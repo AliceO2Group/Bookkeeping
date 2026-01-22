@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const { snakeToCamel, pascalToSnake, ucFirst, lcFirst, snakeToPascal } = require('../../../lib/utilities/stringUtils.js');
+const { snakeToCamel, pascalToSnake, ucFirst, lcFirst, snakeToPascal, splitStringToStringsTrimmed } = require('../../../lib/utilities/stringUtils.js');
 const { expect } = require('chai');
 
 module.exports = () => {
@@ -59,6 +59,11 @@ module.exports = () => {
         expect(snakeToCamel('THIS_IS_SNAKE_CASE_')).to.equal('thisIsSnakeCase');
         expect(snakeToCamel('_THIS_IS_SNAKE_CASE_')).to.equal('thisIsSnakeCase');
         expect(snakeToCamel('SNAKE')).to.equal('snake');
+    });
+
+    it('should successfully split string into array of strings', () => {
+        expect(splitStringToStringsTrimmed('one  ,    two, three ')).to.deep.equal(['one', 'two', 'three']);
+        expect(splitStringToStringsTrimmed('one  .    two. three ', '.')).to.deep.equal(['one', 'two', 'three']);
     });
 
     it('should successfully convert snake_case string to PascalCase', () => {
