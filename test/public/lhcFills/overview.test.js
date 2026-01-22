@@ -271,9 +271,9 @@ module.exports = () => {
         const filterSBExpect = { selector: '.stableBeams-filter .w-30', value: 'Stable Beams Only' };
         const filterFillNRExpect = {selector: 'div.items-baseline:nth-child(1) > div:nth-child(1)', value: 'Fill #'};
         const filterSBDurationExpect = {selector: 'div.items-baseline:nth-child(3) > div:nth-child(1)', value: 'SB Duration'};
-        const filterSBDurationPlaceholderExpect = {selector: '.beam-duration-filter', value: 'e.g 16:14:15 (HH:MM:SS)'}
+        const filterSBDurationPlaceholderExpect = {selector: '#beam-duration-filter-operand', value: 'e.g 16:14:15 (HH:MM:SS)'}
         const filterRunDurationExpect = {selector: 'div.flex-row:nth-child(4) > div:nth-child(1)', value: 'Total runs duration'}
-        const filterRunDurationPlaceholderExpect = {selector: '.run-duration-filter', value: 'e.g 16:14:15 (HH:MM:SS)'};
+        const filterRunDurationPlaceholderExpect = {selector: '#run-duration-filter-operand', value: 'e.g 16:14:15 (HH:MM:SS)'};
         const filterSBDurationOperatorExpect = { value: true };
         const filterBeamTypeExpect = {selector: 'div.flex-row:nth-child(5) > div:nth-child(1)', value: 'Beam Type'}
 
