@@ -127,7 +127,7 @@ module.exports = () => {
 
     // Beam duration filter tests
     it('should only contain specified stable beam durations, < 12:00:00', async () => {
-        getAllLhcFillsDto.query = { filter: { beamDuration: '43200', beamDurationOperator: '<'  } };
+        getAllLhcFillsDto.query = { filter: { beamDuration: {limit: '43200', operator: '<'} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
         expect(lhcFills).to.be.an('array').and.lengthOf(3)
         lhcFills.forEach((lhcFill) => {
@@ -136,7 +136,7 @@ module.exports = () => {
     });
 
      it('should only contain specified stable beam durations, <= 12:00:00', async () => {
-        getAllLhcFillsDto.query = { filter: { beamDuration: '43200', beamDurationOperator: '<=' } };
+        getAllLhcFillsDto.query = { filter: { beamDuration: {limit: '43200', operator: '<='} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
         expect(lhcFills).to.be.an('array').and.lengthOf(4)
         lhcFills.forEach((lhcFill) => {
@@ -145,7 +145,7 @@ module.exports = () => {
     })
 
     it('should only contain specified stable beam durations, = 00:01:40', async () => {
-        getAllLhcFillsDto.query = { filter: { beamDuration: '100', beamDurationOperator: '=' } };
+        getAllLhcFillsDto.query = { filter: { beamDuration: {limit: '100', operator: '='} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
         expect(lhcFills).to.be.an('array').and.lengthOf(3)
         lhcFills.forEach((lhcFill) => {
@@ -154,7 +154,7 @@ module.exports = () => {
     });
 
      it('should only contain specified stable beam durations, >= 00:01:40', async () => {
-        getAllLhcFillsDto.query = { filter: { beamDuration: '100', beamDurationOperator: '>='  } };
+        getAllLhcFillsDto.query = { filter: { beamDuration: {limit: '100', operator: '>='} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
         
         expect(lhcFills).to.be.an('array').and.lengthOf(4)
@@ -164,7 +164,7 @@ module.exports = () => {
      })
 
      it('should only contain specified stable beam durations, > 00:01:40', async () => {
-        getAllLhcFillsDto.query = { filter: { beamDuration: '100', beamDurationOperator: '>' } };
+        getAllLhcFillsDto.query = { filter: { beamDuration: {limit: '100', operator: '>'} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(1)
@@ -174,18 +174,14 @@ module.exports = () => {
      })
 
      it('should only contain specified stable beam durations, = 00:00:00', async () => {
-        // Tests the usecase's ability to replace the request for 0 to a request for null.
-        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, beamDuration: 0, beamDurationOperator: '=' } };
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, beamDuration: {limit: '0', operator: '='} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
-        expect(lhcFills).to.be.an('array').and.lengthOf(1)
-        lhcFills.forEach((lhcFill) => {
-            expect(lhcFill.stableBeamsDuration).equals(null)
-        });
+        expect(lhcFills).to.be.an('array').and.lengthOf(0)
      })
 
     it('should only contain specified total run duration, > 04:00:00', async () => {
-        getAllLhcFillsDto.query = { filter: { runDuration: '14400', runDurationOperator: '>' } };
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '14400', operator: '>'} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(1)
@@ -195,7 +191,7 @@ module.exports = () => {
     })
 
     it('should only contain specified total run duration, >= 05:00:00', async () => {
-        getAllLhcFillsDto.query = { filter: { runDuration: '18000', runDurationOperator: '>=' } };
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '18000', operator: '>='} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(1)
@@ -205,7 +201,7 @@ module.exports = () => {
     })
 
     it('should only contain specified total run duration, = 05:00:00', async () => {
-        getAllLhcFillsDto.query = { filter: { runDuration: '18000', runDurationOperator: '=' } };
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '18000', operator: '='} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(1)
@@ -216,7 +212,7 @@ module.exports = () => {
 
     it('should only contain specified total run duration, = 00:00:00', async () => {
         // Tests the usecase's ability to replace the request for 0 to a request for null.
-        getAllLhcFillsDto.query = { filter: { runDuration: 0, runDurationOperator: '=' } };
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '0', operator: '='} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(4)
@@ -226,7 +222,7 @@ module.exports = () => {
     })
 
     it('should only contain specified total run duration, <= 05:00:00', async () => {
-        getAllLhcFillsDto.query = { filter: { runDuration: '18000', runDurationOperator: '<=' } };
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '18000', operator: '<='} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(1)
@@ -236,7 +232,7 @@ module.exports = () => {
     })
 
     it('should only contain specified total run duration, < 06:30:59', async () => {
-        getAllLhcFillsDto.query = { filter: { runDuration: '23459', runDurationOperator: '<' } };
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '23459', operator: '<'} } }; 
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(1)

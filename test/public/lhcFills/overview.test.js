@@ -25,6 +25,7 @@ const {
     expectLink,
     openFilteringPanel,
     expectAttributeValue,
+    fillInput,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -270,17 +271,20 @@ module.exports = () => {
 
     it('should successfully display filter elements', async () => {
         const filterSBExpect = { selector: '.stableBeams-filter .w-30', value: 'Stable Beams Only' };
-        const filterFillNRExpect = {selector: 'div.items-baseline:nth-child(1) > div:nth-child(1)', value: 'Fill #'}
-        const filterSBDurationExpect = {selector: 'div.items-baseline:nth-child(3) > div:nth-child(1)', value: 'SB Duration'}
-        const filterSBDurationPlaceholderExpect = {selector: '.beam-duration-filter', value: 'e.g 16:14:15 (HH:MM:SS)'}
+        const filterFillNRExpect = {selector: 'div.items-baseline:nth-child(1) > div:nth-child(1)', value: 'Fill #'};
+        const filterSBDurationExpect = {selector: 'div.items-baseline:nth-child(3) > div:nth-child(1)', value: 'SB Duration'};
+        const filterSBDurationPlaceholderExpect = {selector: '#beam-duration-filter-operand', value: 'e.g 16:14:15 (HH:MM:SS)'}
         const filterRunDurationExpect = {selector: 'div.flex-row:nth-child(4) > div:nth-child(1)', value: 'Total runs duration'}
-        const filterRunDurationPlaceholderExpect = {selector: '.run-duration-filter', value: 'e.g 16:14:15 (HH:MM:SS)'}
+        const filterRunDurationPlaceholderExpect = {selector: '#run-duration-filter-operand', value: 'e.g 16:14:15 (HH:MM:SS)'};
+        const filterSBDurationOperatorExpect = { value: true };
         const filterBeamTypeExpect = {selector: 'div.flex-row:nth-child(5) > div:nth-child(1)', value: 'Beam Type'}
         const filterSchemeNamePlaceholderExpect = {selector: '.scheme-name-filter', value: 'e.g. Single_12b_8_1024_8_2018'}
         
         await goToPage(page, 'lhc-fill-overview');
         // Open the filtering panel
         await openFilteringPanel(page);
+        // Note: expectAttributeValue does not work here.
+        expect(await page.evaluate(() => document.querySelector('#beam-duration-filter-operator > option:nth-child(3)').selected)).to.equal(filterSBDurationOperatorExpect.value);
         await expectInnerText(page, filterSBExpect.selector, filterSBExpect.value);
         await expectInnerText(page, filterFillNRExpect.selector, filterFillNRExpect.value);
         await expectInnerText(page, filterSBDurationExpect.selector, filterSBDurationExpect.value);
@@ -306,5 +310,44 @@ module.exports = () => {
         await waitForTableLength(page, 5);
         await pressElement(page, '.slider.round');
         await waitForTableLength(page, 6);
+    });
+
+    it('should successfully apply beam duration filter', async () => {
+        const filterSBDurationOperator= '#beam-duration-filter-operator';
+        const filterSBDurationOperand= '#beam-duration-filter-operand';
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        await page.select(filterSBDurationOperator, '>=');
+        await fillInput(page, filterSBDurationOperand, '00:01:40', ['change']);
+        await waitForTableLength(page, 4);
+    });
+
+    it('should successfully apply run duration filter', async () => {
+        const filterRunDurationOperator= '#run-duration-filter-operator';
+        const filterRunDurationOperand= '#run-duration-filter-operand';
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        await page.select(filterRunDurationOperator, '<=');
+        await fillInput(page, filterRunDurationOperand, '00:00:00', ['change']);
+        await waitForTableLength(page, 4);
+        await page.select(filterRunDurationOperator, '>=');
+        await fillInput(page, filterRunDurationOperand, '00:00:00', ['change']);
+        await waitForTableLength(page, 5);
+    });
+
+    it('should successfully apply beam types filter', async () => {
+        const filterBeamTypeP_Pb = '#beams-types-checkbox-p-Pb';
+        const filterBeamTypePb_Pb = '#beams-types-checkbox-Pb-Pb';
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        await openFilteringPanel(page);
+        await pressElement(page, filterBeamTypeP_Pb);
+        await waitForTableLength(page, 1);
+        await pressElement(page, filterBeamTypePb_Pb);
+        await waitForTableLength(page, 2);
     });
 };
