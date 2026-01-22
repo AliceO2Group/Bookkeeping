@@ -554,17 +554,19 @@ module.exports = () => {
                 });
         });
 
-        it('should return 400 for beam types filter, one wrong', (done) => {
+        // API accepts filters that do not exist, this is because it does not affect the results
+        it('should return 200 for beam types filter, one wrong', (done) => {
             request(server)
-                .get('/api/lhcFills?age[offset]=0&page[limit]=15&filter[beamsType]=Pb-Pb,Jasper-Jasper,p-p,p-Pb')
-                .expect(400)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamsType]=Pb-Pb,Jasper-Jasper,p-p,p-Pb')
+                .expect(200)
                 .end((err, res) => {
                     if (err) {
                         done(err);
                         return;
                     }
 
-                    expect(res.body.errors[0].title).to.equal('Invalid Attribute');
+                    expect(res.body.data).to.have.lengthOf(4);
+                    expect(res.body.data[0].fillNumber).to.equal(4);
 
                     done();
                 });
