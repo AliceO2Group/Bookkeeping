@@ -278,7 +278,7 @@ module.exports = () => {
         const filterRunDurationPlaceholderExpect = {selector: '#run-duration-filter-operand', value: 'e.g 16:14:15 (HH:MM:SS)'};
         const filterSBDurationOperatorExpect = { value: true };
         const filterBeamTypeExpect = {selector: 'div.flex-row:nth-child(5) > div:nth-child(1)', value: 'Beam Type'}
-        const filterSchemeNamePlaceholderExpect = {selector: '.scheme-name-filter', value: 'e.g. Single_12b_8_1024_8_2018'}
+        const filterSchemeNamePlaceholderExpect = {selector: '.fillingSchemeName-filter input', value: 'e.g. Single_12b_8_1024_8_2018'}
         
         await goToPage(page, 'lhc-fill-overview');
         // Open the filtering panel
@@ -352,7 +352,7 @@ module.exports = () => {
     });
 
     it('should successfully apply scheme name filter', async () => {
-        const filterSchemeNameInputField= '.scheme-name-filter';
+        const filterSchemeNameInputField= '.fillingSchemeName-filter input';
         await goToPage(page, 'lhc-fill-overview');
         await waitForTableLength(page, 5);
         // Open the filtering panel
