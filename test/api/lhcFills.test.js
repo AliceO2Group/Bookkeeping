@@ -572,7 +572,7 @@ module.exports = () => {
                 });
         });
 
-        it('should return 200 and an LHCFill array for schemename filter, full', (done) => {
+        it('should return 200 and an LHCFill array for scheme name filter, full', (done) => {
             request(server)
                 .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[schemeName]=Single_12b_8_1024_8_2018')
                 .expect(200)
@@ -589,7 +589,7 @@ module.exports = () => {
                 });
         });
 
-        it('should return 200 and an LHCFill array for schemename filter, partial', (done) => {
+        it('should return 200 and an LHCFill array for scheme name filter, partial', (done) => {
             request(server)
                 .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[schemeName]=_1')
                 .expect(200)
@@ -606,7 +606,7 @@ module.exports = () => {
                 });
         });
 
-        it('should return 400 for schemename filter, empty filter', (done) => {
+        it('should return 400 for scheme name filter, empty filter', (done) => {
             request(server)
                 .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[schemeName]=')
                 .expect(400)
