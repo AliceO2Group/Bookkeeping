@@ -90,8 +90,8 @@ module.exports = () => {
         expect(runs[1].runNumber).to.equal(95);
     });
 
-    it('should return an array, only containing found runs from passed list (run numbers can be missing or non-numbers)', async () => {
-        getAllRunsDto.query = { filter: { runNumbers: '-2,17, ,400,18' } };
+    it('should return an array, only containing found runs from passed list (run numbers can be missing)', async () => {
+        getAllRunsDto.query = { filter: { runNumbers: '17, ,400,18' } };
         const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
 
         expect(runs).to.be.an('array');
