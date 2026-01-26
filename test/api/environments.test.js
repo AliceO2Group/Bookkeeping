@@ -236,6 +236,42 @@ module.exports = () => {
             expect(environments[0].id).to.be.equal('TDI59So3d');
             expect(environments[1].id).to.be.equal('Dxi029djX');
         });
+
+        it('should successfully filter environments when run number filter contains empty entries', async () => {
+            const response = await request(server).get('/api/environments?filter[runNumbers]=103,,');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments).to.have.lengthOf(1);
+            expect(environments[0].id).to.be.equal('TDI59So3d');
+        });
+
+        it('should return 400 for an invalid run number range, first number greater than second', async () => {
+            const response = await request(server).get('/api/environments?filter[runNumbers]=105-100');
+
+            expect(response.status).to.equal(400);
+            const { errors } = response.body;
+            const rangeError = errors.find((err) => err.source.pointer === '/data/attributes/query/filter/runNumbers');
+            expect(rangeError.detail).to.equal('Invalid range: 105-100');
+        });
+
+        it('should return 400 for an invalid run number range, negative start number', async () => {
+            const response = await request(server).get('/api/environments?filter[runNumbers]=-100-105');
+
+            expect(response.status).to.equal(400);
+            const { errors } = response.body;
+            const rangeError = errors.find((err) => err.source.pointer === '/data/attributes/query/filter/runNumbers');
+            expect(rangeError.detail).to.equal('Invalid range: -100-105');
+        });
+
+        it('should return 400 for an invalid run number range, no start number', async () => {
+            const response = await request(server).get('/api/environments?filter[runNumbers]=-105');
+
+            expect(response.status).to.equal(400);
+            const { errors } = response.body;
+            const rangeError = errors.find((err) => err.source.pointer === '/data/attributes/query/filter/runNumbers');
+            expect(rangeError.detail).to.equal('Invalid range: -105');
+        });
     });
     describe('POST /api/environments', () => {
         it('should return 201 if valid data is provided', async () => {
