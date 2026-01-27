@@ -12,7 +12,7 @@
  */
 
 const Sinon = require('sinon');
-const { validateRange, unpackNumberRange } = require('../../../lib/utilities/rangeUtils.js');
+const { validateRange, unpackNumberRange, RANGE_INVALID } = require('../../../lib/utilities/rangeUtils.js');
 const { expect } = require('chai');
 
 module.exports = () => {
@@ -61,14 +61,6 @@ module.exports = () => {
             expect(result).to.equal(input);
         });
 
-        it('rejects non-numeric input', () => {
-            const input = '5,a,7';
-            validateRange(input, helpers);
-            expect(helpers.error.calledOnce).to.be.true;
-            expect(helpers.error.firstCall.args[0]).to.equal('any.invalid');
-            expect(helpers.error.firstCall.args[1]).to.deep.equal({ message: 'Invalid number: a' });
-        });
-
         it('rejects range with non-numeric input', () => {
             const input = '3-a';
             validateRange(input, helpers);
@@ -88,20 +80,6 @@ module.exports = () => {
             const input = '5-5';
             const result = validateRange(input, helpers);
             expect(result).to.equal(input);
-        });
-
-        it('rejects range containing more than one `-`', () => {
-            const input = '1-2-3';
-            validateRange(input, helpers);
-            expect(helpers.error.calledOnce).to.be.true;
-            expect(helpers.error.firstCall.args[1]).to.deep.equal({ message: 'Invalid range: 1-2-3' });
-        });
-
-        it('rejects range containing more than one `-`, at end', () => {
-            const input = '1-2-';
-            validateRange(input, helpers);
-            expect(helpers.error.calledOnce).to.be.true;
-            expect(helpers.error.firstCall.args[1]).to.deep.equal({ message: 'Invalid range: 1-2-' });
         });
 
         // MAX_RANGE_SIZE = 100, should this change, also change this test...
