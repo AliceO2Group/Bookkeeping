@@ -162,6 +162,33 @@ module.exports = () => {
         expect(environments.map(({ id }) => id)).to.have.members(['TDI59So3d', 'Dxi029djX']);
     });
 
+    it('should successfully filter environments on a run number range spanning multiple environments', async () => {
+        getAllEnvsDto.query = { filter: { runNumbers: '100-103' } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(2);
+        expect(environments.map(({ id }) => id)).to.have.members(['Dxi029djX', 'TDI59So3d']);
+    });
+
+    it('should successfully filter environments on a single-value run number range', async () => {
+        getAllEnvsDto.query = { filter: { runNumbers: '105-105' } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(1);
+        expect(environments[0].id).to.be.equal('TDI59So3d');
+    });
+
+    it('should successfully filter environments when run number filter includes empty entries', async () => {
+        getAllEnvsDto.query = { filter: { runNumbers: '103, ' } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(1);
+        expect(environments[0].id).to.be.equal('TDI59So3d');
+    });
+
     it('should successfully filter environments on created from and to', async () => {
         const from = Date.now() - 24 * 60 * 60 * 1000; // environment from 24h ago which was created by CreateEnvironmentUseCase.test.js
         const to = Date.now() - 10;
