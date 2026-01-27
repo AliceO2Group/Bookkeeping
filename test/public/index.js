@@ -14,12 +14,12 @@
 const LhcFillsSuite = require('./lhcFills');
 const LogsSuite = require('./logs');
 const RunsSuite = require('./runs');
-const SubsystemsSuite = require('./subsystems');
 const TagsSuite = require('./tags');
 const FlpsSuite = require('./flps');
 const HomeSuite = require('./home');
 const AboutSuite = require('./about');
 const EnvsSuite = require('./envs');
+const ErrorSuite = require('./error');
 const EosReportSuite = require('./eosReport');
 const LhcPeriodsSuite = require('./lhcPeriods');
 const DataPassesSuite = require('./dataPasses');
@@ -33,7 +33,6 @@ module.exports = () => {
     describe('Logs', LogsSuite);
     describe('Envs', EnvsSuite);
     describe('Runs', RunsSuite);
-    describe('Subsystems', SubsystemsSuite);
     describe('Tags', TagsSuite);
     describe('Flps', FlpsSuite);
     describe('Home', HomeSuite);
@@ -43,4 +42,5 @@ module.exports = () => {
     describe('SimulationPasses', SimulationPassesSuite);
     describe('QcFlagTypes', QcFlagTypesSuite);
     describe('QcFlags', QcFlagsSuite);
+    describe('Error', ErrorSuite);
 };

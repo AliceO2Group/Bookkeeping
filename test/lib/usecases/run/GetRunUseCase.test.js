@@ -96,4 +96,10 @@ module.exports = () => {
         expect(result.detectors).to.equal('ACO,CPV,CTP,EMC,FIT,HMP,ITS,MCH,MFT,MID,PHS,TOF,TPC,TRD,ZDC');
         expect(result.runDuration).to.equal(result.timeTrgEnd - result.timeTrgStart);
     });
+
+    it('should successfully return an object that contains name of user that started and stopped it', async () => {
+        const result = await new GetRunUseCase().execute(getRunDto);
+        expect(result.userStart.name).to.equal('John Doe');
+        expect(result.userStop.name).to.equal('Jan Jansen');
+    });
 };

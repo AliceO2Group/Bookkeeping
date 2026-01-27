@@ -17,9 +17,16 @@ const {
     defaultAfter,
     pressElement,
     goToPage,
-    checkColumnBalloon, waitForNavigation, expectUrlParams,
+    checkColumnBalloon,
+    waitForNavigation,
+    expectUrlParams,
+    expectInnerText,
+    waitForTableLength,
+    expectLink,
+    openFilteringPanel,
+    expectAttributeValue,
+    fillInput,
 } = require('../defaults.js');
-const { waitForTimeout, expectInnerText } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
 const { expect } = chai;
@@ -27,17 +34,28 @@ const { expect } = chai;
 const percentageRegex = new RegExp(/\d{1,2}.\d{2}%/);
 const durationRegex = new RegExp(/\d{2}:\d{2}:\d{2}/);
 
+const defaultViewPort = {
+    width: 700,
+    height: 763,
+    deviceScaleFactor: 1,
+};
+
+const testResizeViewPort = {
+    width: 700,
+    height: 391,
+    deviceScaleFactor: 1,
+};
+
+const bottomNavBarSelector = `div.flex-row:nth-child(2)`;
+
+
 module.exports = () => {
     let page;
     let browser;
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
-        await page.setViewport({
-            width: 700,
-            height: 720,
-            deviceScaleFactor: 1,
-        });
+        await page.setViewport(defaultViewPort);
         await resetDatabaseContent();
     });
 
@@ -56,6 +74,31 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping');
     });
 
+    // in case the 'should resize table accordingly' fails we still want to fix the viewport size to default values.
+    describe("viewport changing tests", async () => {
+        afterEach(async () => {
+            await page.setViewport(defaultViewPort);
+        });
+
+        it('should resize table accordingly', async () => {
+            await goToPage(page, 'lhc-fill-overview');
+             // turn off Stable Beams Only filter
+            await pressElement(page, '.slider.round');
+            // 6 rows non stable beam in test data
+            // document.documentElement.clientHeight = 391 should result in 3 rows.
+            await waitForTableLength(page, 6);
+            await page.setViewport(testResizeViewPort);
+            await waitForTableLength(page, 3);
+            const bottomNavBar = await page.$(bottomNavBarSelector);
+            expect(await bottomNavBar.isIntersectingViewport()).to.be.true
+
+            await page.setViewport(defaultViewPort);
+            await waitForTableLength(page, 6);
+        });
+    });
+
+    
+
     it('shows correct datatypes in respective columns', async () => {
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
@@ -64,8 +107,6 @@ module.exports = () => {
             createdAt: (date) => !isNaN(Date.parse(date)),
             // Seems to not exist anymore
             updatedAt: (date) => !isNaN(Date.parse(date)),
-            // Seems to not exist anymore
-            toredownAt: (date) => !isNaN(Date.parse(date)),
             // Seems to not exist anymore
             status: (date) => !isNaN(Date.parse(date)),
             // Seems to not exist anymore
@@ -106,39 +147,49 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        await waitForTimeout(100);
 
-        expect(await page.$eval('#firstRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(1);
-        expect(await page.$eval('#lastRowIndex', (element) => parseInt(element.innerText, 10))).to.equal(6);
-        expect(await page.$eval('#totalRowsCount', (element) => parseInt(element.innerText, 10))).to.equal(6);
+        await expectInnerText(page, '#firstRowIndex', '1');
+        await expectInnerText(page, '#lastRowIndex', '5');
+        await expectInnerText(page, '#totalRowsCount', '5');
     });
 
     it('Should have balloon on runs column', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        await waitForTimeout(100);
+        await waitForTableLength(page, 5);
 
-        await checkColumnBalloon(page, 1, 12);
+        await checkColumnBalloon(page, 1, 11);
     });
 
+    it('fill dropdown menu should be correct', async() => {
+        // activate the popover
+        await pressElement(page, `#row6-fillNumber-text > div:nth-child(1) > div:nth-child(2)`)
+        await page.waitForSelector(`body > div:nth-child(3) > div:nth-child(1)`);
+        await expectInnerText(page, `#copy-6 > div:nth-child(1)`, 'Copy Fill Number')
+
+        await expectLink(page, 'body > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > a:nth-child(3)', {
+            href: `http://localhost:4000/?page=log-create&lhcFillNumbers=6`, innerText: ' Add log to this fill'
+        })
+        // disable the popover
+        await pressElement(page, `#row6-fillNumber-text > div:nth-child(1) > div:nth-child(2)`)
+    })
+
     it('can set how many lhcFills are available per page', async () => {
-        await waitForTimeout(300);
+         // turn off Stable Beams Only filter
+        await pressElement(page, '.slider.round');
+
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.$(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        await waitForTimeout(300);
         expect(amountSelectorButtonText.trim().endsWith('10')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
-        await amountSelectorButton.evaluate((button) => button.click());
-        await waitForTimeout(100);
-        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
-        expect(Boolean(amountSelectorDropdown)).to.be.true;
+        await pressElement(page, `${amountSelectorId} button`);
+        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
-        // Expect the amount of visible lhcfills to reduce when the first option (5) is selected
-        const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
-        await menuItem.evaluate((button) => button.click());
-        await waitForTimeout(100);
+        // Expect the amount of visible lhcFills to reduce when the first option (5) is selected
+        await pressElement(page, `${amountSelectorId} .dropup-menu .menu-item`);
+        await waitForTableLength(page, 5);
 
         const tableRows = await page.$$('table tr');
         expect(tableRows.length - 1).to.equal(5);
@@ -150,19 +201,22 @@ module.exports = () => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
-        await waitForTimeout(100);
-        expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
+        await page.waitForSelector(`${amountSelectorId} input:invalid`);
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
         await goToPage(page, 'lhc-fill-overview');
+
+        // turn off Stable Beams Only filter
+        await pressElement(page, '.slider.round');
+
 
         // Override the amount of lhc fills visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.lhcFills.overviewModel.pagination.itemsPerPage = 1;
         });
-        await waitForTimeout(100);
+        await waitForTableLength(page, 1);
 
         // Expect the page five button to now be visible, but no more than that
         const pageFiveButton = await page.$('#page5');
@@ -172,9 +226,7 @@ module.exports = () => {
 
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
-        await waitForTimeout(100);
-        const pageOneButton = await page.$('#page1');
-        expect(pageOneButton).to.be.null;
+        await page.waitForSelector('#page1', { hidden: true });
     });
 
     it('should successfully navigate to the LHC fill details page', async () => {
@@ -198,12 +250,87 @@ module.exports = () => {
     });
 
     it('should successfully display some statistics', async () => {
+        const beamTypeExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(9)', value: 'PROTON\nPROTON' };
+        const beforeFirststRunExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(5)', value: '03:00:00\n(25.00%)' };
+        const collidingBunchesExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(10)', value: '1024' };
+        const meanRunDurationExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(6)', value: '01:40:00' };
+        const totalRunsDurationExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(7)', value: '05:00:00' };
+        const efficiencyExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(8)', value: '41.67%' };
+
         await goToPage(page, 'lhc-fill-overview');
 
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(6)', '41.67%');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(7)', '03:00:00\n(25.00%)');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(8)', '02:00:00\n(16.67%)');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(9)', '01:40:00');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(10)', '05:00:00');
+        await expectInnerText(page, beamTypeExpect.selector, beamTypeExpect.value);
+        await expectInnerText(page, beforeFirststRunExpect.selector, beforeFirststRunExpect.value);
+        await expectInnerText(page, collidingBunchesExpect.selector, collidingBunchesExpect.value);
+        await expectInnerText(page, meanRunDurationExpect.selector, meanRunDurationExpect.value);
+        await expectInnerText(page, totalRunsDurationExpect.selector, totalRunsDurationExpect.value);
+        await expectInnerText(page, efficiencyExpect.selector, efficiencyExpect.value);
+    });
+
+    it('should successfully display filter elements', async () => {
+        const filterSBExpect = { selector: '.stableBeams-filter .w-30', value: 'Stable Beams Only' };
+        const filterFillNRExpect = {selector: 'div.items-baseline:nth-child(1) > div:nth-child(1)', value: 'Fill #'};
+        const filterSBDurationExpect = {selector: 'div.items-baseline:nth-child(3) > div:nth-child(1)', value: 'SB Duration'};
+        const filterSBDurationPlaceholderExpect = {selector: '#beam-duration-filter-operand', value: 'e.g 16:14:15 (HH:MM:SS)'}
+        const filterRunDurationExpect = {selector: 'div.flex-row:nth-child(4) > div:nth-child(1)', value: 'Total runs duration'}
+        const filterRunDurationPlaceholderExpect = {selector: '#run-duration-filter-operand', value: 'e.g 16:14:15 (HH:MM:SS)'};
+        const filterSBDurationOperatorExpect = { value: true };
+
+        
+        await goToPage(page, 'lhc-fill-overview');
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        // Note: expectAttributeValue does not work here.
+        expect(await page.evaluate(() => document.querySelector('#beam-duration-filter-operator > option:nth-child(3)').selected)).to.equal(filterSBDurationOperatorExpect.value);
+        await expectInnerText(page, filterSBExpect.selector, filterSBExpect.value);
+        await expectInnerText(page, filterFillNRExpect.selector, filterFillNRExpect.value);
+        await expectInnerText(page, filterSBDurationExpect.selector, filterSBDurationExpect.value);
+        await expectAttributeValue(page, filterSBDurationPlaceholderExpect.selector, 'placeholder', filterSBDurationPlaceholderExpect.value);
+        await expectInnerText(page, filterRunDurationExpect.selector, filterRunDurationExpect.value);
+        await expectAttributeValue(page, filterRunDurationPlaceholderExpect.selector, 'placeholder', filterRunDurationPlaceholderExpect.value);
+    });
+
+    it('should successfully un-apply Stable Beam filter menu', async () => {
+        const filterButtonSBOnlySelector= '#stableBeamsOnlyRadioOFF';
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        await pressElement(page, filterButtonSBOnlySelector);
+        await waitForTableLength(page, 6);
+    });
+
+    it('should successfully turn off stable beam only from header', async () => {
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        await pressElement(page, '.slider.round');
+        await waitForTableLength(page, 6);
+    });
+
+    it('should successfully apply beam duration filter', async () => {
+        const filterSBDurationOperator= '#beam-duration-filter-operator';
+        const filterSBDurationOperand= '#beam-duration-filter-operand';
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        await page.select(filterSBDurationOperator, '>=');
+        await fillInput(page, filterSBDurationOperand, '00:01:40', ['change']);
+        await waitForTableLength(page, 4);
+    });
+
+    it('should successfully apply run duration filter', async () => {
+        const filterRunDurationOperator= '#run-duration-filter-operator';
+        const filterRunDurationOperand= '#run-duration-filter-operand';
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        await page.select(filterRunDurationOperator, '<=');
+        await fillInput(page, filterRunDurationOperand, '00:00:00', ['change']);
+        await waitForTableLength(page, 4);
+        await page.select(filterRunDurationOperator, '>=');
+        await fillInput(page, filterRunDurationOperand, '00:00:00', ['change']);
+        await waitForTableLength(page, 5);
     });
 };

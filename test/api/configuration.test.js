@@ -22,6 +22,7 @@ module.exports = () => {
             expect(response.status).to.equal(200);
             expect(response.body).to.eql({
                 data: {
+                    AliEcsGuiUrl: 'http://localhost:8080',
                     FlpInfologgerUrl: 'http://localhost:8081',
                     EpnInfologgerUrl: null,
                     AliFlpIndexUrl: 'http://localhost:80',

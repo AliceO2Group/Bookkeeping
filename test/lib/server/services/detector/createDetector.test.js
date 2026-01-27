@@ -16,10 +16,11 @@ const assert = require('assert');
 const { createDetector } = require('../../../../../lib/server/services/detector/createDetector.js');
 const { getDetector } = require('../../../../../lib/server/services/detector/getDetector.js');
 const { ConflictError } = require('../../../../../lib/server/errors/ConflictError.js');
+const { DetectorType } = require('../../../../../lib/domain/enums/DetectorTypes.js');
 
 module.exports = () => {
     it('should successfully create a detector and return the corresponding ID', async () => {
-        const detectorId = await createDetector({ name: 'A-NEW-DETECTOR' });
+        const detectorId = await createDetector({ name: 'A-NEW-DETECTOR', type: DetectorType.PHYSICAL });
         expect((await getDetector({ detectorId })).name).to.equal('A-NEW-DETECTOR');
     });
 

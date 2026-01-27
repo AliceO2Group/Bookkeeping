@@ -36,8 +36,222 @@ module.exports = () => {
 
         expect(lhcFills).to.be.an('array');
         lhcFills.forEach((lhcFill) => {
-            // Every lhcFill should have stableBeamStart
+            // Every lhcFill should have stableBeamsStart
             expect(lhcFill.stableBeamsStart).to.not.be.null;
         });
     });
+
+    // Fill number filter tests
+
+    it('should only contain specified fill number', async () => {
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: '6' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.fillNumber).to.equal(6)
+        });
+    })
+
+    it('should only contain specified fill numbers', async () => {
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: '6,3' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+
+    
+        expect(lhcFills).to.be.an('array').and.lengthOf(2)
+
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.fillNumber).oneOf([6,3])
+        });
+    })
+
+    it('should only contain specified fill numbers, range', async () => {
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: '1-3,6' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+
+    
+        expect(lhcFills).to.be.an('array').and.lengthOf(4)
+
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.fillNumber).oneOf([1,2,3,6])
+        });
+    })
+
+    it('should only contain specified fill numbers, whitespace', async () => {
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: ' 6 , 3 ' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+
+    
+        expect(lhcFills).to.be.an('array').and.lengthOf(2)
+
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.fillNumber).oneOf([6,3])
+        });
+    })
+
+    it('should only contain specified fill numbers, comma misplacement', async () => {
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: ',6,3,' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+
+    
+        expect(lhcFills).to.be.an('array').and.lengthOf(2)
+
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.fillNumber).oneOf([6,3])
+        });
+    })
+
+    // Beam duration filter tests
+    it('should only contain specified stable beam durations, < 12:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { beamDuration: {limit: '43200', operator: '<'} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+        expect(lhcFills).to.be.an('array').and.lengthOf(3)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.stableBeamsDuration).lessThan(43200)
+        });
+    });
+
+    it('should only contain specified stable beam durations, <= 12:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { beamDuration: {limit: '43200', operator: '<='} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+        expect(lhcFills).to.be.an('array').and.lengthOf(4)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.stableBeamsDuration).lessThanOrEqual(43200)
+        });
+    })
+
+    it('should only contain specified stable beam durations, = 00:01:40', async () => {
+        getAllLhcFillsDto.query = { filter: { beamDuration: {limit: '100', operator: '='} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+        expect(lhcFills).to.be.an('array').and.lengthOf(3)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.stableBeamsDuration).equal(100)
+        });
+    });
+
+    it('should only contain specified stable beam durations, >= 00:01:40', async () => {
+        getAllLhcFillsDto.query = { filter: { beamDuration: {limit: '100', operator: '>='} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+        
+        expect(lhcFills).to.be.an('array').and.lengthOf(4)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.stableBeamsDuration).greaterThanOrEqual(100)
+        });
+    })
+
+    it('should only contain specified stable beam durations, > 00:01:40', async () => {
+        getAllLhcFillsDto.query = { filter: { beamDuration: {limit: '100', operator: '>'} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.stableBeamsDuration).greaterThan(100)
+        });
+    })
+
+    it('should only contain specified stable beam durations, = 00:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, beamDuration: {limit: '0', operator: '='} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(0)
+    })
+
+    it('should only contain specified total run duration, < 00:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '0', operator: '<'} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(0)
+    });
+
+    it('should only contain specified total run duration, > 00:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '0', operator: '>'} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThan(0)
+        });
+    });
+
+    it('should only contain specified total run duration, <= 00:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '0', operator: '<='} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(4)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).equals(0)
+        });
+    });
+
+    it('should only contain specified total run duration, >= 00:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '0', operator: '>='} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(5)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThanOrEqual(0)
+        });
+    });
+
+
+    it('should only contain specified total run duration, > 04:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '14400', operator: '>'} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThan(14400)
+        });
+    })
+
+    it('should only contain specified total run duration, >= 05:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '18000', operator: '>='} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThan(18000)
+        });
+    })
+
+    it('should only contain specified total run duration, = 05:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '18000', operator: '='} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThan(18000)
+        });
+    })
+
+    it('should only contain specified total run duration, = 00:00:00', async () => {
+        // Tests the usecase's ability to replace the request for 0 to a request for null.
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '0', operator: '='} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(4)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).equals(0)
+        });
+    })
+
+    it('should only contain specified total run duration, <= 05:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '18000', operator: '<='} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThan(18000)
+        });
+    })
+
+    it('should only contain specified total run duration, < 06:30:59', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '23459', operator: '<'} } }; 
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThan(23459)
+        });
+    })
 };

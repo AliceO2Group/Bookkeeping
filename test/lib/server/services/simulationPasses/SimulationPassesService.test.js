@@ -21,6 +21,7 @@ const LHC23k6c = {
     id: 1,
     name: 'LHC23k6c',
     jiraId: 'SIMTICKET-1',
+    pdpBeamTypes: ['PbPb', 'pp'],
     description: 'Some Random general purpose for LHC23k6c',
     pwg: 'PWGX2',
     requestedEventsCount: 1345555,
@@ -34,6 +35,7 @@ const LHC23k6b = {
     id: 2,
     name: 'LHC23k6b',
     jiraId: 'SIMTICKET-2',
+    pdpBeamTypes: ['PbPb'],
     description: 'Some Random general purpose for LHC23k6b',
     pwg: 'PWGX1',
     requestedEventsCount: 2345555,
@@ -47,6 +49,7 @@ const LHC23k6a = {
     id: 3,
     name: 'LHC23k6a',
     jiraId: 'SIMTICKET-3',
+    pdpBeamTypes: ['PbPb'],
     description: 'Some Random general purpose for LHC23k6a',
     pwg: 'PWGX3',
     requestedEventsCount: 2245555,
@@ -59,17 +62,17 @@ const LHC23k6a = {
 module.exports = () => {
     before(resetDatabaseContent);
 
-    it('should succesfully get by id', async () => {
+    it('should successfully get by id', async () => {
         const simulationPass = await simulationPassService.getByIdentifier({ id: 1 });
         expect(simulationPass).to.be.eql(LHC23k6c);
     });
 
-    it('should succesfully get by name', async () => {
+    it('should successfully get by name', async () => {
         const simulationPass = await simulationPassService.getByIdentifier({ name: 'LHC23k6b' });
         expect(simulationPass).to.be.eql(LHC23k6b);
     });
 
-    it('should succesfully get all data', async () => {
+    it('should successfully get all data', async () => {
         const { rows: simulationPasses } = await simulationPassService.getAll();
         expect(simulationPasses).to.be.lengthOf(3);
         expect(simulationPasses).to.have.all.deep.members([LHC23k6c, LHC23k6b, LHC23k6a]);
@@ -82,7 +85,7 @@ module.exports = () => {
         );
     });
 
-    it('should succesfully filter simulation passes on names', async () => {
+    it('should successfully filter simulation passes on names', async () => {
         const params = {
             filter: {
                 names: ['LHC23k6b'],
@@ -93,7 +96,7 @@ module.exports = () => {
         expect(simulationPasses[0]).to.be.eql(LHC23k6b);
     });
 
-    it('should succesfully filter simulation passes on ids', async () => {
+    it('should successfully filter simulation passes on ids', async () => {
         const params = {
             filter: {
                 ids: ['1', '2'],
@@ -107,7 +110,7 @@ module.exports = () => {
         expect(await simulationPassService.getByIdentifier({ id: 99999 })).to.be.null;
     });
 
-    it('should succesfully filter simulation passes on lhc periods ids', async () => {
+    it('should successfully filter simulation passes on lhc periods ids', async () => {
         const params = {
             filter: {
                 lhcPeriodIds: ['1'],
@@ -118,7 +121,7 @@ module.exports = () => {
         expect(simulationPasses).to.have.deep.members([LHC23k6b, LHC23k6a]);
     });
 
-    it('should succesfully filter simulation passes on Sata Pass ids', async () => {
+    it('should successfully filter simulation passes on Sata Pass ids', async () => {
         const params = {
             filter: {
                 dataPassIds: ['1'],
@@ -129,7 +132,7 @@ module.exports = () => {
         expect(simulationPasses).to.have.deep.members([LHC23k6c]);
     });
 
-    it('should succesfully sort simulation passes by names', async () => {
+    it('should successfully sort simulation passes by names', async () => {
         const params = {
             sort: {
                 name: 'ASC',
@@ -140,7 +143,7 @@ module.exports = () => {
         expect(simulationPasses).to.have.ordered.deep.members([LHC23k6a, LHC23k6b, LHC23k6c]);
     });
 
-    it('should succesfully sort simulation passes by generatedEventsCount', async () => {
+    it('should successfully sort simulation passes by generatedEventsCount', async () => {
         const params = {
             sort: {
                 generatedEventsCount: 'DESC',
@@ -151,7 +154,7 @@ module.exports = () => {
         expect(simulationPasses).to.have.ordered.deep.members([LHC23k6c, LHC23k6b, LHC23k6a]);
     });
 
-    it('should succesfully sort simulation passes by requestedEventsCount', async () => {
+    it('should successfully sort simulation passes by requestedEventsCount', async () => {
         const params = {
             sort: {
                 requestedEventsCount: 'DESC',
@@ -161,7 +164,7 @@ module.exports = () => {
         expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b, LHC23k6a, LHC23k6c]);
     });
 
-    it('should succesfully sort simulation passes by outputSize', async () => {
+    it('should successfully sort simulation passes by outputSize', async () => {
         const params = {
             sort: {
                 outputSize: 'ASC',
@@ -172,7 +175,7 @@ module.exports = () => {
         expect(simulationPasses).to.have.ordered.deep.members([LHC23k6a, LHC23k6b, LHC23k6c]);
     });
 
-    it('should succesfully sort simulation passes by pwg', async () => {
+    it('should successfully sort simulation passes by pwg', async () => {
         const params = {
             sort: {
                 pwg: 'ASC',
@@ -183,7 +186,7 @@ module.exports = () => {
         expect(simulationPasses).to.have.ordered.deep.members([LHC23k6b, LHC23k6c, LHC23k6a]);
     });
 
-    it('should succesfully sort simulation passes by jiraId', async () => {
+    it('should successfully sort simulation passes by jiraId', async () => {
         const params = {
             sort: {
                 jiraId: 'ASC',

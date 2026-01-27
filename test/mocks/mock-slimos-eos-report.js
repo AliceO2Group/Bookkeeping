@@ -86,7 +86,7 @@ exports.customizedSlimosEosReportRequest = {
 
 exports.formattedCustomizedSlimosEosReport = genericFormattedCustomizedEosReport(
     ShiftTypes.SLIMOS,
-    // eslint-disable-next-line max-len
+    // eslint-disable-next-line @stylistic/js/max-len
     '- \\[SLIMOS\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)\n- \\[SLIMOS, FLP\\] - [Fifth issue log](http://localhost:4000?page=log-detail&id=124)',
     '',
 );

@@ -14,7 +14,7 @@ const { expect } = require('chai');
 const request = require('supertest');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const { server } = require('../../lib/application');
-const { buildUrl } = require('../../lib/utilities/buildUrl.js');
+const { buildUrl } = require('@aliceo2/web-ui');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -35,33 +35,506 @@ module.exports = () => {
                     done();
                 });
         });
-    });
-    describe('POST /api/lhcFills', () => {
-        it('should return 201 if valid data is provided', (done) => {
+
+        it('should return 200 and an LHCFill array for stablebeams only filter', (done) => {
             request(server)
-                .post('/api/lhcFills')
-                .expect(201)
-                .send({
-                    fillNumber: 544455,
-                    stableBeamsStart: new Date('2022-03-22 15:00:00'),
-                    stableBeamsEnd: new Date('2022-03-22 15:00:00'),
-                    stableBeamsDuration: 600,
-                    beamType: 'Pb-Pb',
-                    fillingSchemeName: 'schemename',
-                })
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[hasStableBeams]=true')
+                .expect(200)
                 .end((err, res) => {
                     if (err) {
                         done(err);
                         return;
                     }
-                    const { data } = res.body;
-                    expect(data.stableBeamsStart).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
-                    expect(data.stableBeamsEnd).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
-                    expect(data.stableBeamsDuration).to.equal(600);
-                    expect(data.beamType).to.equal('Pb-Pb');
-                    expect(data.fillingSchemeName).to.equal('schemename');
+
+                    expect(res.body.data).to.have.lengthOf(5);
+
                     done();
                 });
+        });
+
+        it('should return 200 and an LHCFill array for stablebeams duration filter, = 12:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]==&filter[beamDuration][limit]=12:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(1);
+                    expect(res.body.data[0].fillNumber).to.equal(6);
+
+                    done();
+                });
+        });
+
+        it('should return 200 for stablebeams duration filter, = 00:9:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]==&filter[beamDuration][limit]=00:9:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(0);
+
+                    done();
+                });
+        });
+
+        it('should return 200 for stablebeams duration filter, = 00:00:9', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]==&filter[beamDuration][limit]=00:00:9')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(0);
+
+                    done();
+                });
+        });
+
+        it('should return 200 for stablebeams duration filter, = 999999:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]==&filter[beamDuration][limit]=999999:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(0);
+
+                    done();
+                });
+        });
+
+
+        it('should return 200 for stablebeams duration filter, = 999999:0:0', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]==&filter[beamDuration][limit]=999999:0:0')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(0);
+
+                    done();
+                });
+        });
+
+
+
+        it('should return 400 for wrong stablebeams duration filter, = 44:60:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]==&filter[beamDuration][limit]=44:60:00')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.errors[0].title).to.equal('Invalid Attribute');
+
+                    done();
+                });
+        });
+
+        it('should return 400 for wrong stablebeams duration filter, = 44:00:60', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]==&filter[beamDuration][limit]=44:00:60')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.errors[0].title).to.equal('Invalid Attribute');
+
+                    done();
+                });
+        });
+
+        it('should return 400 for wrong stablebeams duration filter, = -44:30:15', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]==&filter[beamDuration][limit]=-44:30:15')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.errors[0].title).to.equal('Invalid Attribute');
+
+                    done();
+                });
+        });
+
+
+        it('should return 200 and an LHCFill array for stablebeams duration filter, < 12:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]=<&filter[beamDuration][limit]=12:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(3);
+                    expect(res.body.data[0].fillNumber).to.equal(3);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for stablebeams duration filter, <= 12:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]=<=&filter[beamDuration][limit]=12:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(4);
+                    expect(res.body.data[0].fillNumber).to.equal(6);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for stablebeams duration filter, >= 12:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]=>=&filter[beamDuration][limit]=12:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(1);
+                    expect(res.body.data[0].fillNumber).to.equal(6);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for stablebeams duration filter, > 12:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamDuration][operator]=>&filter[beamDuration][limit]=12:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(0);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for runs duration filter, = 05:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]==&filter[runDuration][limit]=05:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(1);
+                    expect(res.body.data[0].fillNumber).to.equal(6);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for runs duration filter, = 5:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]==&filter[runDuration][limit]=5:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(1);
+                    expect(res.body.data[0].fillNumber).to.equal(6);
+
+                    done();
+                });
+        });
+
+        it('should return 200 for runs duration filter, = 00:9:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]==&filter[runDuration][limit]=00:9:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(0);
+
+                    done();
+                });
+        });
+
+        it('should return 200 for runs duration filter, = 00:00:9', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]==&filter[runDuration][limit]=00:00:9')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(0);
+
+                    done();
+                });
+        });
+
+        it('should return 200 for runs duration filter, = 999999:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]==&filter[runDuration][limit]=999999:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(0);
+
+                    done();
+                });
+        });
+
+
+        it('should return 200 for runs duration filter, = 999999:0:0', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]==&filter[runDuration][limit]=999999:0:0')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(0);
+
+                    done();
+                });
+        });
+
+
+
+        it('should return 400 for wrong runs duration filter, = 44:60:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]==&filter[runDuration][limit]=44:60:00')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.errors[0].title).to.equal('Invalid Attribute');
+
+                    done();
+                });
+        });
+
+        it('should return 400 for wrong runs duration filter, = 44:00:60', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]==&filter[runDuration][limit]=44:00:60')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.errors[0].title).to.equal('Invalid Attribute');
+
+                    done();
+                });
+        });
+
+        it('should return 400 for wrong runs duration filter, = -44:30:15', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]==&filter[runDuration][limit]=-44:30:15')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.errors[0].title).to.equal('Invalid Attribute');
+
+                    done();
+                });
+        });
+
+
+        it('should return 200 and an LHCFill array for runs duration filter, < 6:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]=<&filter[runDuration][limit]=6:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(1);
+                    expect(res.body.data[0].fillNumber).to.equal(6);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for runs duration filter, <= 5:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]=<=&filter[runDuration][limit]=5:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(1);
+                    expect(res.body.data[0].fillNumber).to.equal(6);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for runs duration filter, >= 00:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]=>=&filter[runDuration][limit]=00:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(5);
+                    expect(res.body.data[0].fillNumber).to.equal(6);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for runs duration filter, = 00:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]==&filter[runDuration][limit]=00:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(4);
+                    expect(res.body.data[0].fillNumber).to.equal(5);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for runs duration filter, > 00:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]=>&filter[runDuration][limit]=00:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(1);
+                    expect(res.body.data[0].fillNumber).to.equal(6);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for runs duration filter, < 00:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]=<&filter[runDuration][limit]=00:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(0);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for runs duration filter, > 03:00:00', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]=>&filter[runDuration][limit]=03:00:00')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(1);
+                    expect(res.body.data[0].fillNumber).to.equal(6);
+
+                    done();
+                });
+        });
+    });
+    describe('POST /api/lhcFills', () => {
+        it('should return 201 if valid data is provided', async () => {
+            const response = await request(server)
+                .post('/api/lhcFills')
+                .send({
+                    fillNumber: 544455,
+                    beamType: 'Pb-Pb',
+                    fillingSchemeName: 'schemename',
+                });
+
+            expect(response.status).to.equal(201);
+
+            const { data } = response.body;
+            expect(data.beamType).to.equal('Pb-Pb');
+            expect(data.fillingSchemeName).to.equal('schemename');
         });
         it('should return 409 if the fillNumber is duplicate', (done) => {
             request(server)
@@ -69,10 +542,6 @@ module.exports = () => {
                 .expect(409)
                 .send({
                     fillNumber: 1,
-                    stableBeamsStart: new Date('2022-03-22 15:00:00'),
-                    stableBeamsEnd: new Date('2022-03-22 15:00:00'),
-                    stableBeamsDuration: 600,
-                    beamType: 'Pb-Pb',
                     fillingSchemeName: 'schemename',
                 })
                 .end((err, res) => {
@@ -101,30 +570,27 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should return 201 if valid data is given', (done) => {
-            request(server)
+        it('should return 201 if valid data is given', async () => {
+            const response = await request(server)
                 .patch('/api/lhcFills/1')
                 .send({
                     stableBeamsStart: new Date('2022-03-22 15:00:00'),
                     stableBeamsEnd: new Date('2022-03-22 15:00:00'),
                     stableBeamsDuration: 600,
-                    beamType: 'Pb-Pb',
                     fillingSchemeName: 'schemename',
-                })
-                .expect(201)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-                    const { data } = res.body;
-                    expect(data.stableBeamsStart).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
-                    expect(data.stableBeamsEnd).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
-                    expect(data.stableBeamsDuration).to.equal(600);
-                    expect(data.beamType).to.equal('Pb-Pb');
-                    expect(data.fillingSchemeName).to.equal('schemename');
-                    done();
+                    collidingBunchesCount: 7654321,
+                    deliveredLuminosity: 123.123456,
                 });
+
+            expect(response.status).to.equal(201);
+
+            const { data } = response.body;
+            expect(data.stableBeamsStart).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
+            expect(data.stableBeamsEnd).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
+            expect(data.stableBeamsDuration).to.equal(600);
+            expect(data.fillingSchemeName).to.equal('schemename');
+            expect(data.collidingBunchesCount).to.equal(7654321);
+            expect(data.deliveredLuminosity).to.equal(123.123456);
         });
     });
 
@@ -161,25 +627,18 @@ module.exports = () => {
         });
     });
     describe('GET /api/lhcFills/:fillNumber', () => {
-        it('should return 200 and an array for a normal request', (done) => {
-            request(server)
-                .get('/api/lhcFills/1')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
+        it('should return 200 and an array for a normal request', async () => {
+            const response = await request(server).get('/api/lhcFills/1');
+            expect(response.status).to.equal(200);
 
-                    const { data } = res.body;
-                    expect(data.stableBeamsStart).to.equal(1647961200000);
-                    expect(data.stableBeamsEnd).to.equal(1647961200000);
-                    expect(data.stableBeamsDuration).to.equal(600);
-                    expect(data.beamType).to.equal('Pb-Pb');
-                    expect(data.fillingSchemeName).to.equal('schemename');
-                    expect(data.fillNumber).to.equal(1);
-                    done();
-                });
+            const { data } = response.body;
+            expect(data.stableBeamsStart).to.equal(1647961200000);
+            expect(data.stableBeamsEnd).to.equal(1647961200000);
+            expect(data.stableBeamsDuration).to.equal(600);
+            expect(data.beamType).to.equal('p-p');
+            expect(data.fillingSchemeName).to.equal('schemename');
+            expect(data.fillNumber).to.equal(1);
+            expect(data.runs.map(({ lhcPeriod }) => lhcPeriod)).to.eql([undefined, 'LHC22a', 'LHC22b', 'LHC22b', 'LHC22b']);
         });
 
         it('should return 404 when a invalid run number is given', (done) => {
@@ -216,7 +675,7 @@ module.exports = () => {
     });
 
     describe('GET /api/lhcFills/:lhcFillNumber/logs/', () => {
-        it('should succesfully return a 200 response containing the logs linked to a given LHC fill', async () => {
+        it('should successfully return a 200 response containing the logs linked to a given LHC fill', async () => {
             const response = await request(server).get('/api/lhcFills/6/logs');
             expect(response.status).to.equal(200);
             expect(response.body.data).to.lengthOf(2);
@@ -227,7 +686,7 @@ module.exports = () => {
         it('should successfully return a 200 response containing the fills that are ended in the given period', async () => {
             const firstCreatedAt = new Date('2019-08-09 18:00:00');
             const secondCreatedAt = new Date('2019-08-09 20:00:00');
-            const url = buildUrl('/api/lhcFills/ended-within', {
+            const url = buildUrl('/api/lhcFills/stable-beams-ended-within', {
                 from: firstCreatedAt.getTime(),
                 to: secondCreatedAt.getTime(),
             });
@@ -240,7 +699,7 @@ module.exports = () => {
         it('should successfully return 400 if the given limits are not valid', async () => {
             const createdAt = new Date('2019-08-09 20:00:00').getTime();
 
-            const baseUrl = '/api/lhcFills/ended-within';
+            const baseUrl = '/api/lhcFills/stable-beams-ended-within';
 
             {
                 const response = await request(server).get(baseUrl);

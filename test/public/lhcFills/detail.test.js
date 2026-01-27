@@ -18,10 +18,10 @@ const {
     pressElement,
     goToPage,
     getPopoverContent,
-    waitForTimeout,
     waitForNavigation,
     getTableDataSlice,
     expectUrlParams,
+    waitForTableLength,
 } = require('../defaults.js');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -38,6 +38,15 @@ module.exports = () => {
     it('should successfully display lhc fills details page', async () => {
         await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 6 } });
         await expectInnerText(page, 'h2', 'Fill No. 6');
+
+        await expectInnerText(page, '#lhc-fill-stableBeamsStart', 'Stable beams start:\n08/08/2019, 11:00:00');
+        await expectInnerText(page, '#lhc-fill-stableBeamsEnd', 'Stable beams end:\n08/08/2019, 23:00:00');
+        await expectInnerText(page, '#lhc-fill-stableBeamsDuration', 'Beams duration:\n12:00:00');
+
+        await expectInnerText(page, '#lhc-fill-beamType', 'Beam type:\nPROTON-PROTON');
+        await expectInnerText(page, '#lhc-fill-fillingSchemeName', 'Scheme name:\nSingle_12b_8_1024_8_2018');
+        await expectInnerText(page, '#lhc-fill-collidingBunchesCount', 'Colliding bunches:\n1,024');
+        await expectInnerText(page, '#lhc-fill-deliveredLuminosity', 'Delivered lumi:\n420 nb-1');
     });
 
     it('should successfully emphasize the fills that have a stable beams', async () => {
@@ -113,7 +122,7 @@ module.exports = () => {
 
     it('should successfully switch between physics run and all runs and display valid fill statistics', async () => {
         await pressElement(page, '#all-runs-tab');
-        await waitForTimeout(50);
+        await waitForTableLength(page, 5);
 
         {
             const timeLossAtStart = await page.$eval('#lhc-fill-timeLossAtStart', (element) => element.innerText);
@@ -143,7 +152,7 @@ module.exports = () => {
 
         // Test the switch back to physics only
         await pressElement(page, '#physics-runs-tab');
-        await waitForTimeout(50);
+        await waitForTableLength(page, 4);
 
         {
             const timeLossAtStart = await page.$eval('#lhc-fill-timeLossAtStart', (element) => element.innerText);
@@ -160,7 +169,7 @@ module.exports = () => {
     });
 
     it('should successfully display time elapsed between runs', async () => {
-        // eslint-disable-next-line require-jsdoc
+        // eslint-disable-next-line jsdoc/require-param
         const getRunDuration = async (rowNumber) => page.$eval(
             `#runs tbody tr:nth-of-type(${rowNumber})`,
             (row) => document.querySelector(`#${row.id}-timeSincePreviousRun`).innerText,

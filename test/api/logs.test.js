@@ -1088,7 +1088,7 @@ module.exports = () => {
                     mattermost: 'food',
                     archived: false,
                     archivedAt: null,
-                    color: null,
+                    color: '#EEEEEE',
                 },
                 {
                     id: 2,

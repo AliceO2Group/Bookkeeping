@@ -12,22 +12,20 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, getFirstRow, goToPage } = require('../defaults.js');
+const { defaultBefore, defaultAfter, getFirstRow, goToPage, waitForNavigation, pressElement, expectUrlParams } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
-const { waitForTimeout } = require('../defaults.js');
 
 const { expect } = chai;
 
 module.exports = () => {
     let page;
     let browser;
-    let url;
 
     let table;
     let firstRowId;
 
     before(async () => {
-        [page, browser, url] = await defaultBefore(page, browser);
+        [page, browser] = await defaultBefore(page, browser);
         await resetDatabaseContent();
     });
     after(async () => {
@@ -45,16 +43,13 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping');
     });
 
-    it('Can find table', async () => {
-        table = await page.$$('tr');
-        firstRowId = await getFirstRow(table, page);
-
-        // We expect to find a table
-        expect(firstRowId).to.equal('row119');
+    it('should successfully display logs table', async () => {
+        await page.waitForSelector('#logs-panel tr#row119');
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        table = await page.$$('tr');
+        await page.waitForSelector('#runs-panel');
+        table = await page.$$('#runs-panel tr');
         firstRowId = await getFirstRow(table, page);
 
         // Expectations of header texts being of a certain datatype
@@ -86,15 +81,10 @@ module.exports = () => {
         }
     });
 
-    it('can navigate to a detail page via ahref link', async () => {
-        const firstButton = await page.$('a.btn-redirect');
-        const parsedFirstRowId = parseInt(firstRowId.slice('btn'.length, firstRowId.length), 10);
-
+    it('can navigate to a detail page via link', async () => {
         // We expect the entry page to have the same id as the id from the log overview
-        await firstButton.evaluate((ahref) => ahref.click());
-        await waitForTimeout(500);
+        await waitForNavigation(page, () => pressElement(page, '#logs-panel a.btn-redirect'));
 
-        const redirectedUrl = await page.url();
-        expect(redirectedUrl).to.equal(`${url}/?page=log-detail&id=${parsedFirstRowId}`);
+        expectUrlParams(page, { page: 'log-detail', id: 119 });
     });
 };

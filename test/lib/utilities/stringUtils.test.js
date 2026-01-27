@@ -11,11 +11,11 @@
  * or submit itself to any jurisdiction.
  */
 
-const { snakeToCamel, pascalToSnake, ucFirst, lcFirst, snakeToPascal } = require('../../../lib/utilities/stringUtils.js');
+const { snakeToCamel, pascalToSnake, ucFirst, lcFirst, snakeToPascal, splitStringToStringsTrimmed } = require('../../../lib/utilities/stringUtils.js');
 const { expect } = require('chai');
 
 module.exports = () => {
-    it('should succeffully set the first character of a given string to upper case', () => {
+    it('should successfully set the first character of a given string to upper case', () => {
         expect(ucFirst('myString')).to.equal('MyString');
         expect(ucFirst('MyString')).to.equal('MyString');
         expect(ucFirst('my string')).to.equal('My string');
@@ -26,7 +26,7 @@ module.exports = () => {
         expect(ucFirst('String')).to.equal('String');
     });
 
-    it('should succeffully set the first character of a given string to lower case', () => {
+    it('should successfully set the first character of a given string to lower case', () => {
         expect(lcFirst('myString')).to.equal('myString');
         expect(lcFirst('MyString')).to.equal('myString');
         expect(lcFirst('my string')).to.equal('my string');
@@ -59,6 +59,11 @@ module.exports = () => {
         expect(snakeToCamel('THIS_IS_SNAKE_CASE_')).to.equal('thisIsSnakeCase');
         expect(snakeToCamel('_THIS_IS_SNAKE_CASE_')).to.equal('thisIsSnakeCase');
         expect(snakeToCamel('SNAKE')).to.equal('snake');
+    });
+
+    it('should successfully split string into array of strings', () => {
+        expect(splitStringToStringsTrimmed('one  ,    two, three ')).to.deep.equal(['one', 'two', 'three']);
+        expect(splitStringToStringsTrimmed('one  .    two. three ', '.')).to.deep.equal(['one', 'two', 'three']);
     });
 
     it('should successfully convert snake_case string to PascalCase', () => {

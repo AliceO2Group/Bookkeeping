@@ -72,7 +72,7 @@ module.exports = () => {
         };
 
         // Bigint can not be parsed by JSON utils so it can't be easily copied
-        // eslint-disable-next-line require-jsdoc
+        // eslint-disable-next-line jsdoc/require-param
         const getGRPCBigintMessage = () => ({
             ui: Long.fromString('FEDCBA9876543210', true, 16),
             i: Long.fromString('-76543210FEDCBA98', false, 16),
@@ -97,7 +97,7 @@ module.exports = () => {
             TestBigInts: (...args) => testBigIntsImpl(...args),
             TestRepeated: (...args) => testRepeatedImpl(...args),
         };
-        const adapter = bindGRPCController(proto.Service.service, controller, absoluteMessagesDefinitions);
+        const adapter = bindGRPCController(proto.Service.service, controller, [], absoluteMessagesDefinitions);
 
         afterEach(() => {
             sinon.restore();
@@ -134,7 +134,7 @@ module.exports = () => {
         });
     });
 
-    it('should throw when calling a controller without return is called', async () => {
+    it('should throw when a controller without return is called', async () => {
         const testEnumsImpl = sinon.fake();
         const controller = {
             TestEnums: (...args) => testEnumsImpl(...args),
@@ -143,7 +143,7 @@ module.exports = () => {
         };
         const callback = sinon.fake();
 
-        const adapter = bindGRPCController(proto.Service.service, controller, absoluteMessagesDefinitions);
+        const adapter = bindGRPCController(proto.Service.service, controller, [], absoluteMessagesDefinitions);
 
         await adapter.TestEnums({ request: {} }, callback);
 
@@ -151,7 +151,7 @@ module.exports = () => {
 
         expect(callback.calledWithMatch({
             code: 2,
-            message: 'Controller for /test.Service/TestEnums returned a null response',
+            message: 'Controller for /test.Service/TestEnums returned an invalid response',
         })).to.be.true;
     });
 };

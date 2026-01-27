@@ -15,14 +15,21 @@ const {
     defaultBefore,
     defaultAfter,
     pressElement,
-    goToPage,
     checkColumnBalloon,
+    expectLink,
     validateTableData,
     expectInnerText,
-    waitForTimeout,
     expectUrlParams,
     waitForNavigation,
     getInnerText,
+    waitForTableLength,
+    getPopoverSelector,
+    goToPage,
+    openFilteringPanel,
+    fillInput,
+    getPeriodInputsSelectors,
+    expectAttributeValue,
+    resetFilters,
 } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -49,10 +56,7 @@ module.exports = () => {
     });
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'env-overview');
-
-        // We expect the page to return the correct status code, making sure the server is running properly
-        expect(response.status()).to.equal(200);
+        await goToPage(page, 'env-overview');
 
         // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
@@ -60,18 +64,15 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        await goToPage(page, 'env-overview');
-
         const { StatusAcronym, STATUS_ACRONYMS } = await import('../../../lib/public/domain/enums/statusAcronym.mjs');
 
         const statusNames = new Set(Object.keys(StatusAcronym));
 
-        // eslint-disable-next-line require-jsdoc
+        // eslint-disable-next-line jsdoc/require-param
         const checkDate = (date) => !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY hh:mm:ss'));
         const tableDataValidators = {
             id: (id) => /[A-Za-z0-9]+/.test(id),
             runs: (runs) => runs === '-' || runs.split(',').every((run) => !isNaN(run)),
-            createdAt: checkDate,
             updatedAt: checkDate,
             status: (currentStatus) => statusNames.has(currentStatus),
             historyItems: (history) => history.split('-').every((statusAcronym) => STATUS_ACRONYMS.includes(statusAcronym)),
@@ -80,24 +81,17 @@ module.exports = () => {
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
-        await goToPage(page, 'env-overview');
-        await waitForTimeout(100);
-
         await expectInnerText(page, '#firstRowIndex', '1');
         await expectInnerText(page, '#lastRowIndex', '9');
         await expectInnerText(page, '#totalRowsCount', '9');
     });
 
     it('Should have balloon on runs column', async () => {
-        await goToPage(page, 'env-overview');
         await checkColumnBalloon(page, 1, 2);
         await checkColumnBalloon(page, 1, 6);
     });
 
     it('Should have correct status color in the overview page', async () => {
-        await goToPage(page, 'env-overview');
-        await waitForTimeout(100);
-
         /**
          * Check that a given cell of the given column displays the correct color depending on the status
          *
@@ -118,39 +112,51 @@ module.exports = () => {
                     await page.waitForSelector(`${cellSelector}.danger`);
                     break;
                 case 'CONFIGURED':
-                    await page.waitForSelector(`${cellSelector}.warning`);
+                    await page.waitForSelector(`${cellSelector}.primary`);
+                    break;
+                case 'DONE':
+                    await page.waitForSelector(`${cellSelector}.black`);
+                    break;
+                case 'DESTROYED':
+                    await page.waitForSelector(`${cellSelector}.black`);
+                    break;
+                case 'DEPLOYED':
+                    await page.waitForSelector(`${cellSelector}.gray`);
+                    break;
+                case 'PENDING':
+                    await page.waitForSelector(`${cellSelector}.gray`);
+                    break;
+                case 'STANDBY':
+                    await page.waitForSelector(`${cellSelector}.gray`);
+                    break;
+                case 'UNKNOWN':
+                    await page.waitForSelector(`${cellSelector}.gray-dark`);
                     break;
             }
+
         };
 
         await checkEnvironmentStatusColor(1, 4);
         await checkEnvironmentStatusColor(2, 4);
         await checkEnvironmentStatusColor(3, 4);
-        await checkEnvironmentStatusColor(4, 4);
+        await checkEnvironmentStatusColor(6, 4);
+        await checkEnvironmentStatusColor(9, 4);
     });
 
     it('can set how many environments are available per page', async () => {
-        await waitForTimeout(300);
-        // Expect the amount selector to currently be set to 10 (because of the defined page height)
+        // Expect the amount selector to currently be set to 9 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.waitForSelector(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        await waitForTimeout(300);
-        expect(amountSelectorButtonText.trim().endsWith('10')).to.be.true;
+        expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
-        await amountSelectorButton.evaluate((button) => button.click());
-        await waitForTimeout(100);
-        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
-        expect(Boolean(amountSelectorDropdown)).to.be.true;
+        await pressElement(page, `${amountSelectorId} button`);
+        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
         // Expect the amount of visible environments to reduce when the first option (5) is selected
-        const menuItem = await page.$(`${amountSelectorId} .dropup-menu .menu-item`);
-        await menuItem.evaluate((button) => button.click());
-        await waitForTimeout(100);
-
-        const tableRows = await page.$$('table tr');
-        expect(tableRows.length - 1).to.equal(5);
+        await pressElement(page, `${amountSelectorId} .dropup-menu .menu-item`);
+        await waitForTableLength(page, 5);
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
@@ -159,19 +165,16 @@ module.exports = () => {
             el.value = '1111';
             el.dispatchEvent(new Event('input'));
         });
-        await waitForTimeout(100);
-        expect(Boolean(await page.$(`${amountSelectorId} input:invalid`))).to.be.true;
+        await page.waitForSelector(`${amountSelectorId} input:invalid`);
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
-        await goToPage(page, 'env-overview');
-
         // Override the amount of runs visible per page manually
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.envs.overviewModel.pagination.itemsPerPage = 1;
         });
-        await waitForTimeout(100);
+        await waitForTableLength(page, 1);
 
         // Expect the page five button to now be visible, but no more than that
         await page.waitForSelector('#page5');
@@ -179,14 +182,135 @@ module.exports = () => {
 
         // Expect the page one button to have fallen away when clicking on page five button
         await pressElement(page, '#page5');
-        await waitForTimeout(100);
-        const pageOneButton = await page.$('#page1');
-        expect(Boolean(pageOneButton)).to.be.false;
+        await page.waitForSelector('#page1', { hidden: true });
+
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.envs.overviewModel.pagination.reset();
+            // eslint-disable-next-line no-undef
+            model.envs.overviewModel.pagination.notify();
+        });
     });
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
-        await goToPage(page, 'env-overview');
-        await waitForNavigation(page, () => pressElement(page, '#rowTDI59So3d-runs a'));
+        await waitForNavigation(page, () => pressElement(page, 'a#env-overview', true));
+        await waitForNavigation(page, () => pressElement(page, '#rowTDI59So3d-runs a', true));
         expectUrlParams(page, { page: 'run-detail', runNumber: 103 });
+    });
+
+    it('should successfully display dropdown links', async () => {
+        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
+
+        // Running env
+        let envId = 'CmCvjNbg';
+        await pressElement(page, `tr[id='row${envId}'] .popover-trigger`, true);
+        let popover = await getPopoverSelector(await page.waitForSelector(`tr[id='row${envId}'] .popover-trigger`));
+
+        await expectLink(page, `${popover} :nth-child(1 of .external-link)`, {
+            href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22CmCvjNbg%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+            innerText: 'Infologger FLP',
+        });
+
+        await expectLink(page, `${popover} :nth-child(2 of .external-link)`, {
+            href: 'http://localhost:8080/?page=environment&id=CmCvjNbg',
+            innerText: 'ECS',
+        });
+
+        await expectLink(page, `${popover} #add-log-link`, {
+            href: 'http://localhost:4000/?page=log-create&environmentIds=CmCvjNbg',
+            innerText: 'Add log',
+        });
+
+        // Not running env
+        envId = 'EIDO13i3D';
+        await pressElement(page, `tr[id='row${envId}'] .popover-trigger`);
+        popover = await getPopoverSelector(await page.waitForSelector(`tr[id='row${envId}'] .popover-trigger`));
+
+        await expectLink(page, `${popover} :nth-child(1 of .external-link)`, {
+            href: 'http://localhost:8081/?q={%22partition%22:{%22match%22:%22EIDO13i3D%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',
+            innerText: 'Infologger FLP',
+        });
+
+        // ECS link should not be present
+        await page.waitForSelector(`${popover} :nth-child(2 of .external-link)`, { hidden: true });
+
+        await expectLink(page, `${popover} #add-log-link`, {
+            href: 'http://localhost:4000/?page=log-create&environmentIds=EIDO13i3D&runNumbers=94,95,96',
+            innerText: 'Add log',
+        });
+    });
+
+    it('should skip load when infinite scroll is enabled but call it when disabled', async () => {
+        // Set up spy on the overviewModel.load method
+        await page.evaluate(() => {
+            const originalLoad = model.envs.overviewModel.load.bind(model.envs.overviewModel);
+            model.envs.overviewModel.load = function(...args) {
+                model.envs.overviewModel._loadCallCount++;
+                return originalLoad(...args);
+            };
+        });
+
+        await page.evaluate(() => {
+            model.envs.overviewModel._loadCallCount = 0;
+            model.envs.loadOverview();
+        });
+
+        // load() should have been called once
+        let loadCallCount = await page.evaluate(() => {
+            return model.envs.overviewModel._loadCallCount;
+        });
+        expect(loadCallCount).to.equal(1);
+
+        // Enable infinite scroll mode
+        await page.evaluate(() => {
+            model.envs.overviewModel.pagination.enableInfiniteMode();
+        });
+
+        // Reset counter and test again
+        await page.evaluate(() => {
+            model.envs.overviewModel._loadCallCount = 0;
+            model.envs.loadOverview();
+        });
+
+        // load() should not have been called
+        loadCallCount = await page.evaluate(() => {
+            return model.envs.overviewModel._loadCallCount;
+        });
+        expect(loadCallCount).to.equal(0);
+    });
+
+    it('should successfully filter environments utilising all filters in the process', async () => {
+        // Get the popover key from the filter button's parent
+        const filterButton = await page.waitForSelector('#openFilterToggle');
+        const popoverKey = await filterButton.evaluate((button) => {
+            return button.parentElement.getAttribute('data-popover-key');
+        });
+        const filterPanelSelector = `.popover[data-popover-key="${popoverKey}"]`;
+        
+        await page.waitForSelector(filterPanelSelector, { hidden: true });
+        
+        await openFilteringPanel(page);
+        await page.waitForSelector(filterPanelSelector, { visible: true });
+
+        await expectAttributeValue(page, '.id-filter input', 'placeholder', 'e.g. CmCvjNbg, TDI59So3d...');
+        await expectAttributeValue(page, '.runs-filter input', 'placeholder', 'e.g. 553203, 553221, ...');
+        await expectAttributeValue(page, '.historyItems-filter input', 'placeholder', 'e.g. D-R-X');
+
+        await fillInput(page, '.id-filter input', 'Dxi029djX, TDI59So3d', ['change']);
+        await page.$eval('.status-filter #checkboxes-checkbox-DESTROYED', (element) => element.click());
+        await fillInput(page, '.runs-filter input', '10', ['change']);
+        await fillInput(page, '.historyItems-filter input', 'C-R-D-X', ['change']);
+        
+        const createdAtPopoverSelector = await getPopoverSelector(await page.$('.createdAt-filter .popover-trigger'));
+        const periodInputsSelectors = getPeriodInputsSelectors(createdAtPopoverSelector);
+        await fillInput(page, periodInputsSelectors.fromDateSelector, '2019-08-09', ['change']);
+        await fillInput(page, periodInputsSelectors.toDateSelector, '2019-08-10', ['change']);
+        await fillInput(page, periodInputsSelectors.fromTimeSelector, '00:00', ['change']);
+        await fillInput(page, periodInputsSelectors.toTimeSelector, '23:59', ['change']);
+
+        await waitForTableLength(page, 1);
+        expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['rowTDI59So3d']);
+
+        await resetFilters(page);
     });
 };

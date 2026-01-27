@@ -26,6 +26,7 @@ add_library(BookkeepingProtos OBJECT
         ${PROTO_DIR}/run.proto
         ${PROTO_DIR}/dplProcessExecution.proto
         ${PROTO_DIR}/qcFlag.proto
+        ${PROTO_DIR}/ctpTriggerCounters.proto
 )
 
 target_link_libraries(BookkeepingProtos
@@ -61,8 +62,14 @@ add_library(BookkeepingApi SHARED
         src/BkpClientFactory.cxx
         include/BookkeepingApi/QcFlagServiceClient.h
         include/BookkeepingApi/QcFlag.h
-        src/grpc/services/GrpcQcFlagServiceClient.cpp
+        src/grpc/services/GrpcQcFlagServiceClient.cxx
         src/grpc/services/GrpcQcFlagServiceClient.h
+        include/BookkeepingApi/CtpTriggerCountersServiceClient.h
+        src/grpc/services/GrpcCtpTriggerCountersServiceClient.h
+        src/grpc/services/GrpcCtpTriggerCountersServiceClient.cxx
+        include/BookkeepingApi/RunServiceClient.h
+        src/grpc/services/GrpcRunServiceClient.h
+        src/grpc/services/GrpcRunServiceClient.cxx
 )
 
 target_include_directories(BookkeepingApi
@@ -107,6 +114,8 @@ install(FILES
         ${PROTO_OUT_DIR}/flp.pb.h
         ${PROTO_OUT_DIR}/run.pb.h
         ${PROTO_OUT_DIR}/dplProcessExecution.pb.h
+        ${PROTO_OUT_DIR}/qcFlag.pb.h
+        ${PROTO_OUT_DIR}/ctpTriggerCounters.pb.h
         DESTINATION "include"
 )
 

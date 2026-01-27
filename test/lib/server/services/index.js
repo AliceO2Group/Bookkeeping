@@ -13,6 +13,7 @@
 
 const { resetDatabaseContent } = require('../../../utilities/resetDatabaseContent.js');
 
+const BeamModeSuite = require('./beamMode/index.js');
 const DetectorSuite = require('./detector/index.js');
 const DplSuite = require('./dpl/index.js');
 const Environment = require('./environment/index.js');
@@ -30,19 +31,22 @@ const DataPassesSuite = require('./dataPasses/index.js');
 const UserSuite = require('./user/index.js');
 const SimulationPassesSuite = require('./simulationPasses/index.js');
 const QcFlagsSuite = require('./qualityControlFlag/index.js');
-const TriggerCountersSuite = require('./triggerCounters/index.js');
+const CtpTriggerCountersSuite = require('./ctpTriggerCounters/index.js');
+const GaqDetectorSuite = require('./gaq');
 
 module.exports = () => {
     before(resetDatabaseContent);
 
     after(resetDatabaseContent);
 
+    describe('BeamMode', BeamModeSuite);
     describe('Detector', DetectorSuite);
     describe('DPL', DplSuite);
     describe('Environment', Environment);
     describe('Environment history item', EnvironmentHistoryItemSuite);
     describe('EOS report', EosReportSuite);
     describe('Flp role', FlpRoleSuite);
+    describe('GaqDetector', GaqDetectorSuite);
     describe('LHC fill suite', LhcFillSuite);
     describe('Logs', LogSuite);
     describe('RunType', RunTypeSuite);
@@ -54,5 +58,5 @@ module.exports = () => {
     describe('DataPasses', DataPassesSuite);
     describe('SimulationPasses', SimulationPassesSuite);
     describe('QC Flags', QcFlagsSuite);
-    describe('Trigger counters', TriggerCountersSuite);
+    describe('Trigger counters', CtpTriggerCountersSuite);
 };

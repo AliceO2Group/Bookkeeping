@@ -24,9 +24,6 @@ module.exports = () => {
         createLhcFillDto = await CreateLhcFillDto.validateAsync({
             body: {
                 fillNumber: 123123123,
-                stableBeamsStart: new Date('2022-03-22 15:00:00'),
-                stableBeamsEnd: new Date('2022-03-22 15:00:00'),
-                stableBeamsDuration: 600,
                 beamType: 'Pb-Pb',
                 fillingSchemeName: 'schemename',
             },
@@ -52,9 +49,6 @@ module.exports = () => {
             .execute(createLhcFillDto);
 
         expect(result.fillNumber).to.equal(123123);
-        expect(result.stableBeamsStart).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
-        expect(result.stableBeamsEnd).to.equal(new Date('2022-03-22 15:00:00 utc').getTime());
-        expect(result.stableBeamsDuration).to.equal(600);
         expect(result.beamType).to.equal('Pb-Pb');
         expect(result.fillingSchemeName).to.equal('schemename');
     });

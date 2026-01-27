@@ -6,13 +6,16 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   linter:
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Lint Dockerfile
         uses: brpaz/hadolint-action@master
         with:
@@ -23,7 +26,7 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Validate docker-compose.yml
         run: |
           docker compose \
@@ -46,4 +49,21 @@ jobs:
           docker compose \
             -f docker-compose.yml \
             -f docker-compose.coverage.yml \
+            config --quiet
+      - name: Validate docker-compose.test-parallel-base.yml
+        run: |
+          docker compose \
+            -f docker-compose.test-parallel-base.yml \
+            config --quiet
+      - name: Validate docker-compose.test-parallel-ci.yml
+        run: |
+          docker compose \
+            -f docker-compose.test-parallel-base.yml \
+            -f docker-compose.test-parallel-ci.yml \
+            config --quiet
+      - name: Validate docker-compose.test-parallel-local.yml
+        run: |
+          docker compose \
+            -f docker-compose.test-parallel-base.yml \
+            -f docker-compose.test-parallel-local.yml \
             config --quiet

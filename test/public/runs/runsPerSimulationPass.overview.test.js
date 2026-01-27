@@ -28,11 +28,15 @@ const {
     waitForDownload,
     waitForNavigation,
     expectUrlParams,
+    testTableSortingByColumn,
+    waitForTableLength,
+    expectColumnValues,
 } = require('../defaults.js');
 
 const { expect } = chai;
 const { qcFlagService } = require('../../../lib/server/services/qualityControlFlag/QcFlagService');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
+const { navigateToRunsPerSimulationPass } = require('./navigationUtils.js');
 
 const DETECTORS = [
     'CPV',
@@ -87,8 +91,6 @@ module.exports = () => {
     });
 
     it('shows correct datatypes in respective columns', async () => {
-        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
-
         const tableDataValidators = {
             runNumber: (number) => !isNaN(number),
             fillNumber: (number) => number === '-' || !isNaN(number),
@@ -101,50 +103,51 @@ module.exports = () => {
             aliceL3Current: (current) => !isNaN(Number(current.replace(/,/g, ''))),
             dipoleCurrent: (current) => !isNaN(Number(current.replace(/,/g, ''))),
 
-            muInelasticInteractionRate: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAvg: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAtStart: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAtMid: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             ...Object.fromEntries(DETECTORS.map((detectorName) => [
                 detectorName,
-                (qualityDisplay) => !qualityDisplay || /(QC)|(\d+!?)/.test(qualityDisplay),
+                (qualityDisplay) => !qualityDisplay || /(QC)|(\d+)/.test(qualityDisplay),
             ])),
         };
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
 
         await expectLink(page, 'tr#row56 .column-ITS a', {
-            href: 'http://localhost:4000/?page=qc-flag-creation-for-simulation-pass&runNumber=56&dplDetectorId=4&simulationPassId=2',
+            href: 'http://localhost:4000/?page=qc-flag-creation-for-simulation-pass&runNumberDetectorsMap=56:4&simulationPassId=2',
             innerText: 'QC',
         });
 
         const [tmpQcFlag] = await qcFlagService.create(
             [{ flagTypeId: 2 }],
-            { runNumber: 56, simulationPassIdentifier: { id: 2 }, dplDetectorIdentifier: { dplDetectorId: 4 } },
+            { runNumber: 56, simulationPassIdentifier: { id: 2 }, detectorIdentifier: { detectorId: 4 } },
             { user: { externalUserId: 1, roles: ['admin'] } }, // Create bad flag
         );
 
         await reloadPage(page);
         await expectLink(page, 'tr#row56 .column-ITS a', {
             href: 'http://localhost:4000/?page=qc-flags-for-simulation-pass&runNumber=56&dplDetectorId=4&simulationPassId=2',
-            innerText: '0!',
+            innerText: '0',
         });
+
+        await page.waitForSelector('tr#row56 .column-ITS a .icon');
 
         await qcFlagService.delete(tmpQcFlag.id);
     });
 
-    it('Should display the correct items counter at the bottom of the page', async () => {
-        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
+    it('should successfully sort by runNumber in ascending and descending manners', async () => {
+        await testTableSortingByColumn(page, 'runNumber');
+    });
 
+    it('Should display the correct items counter at the bottom of the page', async () => {
         await expectInnerText(page, '#firstRowIndex', '1');
         await expectInnerText(page, '#lastRowIndex', '3');
         await expectInnerText(page, '#totalRowsCount', '3');
     });
 
     it('successfully switch to raw timestamp display', async () => {
-        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
-
         await expectInnerText(page, '#row56 td:nth-child(3)', '08/08/2019\n20:00:00');
         await expectInnerText(page, '#row56 td:nth-child(4)', '08/08/2019\n21:00:00');
 
@@ -154,8 +157,6 @@ module.exports = () => {
     });
 
     it('can set how many runs are available per page', async () => {
-        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
-
         const amountSelectorId = '#amountSelector';
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
         await pressElement(page, amountSelectorButtonSelector);
@@ -165,38 +166,71 @@ module.exports = () => {
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
 
+        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
         await fillInput(page, `${amountSelectorId} input[type=number]`, 1111);
         await page.waitForSelector(amountSelectorId);
     });
 
     it('notifies if table loading returned an error', async () => {
-        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
-
         // eslint-disable-next-line no-return-assign, no-undef
         await page.evaluate(() => model.runs.perSimulationPassOverviewModel.pagination.itemsPerPage = 200);
 
         // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
         await expectInnerText(page, '.alert-danger', expectedMessage);
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.runs.perSimulationPassOverviewModel.pagination.reset();
+            // eslint-disable-next-line no-undef
+            model.runs.perSimulationPassOverviewModel.pagination.notify();
+        });
+        await waitForTableLength(page, 3);
     });
 
     it('can navigate to a run detail page', async () => {
-        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
-
         await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: 56 });
+        await waitForNavigation(page, () => page.goBack());
+    });
+
+
+    it('should successfully apply detectors notBadFraction filters', async () => {
+        await navigateToRunsPerSimulationPass(page, 2, 1, 3);
+        await pressElement(page, '#openFilterToggle', true);
+
+        await page.waitForSelector('#detectorsQc-for-1-notBadFraction-operator');
+        await page.select('#detectorsQc-for-1-notBadFraction-operator', '<=');
+        await fillInput(page, '#detectorsQc-for-1-notBadFraction-operand', '90', ['change']);
+        await expectColumnValues(page, 'runNumber', ['106']);
+
+        await pressElement(page, '#openFilterToggle', true);
+        await pressElement(page, '#reset-filters', true);
+        await expectColumnValues(page, 'runNumber', ['107', '106', '105']);
+    });
+
+    it('should successfully apply detectors notBadFraction filters', async () => {
+        await navigateToRunsPerSimulationPass(page, 2, 1, 3);
+        await pressElement(page, '#openFilterToggle', true);
+
+        await page.waitForSelector('#detectorsQc-for-1-notBadFraction-operator');
+        await page.select('#detectorsQc-for-1-notBadFraction-operator', '<=');
+        await fillInput(page, '#detectorsQc-for-1-notBadFraction-operand', '90', ['change']);
+        await expectColumnValues(page, 'runNumber', ['106']);
+
+        await pressElement(page, '#openFilterToggle', true);
+        await pressElement(page, '#reset-filters', true);
+        await expectColumnValues(page, 'runNumber', ['107', '106', '105']);
     });
 
     it('should successfully export runs', async () => {
-        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
+        await navigateToRunsPerSimulationPass(page, 1, 2, 3);
+        const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
 
-        const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-runs-trigger';
+        const targetFileName = 'data.json';
 
-        const targetFileName = 'runs.json';
-
-        // First export
+        // Export
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
-        await page.waitForSelector('#export-runs-modal');
+        await page.waitForSelector('#export-data-modal');
         await page.waitForSelector('#send:disabled');
         await page.waitForSelector('.form-control');
         await page.select('.form-control', 'runQuality', 'runNumber');
@@ -216,6 +250,38 @@ module.exports = () => {
             { runNumber: 54, runQuality: 'good' },
             { runNumber: 49, runQuality: 'good' },
         ]);
+        fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+    });
+
+    it('should successfully export runs with QC flags as CSV', async () => {
+        await navigateToRunsPerSimulationPass(page, 2, 1, 3);
+
+        const targetFileName = 'data.csv';
+        
+        // Export
+        await pressElement(page, '#export-data-trigger');
+        await page.waitForSelector('#export-data-modal');
+        await page.waitForSelector('#send:disabled');
+        await page.waitForSelector('.form-control');
+        await page.select('.form-control', 'runNumber', 'CPV');
+        await pressElement(page, '#data-export-type-CSV');
+        await page.waitForSelector('#send:enabled');
+        const exportButtonText = await page.$eval('#send', (button) => button.innerText);
+        expect(exportButtonText).to.be.eql('Export');
+
+        const downloadPath = await waitForDownload(page, () => pressElement(page, '#send', true));
+
+        // Check download
+        const downloadFilesNames = fs.readdirSync(downloadPath);
+        expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
+        const exportContent = fs.readFileSync(path.resolve(downloadPath, targetFileName)).toString();
+
+        expect(exportContent.trim()).to.be.eql([
+            'runNumber;CPV',
+            '107;""',
+            '106;"Bad (from: 1565272000000 to: 1565337000000) | Bad (from: 1565340600000 to: 1565359200000)"',
+            '105;""',
+        ].join('\r\n'));
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
 };

@@ -13,7 +13,7 @@
 
 const OverviewSuite = require('./overview.test');
 const DetailSuite = require('./detail.test');
-const RunsPerPeriodOverviewSuite = require('./runsPerPeriod.overview.test');
+const RunsPerPeriodOverviewSuite = require('./runsPerLhcPeriod.overview.test');
 const RunsPerDataPassOverviewPage = require('./runsPerDataPass.overview.test');
 const RunsPerSimulationPassOverviewPage = require('./runsPerSimulationPass.overview.test');
 

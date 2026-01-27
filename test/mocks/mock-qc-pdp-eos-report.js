@@ -19,7 +19,7 @@ const {
     genericFormattedCustomizedEosReport,
 } = require('./base-mock-eos-report.js');
 const { ShiftTypes } = require('../../lib/domain/enums/ShiftTypes.js');
-const { RunDefinition } = require('../../lib/server/services/run/getRunDefinition.js');
+const { RunDefinition } = require('../../lib/domain/enums/RunDefinition.js');
 
 exports.eosQcPdpReportTitle = 'End of shift report - QC/PDP - 17/03/2023 Morning';
 
@@ -114,7 +114,7 @@ const customizedQcPdpEosReport = {
                     ],
                     detectors: [],
                     detectorsQualities: [],
-                    definition: RunDefinition.Commissioning,
+                    definition: RunDefinition.COMMISSIONING,
                 },
             ],
             TECHNICAL: [
@@ -227,7 +227,7 @@ const formattedCustomizedQcPdpEosReportTypeSpecific = `
 
 exports.formattedCustomizedQcPdpEosReport = genericFormattedCustomizedEosReport(
     ShiftTypes.QC_PDP,
-    // eslint-disable-next-line max-len
+    // eslint-disable-next-line @stylistic/js/max-len
     '- \\[QC/PDP Shifter\\] - [Third issue log](http://localhost:4000?page=log-detail&id=120)\n- \\[QC/PDP Shifter, FLP\\] - [Fifth issue log](http://localhost:4000?page=log-detail&id=124)',
     formattedCustomizedQcPdpEosReportTypeSpecific,
 );

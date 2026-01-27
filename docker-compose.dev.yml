@@ -8,9 +8,12 @@ services:
       NODE_ENV: development
       DATABASE_LOGGING: "${DATABASE_LOGGING-True}"
       JWT_SECRET: BOOKKEEPING-DEV
+      GRPC_INTERNAL_ORIGIN: '[::]:4001'
+      GRPC_AUTHENTICATED_ORIGIN: '[::]:4002'
     ports:
       - "4000:4000"
       - "4001:4001"
+      - "4002:4002"
     restart: "no"
     volumes:
       - type: bind

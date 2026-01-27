@@ -7,6 +7,7 @@ import 'common.proto';
 service QcFlagService {
   rpc CreateForDataPass(DataPassQcFlagCreationRequest) returns (QcFlagCreationResponse);
   rpc CreateForSimulationPass(SimulationPassQcFlagCreationRequest) returns (QcFlagCreationResponse);
+  rpc CreateSynchronous(SynchronousQcFlagCreationRequest) returns (QcFlagCreationResponse);
 }
 
 message QcFlagCreationResponse {
@@ -27,6 +28,12 @@ message SimulationPassQcFlagCreationRequest {
   string productionName = 2;
   string detectorName = 3;
   repeated QcFlag flags = 4;
+}
+
+message SynchronousQcFlagCreationRequest {
+  uint32 runNumber = 1;
+  string detectorName = 2;
+  repeated QcFlag flags = 3;
 }
 
 message QcFlag {

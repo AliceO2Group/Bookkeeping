@@ -1,36 +1,47 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "0.91.0",
+  "version": "1.15.0",
   "author": "ALICEO2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AliceO2Group/Bookkeeping.git"
+  },
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
     "coverage:report": "nyc report --reporter=html --reporter=json",
-    "lint": "eslint . --ext .js",
+    "lint": "eslint --config eslint.config.js ",
     "lint:fix": "npm run lint -- --fix",
     "sequelize": "sequelize-cli",
     "start:dev": "nodemon --ignore 'lib/public/**/*.js' lib/main.js",
     "start:prod": "node lib/main.js",
     "test": "mocha --exit --timeout 0",
+    "test:subset": "nyc -- mocha --exit --timeout 0 test/scripts/test-${TEST_TYPE}.js && nyc report --report-dir=/usr/src/app/coverage/${TEST_TYPE} --reporter=json",
+    "test:subset-local": "mocha --exit --timeout 0 --reporter test/scripts/parallel-local/custom-mocha-reporter.js test/scripts/test-${TEST_TYPE}.js",
     "docker-run": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
     "docker-test": "docker compose -p test -f docker-compose.yml -f docker-compose.test.yml up --build --abort-on-container-exit",
+    "docker-test:parallel": "node test/scripts/parallel-local/main.js",
     "docker-update": "node scripts/update-dockerfile.js"
   },
   "engines": {
-    "node": ">= 18.x"
+    "node": ">= 22.x"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "2.6.0",
-    "@grpc/grpc-js": "1.10.9",
-    "@grpc/proto-loader": "0.7.0",
+    "@aliceo2/web-ui": "2.9.0",
+    "@grpc/grpc-js": "1.14.0",
+    "@grpc/proto-loader": "0.8.0",
     "cls-hooked": "4.2.2",
     "d3": "7.8.5",
     "deepmerge": "4.3.0",
-    "joi": "17.13.1",
+    "dotenv": "17.2.0",
+    "joi": "18.0.0",
+    "kafkajs": "2.2.0",
     "mariadb": "3.0.0",
-    "multer": "1.4.5-lts.1",
+    "mkdirp": "3.0.1",
+    "multer": "2.0.2",
     "node-fetch": "3.3.1",
+    "protobufjs": "8.0.0",
     "sequelize": "6.37.0",
-    "umzug": "3.8.0"
+    "umzug": "3.8.2"
   },
   "files": [
     "lib/",
@@ -38,19 +49,23 @@
     "proto/"
   ],
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@stylistic/eslint-plugin-js": "^4.4.1",
     "@types/d3": "7.4.0",
-    "chai": "4.4.1",
-    "date-and-time": "3.2.0",
-    "eslint": "8.57.0",
-    "js-yaml": "4.1.0",
-    "mocha": "10.4.0",
+    "chai": "4.5.0",
+    "date-and-time": "3.6.0",
+    "eslint": "^9.37.0",
+    "eslint-plugin-jsdoc": "^62.2.0",
+    "globals": "^17.0.0",
+    "js-yaml": "4.1.1",
+    "mocha": "11.7.0",
     "nodemon": "3.1.3",
-    "nyc": "15.1.0",
-    "puppeteer": "22.10.0",
+    "nyc": "17.1.0",
+    "puppeteer": "24.35.0",
     "puppeteer-to-istanbul": "1.4.0",
     "sequelize-cli": "6.6.0",
-    "sinon": "18.0.0",
-    "supertest": "7.0.0"
+    "sinon": "21.0.0",
+    "supertest": "7.2.2"
   },
   "bundleDependencies": [
     "@aliceo2/web-ui",
@@ -60,9 +75,11 @@
     "d3",
     "deepmerge",
     "joi",
+    "kafkajs",
     "mariadb",
     "multer",
     "node-fetch",
+    "protobufjs",
     "sequelize",
     "umzug"
   ]

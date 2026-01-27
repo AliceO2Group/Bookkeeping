@@ -17,7 +17,6 @@ const path = require('path');
 
 const DOCKERFILE_SRC = path.join(__dirname, '..', 'Dockerfile');
 
-// eslint-disable-next-line no-console
 const { log } = console;
 
 /**
