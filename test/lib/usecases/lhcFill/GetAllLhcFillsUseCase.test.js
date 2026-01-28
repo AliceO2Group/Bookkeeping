@@ -258,7 +258,7 @@ module.exports = () => {
     it('should only contain specified beam types, {p-p, PROTON-PROTON, Pb-Pb}', async () => {
         const beamTypes = ['p-p', ' PROTON-PROTON', 'Pb-Pb']
         
-        getAllLhcFillsDto.query = { filter: { beamsType: beamTypes.join(',') } };
+        getAllLhcFillsDto.query = { filter: { beamType: beamTypes.join(',') } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(4)
@@ -270,7 +270,7 @@ module.exports = () => {
     it('should only contain specified beam types, {p-p, PROTON-PROTON, Pb-Pb, null}', async () => {
         let beamTypes = ['p-p', ' PROTON-PROTON', 'Pb-Pb', 'null']
         
-        getAllLhcFillsDto.query = { filter: { beamsType: beamTypes.join(',') } };
+        getAllLhcFillsDto.query = { filter: { beamType: beamTypes.join(',') } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(4)
