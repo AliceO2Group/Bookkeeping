@@ -519,6 +519,58 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should return 200 and an LHCFill array for beam types filter, correct', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamType]=Pb-Pb')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(1);
+                    expect(res.body.data[0].fillNumber).to.equal(3);
+
+                    done();
+                });
+        });
+
+        it('should return 200 and an LHCFill array for beam types filter, multiple correct', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamType]=Pb-Pb,p-p,p-Pb')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(4);
+                    expect(res.body.data[0].fillNumber).to.equal(4);
+
+                    done();
+                });
+        });
+
+        // API accepts filters that do not exist, this is because it does not affect the results
+        it('should return 200 for beam types filter, one wrong', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamType]=Pb-Pb,Jasper-Jasper,p-p,p-Pb')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(4);
+                    expect(res.body.data[0].fillNumber).to.equal(4);
+
+                    done();
+                });
+        });
     });
     describe('POST /api/lhcFills', () => {
         it('should return 201 if valid data is provided', async () => {

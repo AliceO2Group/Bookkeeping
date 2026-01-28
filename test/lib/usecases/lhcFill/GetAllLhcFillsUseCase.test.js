@@ -254,4 +254,29 @@ module.exports = () => {
             expect(lhcFill.statistics.runsCoverage).greaterThan(23459)
         });
     })
+
+    it('should only contain specified beam types, {p-p, PROTON-PROTON, Pb-Pb}', async () => {
+        const beamTypes = ['p-p', ' PROTON-PROTON', 'Pb-Pb']
+        
+        getAllLhcFillsDto.query = { filter: { beamType: beamTypes.join(',') } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(4)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.beamType).oneOf(beamTypes)
+        });
+    })
+
+    it('should only contain specified beam types, {p-p, PROTON-PROTON, Pb-Pb, null}', async () => {
+        let beamTypes = ['p-p', ' PROTON-PROTON', 'Pb-Pb', 'null']
+        
+        getAllLhcFillsDto.query = { filter: { beamType: beamTypes.join(',') } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(4)
+
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.beamType).oneOf(beamTypes)
+        });
+    })
 };
