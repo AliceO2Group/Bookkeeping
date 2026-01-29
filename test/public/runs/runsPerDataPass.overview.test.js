@@ -468,7 +468,7 @@ module.exports = () => {
         });
     }
 
-        it('should successfully apply gaqNotBadFraction filters', async () => {
+    it('should successfully apply gaqNotBadFraction filters', async () => {
         await navigateToRunsPerDataPass(page, 2, 1, 3);
 
         await pressElement(page, '#openFilterToggle', true);
