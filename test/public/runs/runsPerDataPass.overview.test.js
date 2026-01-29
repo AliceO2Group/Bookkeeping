@@ -147,6 +147,8 @@ module.exports = () => {
 
         await expectInnerText(page, '#row106-globalAggregatedQuality', 'GAQ');
 
+        expect(await getPopoverInnerText(await page.waitForSelector('#row106-globalAggregatedQuality .popover-trigger')))
+            .to.be.equal('GAQ Summary is disabled, please click to view GAQ flags');
     });
 
     it('should ignore QC flags created by services in QC summaries of AOT and MUON ', async () => {
