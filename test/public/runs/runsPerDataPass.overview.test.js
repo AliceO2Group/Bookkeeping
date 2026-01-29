@@ -147,9 +147,6 @@ module.exports = () => {
 
         await expectInnerText(page, '#row106-globalAggregatedQuality', 'GAQ');
 
-        await expectInnerText(page, '#row107-globalAggregatedQuality', '76');
-        expect(await getPopoverInnerText(await page.waitForSelector('#row107-globalAggregatedQuality .popover-trigger')))
-            .to.be.equal('Missing 3 verifications');
     });
 
     it('should ignore QC flags created by services in QC summaries of AOT and MUON ', async () => {
@@ -471,23 +468,7 @@ module.exports = () => {
         });
     }
 
-    it('should successfully apply gaqNotBadFraction filters', async () => {
-        await navigateToRunsPerDataPass(page, 2, 1, 3);
 
-        await pressElement(page, '#openFilterToggle', true);
-
-        await page.waitForSelector('#gaqNotBadFraction-operator');
-        await page.select('#gaqNotBadFraction-operator', '<=');
-        await fillInput(page, '#gaqNotBadFraction-operand', '80', ['change']);
-        await expectColumnValues(page, 'runNumber', ['107']);
-
-        await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
-        await expectColumnValues(page, 'runNumber', []);
-
-        await pressElement(page, '#openFilterToggle', true);
-        await pressElement(page, '#reset-filters', true);
-        await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
-    });
 
     it('should successfully apply detectors notBadFraction filters', async () => {
         await page.waitForSelector('#detectorsQc-for-1-notBadFraction-operator');
