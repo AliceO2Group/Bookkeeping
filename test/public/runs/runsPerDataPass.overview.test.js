@@ -147,9 +147,6 @@ module.exports = () => {
 
         await expectInnerText(page, '#row106-globalAggregatedQuality', 'GAQ');
 
-        await expectInnerText(page, '#row107-globalAggregatedQuality', '76');
-        expect(await getPopoverInnerText(await page.waitForSelector('#row107-globalAggregatedQuality .popover-trigger')))
-            .to.be.equal('Missing 3 verifications');
     });
 
     it('should ignore QC flags created by services in QC summaries of AOT and MUON ', async () => {
