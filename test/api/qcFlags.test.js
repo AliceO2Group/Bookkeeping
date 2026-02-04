@@ -556,22 +556,62 @@ module.exports = () => {
                 relations,
             );
 
-            const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=3');
+            const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=3&runNumber=54');
             expect(response.status).to.be.equal(200);
             const { body: { data } } = response;
             expect(data).to.be.eql({
-                54: {
                     missingVerificationsCount: 1,
                     mcReproducible: true,
                     badEffectiveRunCoverage: 1,
                     explicitlyNotBadEffectiveRunCoverage: 0,
                     undefinedQualityPeriodsCount: 0,
                 },
-            });
+            );
         });
 
-        it('should return 400 when bad query parameter provided', async () => {
-            const response = await request(server).get('/api/qcFlags/summary/gaq');
+        it('should return empty GAQ summary if no data exists for given dataPassId & runNumber combination', async () => {
+            const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=3&runNumber=999');
+            expect(response.status).to.equal(200);
+            const { body: { data } } = response;
+            expect(data).to.eql({});
+        });
+
+        it('should return 400 if dataPassId is not positive', async () => {
+            const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=-1&runNumber=54');
+            expect(response.status).to.equal(400);
+            expect(response.body.errors[0].detail).to.equal('"query.dataPassId" must be a positive number');
+        });
+
+        it('should return 400 if runNumber is not positive', async () => {
+            const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=3&runNumber=-10');
+            expect(response.status).to.equal(400);
+            expect(response.body.errors[0].detail).to.equal('"query.runNumber" must be a positive number');
+        });
+
+        it('should return 400 if dataPassId is not a number', async () => {
+            const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=abc&runNumber=54');
+            expect(response.status).to.equal(400);
+            const { errors } = response.body;
+            expect(errors[0].detail).to.equal('"query.dataPassId" must be a number');
+        });
+
+        it('should return 400 if runNumber is not a number', async () => {
+            const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=3&runNumber=abc');
+            expect(response.status).to.equal(400);
+            const { errors } = response.body;
+            expect(errors[0].detail).to.equal('"query.runNumber" must be a number');
+        });
+
+        it('should return 400 when runNumber parameter is missing', async () => {
+            const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=3');
+            expect(response.status).to.be.equal(400);
+            const { errors } = response.body;
+            const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/runNumber');
+            expect(titleError.detail).to.equal('"query.runNumber" is required');
+        });
+
+        it('should return 400 when dataPassId parameter is missing', async () => {
+            const response = await request(server).get('/api/qcFlags/summary/gaq?runNumber=54');
             expect(response.status).to.be.equal(400);
             const { errors } = response.body;
             const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/dataPassId');
