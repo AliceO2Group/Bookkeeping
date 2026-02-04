@@ -188,7 +188,45 @@ module.exports = () => {
             'Default detectors: FT0, ITS, TPC (and ZDC for heavy-ion runs)');
     });
 
+    it('should make a separate GAQ summary request for each run', async () => {
+        // Track all GAQ summary API requests
+        const gaqRequests = [];
+        const requestHandler = (request) => {
+            const url = request.url();
+            if (url.includes('/api/qcFlags/summary/gaq')) {
+                gaqRequests.push({ url });
+            }
+        };
+        page.on('request', requestHandler);
+
+        // Navigate to the page to trigger the GAQ requests
+        await navigateToRunsPerDataPass(page, 1, 3, 4);
+        await page.waitForSelector('table tbody tr');
+
+        // Wait for all GAQ requests to complete
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        page.off('request', requestHandler);
+
+        // Extract run numbers from the requests
+        const runNumbersInRequests = gaqRequests.map(({ url }) => {
+            const match = url.match(/runNumber=(\d+)/);
+            return match ? match[1] : null;
+        }).filter(Boolean);
+
+        expect(runNumbersInRequests.length).to.be.greaterThan(0, 'Should have made GAQ requests');
+
+        // Verify each request is for a unique run (no duplicates from the single page load)
+        const uniqueRunNumbers = [...new Set(runNumbersInRequests)];
+        expect(uniqueRunNumbers.length).to.equal(runNumbersInRequests.length, 
+            `Expected each run to have exactly one GAQ request, but got: ${runNumbersInRequests.join(', ')}`);
+
+        expect(uniqueRunNumbers).to.have.members(['105', '49', '54', '56']);
+    });
+
     it('should switch mcReproducibleAsNotBad', async () => {
+        await navigateToRunsPerDataPass(page, 2, 1, 3);
+
         let oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
         await waitForTableLength(page, 3, 5000, oldTable);
