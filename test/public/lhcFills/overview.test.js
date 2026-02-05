@@ -275,6 +275,7 @@ module.exports = () => {
         const filterRunDurationExpect = {selector: 'div.flex-row:nth-child(4) > div:nth-child(1)', value: 'Total runs duration'}
         const filterRunDurationPlaceholderExpect = {selector: '#run-duration-filter-operand', value: 'e.g 16:14:15 (HH:MM:SS)'};
         const filterSBDurationOperatorExpect = { value: true };
+        const filterBeamTypeExpect = {selector: 'div.flex-row:nth-child(5) > div:nth-child(1)', value: 'Beam Type'}
 
         
         await goToPage(page, 'lhc-fill-overview');
@@ -288,6 +289,7 @@ module.exports = () => {
         await expectAttributeValue(page, filterSBDurationPlaceholderExpect.selector, 'placeholder', filterSBDurationPlaceholderExpect.value);
         await expectInnerText(page, filterRunDurationExpect.selector, filterRunDurationExpect.value);
         await expectAttributeValue(page, filterRunDurationPlaceholderExpect.selector, 'placeholder', filterRunDurationPlaceholderExpect.value);
+        await expectInnerText(page, filterBeamTypeExpect.selector, filterBeamTypeExpect.value);
     });
 
     it('should successfully un-apply Stable Beam filter menu', async () => {
@@ -332,5 +334,20 @@ module.exports = () => {
         await page.select(filterRunDurationOperator, '>=');
         await fillInput(page, filterRunDurationOperand, '00:00:00', ['change']);
         await waitForTableLength(page, 5);
+    });
+
+    it('should successfully apply beam types filter', async () => {
+        const filterBeamTypeP_Pb = '#beam-types-checkbox-p-Pb';
+        const filterBeamTypePb_Pb = '#beam-types-checkbox-Pb-Pb';
+
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+
+        await openFilteringPanel(page);
+        await pressElement(page, filterBeamTypeP_Pb);
+        await waitForTableLength(page, 1);
+    
+        await pressElement(page, filterBeamTypePb_Pb);
+        await waitForTableLength(page, 2);
     });
 };
