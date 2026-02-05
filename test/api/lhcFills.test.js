@@ -557,7 +557,7 @@ module.exports = () => {
         // API accepts filters that do not exist, this is because it does not affect the results
         it('should return 200 for beam types filter, one wrong', (done) => {
             request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamType]=Pb-Pb,Jasper-Jasper,p-p,p-Pb')
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamType]=Pb-Pb,Hello-World,p-p,p-Pb')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -568,6 +568,38 @@ module.exports = () => {
                     expect(res.body.data).to.have.lengthOf(4);
                     expect(res.body.data[0].fillNumber).to.equal(4);
 
+                    done();
+                });
+        });
+
+        it('should return 200 and an empty LHC Fill array for beam types filter that does not exist', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamType]=Hello-World')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(0);
+                    done();
+                });
+        });
+
+        it('should return 400 for beam types filter that is empty', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamType]=')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors: [error] } = res.body;
+                    expect(error.title).to.equal('Invalid Attribute');
+                    expect(error.detail).to.equal('"query.filter.beamType" is not allowed to be empty');
                     done();
                 });
         });

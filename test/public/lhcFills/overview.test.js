@@ -339,11 +339,14 @@ module.exports = () => {
     it('should successfully apply beam types filter', async () => {
         const filterBeamTypeP_Pb = '#beam-types-checkbox-p-Pb';
         const filterBeamTypePb_Pb = '#beam-types-checkbox-Pb-Pb';
+
         await goToPage(page, 'lhc-fill-overview');
         await waitForTableLength(page, 5);
+
         await openFilteringPanel(page);
         await pressElement(page, filterBeamTypeP_Pb);
         await waitForTableLength(page, 1);
+    
         await pressElement(page, filterBeamTypePb_Pb);
         await waitForTableLength(page, 2);
     });
