@@ -358,7 +358,7 @@ module.exports = () => {
         const filterSchemeNameInputField= '.fillingSchemeName-filter input';
         await goToPage(page, 'lhc-fill-overview');
         await waitForTableLength(page, 5);
-        // Open the filtering panel
+
         await openFilteringPanel(page);
         await fillInput(page, filterSchemeNameInputField, 'Single_12b_8_1024_8_2018', ['change']);
         await waitForTableLength(page, 1);

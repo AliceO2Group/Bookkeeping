@@ -105,7 +105,6 @@ module.exports = () => {
         getAllLhcFillsDto.query = { filter: { hasStableBeams: true, schemeName: 'schemename' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
-    
         expect(lhcFills).to.be.an('array').and.lengthOf(3)
 
         lhcFills.forEach((lhcFill) => {
@@ -117,7 +116,6 @@ module.exports = () => {
         getAllLhcFillsDto.query = { filter: { schemeName: '25ns_2352b_2340_2004_2133' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
-    
         expect(lhcFills).to.be.an('array').and.lengthOf(1)
 
         lhcFills.forEach((lhcFill) => {
