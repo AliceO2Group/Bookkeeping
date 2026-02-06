@@ -296,9 +296,15 @@ module.exports = () => {
         await expectAttributeValue(page, '.runs-filter input', 'placeholder', 'e.g. 553203, 553221, ...');
         await expectAttributeValue(page, '.historyItems-filter input', 'placeholder', 'e.g. D-R-X');
 
+        // range of runNumbers
+        await fillInput(page, '.runs-filter input', '103-104', ['change']);
+        await waitForTableLength(page, 1);
+        // substring of a runNumber
+        await fillInput(page, '.runs-filter input', '10', ['change']);
+
         await fillInput(page, '.id-filter input', 'Dxi029djX, TDI59So3d', ['change']);
         await page.$eval('.status-filter #checkboxes-checkbox-DESTROYED', (element) => element.click());
-        await fillInput(page, '.runs-filter input', '10', ['change']);
+
         await fillInput(page, '.historyItems-filter input', 'C-R-D-X', ['change']);
         
         const createdAtPopoverSelector = await getPopoverSelector(await page.$('.createdAt-filter .popover-trigger'));

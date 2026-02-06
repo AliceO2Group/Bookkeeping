@@ -522,7 +522,7 @@ module.exports = () => {
 
         it('should return 200 and an LHCFill array for beam types filter, correct', (done) => {
             request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamsType]=Pb-Pb')
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamType]=Pb-Pb')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -539,7 +539,7 @@ module.exports = () => {
 
         it('should return 200 and an LHCFill array for beam types filter, multiple correct', (done) => {
             request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamsType]=Pb-Pb,p-p,p-Pb')
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamType]=Pb-Pb,p-p,p-Pb')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -557,7 +557,7 @@ module.exports = () => {
         // API accepts filters that do not exist, this is because it does not affect the results
         it('should return 200 for beam types filter, one wrong', (done) => {
             request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamsType]=Pb-Pb,Jasper-Jasper,p-p,p-Pb')
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamType]=Pb-Pb,Hello-World,p-p,p-Pb')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -572,9 +572,9 @@ module.exports = () => {
                 });
         });
 
-        it('should return 200 and an LHCFill array for scheme name filter, full', (done) => {
+        it('should return 200 and an empty LHC Fill array for beam types filter that does not exist', (done) => {
             request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[schemeName]=Single_12b_8_1024_8_2018')
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamType]=Hello-World')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -582,33 +582,14 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res.body.data).to.have.lengthOf(1);
-                    expect(res.body.data[0].fillNumber).to.equal(6);
-
+                    expect(res.body.data).to.have.lengthOf(0);
                     done();
                 });
         });
 
-        it('should return 200 and an LHCFill array for scheme name filter, partial', (done) => {
+        it('should return 400 for beam types filter that is empty', (done) => {
             request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[schemeName]=_1')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    expect(res.body.data).to.have.lengthOf(2);
-                    expect(res.body.data[0].fillNumber).to.equal(6);
-
-                    done();
-                });
-        });
-
-        it('should return 400 for scheme name filter, empty filter', (done) => {
-            request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[schemeName]=')
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamType]=')
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
@@ -616,12 +597,14 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res.body.errors[0].title).to.equal('Invalid Attribute');
-
+                    const { errors: [error] } = res.body;
+                    expect(error.title).to.equal('Invalid Attribute');
+                    expect(error.detail).to.equal('"query.filter.beamType" is not allowed to be empty');
                     done();
                 });
         });
     });
+
     describe('POST /api/lhcFills', () => {
         it('should return 201 if valid data is provided', async () => {
             const response = await request(server)

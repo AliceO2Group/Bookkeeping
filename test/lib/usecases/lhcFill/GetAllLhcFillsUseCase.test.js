@@ -135,7 +135,7 @@ module.exports = () => {
         });
     });
 
-     it('should only contain specified stable beam durations, <= 12:00:00', async () => {
+    it('should only contain specified stable beam durations, <= 12:00:00', async () => {
         getAllLhcFillsDto.query = { filter: { beamDuration: {limit: '43200', operator: '<='} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
         expect(lhcFills).to.be.an('array').and.lengthOf(4)
@@ -153,7 +153,7 @@ module.exports = () => {
         });
     });
 
-     it('should only contain specified stable beam durations, >= 00:01:40', async () => {
+    it('should only contain specified stable beam durations, >= 00:01:40', async () => {
         getAllLhcFillsDto.query = { filter: { beamDuration: {limit: '100', operator: '>='} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
         
@@ -161,9 +161,9 @@ module.exports = () => {
         lhcFills.forEach((lhcFill) => {
             expect(lhcFill.stableBeamsDuration).greaterThanOrEqual(100)
         });
-     })
+    })
 
-     it('should only contain specified stable beam durations, > 00:01:40', async () => {
+    it('should only contain specified stable beam durations, > 00:01:40', async () => {
         getAllLhcFillsDto.query = { filter: { beamDuration: {limit: '100', operator: '>'} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
@@ -171,14 +171,52 @@ module.exports = () => {
         lhcFills.forEach((lhcFill) => {
             expect(lhcFill.stableBeamsDuration).greaterThan(100)
         });
-     })
+    })
 
-     it('should only contain specified stable beam durations, = 00:00:00', async () => {
+    it('should only contain specified stable beam durations, = 00:00:00', async () => {
         getAllLhcFillsDto.query = { filter: { hasStableBeams: true, beamDuration: {limit: '0', operator: '='} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(0)
-     })
+    })
+
+    it('should only contain specified total run duration, < 00:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '0', operator: '<'} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(0)
+    });
+
+    it('should only contain specified total run duration, > 00:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '0', operator: '>'} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThan(0)
+        });
+    });
+
+    it('should only contain specified total run duration, <= 00:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '0', operator: '<='} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(4)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).equals(0)
+        });
+    });
+
+    it('should only contain specified total run duration, >= 00:00:00', async () => {
+        getAllLhcFillsDto.query = { filter: { runDuration: {limit: '0', operator: '>='} } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(5)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.statistics.runsCoverage).greaterThanOrEqual(0)
+        });
+    });
+
 
     it('should only contain specified total run duration, > 04:00:00', async () => {
         getAllLhcFillsDto.query = { filter: { runDuration: {limit: '14400', operator: '>'} } };
@@ -241,10 +279,20 @@ module.exports = () => {
         });
     })
 
+    it('should only contain specified beam type, {p-p}', async () => {
+        getAllLhcFillsDto.query = { filter: { beamType: 'p-p' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(2)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.beamType).to.equal('p-p')
+        });
+    })
+
     it('should only contain specified beam types, {p-p, PROTON-PROTON, Pb-Pb}', async () => {
         const beamTypes = ['p-p', ' PROTON-PROTON', 'Pb-Pb']
         
-        getAllLhcFillsDto.query = { filter: { beamsType: beamTypes.join(',') } };
+        getAllLhcFillsDto.query = { filter: { beamType: beamTypes.join(',') } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(4)
@@ -253,31 +301,22 @@ module.exports = () => {
         });
     })
 
-    it('should only contain specified beam types, OR NULL, {p-p, PROTON-PROTON, Pb-Pb, null}', async () => {
-        let beamTypes = ['p-p', ' PROTON-PROTON', 'Pb-Pb', 'null']
+    it('should ignore unknown beam types, {p-p, Hello-world, Pb-Pb}', async () => {
+        const beamTypes = ['p-p', 'Hello-world', 'Pb-Pb']
         
-        getAllLhcFillsDto.query = { filter: { beamsType: beamTypes.join(',') } };
+        getAllLhcFillsDto.query = { filter: { beamType: beamTypes.join(',') } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
-        expect(lhcFills).to.be.an('array').and.lengthOf(5)
-
-        const nullIndex = beamTypes.findIndex((value) => value ==='null')
-        beamTypes[nullIndex] = null;
-
+        expect(lhcFills).to.be.an('array').and.lengthOf(3)
         lhcFills.forEach((lhcFill) => {
-            expect(lhcFill.beamType).oneOf(beamTypes)
+            expect(lhcFill.beamType).oneOf(['p-p', 'Pb-Pb'])
         });
     })
 
-    it('should only contain specified beam type, IS NULL, {null}', async () => {
-        const beamTypes = ['null']
-        
-        getAllLhcFillsDto.query = { filter: { beamsType: beamTypes.join(',') } };
+    it('should be empty with unknown beam type, {Hello-world}', async () => {
+        getAllLhcFillsDto.query = { filter: { beamType: 'Hello-world' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
-        expect(lhcFills).to.be.an('array').and.lengthOf(1)
-        lhcFills.forEach((lhcFill) => {
-            expect(lhcFill.beamType).oneOf([null])
-        });
+        expect(lhcFills).to.be.an('array').and.lengthOf(0)
     })
 };
