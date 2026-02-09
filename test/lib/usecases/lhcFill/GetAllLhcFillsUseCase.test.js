@@ -254,4 +254,45 @@ module.exports = () => {
             expect(lhcFill.statistics.runsCoverage).greaterThan(23459)
         });
     })
+
+    it('should only contain specified beam type, {p-p}', async () => {
+        getAllLhcFillsDto.query = { filter: { beamTypes: 'p-p' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(2)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.beamType).to.equal('p-p')
+        });
+    })
+
+    it('should only contain specified beam types, {p-p, PROTON-PROTON, Pb-Pb}', async () => {
+        const beamTypes = ['p-p', 'PROTON-PROTON', 'Pb-Pb']
+        
+        getAllLhcFillsDto.query = { filter: { beamTypes: beamTypes.join(',') } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(4)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.beamType).oneOf(beamTypes)
+        });
+    })
+
+    it('should ignore unknown beam types, {p-p, Hello-world, Pb-Pb}', async () => {
+        const beamTypes = ['p-p', 'Hello-world', 'Pb-Pb']
+        
+        getAllLhcFillsDto.query = { filter: { beamTypes: beamTypes.join(',') } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(3)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.beamType).oneOf(['p-p', 'Pb-Pb'])
+        });
+    })
+
+    it('should be empty with unknown beam type, {Hello-world}', async () => {
+        getAllLhcFillsDto.query = { filter: { beamTypes: 'Hello-world' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(0)
+    })
 };
