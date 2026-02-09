@@ -101,6 +101,28 @@ module.exports = () => {
         });
     })
 
+    it('should only contain matching scheme name, one precise', async () => {
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, schemeName: 'schemename' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(3)
+
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.fillingSchemeName).to.equal('schemename')
+        });
+    })
+
+    it('should only contain matching scheme name, one partial', async () => {
+        getAllLhcFillsDto.query = { filter: { schemeName: '25ns_2352b_2340_2004_2133' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(1)
+
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.fillingSchemeName).to.equal('25ns_2352b_2340_2004_2133_108bpi_24inj')
+        });
+    })
+
     // Beam duration filter tests
     it('should only contain specified stable beam durations, < 12:00:00', async () => {
         getAllLhcFillsDto.query = { filter: { beamDuration: {limit: '43200', operator: '<'} } };
@@ -253,5 +275,46 @@ module.exports = () => {
         lhcFills.forEach((lhcFill) => {
             expect(lhcFill.statistics.runsCoverage).greaterThan(23459)
         });
+    })
+
+    it('should only contain specified beam type, {p-p}', async () => {
+        getAllLhcFillsDto.query = { filter: { beamTypes: 'p-p' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(2)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.beamType).to.equal('p-p')
+        });
+    })
+
+    it('should only contain specified beam types, {p-p, PROTON-PROTON, Pb-Pb}', async () => {
+        const beamTypes = ['p-p', 'PROTON-PROTON', 'Pb-Pb']
+        
+        getAllLhcFillsDto.query = { filter: { beamTypes: beamTypes.join(',') } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(4)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.beamType).oneOf(beamTypes)
+        });
+    })
+
+    it('should ignore unknown beam types, {p-p, Hello-world, Pb-Pb}', async () => {
+        const beamTypes = ['p-p', 'Hello-world', 'Pb-Pb']
+        
+        getAllLhcFillsDto.query = { filter: { beamTypes: beamTypes.join(',') } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(3)
+        lhcFills.forEach((lhcFill) => {
+            expect(lhcFill.beamType).oneOf(['p-p', 'Pb-Pb'])
+        });
+    })
+
+    it('should be empty with unknown beam type, {Hello-world}', async () => {
+        getAllLhcFillsDto.query = { filter: { beamTypes: 'Hello-world' } };
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
+
+        expect(lhcFills).to.be.an('array').and.lengthOf(0)
     })
 };
