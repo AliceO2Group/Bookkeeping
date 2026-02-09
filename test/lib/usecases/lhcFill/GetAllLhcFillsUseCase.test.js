@@ -278,7 +278,7 @@ module.exports = () => {
     })
 
     it('should only contain specified beam type, {p-p}', async () => {
-        getAllLhcFillsDto.query = { filter: { beamType: 'p-p' } };
+        getAllLhcFillsDto.query = { filter: { beamTypes: 'p-p' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(2)
@@ -288,9 +288,9 @@ module.exports = () => {
     })
 
     it('should only contain specified beam types, {p-p, PROTON-PROTON, Pb-Pb}', async () => {
-        const beamTypes = ['p-p', ' PROTON-PROTON', 'Pb-Pb']
+        const beamTypes = ['p-p', 'PROTON-PROTON', 'Pb-Pb']
         
-        getAllLhcFillsDto.query = { filter: { beamType: beamTypes.join(',') } };
+        getAllLhcFillsDto.query = { filter: { beamTypes: beamTypes.join(',') } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(4)
@@ -302,7 +302,7 @@ module.exports = () => {
     it('should ignore unknown beam types, {p-p, Hello-world, Pb-Pb}', async () => {
         const beamTypes = ['p-p', 'Hello-world', 'Pb-Pb']
         
-        getAllLhcFillsDto.query = { filter: { beamType: beamTypes.join(',') } };
+        getAllLhcFillsDto.query = { filter: { beamTypes: beamTypes.join(',') } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(3)
@@ -312,7 +312,7 @@ module.exports = () => {
     })
 
     it('should be empty with unknown beam type, {Hello-world}', async () => {
-        getAllLhcFillsDto.query = { filter: { beamType: 'Hello-world' } };
+        getAllLhcFillsDto.query = { filter: { beamTypes: 'Hello-world' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(0)
