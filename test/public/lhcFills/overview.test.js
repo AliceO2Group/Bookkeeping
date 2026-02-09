@@ -256,6 +256,7 @@ module.exports = () => {
         const meanRunDurationExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(6)', value: '01:40:00' };
         const totalRunsDurationExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(7)', value: '05:00:00' };
         const efficiencyExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(8)', value: '41.67%' };
+        const schemeNameExpect = { selector: '#row6-fillingSchemeName > div:nth-child(1) > div:nth-child(1)', value: 'Single_12b_8_1024_8_2018'};
 
         await goToPage(page, 'lhc-fill-overview');
 
@@ -265,6 +266,7 @@ module.exports = () => {
         await expectInnerText(page, meanRunDurationExpect.selector, meanRunDurationExpect.value);
         await expectInnerText(page, totalRunsDurationExpect.selector, totalRunsDurationExpect.value);
         await expectInnerText(page, efficiencyExpect.selector, efficiencyExpect.value);
+        await expectInnerText(page, schemeNameExpect.selector, schemeNameExpect.value);
     });
 
     it('should successfully display filter elements', async () => {
@@ -276,7 +278,7 @@ module.exports = () => {
         const filterRunDurationPlaceholderExpect = {selector: '#run-duration-filter-operand', value: 'e.g 16:14:15 (HH:MM:SS)'};
         const filterSBDurationOperatorExpect = { value: true };
         const filterBeamTypeExpect = {selector: 'div.flex-row:nth-child(5) > div:nth-child(1)', value: 'Beam Type'}
-
+        const filterSchemeNamePlaceholderExpect = {selector: '.fillingSchemeName-filter input', value: 'e.g. Single_12b_8_1024_8_2018'}
         
         await goToPage(page, 'lhc-fill-overview');
         // Open the filtering panel
@@ -290,6 +292,7 @@ module.exports = () => {
         await expectInnerText(page, filterRunDurationExpect.selector, filterRunDurationExpect.value);
         await expectAttributeValue(page, filterRunDurationPlaceholderExpect.selector, 'placeholder', filterRunDurationPlaceholderExpect.value);
         await expectInnerText(page, filterBeamTypeExpect.selector, filterBeamTypeExpect.value);
+        await expectAttributeValue(page, filterSchemeNamePlaceholderExpect.selector, 'placeholder', filterSchemeNamePlaceholderExpect.value);
     });
 
     it('should successfully un-apply Stable Beam filter menu', async () => {
@@ -349,5 +352,15 @@ module.exports = () => {
     
         await pressElement(page, filterBeamTypePb_Pb);
         await waitForTableLength(page, 2);
+    });
+
+    it('should successfully apply scheme name filter', async () => {
+        const filterSchemeNameInputField= '.fillingSchemeName-filter input';
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+
+        await openFilteringPanel(page);
+        await fillInput(page, filterSchemeNameInputField, 'Single_12b_8_1024_8_2018', ['change']);
+        await waitForTableLength(page, 1);
     });
 };
