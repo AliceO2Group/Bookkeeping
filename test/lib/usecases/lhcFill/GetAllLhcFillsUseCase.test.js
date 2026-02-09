@@ -266,7 +266,7 @@ module.exports = () => {
     })
 
     it('should only contain specified beam types, {p-p, PROTON-PROTON, Pb-Pb}', async () => {
-        const beamTypes = ['p-p', ' PROTON-PROTON', 'Pb-Pb']
+        const beamTypes = ['p-p', 'PROTON-PROTON', 'Pb-Pb']
         
         getAllLhcFillsDto.query = { filter: { beamType: beamTypes.join(',') } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)

@@ -603,7 +603,29 @@ module.exports = () => {
                     done();
                 });
         });
+
+        it('should return 200 for beam types with correct values', (done) => {
+            request(server)
+                .get('/api/lhcFills/beamTypes')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.deep.equal([
+                        { beam_type: 'p-p' },
+                        { beam_type: 'p-Pb' },
+                        { beam_type: 'Pb-Pb' },
+                        { beam_type: 'PROTON-PROTON' },
+                    ]);
+
+                    done();
+                });
+        });
     });
+
     describe('POST /api/lhcFills', () => {
         it('should return 201 if valid data is provided', async () => {
             const response = await request(server)
