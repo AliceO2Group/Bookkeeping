@@ -32,14 +32,9 @@ module.exports = () => {
         
         await page.waitForSelector(navTabSelector);
 
-        let tabIds = await page.$$eval(navTabSelector, tabs =>
-            tabs.map(tab => tab.id)
-        );
-
-        tabIds = tabIds.slice(1); //
-
+        const tabIds = await page.$$eval(navTabSelector, tabs => tabs.map(tab => tab.id));
+        
         for (const id of tabIds) {
-            console.log(id);
             await page.click(`#${id}`);
             
             expectUrlParams(page, { page: id }); // basePageTabs set their links and their ID to be the same.
