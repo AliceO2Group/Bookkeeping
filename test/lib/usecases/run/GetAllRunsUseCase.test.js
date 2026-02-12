@@ -183,6 +183,32 @@ module.exports = () => {
         }
     });
 
+    it('should successfully filter on beamModes', async () => {
+        const singleBeamMode = ['STABLE BEAMS'];
+        const multipleBeamMode = ['STABLE BEAMS', 'NO BEAM'];
+        const nonExistentBeamMode = ['DOES NOT EXIST'];
+
+        getAllRunsDto.query = { filter: { beamModes: singleBeamMode } };
+        {
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto); 
+            expect(runs).to.have.lengthOf(5);
+            expect(runs.every(({ lhcBeamMode }) => singleBeamMode.includes(lhcBeamMode))).to.be.true;
+        }
+
+        getAllRunsDto.query = { filter: { beamModes: multipleBeamMode } };
+        {
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.have.lengthOf(6);
+            expect(runs.every(({ lhcBeamMode }) => multipleBeamMode.includes(lhcBeamMode))).to.be.true;
+        }
+        
+        getAllRunsDto.query = { filter: { beamModes: nonExistentBeamMode } };
+        {
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.have.lengthOf(0);
+        }
+    });
+
     it('should successfully filter on run definition', async () => {
         const PHYSICS_COUNT = 7;
         const COSMICS_COUNT = 2;
