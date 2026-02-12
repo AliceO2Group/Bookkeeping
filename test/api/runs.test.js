@@ -142,6 +142,37 @@ module.exports = () => {
             expect(runs).to.lengthOf(20);
         });
 
+        it('should successfully filter with single beamMode', async () => {
+            const response = await request(server).get('/api/runs?filter[beamModes]=STABLE BEAMS');
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+            
+            expect(runs).to.lengthOf(5);
+        });
+
+        it('should successfully filter with multiple beamModes', async () => {
+            const response = await request(server).get('/api/runs?filter[beamModes]=STABLE BEAMS,NO BEAM');
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+            
+            expect(runs).to.lengthOf(6);
+        });
+
+        it('should return 400 if beamModes filter has the incorrect format', async () => {
+            const beamModeString = '*THERE\'S NON LETTERS IN HERE';
+            const response = await request(server).get(`/api/runs?filter[beamModes]=${beamModeString}`);
+
+
+            expect(response.status).to.equal(400);
+
+            const { errors: [error] } = response.body;
+
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal(`Beam modes "${beamModeString}" must contain only uppercase letters and single spaces between words.`);
+        });
+
         it('should successfully filter on multiple specified run numbers', async () => {
             const response = await request(server).get('/api/runs?filter[runNumbers]=17,18');
 
