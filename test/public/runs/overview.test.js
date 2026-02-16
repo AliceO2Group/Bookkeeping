@@ -727,6 +727,14 @@ module.exports = () => {
             await waitForTableLength(page, 5);
         });
 
+        it('should successfully filter on beam mode', async () => {
+            await pressElement(page, '.beamModes-filter .dropdown-trigger');
+            await pressElement(page, '#beam-mode-dropdown-option-NO\\ BEAM', true);
+            await waitForTableLength(page, 1);
+            await pressElement(page, '#beam-mode-dropdown-option-STABLE\\ BEAMS', true);
+            await waitForTableLength(page, 6);
+        });
+
         it('should successfully filter on nDetectors', async () => {
             await expectInputValue(page, '#nDetectors-operator', '=');
 
