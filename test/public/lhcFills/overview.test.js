@@ -26,6 +26,8 @@ const {
     openFilteringPanel,
     expectAttributeValue,
     fillInput,
+    getPeriodInputsSelectors,
+    getPopoverSelector,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -352,6 +354,69 @@ module.exports = () => {
     
         await pressElement(page, filterBeamTypePb_Pb);
         await waitForTableLength(page, 2);
+    });
+
+    it('should successfully apply stableBeamStart filter', async () => {
+        const popoverTrigger = '.stableBeamsStart-filter .popover-trigger';
+
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        await page.waitForSelector('.column-stableBeamsStart');
+
+        const filterButton = await page.waitForSelector('#openFilterToggle');
+        const popoverKey = await filterButton.evaluate((button) => {
+            return button.parentElement.getAttribute('data-popover-key');
+        });
+        
+        const filterPanelSelector = `.popover[data-popover-key="${popoverKey}"]`;
+        
+        await openFilteringPanel(page);
+        await page.waitForSelector(filterPanelSelector, { visible: true });
+        await page.waitForSelector(popoverTrigger);
+        
+        const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
+        const { fromDateSelector, toDateSelector, fromTimeSelector, toTimeSelector } = getPeriodInputsSelectors(popOverSelector);
+        console.log({ fromDateSelector, toDateSelector, fromTimeSelector, toTimeSelector });
+
+        
+        await fillInput(page, fromDateSelector, '2019-08-08', ['change']);
+        await fillInput(page, toDateSelector, '2019-08-08', ['change']);
+        await fillInput(page, fromTimeSelector, '10:00', ['change']);
+        await fillInput(page, toTimeSelector, '12:00', ['change']);
+        
+        await openFilteringPanel(page);
+        await pressElement(page, popoverTrigger);
+        await waitForTableLength(page, 1);
+    });
+
+    it('should successfully apply stableBeamEnd filter', async () => {
+        const popoverTrigger = '.stableBeamsEnd-filter .popover-trigger';
+
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        await page.waitForSelector('.column-stableBeamsEnd');
+
+        const filterButton = await page.waitForSelector('#openFilterToggle');
+        const popoverKey = await filterButton.evaluate((button) => {
+            return button.parentElement.getAttribute('data-popover-key');
+        });
+
+        const filterPanelSelector = `.popover[data-popover-key="${popoverKey}"]`;
+        
+        await openFilteringPanel(page);
+        await page.waitForSelector(filterPanelSelector, { visible: true });
+        await page.waitForSelector(popoverTrigger);
+
+        const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
+        const { fromDateSelector, toDateSelector, fromTimeSelector, toTimeSelector } = getPeriodInputsSelectors(popOverSelector);
+
+        await fillInput(page, fromDateSelector, '2022-03-22', ['change']);
+        await fillInput(page, toDateSelector, '2022-03-22', ['change']);
+        await fillInput(page, fromTimeSelector, '01:00', ['change']);
+        await fillInput(page, toTimeSelector, '23:59', ['change']);
+        await openFilteringPanel(page);
+        await pressElement(page, popoverTrigger);
+        await waitForTableLength(page, 3);
     });
 
     it('should successfully apply scheme name filter', async () => {
