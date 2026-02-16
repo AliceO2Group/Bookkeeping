@@ -25,16 +25,20 @@ module.exports = () => {
         expect(formatNamedValue({ name: 'Test', id: 123 })).to.equal('Test');
     });
 
-    it('should return value when value has no name property', () => {
+    it('should return value when value is a string, number or a boolean', () => {
         expect(formatNamedValue('Plain String')).to.equal('Plain String');
         expect(formatNamedValue(42)).to.equal(42);
         expect(formatNamedValue(true)).to.equal(true);
-        expect(formatNamedValue({ id: 1 })).to.deep.equal({ id: 1 });
     });
 
     it('should return "-" when value is null or undefined', () => {
         expect(formatNamedValue(null)).to.equal('-');
         expect(formatNamedValue(undefined)).to.equal('-');
+    });
+
+    it('should return "-" when value.name is null or undefined', () => {
+        expect(formatNamedValue({name: undefined})).to.equal('-');
+        expect(formatNamedValue({name: null})).to.equal('-');
     });
 
     it('should correctly handle falsy but defined values', () => {
