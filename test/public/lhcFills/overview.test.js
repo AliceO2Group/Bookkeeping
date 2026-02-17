@@ -383,8 +383,6 @@ module.exports = () => {
         
         const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
         const { fromDateSelector, toDateSelector, fromTimeSelector, toTimeSelector } = getPeriodInputsSelectors(popOverSelector);
-        console.log({ fromDateSelector, toDateSelector, fromTimeSelector, toTimeSelector });
-
         
         await fillInput(page, fromDateSelector, '2019-08-08', ['change']);
         await fillInput(page, toDateSelector, '2019-08-08', ['change']);
