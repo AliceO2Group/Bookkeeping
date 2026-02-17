@@ -163,16 +163,19 @@ module.exports = () => {
     });
 
     it('fill dropdown menu should be correct', async() => {
-        // activate the popover
-        await pressElement(page, `#row6-fillNumber-text > div:nth-child(1) > div:nth-child(2)`)
-        await page.waitForSelector(`body > div:nth-child(3) > div:nth-child(1)`);
-        await expectInnerText(page, `#copy-6 > div:nth-child(1)`, 'Copy Fill Number')
+        const popoverTrigger = '#row6-fillNumber-text > div:nth-child(1) > div:nth-child(2)';
 
-        await expectLink(page, 'body > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > a:nth-child(3)', {
+        await pressElement(page, popoverTrigger);
+        await expectInnerText(page, '#copy-6 > div:nth-child(1)', 'Copy Fill Number');
+        
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector(popoverTrigger));
+
+
+        await expectLink(page, `${popoverSelector} a:nth-of-type(2)`, {
             href: `http://localhost:4000/?page=log-create&lhcFillNumbers=6`, innerText: ' Add log to this fill'
         })
         // disable the popover
-        await pressElement(page, `#row6-fillNumber-text > div:nth-child(1) > div:nth-child(2)`)
+        await pressElement(page, popoverTrigger)
     })
 
     it('can set how many lhcFills are available per page', async () => {
