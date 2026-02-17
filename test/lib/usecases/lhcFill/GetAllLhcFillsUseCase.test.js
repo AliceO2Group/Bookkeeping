@@ -31,20 +31,20 @@ module.exports = () => {
     });
 
     it('should only containing lhc fills with stable beams', async () => {
-        getAllLhcFillsDto.query = { filter: { hasStableBeamss: true } };
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
         expect(lhcFills).to.be.an('array');
         lhcFills.forEach((lhcFill) => {
-            // Every lhcFill should have stableBeamssStart
-            expect(lhcFill.stableBeamssStart).to.not.be.null;
+            // Every lhcFill should have stableBeamsStart
+            expect(lhcFill.stableBeamsStart).to.not.be.null;
         });
     });
 
     // Fill number filter tests
 
     it('should only contain specified fill number', async () => {
-        getAllLhcFillsDto.query = { filter: { hasStableBeamss: true, fillNumbers: '6' } };
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: '6' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
         expect(lhcFills).to.be.an('array').and.lengthOf(1)
 
@@ -54,7 +54,7 @@ module.exports = () => {
     })
 
     it('should only contain specified fill numbers', async () => {
-        getAllLhcFillsDto.query = { filter: { hasStableBeamss: true, fillNumbers: '6,3' } };
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: '6,3' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
     
@@ -66,7 +66,7 @@ module.exports = () => {
     })
 
     it('should only contain specified fill numbers, range', async () => {
-        getAllLhcFillsDto.query = { filter: { hasStableBeamss: true, fillNumbers: '1-3,6' } };
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: '1-3,6' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
     
@@ -78,7 +78,7 @@ module.exports = () => {
     })
 
     it('should only contain specified fill numbers, whitespace', async () => {
-        getAllLhcFillsDto.query = { filter: { hasStableBeamss: true, fillNumbers: ' 6 , 3 ' } };
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: ' 6 , 3 ' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
     
@@ -90,7 +90,7 @@ module.exports = () => {
     })
 
     it('should only contain specified fill numbers, comma misplacement', async () => {
-        getAllLhcFillsDto.query = { filter: { hasStableBeamss: true, fillNumbers: ',6,3,' } };
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, fillNumbers: ',6,3,' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
     
@@ -102,7 +102,7 @@ module.exports = () => {
     })
 
     it('should only contain matching scheme name, one precise', async () => {
-        getAllLhcFillsDto.query = { filter: { hasStableBeamss: true, schemeName: 'schemename' } };
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, schemeName: 'schemename' } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
 
         expect(lhcFills).to.be.an('array').and.lengthOf(3)
@@ -129,7 +129,7 @@ module.exports = () => {
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
         expect(lhcFills).to.be.an('array').and.lengthOf(3)
         lhcFills.forEach((lhcFill) => {
-            expect(lhcFill.stableBeamssDuration).lessThan(43200)
+            expect(lhcFill.stableBeamsDuration).lessThan(43200)
         });
     });
 
@@ -138,7 +138,7 @@ module.exports = () => {
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
         expect(lhcFills).to.be.an('array').and.lengthOf(4)
         lhcFills.forEach((lhcFill) => {
-            expect(lhcFill.stableBeamssDuration).lessThanOrEqual(43200)
+            expect(lhcFill.stableBeamsDuration).lessThanOrEqual(43200)
         });
     })
 
@@ -147,7 +147,7 @@ module.exports = () => {
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
         expect(lhcFills).to.be.an('array').and.lengthOf(3)
         lhcFills.forEach((lhcFill) => {
-            expect(lhcFill.stableBeamssDuration).equal(100)
+            expect(lhcFill.stableBeamsDuration).equal(100)
         });
     });
 
@@ -157,7 +157,7 @@ module.exports = () => {
         
         expect(lhcFills).to.be.an('array').and.lengthOf(4)
         lhcFills.forEach((lhcFill) => {
-            expect(lhcFill.stableBeamssDuration).greaterThanOrEqual(100)
+            expect(lhcFill.stableBeamsDuration).greaterThanOrEqual(100)
         });
     })
 
@@ -167,12 +167,12 @@ module.exports = () => {
 
         expect(lhcFills).to.be.an('array').and.lengthOf(1)
         lhcFills.forEach((lhcFill) => {
-            expect(lhcFill.stableBeamssDuration).greaterThan(100)
+            expect(lhcFill.stableBeamsDuration).greaterThan(100)
         });
     })
 
     it('should only contain specified stable beam durations, = 00:00:00', async () => {
-        getAllLhcFillsDto.query = { filter: { hasStableBeamss: true, beamDuration: {limit: '0', operator: '='} } };
+        getAllLhcFillsDto.query = { filter: { hasStableBeams: true, beamDuration: {limit: '0', operator: '='} } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(0)

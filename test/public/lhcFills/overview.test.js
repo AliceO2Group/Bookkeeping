@@ -274,12 +274,14 @@ module.exports = () => {
     it('should successfully display filter elements', async () => {
         const filterSBExpect = { selector: '.stableBeams-filter .w-30', value: 'Stable Beams Only' };
         const filterFillNRExpect = {selector: 'div.items-baseline:nth-child(1) > div:nth-child(1)', value: 'Fill #'};
-        const filterSBDurationExpect = {selector: 'div.items-baseline:nth-child(3) > div:nth-child(1)', value: 'SB Duration'};
+        const filterSBStartExpect = {selector: 'div.items-baseline:nth-child(2) > div:nth-child(1)', value: 'SB START'};
+        const filterSBEndExpect = {selector: 'div.items-baseline:nth-child(3) > div:nth-child(1)', value: 'SB END'};
+        const filterSBDurationExpect = {selector: 'div.items-baseline:nth-child(5) > div:nth-child(1)', value: 'SB Duration'};
         const filterSBDurationPlaceholderExpect = {selector: '#beam-duration-filter-operand', value: 'e.g 16:14:15 (HH:MM:SS)'}
-        const filterRunDurationExpect = {selector: 'div.flex-row:nth-child(4) > div:nth-child(1)', value: 'Total runs duration'}
+        const filterRunDurationExpect = {selector: 'div.flex-row:nth-child(6) > div:nth-child(1)', value: 'Total runs duration'}
         const filterRunDurationPlaceholderExpect = {selector: '#run-duration-filter-operand', value: 'e.g 16:14:15 (HH:MM:SS)'};
         const filterSBDurationOperatorExpect = { value: true };
-        const filterBeamTypeExpect = {selector: 'div.flex-row:nth-child(5) > div:nth-child(1)', value: 'Beam Type'}
+        const filterBeamTypeExpect = {selector: 'div.flex-row:nth-child(7) > div:nth-child(1)', value: 'Beam Type'}
         const filterSchemeNamePlaceholderExpect = {selector: '.fillingSchemeName-filter input', value: 'e.g. Single_12b_8_1024_8_2018'}
         
         await goToPage(page, 'lhc-fill-overview');
@@ -289,6 +291,8 @@ module.exports = () => {
         expect(await page.evaluate(() => document.querySelector('#beam-duration-filter-operator > option:nth-child(3)').selected)).to.equal(filterSBDurationOperatorExpect.value);
         await expectInnerText(page, filterSBExpect.selector, filterSBExpect.value);
         await expectInnerText(page, filterFillNRExpect.selector, filterFillNRExpect.value);
+        await expectInnerText(page, filterSBStartExpect.selector, filterSBStartExpect.value);
+        await expectInnerText(page, filterSBEndExpect.selector, filterSBEndExpect.value);
         await expectInnerText(page, filterSBDurationExpect.selector, filterSBDurationExpect.value);
         await expectAttributeValue(page, filterSBDurationPlaceholderExpect.selector, 'placeholder', filterSBDurationPlaceholderExpect.value);
         await expectInnerText(page, filterRunDurationExpect.selector, filterRunDurationExpect.value);
