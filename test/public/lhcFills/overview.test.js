@@ -26,6 +26,8 @@ const {
     openFilteringPanel,
     expectAttributeValue,
     fillInput,
+    getPeriodInputsSelectors,
+    getPopoverSelector,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -161,16 +163,19 @@ module.exports = () => {
     });
 
     it('fill dropdown menu should be correct', async() => {
-        // activate the popover
-        await pressElement(page, `#row6-fillNumber-text > div:nth-child(1) > div:nth-child(2)`)
-        await page.waitForSelector(`body > div:nth-child(3) > div:nth-child(1)`);
-        await expectInnerText(page, `#copy-6 > div:nth-child(1)`, 'Copy Fill Number')
+        const popoverTrigger = '#row6-fillNumber-text > div:nth-child(1) > div:nth-child(2)';
 
-        await expectLink(page, 'body > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > a:nth-child(3)', {
+        await pressElement(page, popoverTrigger);
+        await expectInnerText(page, '#copy-6 > div:nth-child(1)', 'Copy Fill Number');
+        
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector(popoverTrigger));
+
+
+        await expectLink(page, `${popoverSelector} a:nth-of-type(2)`, {
             href: `http://localhost:4000/?page=log-create&lhcFillNumbers=6`, innerText: ' Add log to this fill'
         })
         // disable the popover
-        await pressElement(page, `#row6-fillNumber-text > div:nth-child(1) > div:nth-child(2)`)
+        await pressElement(page, popoverTrigger)
     })
 
     it('can set how many lhcFills are available per page', async () => {
@@ -272,12 +277,14 @@ module.exports = () => {
     it('should successfully display filter elements', async () => {
         const filterSBExpect = { selector: '.stableBeams-filter .w-30', value: 'Stable Beams Only' };
         const filterFillNRExpect = {selector: 'div.items-baseline:nth-child(1) > div:nth-child(1)', value: 'Fill #'};
-        const filterSBDurationExpect = {selector: 'div.items-baseline:nth-child(3) > div:nth-child(1)', value: 'SB Duration'};
+        const filterSBStartExpect = {selector: 'div.items-baseline:nth-child(2) > div:nth-child(1)', value: 'SB START'};
+        const filterSBEndExpect = {selector: 'div.items-baseline:nth-child(3) > div:nth-child(1)', value: 'SB END'};
+        const filterSBDurationExpect = {selector: 'div.items-baseline:nth-child(5) > div:nth-child(1)', value: 'SB Duration'};
         const filterSBDurationPlaceholderExpect = {selector: '#beam-duration-filter-operand', value: 'e.g 16:14:15 (HH:MM:SS)'}
-        const filterRunDurationExpect = {selector: 'div.flex-row:nth-child(4) > div:nth-child(1)', value: 'Total runs duration'}
+        const filterRunDurationExpect = {selector: 'div.flex-row:nth-child(6) > div:nth-child(1)', value: 'Total runs duration'}
         const filterRunDurationPlaceholderExpect = {selector: '#run-duration-filter-operand', value: 'e.g 16:14:15 (HH:MM:SS)'};
         const filterSBDurationOperatorExpect = { value: true };
-        const filterBeamTypeExpect = {selector: 'div.flex-row:nth-child(5) > div:nth-child(1)', value: 'Beam Type'}
+        const filterBeamTypeExpect = {selector: 'div.flex-row:nth-child(7) > div:nth-child(1)', value: 'Beam Type'}
         const filterSchemeNamePlaceholderExpect = {selector: '.fillingSchemeName-filter input', value: 'e.g. Single_12b_8_1024_8_2018'}
         
         await goToPage(page, 'lhc-fill-overview');
@@ -287,6 +294,8 @@ module.exports = () => {
         expect(await page.evaluate(() => document.querySelector('#beam-duration-filter-operator > option:nth-child(3)').selected)).to.equal(filterSBDurationOperatorExpect.value);
         await expectInnerText(page, filterSBExpect.selector, filterSBExpect.value);
         await expectInnerText(page, filterFillNRExpect.selector, filterFillNRExpect.value);
+        await expectInnerText(page, filterSBStartExpect.selector, filterSBStartExpect.value);
+        await expectInnerText(page, filterSBEndExpect.selector, filterSBEndExpect.value);
         await expectInnerText(page, filterSBDurationExpect.selector, filterSBDurationExpect.value);
         await expectAttributeValue(page, filterSBDurationPlaceholderExpect.selector, 'placeholder', filterSBDurationPlaceholderExpect.value);
         await expectInnerText(page, filterRunDurationExpect.selector, filterRunDurationExpect.value);
@@ -352,6 +361,67 @@ module.exports = () => {
     
         await pressElement(page, filterBeamTypePb_Pb);
         await waitForTableLength(page, 2);
+    });
+
+    it('should successfully apply stableBeamStart filter', async () => {
+        const popoverTrigger = '.stableBeamsStart-filter .popover-trigger';
+
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        await page.waitForSelector('.column-stableBeamsStart');
+
+        const filterButton = await page.waitForSelector('#openFilterToggle');
+        const popoverKey = await filterButton.evaluate((button) => {
+            return button.parentElement.getAttribute('data-popover-key');
+        });
+        
+        const filterPanelSelector = `.popover[data-popover-key="${popoverKey}"]`;
+        
+        await openFilteringPanel(page);
+        await page.waitForSelector(filterPanelSelector, { visible: true });
+        await page.waitForSelector(popoverTrigger);
+        
+        const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
+        const { fromDateSelector, toDateSelector, fromTimeSelector, toTimeSelector } = getPeriodInputsSelectors(popOverSelector);
+        
+        await fillInput(page, fromDateSelector, '2019-08-08', ['change']);
+        await fillInput(page, toDateSelector, '2019-08-08', ['change']);
+        await fillInput(page, fromTimeSelector, '10:00', ['change']);
+        await fillInput(page, toTimeSelector, '12:00', ['change']);
+        
+        await openFilteringPanel(page);
+        await pressElement(page, popoverTrigger);
+        await waitForTableLength(page, 1);
+    });
+
+    it('should successfully apply stableBeamEnd filter', async () => {
+        const popoverTrigger = '.stableBeamsEnd-filter .popover-trigger';
+
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        await page.waitForSelector('.column-stableBeamsEnd');
+
+        const filterButton = await page.waitForSelector('#openFilterToggle');
+        const popoverKey = await filterButton.evaluate((button) => {
+            return button.parentElement.getAttribute('data-popover-key');
+        });
+
+        const filterPanelSelector = `.popover[data-popover-key="${popoverKey}"]`;
+        
+        await openFilteringPanel(page);
+        await page.waitForSelector(filterPanelSelector, { visible: true });
+        await page.waitForSelector(popoverTrigger);
+
+        const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
+        const { fromDateSelector, toDateSelector, fromTimeSelector, toTimeSelector } = getPeriodInputsSelectors(popOverSelector);
+
+        await fillInput(page, fromDateSelector, '2022-03-22', ['change']);
+        await fillInput(page, toDateSelector, '2022-03-22', ['change']);
+        await fillInput(page, fromTimeSelector, '01:00', ['change']);
+        await fillInput(page, toTimeSelector, '23:59', ['change']);
+        await openFilteringPanel(page);
+        await pressElement(page, popoverTrigger);
+        await waitForTableLength(page, 3);
     });
 
     it('should successfully apply scheme name filter', async () => {
