@@ -34,6 +34,8 @@ const {
     waitForEmptyTable,
     waitForTableTotalRowsCountToEqual,
     waitForTableFirstRowIndexToEqual,
+    openFilteringPanel,
+    resetFilters,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
