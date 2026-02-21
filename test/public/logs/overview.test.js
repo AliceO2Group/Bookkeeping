@@ -91,16 +91,13 @@ module.exports = () => {
     it('can filter by log title', async () => {
         await waitForTableLength(page, 10);
 
-        await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector('#titleFilterText');
-
-        await fillInput(page, '#titleFilterText', 'first');
+        await openFilteringPanel(page)
+        await fillInput(page, '#titleFilterText', 'first', ['change']);
         await waitForTableLength(page, 1);
 
-        await fillInput(page, '#titleFilterText', 'bogusbogusbogus');
+        await fillInput(page, '#titleFilterText', 'bogusbogusbogus', ['change']);
         await waitForEmptyTable(page);
-
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
     });
 
     it('should successfully provide an input to filter on log content', async () => {
