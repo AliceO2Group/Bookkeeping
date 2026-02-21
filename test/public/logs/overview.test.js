@@ -36,6 +36,7 @@ const {
     waitForTableFirstRowIndexToEqual,
     openFilteringPanel,
     resetFilters,
+    getPeriodInputsSelectors,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -204,16 +205,14 @@ module.exports = () => {
     it('can filter by environments', async () => {
         await waitForTableLength(page, 10);
 
-        await fillInput(page, '.environments-filter input', '8E4aZTjY');
+        await fillInput(page, '.environments-filter input', '8E4aZTjY', ['change']);
         await waitForTableLength(page, 3);
-
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
         await waitForTableLength(page, 10);
 
-        await fillInput(page, '.environments-filter input', 'abcdefgh');
+        await fillInput(page, '.environments-filter input', 'abcdefgh', ['change']);
         await waitForEmptyTable(page);
-
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
     });
 
     it('can search for tag in the dropdown', async () => {
@@ -241,31 +240,29 @@ module.exports = () => {
         await waitForTableLength(page, 10);
 
         // Insert some text into the filter
-        await fillInput(page, '#runsFilterText', '1, 2');
+        await fillInput(page, '#runsFilterText', '1, 2', ['change']);
         await waitForTableLength(page, 2);
+        await resetFilters(page);
 
-        await pressElement(page, '#reset-filters');
         await waitForTableLength(page, 10);
 
-        await fillInput(page, '#runsFilterText', '1234567890');
+        await fillInput(page, '#runsFilterText', '1234567890', ['change']);
         await waitForEmptyTable(page);
-
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
     });
 
     it('can filter by lhc fill number', async () => {
         await waitForTableLength(page, 10);
 
-        await fillInput(page, '#lhcFillsFilter', '1, 6');
+        await fillInput(page, '#lhcFillsFilterText', '1, 6', ['change']);
         await waitForTableLength(page, 1);
+        await resetFilters(page);
 
-        await pressElement(page, '#reset-filters');
         await waitForTableLength(page, 10);
 
-        await fillInput(page, '#lhcFillsFilter', '1234567890');
+        await fillInput(page, '#lhcFillsFilterText', '1234567890', ['change']);
         await waitForEmptyTable(page);
-
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
     });
 
     it('can sort by columns in ascending and descending manners', async () => {
