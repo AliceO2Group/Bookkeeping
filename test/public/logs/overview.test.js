@@ -153,17 +153,25 @@ module.exports = () => {
     });
 
     it('can filter by creation date', async () => {
-        await pressElement(page, '#openFilterToggle');
+        await openFilteringPanel(page);
+        
+        const popoverTrigger = '.createdAt-filter .popover-trigger';
+        const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
 
         await waitForTableTotalRowsCountToEqual(page, 119);
 
-        // Insert a minimum date into the filter
+        const { fromDateSelector, toDateSelector, fromTimeSelector, toTimeSelector } = getPeriodInputsSelectors(popOverSelector);
+        
         const limit = '2020-02-02';
-        await fillInput(page, '#createdFilterFrom', limit);
-        await fillInput(page, '#createdFilterTo', limit);
-        await waitForTableLength(page, 1);
+        
+        await fillInput(page, fromDateSelector, limit, ['change']);
+        await fillInput(page, toDateSelector, limit, ['change']);
+        await fillInput(page, fromTimeSelector, '11:00', ['change']);
+        await fillInput(page, toTimeSelector, '12:00', ['change']);
 
-        await pressElement(page, '#reset-filters');
+        await waitForTableLength(page, 1);
+        await openFilteringPanel(page);
+        await resetFilters(page);
     });
 
     it('can filter by tags', async () => {
@@ -190,7 +198,7 @@ module.exports = () => {
         await pressElement(page, '#tag-filter-combination-operator-radio-button-or', true);
         await waitForTableLength(page, 3);
 
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
     });
 
     it('can filter by environments', async () => {
