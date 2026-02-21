@@ -103,29 +103,29 @@ module.exports = () => {
     it('should successfully provide an input to filter on log content', async () => {
         await waitForTableLength(page, 10);
 
-        await fillInput(page, '#contentFilterText', 'particle');
+        await fillInput(page, '#contentFilterText', 'particle', ['change']);
         await waitForTableLength(page, 2);
 
-        await fillInput(page, '#titleFilterText', 'this-content-do-not-exists-anywhere');
+        await fillInput(page, '#titleFilterText', 'this-content-do-not-exists-anywhere', ['change']);
         await waitForEmptyTable(page);
 
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
     });
 
     it('can filter by log author', async () => {
         await waitForTableLength(page, 10);
 
-        await fillInput(page, '#authorFilterText', 'Jane');
+        await fillInput(page, '#authorFilterText', 'Jane', ['change']);
         await waitForEmptyTable(page);
 
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
 
         await waitForTableLength(page, 10);
 
-        await fillInput(page, '#authorFilterText', 'John');
+        await fillInput(page, '#authorFilterText', 'John', ['change']);
         await waitForTableLength(page, 5);
 
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
     });
 
     it('should successfully provide an easy-to-access button to filter in/out anonymous logs', async () => {
