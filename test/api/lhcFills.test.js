@@ -798,7 +798,7 @@ module.exports = () => {
         });
     });
 
-    describe.skip('POST /api/lhcFills', () => {
+    describe('POST /api/lhcFills', () => {
         it('should return 201 if valid data is provided', async () => {
             const response = await request(server)
                 .post('/api/lhcFills')
@@ -833,7 +833,7 @@ module.exports = () => {
                 });
         });
     });
-    describe.skip('PATCH /api/lhcFills/:fillNumber', () => {
+    describe('PATCH /api/lhcFills/:fillNumber', () => {
         it('should return 400 if the wrong id is provided', (done) => {
             request(server)
                 .patch('/api/lhcFills/99999')
@@ -872,7 +872,7 @@ module.exports = () => {
         });
     });
 
-    describe.skip('GET /api/lhcFills/:fillNumber/runs/:runNumber', () => {
+    describe('GET /api/lhcFills/:fillNumber/runs/:runNumber', () => {
         it('should return 200 and an array for a normal request', (done) => {
             request(server)
                 .get('/api/lhcFills/1/runs/50')
@@ -904,7 +904,7 @@ module.exports = () => {
                 });
         });
     });
-    describe.skip('GET /api/lhcFills/:fillNumber', () => {
+    describe('GET /api/lhcFills/:fillNumber', () => {
         it('should return 200 and an array for a normal request', async () => {
             const response = await request(server).get('/api/lhcFills/1');
             expect(response.status).to.equal(200);
@@ -934,7 +934,7 @@ module.exports = () => {
                 });
         });
     });
-    describe.skip('GET /api/lhcFills/:fillNumber/runs', () => {
+    describe('GET /api/lhcFills/:fillNumber/runs', () => {
         it('should return 200 and an array for a normal request', (done) => {
             request(server)
                 .get('/api/lhcFills/1/runs')
@@ -952,7 +952,7 @@ module.exports = () => {
         });
     });
 
-    describe.skip('GET /api/lhcFills/:lhcFillNumber/logs/', () => {
+    describe('GET /api/lhcFills/:lhcFillNumber/logs/', () => {
         it('should successfully return a 200 response containing the logs linked to a given LHC fill', async () => {
             const response = await request(server).get('/api/lhcFills/6/logs');
             expect(response.status).to.equal(200);
@@ -960,7 +960,7 @@ module.exports = () => {
         });
     });
 
-    describe.skip('GET /api/lhcFills/:fillNumber/runs/:runNumber', () => {
+    describe('GET /api/lhcFills/:fillNumber/runs/:runNumber', () => {
         it('should successfully return a 200 response containing the fills that are ended in the given period', async () => {
             const firstCreatedAt = new Date('2019-08-09 18:00:00');
             const secondCreatedAt = new Date('2019-08-09 20:00:00');
