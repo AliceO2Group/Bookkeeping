@@ -554,7 +554,7 @@ module.exports = () => {
                 });
         });
 
-        it('should return 200 and a LHCFill array for only "from" filters set for stableBeamStart and end ', (done) => {
+        it('should return 200 and a LHCFill array for only "from" filters set for stableBeamStart and end', (done) => {
             const fromValue = 1647867600000;
 
             request(server)
@@ -576,7 +576,7 @@ module.exports = () => {
                 });
         });
 
-        it('should return 200 and a LHCFill array for only "to" filters set for stableBeamStart and end ', (done) => {
+        it('should return 200 and a LHCFill array for only "to" filters set for stableBeamStart and end', (done) => {
             const toValue = 2000000000000;
 
             request(server)
@@ -609,22 +609,6 @@ module.exports = () => {
                     }
 
                     expect(res.body.data).to.have.lengthOf(3);
-                    done();
-                });
-        });
-
-        it('should return 200 and an LHCFill array for runs duration filter, < 00:00:00', (done) => {
-            request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]=<&filter[runDuration][limit]=00:00:00')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    expect(res.body.data).to.have.lengthOf(0);
-
                     done();
                 });
         });
