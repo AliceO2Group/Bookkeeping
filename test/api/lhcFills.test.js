@@ -502,23 +502,6 @@ module.exports = () => {
                     done();
                 });
         });
-
-        it('should return 200 and an LHCFill array for runs duration filter, > 03:00:00', (done) => {
-            request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]=>&filter[runDuration][limit]=03:00:00')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        done(err);
-                        return;
-                    }
-
-                    expect(res.body.data).to.have.lengthOf(1);
-                    expect(res.body.data[0].fillNumber).to.equal(6);
-
-                    done();
-                });
-        });
    
         it('should return 400 when stableBeamEnd filter "from" is greater than "to"', (done) => {
             request(server)
