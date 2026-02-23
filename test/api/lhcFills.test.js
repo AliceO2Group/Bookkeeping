@@ -572,7 +572,7 @@ module.exports = () => {
                 });
         });
         
-        it('should return 400 when stableBeamEnd filters are strings "from" is greater than "to"', (done) => {
+        it('should return 400 when stableBeamStart filters are strings', (done) => {
             request(server)
             .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsStart][from]=bogus&filter[stableBeamsStart][to]=bogus')
             .expect(400)
@@ -594,7 +594,7 @@ module.exports = () => {
             });
         });
 
-        it('should return 400 when stableBeamEnd filters are strings "from" is greater than "to"', (done) => {
+        it('should return 400 when stableBeamEnd filters are strings', (done) => {
             request(server)
                 .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsEnd][from]=bogus&filter[stableBeamsEnd][to]=bogus')
                 .expect(400)
