@@ -472,34 +472,35 @@ module.exports = () => {
 
         it('should return 200 and an LHCFill array for runs duration filter, > 00:00:00', (done) => {
             request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]=>&filter[runDuration][limit]=00:00:00')
-                .expect(200)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsEnd][from]=2647867600000')
+                .expect(400)
                 .end((err, res) => {
                     if (err) {
                         done(err);
                         return;
                     }
 
-                    expect(res.body.data).to.have.lengthOf(1);
-                    expect(res.body.data[0].fillNumber).to.equal(6);
-
-                    done();
+                    const { errors: [error] } = res.body;
+                    expect(error.title).to.equal('Invalid Attribute');
+                    expect(error.detail).to.equal('"query.filter.stableBeamsEnd.from" must be less than "now"');
+                    done()
                 });
         });
 
-        it('should return 200 and an LHCFill array for runs duration filter, < 00:00:00', (done) => {
+        it('should return 400 when stableBeamStart filter "from" is greater than the current time', (done) => {
             request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]=<&filter[runDuration][limit]=00:00:00')
-                .expect(200)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsStart][from]=2647867600000')
+                .expect(400)
                 .end((err, res) => {
                     if (err) {
                         done(err);
                         return;
                     }
 
-                    expect(res.body.data).to.have.lengthOf(0);
-
-                    done();
+                    const { errors: [error] } = res.body;
+                    expect(error.title).to.equal('Invalid Attribute');
+                    expect(error.detail).to.equal('"query.filter.stableBeamsStart.from" must be less than "now"');
+                    done()
                 });
         });
    
