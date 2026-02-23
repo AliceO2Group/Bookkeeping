@@ -369,18 +369,8 @@ module.exports = () => {
         await goToPage(page, 'lhc-fill-overview');
         await waitForTableLength(page, 5);
         await page.waitForSelector('.column-stableBeamsStart');
-
-        const filterButton = await page.waitForSelector('#openFilterToggle');
-        const popoverKey = await filterButton.evaluate((button) => {
-            return button.parentElement.getAttribute('data-popover-key');
-        });
-        
-        const filterPanelSelector = `.popover[data-popover-key="${popoverKey}"]`;
-        
         await openFilteringPanel(page);
-        await page.waitForSelector(filterPanelSelector, { visible: true });
-        await page.waitForSelector(popoverTrigger);
-        
+
         const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
         const { fromDateSelector, toDateSelector, fromTimeSelector, toTimeSelector } = getPeriodInputsSelectors(popOverSelector);
         
@@ -400,17 +390,7 @@ module.exports = () => {
         await goToPage(page, 'lhc-fill-overview');
         await waitForTableLength(page, 5);
         await page.waitForSelector('.column-stableBeamsEnd');
-
-        const filterButton = await page.waitForSelector('#openFilterToggle');
-        const popoverKey = await filterButton.evaluate((button) => {
-            return button.parentElement.getAttribute('data-popover-key');
-        });
-
-        const filterPanelSelector = `.popover[data-popover-key="${popoverKey}"]`;
-        
         await openFilteringPanel(page);
-        await page.waitForSelector(filterPanelSelector, { visible: true });
-        await page.waitForSelector(popoverTrigger);
 
         const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
         const { fromDateSelector, toDateSelector, fromTimeSelector, toTimeSelector } = getPeriodInputsSelectors(popOverSelector);
