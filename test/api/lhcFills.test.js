@@ -506,7 +506,7 @@ module.exports = () => {
    
         it('should return 400 when stableBeamEnd filter "from" is greater than "to"', (done) => {
             request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsEnd][from]=1647867600000&filter[stableBeamsEnd][to]=1647867600000')
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsEnd][from]=1647867699999&filter[stableBeamsEnd][to]=1647867600000')
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
@@ -523,7 +523,7 @@ module.exports = () => {
    
         it('should return 400 when stableBeamStart filter "from" is greater than "to"', (done) => {
             request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsStart][from]=2647867600000&filter[stableBeamsStart][to]=1647867600000')
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsStart][from]=1647867699999&filter[stableBeamsStart][to]=1647867600000')
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
@@ -564,7 +564,7 @@ module.exports = () => {
             const toValue = 2000000000000;
 
             request(server)
-                .get("/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsStart][to]=2000000000000&filter[stableBeamsEnd][to]=2000000000000")
+                .get(`/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsStart][to]=${toValue}&filter[stableBeamsEnd][to]=${toValue}`)
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
