@@ -35,7 +35,7 @@
     "dotenv": "17.2.0",
     "joi": "18.0.0",
     "kafkajs": "2.2.0",
-    "mariadb": "3.0.0",
+    "mariadb": "3.5.1",
     "mkdirp": "3.0.1",
     "multer": "2.0.2",
     "node-fetch": "3.3.1",
