@@ -503,6 +503,7 @@ module.exports = () => {
                 });
         });
 
+
         it('should return 200 and an LHCFill array for runs duration filter, > 03:00:00', (done) => {
             request(server)
                 .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[runDuration][operator]=>&filter[runDuration][limit]=03:00:00')
@@ -516,6 +517,177 @@ module.exports = () => {
                     expect(res.body.data).to.have.lengthOf(1);
                     expect(res.body.data[0].fillNumber).to.equal(6);
 
+                    done();
+                });
+        });
+   
+        it('should return 400 when stableBeamEnd filter "from" is greater than the current time', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsEnd][from]=2647867600000')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors: [error] } = res.body;
+                    expect(error.title).to.equal('Invalid Attribute');
+                    expect(error.detail).to.equal('"query.filter.stableBeamsEnd.from" must be less than "now"');
+                    done()
+                });
+        });
+
+        it('should return 400 when stableBeamStart filter "from" is greater than the current time', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsStart][from]=2647867600000')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors: [error] } = res.body;
+                    expect(error.title).to.equal('Invalid Attribute');
+                    expect(error.detail).to.equal('"query.filter.stableBeamsStart.from" must be less than "now"');
+                    done()
+                });
+        });
+   
+        it('should return 400 when stableBeamEnd filter "from" is greater than "to"', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsEnd][from]=1647867699999&filter[stableBeamsEnd][to]=1647867600000')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors: [error] } = res.body;
+                    expect(error.title).to.equal('Invalid Attribute');
+                    expect(error.detail).to.equal('"query.filter.stableBeamsEnd.to" must be greater than "ref:from"');
+                    done()
+                });
+        });
+        
+        it('should return 400 when stableBeamStart filters are strings', (done) => {
+            request(server)
+            .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsStart][from]=bogus&filter[stableBeamsStart][to]=bogus')
+            .expect(400)
+            .end((err, res) => {
+                if (err) {
+                    done(err);
+                    return;
+                }
+                
+                const { errors } = res.body;
+
+                expect(errors.map(e => e.detail)).to.have.members([
+                    '"query.filter.stableBeamsStart.from" must be a valid date',
+                    '"query.filter.stableBeamsStart.to" must be a valid date',
+                ]);
+                
+                expect(errors.every(e => e.title === 'Invalid Attribute')).to.be.true;
+                done()
+            });
+        });
+
+        it('should return 400 when stableBeamEnd filters are strings', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsEnd][from]=bogus&filter[stableBeamsEnd][to]=bogus')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    
+                    const { errors } = res.body;
+
+                    expect(errors.map(e => e.detail)).to.have.members([
+                        '"query.filter.stableBeamsEnd.from" must be a valid date',
+                        '"query.filter.stableBeamsEnd.to" must be a valid date',
+                    ]);
+
+                    expect(errors.every(e => e.title === 'Invalid Attribute')).to.be.true;
+                    done()
+                });
+        });
+   
+        it('should return 400 when stableBeamStart filter "from" is greater than "to"', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsStart][from]=1647867699999&filter[stableBeamsStart][to]=1647867600000')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors: [error] } = res.body;
+                    expect(error.title).to.equal('Invalid Attribute');
+                    expect(error.detail).to.equal('"query.filter.stableBeamsStart.to" must be greater than "ref:from"');
+                    done()
+                });
+        });
+
+        it('should return 200 and a LHCFill array for only "from" filters set for stableBeamStart and end', (done) => {
+            const fromValue = 1647867600000;
+
+            request(server)
+                .get(`/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsStart][from]=${fromValue}&filter[stableBeamsEnd][from]=${fromValue}`)
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(3);
+                    res.body.data.forEach(fill => {
+                        expect(fill.stableBeamsStart).to.be.at.least(fromValue);
+                        expect(fill.stableBeamsEnd).to.be.at.least(fromValue);
+                    });
+
+                    done();
+                });
+        });
+
+        it('should return 200 and a LHCFill array for only "to" filters set for stableBeamStart and end', (done) => {
+            const toValue = 2000000000000;
+
+            request(server)
+                .get(`/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsStart][to]=${toValue}&filter[stableBeamsEnd][to]=${toValue}`)
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(4);
+                    
+                    res.body.data.forEach(fill => {
+                        expect(fill.stableBeamsStart).to.be.at.most(toValue);
+                        expect(fill.stableBeamsEnd).to.be.at.most(toValue);
+                    });
+                    done();
+                });
+        });
+
+        it('should return 200 and a LHCFill array for stableBeamStart and end filter set', (done) => {
+            request(server)
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[stableBeamsStart][from]=1647867600000&filter[stableBeamsStart][to]=1647867600001&filter[stableBeamsEnd][from]=1647961200000&filter[stableBeamsEnd][to]=1647961200001')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.data).to.have.lengthOf(3);
                     done();
                 });
         });
