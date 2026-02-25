@@ -37,9 +37,17 @@ module.exports = () => {
         await resetDatabaseContent();
     });
 
-    after(async () => {
-        [page, browser] = await defaultAfter(page, browser);
+    after(async function () {
+        [page, browser] = await defaultAfter(page, browser, this.currentTest);
     });
+
+    afterEach(async function () {
+        const { takeScreenshot } = require('../defaults.js');
+
+        if (this.currentTest.state == 'failed') {
+            await takeScreenshot(this.currentTest.fullTitle())
+        }
+    })
 
     it('loads page - QC Flag Types overview successfully', async () => {
         const response = await goToPage(page, 'qc-flag-type-creation');

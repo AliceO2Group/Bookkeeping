@@ -29,9 +29,17 @@ module.exports = () => {
         await resetDatabaseContent();
     });
 
-    after(async () => {
-        [page, browser] = await defaultAfter(page, browser);
+    after(async function () {
+        [page, browser] = await defaultAfter(page, browser, this.currentTest);
     });
+
+    afterEach(async function () {
+        const { takeScreenshot } = require('../defaults.js');
+
+        if (this.currentTest.state == 'failed') {
+            await takeScreenshot(this.currentTest.fullTitle())
+        }
+    })
 
     it('tag detail loads correctly', async () => {
         await goToPage(page, 'tag-detail', { queryParameters: { id: 1, panel: 'logs' } });

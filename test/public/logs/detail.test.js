@@ -35,9 +35,17 @@ module.exports = () => {
         [page, browser, url] = await defaultBefore(page, browser);
         await resetDatabaseContent();
     });
-    after(async () => {
-        [page, browser] = await defaultAfter(page, browser);
+    after(async function () {
+        [page, browser] = await defaultAfter(page, browser, this.currentTest);
     });
+
+    afterEach(async function () {
+        const { takeScreenshot } = require('../defaults.js');
+
+        if (this.currentTest.state == 'failed') {
+            await takeScreenshot(this.currentTest.fullTitle())
+        }
+    })
 
     it('log detail loads correctly and is opened as does not have children', async () => {
         await goToPage(page, 'log-detail', { queryParameters: { id: 5 } });

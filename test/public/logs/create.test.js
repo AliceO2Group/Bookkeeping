@@ -70,8 +70,8 @@ module.exports = () => {
         }
     });
 
-    after(async () => {
-        [page, browser] = await defaultAfter(page, browser);
+    after(async function () {
+        [page, browser] = await defaultAfter(page, browser, this.currentTest);
 
         try {
             fs.renameSync(path.resolve(...assetsDir, 'hadron_collider_`(é_è)’.jpg'), path.resolve(...assetsDir, 'hadron_collider_(é_è).jpg'));

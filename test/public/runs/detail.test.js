@@ -74,9 +74,17 @@ module.exports = () => {
         await resetDatabaseContent();
         await runService.create({ runNumber: 1010, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
     });
-    after(async () => {
-        [page, browser] = await defaultAfter(page, browser);
+    after(async function () {
+        [page, browser] = await defaultAfter(page, browser, this.currentTest);
     });
+
+    afterEach(async function () {
+        const { takeScreenshot } = require('../defaults.js');
+
+        if (this.currentTest.state == 'failed') {
+            await takeScreenshot(this.currentTest.fullTitle())
+        }
+    })
 
     it('run detail loads correctly', async () => {
         await goToPage(page, 'run-detail', { queryParameters: { runNumber: 1 } });

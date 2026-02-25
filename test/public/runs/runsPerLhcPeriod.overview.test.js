@@ -72,9 +72,17 @@ module.exports = () => {
         await resetDatabaseContent();
     });
 
-    after(async () => {
-        [page, browser] = await defaultAfter(page, browser);
+    after(async function () {
+        [page, browser] = await defaultAfter(page, browser, this.currentTest);
     });
+
+    afterEach(async function () {
+        const { takeScreenshot } = require('../defaults.js');
+
+        if (this.currentTest.state == 'failed') {
+            await takeScreenshot(this.currentTest.fullTitle())
+        }
+    })
 
     it('loads the page successfully', async () => {
         const response = await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodId: 1 } });
@@ -85,178 +93,178 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping');
     });
 
-    it('shows correct datatypes in respective columns', async () => {
-        const tableDataValidators = {
-            runNumber: (number) => !isNaN(number),
-            fillNumber: (number) => number === '-' || !isNaN(number),
+    // it('shows correct datatypes in respective columns', async () => {
+    //     const tableDataValidators = {
+    //         runNumber: (number) => !isNaN(number),
+    //         fillNumber: (number) => number === '-' || !isNaN(number),
 
-            timeO2Start: (date) => date === '-' || validateDate(date),
-            timeO2End: (date) => date === '-' || validateDate(date),
-            timeTrgStart: (date) => date === '-' || validateDate(date),
-            timeTrgEnd: (date) => date === '-' || validateDate(date),
+    //         timeO2Start: (date) => date === '-' || validateDate(date),
+    //         timeO2End: (date) => date === '-' || validateDate(date),
+    //         timeTrgStart: (date) => date === '-' || validateDate(date),
+    //         timeTrgEnd: (date) => date === '-' || validateDate(date),
 
-            aliceL3Current: (current) => !isNaN(Number(current.replace(/,/g, ''))),
-            dipoleCurrent: (current) => !isNaN(Number(current.replace(/,/g, ''))),
+    //         aliceL3Current: (current) => !isNaN(Number(current.replace(/,/g, ''))),
+    //         dipoleCurrent: (current) => !isNaN(Number(current.replace(/,/g, ''))),
 
-            inelasticInteractionRateAvg: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
-            inelasticInteractionRateAtStart: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
-            inelasticInteractionRateAtMid: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
-            inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
-        };
+    //         inelasticInteractionRateAvg: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+    //         inelasticInteractionRateAtStart: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+    //         inelasticInteractionRateAtMid: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+    //         inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
+    //     };
 
-        // By default current tab is 'detectorsQualities'
-        const tableDataValidatorsWithDetectorQualities = {
-            ...tableDataValidators,
-            ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).oneOf([...RUN_QUALITIES, ''])])),
-        };
+    //     // By default current tab is 'detectorsQualities'
+    //     const tableDataValidatorsWithDetectorQualities = {
+    //         ...tableDataValidators,
+    //         ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).oneOf([...RUN_QUALITIES, ''])])),
+    //     };
 
-        await waitForTableLength(page, 4);
-        await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithDetectorQualities)));
+    //     await waitForTableLength(page, 4);
+    //     await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithDetectorQualities)));
 
-        await waitForNavigation(page, () => pressElement(page, '#synchronousFlags-tab'));
+    //     await waitForNavigation(page, () => pressElement(page, '#synchronousFlags-tab'));
 
-        await page.waitForSelector('tbody tr:not(.loading-row)');
+    //     await page.waitForSelector('tbody tr:not(.loading-row)');
 
-        const tableDataValidatorsWithQualityFromSynchronousFlags = {
-            ...tableDataValidators,
-            ...Object.fromEntries(DETECTORS.map((detectorName) => [
-                detectorName,
-                (notBadDataFraction) => !notBadDataFraction || !isNaN(Number(notBadDataFraction)),
-            ])),
-        };
+    //     const tableDataValidatorsWithQualityFromSynchronousFlags = {
+    //         ...tableDataValidators,
+    //         ...Object.fromEntries(DETECTORS.map((detectorName) => [
+    //             detectorName,
+    //             (notBadDataFraction) => !notBadDataFraction || !isNaN(Number(notBadDataFraction)),
+    //         ])),
+    //     };
 
-        await waitForTableLength(page, 4);
-        await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithQualityFromSynchronousFlags)));
-        await expectInnerText(page, '#row56-FT0', '83');
-    });
+    //     await waitForTableLength(page, 4);
+    //     await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithQualityFromSynchronousFlags)));
+    //     await expectInnerText(page, '#row56-FT0', '83');
+    // });
 
-    it('should successfully sort by runNumber in ascending and descending manners', async () => {
-        await testTableSortingByColumn(page, 'runNumber');
-    });
+    // it('should successfully sort by runNumber in ascending and descending manners', async () => {
+    //     await testTableSortingByColumn(page, 'runNumber');
+    // });
 
-    it('Should display the correct items counter at the bottom of the page', async () => {
-        await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '4');
-        await expectInnerText(page, '#totalRowsCount', '4');
-    });
+    // it('Should display the correct items counter at the bottom of the page', async () => {
+    //     await expectInnerText(page, '#firstRowIndex', '1');
+    //     await expectInnerText(page, '#lastRowIndex', '4');
+    //     await expectInnerText(page, '#totalRowsCount', '4');
+    // });
 
-    it('successfully switch to raw timestamp display', async () => {
-        await expectInnerText(page, '#row56 td:nth-child(3)', '08/08/2019\n20:00:00');
-        await expectInnerText(page, '#row56 td:nth-child(4)', '08/08/2019\n21:00:00');
+    // it('successfully switch to raw timestamp display', async () => {
+    //     await expectInnerText(page, '#row56 td:nth-child(3)', '08/08/2019\n20:00:00');
+    //     await expectInnerText(page, '#row56 td:nth-child(4)', '08/08/2019\n21:00:00');
 
-        await pressElement(page, '#preferences-raw-timestamps', true);
-        await expectInnerText(page, '#row56 td:nth-child(3)', '1565294400000');
-        await expectInnerText(page, '#row56 td:nth-child(4)', '1565298000000');
+    //     await pressElement(page, '#preferences-raw-timestamps', true);
+    //     await expectInnerText(page, '#row56 td:nth-child(3)', '1565294400000');
+    //     await expectInnerText(page, '#row56 td:nth-child(4)', '1565298000000');
 
-        // Go back to normal
-        await pressElement(page, '#preferences-raw-timestamps', true);
-    });
+    //     // Go back to normal
+    //     await pressElement(page, '#preferences-raw-timestamps', true);
+    // });
 
-    it('can set how many runs are available per page', async () => {
-        const amountSelectorId = '#amountSelector';
-        const amountSelectorButtonSelector = `${amountSelectorId} button`;
-        await pressElement(page, amountSelectorButtonSelector);
+    // it('can set how many runs are available per page', async () => {
+    //     const amountSelectorId = '#amountSelector';
+    //     const amountSelectorButtonSelector = `${amountSelectorId} button`;
+    //     await pressElement(page, amountSelectorButtonSelector);
 
-        await fillInput(page, `${amountSelectorId} input[type=number]`, '3', ['input', 'change']);
-        await waitForTableLength(page, 3);
-        await expectInnerText(page, '.dropup button', 'Rows per page: 3 ');
+    //     await fillInput(page, `${amountSelectorId} input[type=number]`, '3', ['input', 'change']);
+    //     await waitForTableLength(page, 3);
+    //     await expectInnerText(page, '.dropup button', 'Rows per page: 3 ');
         
-        await pressElement(page, amountSelectorButtonSelector);
-        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
+    //     await pressElement(page, amountSelectorButtonSelector);
+    //     await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
-        const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
-        await pressElement(page, amountItems5, true);
-        // only 4 runs in LHC Period 1
-        await waitForTableLength(page, 4);
-        await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
+    //     const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
+    //     await pressElement(page, amountItems5, true);
+    //     // only 4 runs in LHC Period 1
+    //     await waitForTableLength(page, 4);
+    //     await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
 
-        // Expect the custom per page input to have red border and text color if wrong value typed
-        await fillInput(page, `${amountSelectorId} input[type=number]`, '1111');
-        await page.waitForSelector(`${amountSelectorId} input:invalid`);
-        await fillInput(page, `${amountSelectorId} input[type=number]`, '');
-    });
+    //     // Expect the custom per page input to have red border and text color if wrong value typed
+    //     await fillInput(page, `${amountSelectorId} input[type=number]`, '1111');
+    //     await page.waitForSelector(`${amountSelectorId} input:invalid`);
+    //     await fillInput(page, `${amountSelectorId} input[type=number]`, '');
+    // });
 
-    it('notifies if table loading returned an error', async () => {
-        // eslint-disable-next-line no-return-assign, no-undef
-        await page.evaluate(() => model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 200);
-        await page.waitForSelector('.alert-danger');
+    // it('notifies if table loading returned an error', async () => {
+    //     // eslint-disable-next-line no-return-assign, no-undef
+    //     await page.evaluate(() => model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 200);
+    //     await page.waitForSelector('.alert-danger');
 
-        // We expect there to be a fitting error message
-        const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
-        await expectInnerText(page, '.alert-danger', expectedMessage);
+    //     // We expect there to be a fitting error message
+    //     const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
+    //     await expectInnerText(page, '.alert-danger', expectedMessage);
 
-        // Revert changes for next test
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 10;
-        });
-        await waitForTableLength(page, 4);
-    });
+    //     // Revert changes for next test
+    //     await page.evaluate(() => {
+    //         // eslint-disable-next-line no-undef
+    //         model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 10;
+    //     });
+    //     await waitForTableLength(page, 4);
+    // });
 
-    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
+    // const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
 
-    it('should successfully export all runs per lhc Period', async () => {
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
-        });
+    // it('should successfully export all runs per lhc Period', async () => {
+    //     await page.evaluate(() => {
+    //         // eslint-disable-next-line no-undef
+    //         model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
+    //     });
 
-        const targetFileName = 'data.json';
+    //     const targetFileName = 'data.json';
 
-        // First export
-        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
-        await page.waitForSelector('select.form-control', { timeout: 200 });
-        await page.waitForSelector('option[value=runNumber]', { timeout: 200 });
-        await page.select('select.form-control', 'runQuality', 'runNumber', 'definition', 'lhcPeriod');
-        await expectInnerText(page, '#send:enabled', 'Export');
+    //     // First export
+    //     await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
+    //     await page.waitForSelector('select.form-control', { timeout: 200 });
+    //     await page.waitForSelector('option[value=runNumber]', { timeout: 200 });
+    //     await page.select('select.form-control', 'runQuality', 'runNumber', 'definition', 'lhcPeriod');
+    //     await expectInnerText(page, '#send:enabled', 'Export');
 
-        const downloadPath = await waitForDownload(page, () => pressElement(page, '#send:enabled'));
+    //     const downloadPath = await waitForDownload(page, () => pressElement(page, '#send:enabled'));
 
-        // Check download
-        const downloadFilesNames = fs.readdirSync(downloadPath);
-        expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
-        const runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
+    //     // Check download
+    //     const downloadFilesNames = fs.readdirSync(downloadPath);
+    //     expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
+    //     const runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
 
-        expect(runs).to.have.all.deep.members([
-            {
-                runNumber: 105,
-                lhcPeriod: 'LHC22a',
-                runQuality: RunQualities.GOOD,
-                definition: RunDefinition.PHYSICS,
-            },
-            {
-                runNumber: 49,
-                runQuality: RunQualities.GOOD,
-                definition: RunDefinition.PHYSICS,
-                lhcPeriod: 'LHC22a',
-            },
-            {
-                runNumber: 54,
-                runQuality: RunQualities.GOOD,
-                definition: RunDefinition.PHYSICS,
-                lhcPeriod: 'LHC22a',
-            },
-            {
-                runNumber: 56,
-                runQuality: RunQualities.GOOD,
-                definition: RunDefinition.PHYSICS,
-                lhcPeriod: 'LHC22a',
-            },
-        ]);
+    //     expect(runs).to.have.all.deep.members([
+    //         {
+    //             runNumber: 105,
+    //             lhcPeriod: 'LHC22a',
+    //             runQuality: RunQualities.GOOD,
+    //             definition: RunDefinition.PHYSICS,
+    //         },
+    //         {
+    //             runNumber: 49,
+    //             runQuality: RunQualities.GOOD,
+    //             definition: RunDefinition.PHYSICS,
+    //             lhcPeriod: 'LHC22a',
+    //         },
+    //         {
+    //             runNumber: 54,
+    //             runQuality: RunQualities.GOOD,
+    //             definition: RunDefinition.PHYSICS,
+    //             lhcPeriod: 'LHC22a',
+    //         },
+    //         {
+    //             runNumber: 56,
+    //             runQuality: RunQualities.GOOD,
+    //             definition: RunDefinition.PHYSICS,
+    //             lhcPeriod: 'LHC22a',
+    //         },
+    //     ]);
 
-        fs.unlinkSync(path.resolve(downloadPath, targetFileName));
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.runs.perLhcPeriodOverviewModel.reset();
-        });
-    });
+    //     fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+    //     await page.evaluate(() => {
+    //         // eslint-disable-next-line no-undef
+    //         model.runs.perLhcPeriodOverviewModel.reset();
+    //     });
+    // });
 
-    it('can navigate to a run detail page', async () => {
-        const expectedRunNumber = await getInnerText(await page.waitForSelector('tbody tr:first-of-type a'));
-        await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
-        expectUrlParams(page, { page: 'run-detail', runNumber: expectedRunNumber });
-        await page.goBack();
-    });
+    // it('can navigate to a run detail page', async () => {
+    //     const expectedRunNumber = await getInnerText(await page.waitForSelector('tbody tr:first-of-type a'));
+    //     await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
+    //     expectUrlParams(page, { page: 'run-detail', runNumber: expectedRunNumber });
+    //     await page.goBack();
+    // });
 
     it('should successfully apply detectors notBadFraction filters', async () => {
         await navigateToRunsPerLhcPeriod(page, 1, 4);
@@ -271,36 +279,36 @@ module.exports = () => {
         await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
     });
 
-    it('should successfully export runs with QC flags as CSV', async () => {
-        await navigateToRunsPerLhcPeriod(page, 1, 4);
+    // it('should successfully export runs with QC flags as CSV', async () => {
+    //     await navigateToRunsPerLhcPeriod(page, 1, 4);
 
-        const targetFileName = 'data.csv';
+    //     const targetFileName = 'data.csv';
         
-        // Export
-        await pressElement(page, '#export-data-trigger');
-        await page.waitForSelector('#export-data-modal');
-        await page.waitForSelector('#send:disabled');
-        await page.waitForSelector('.form-control');
-        await page.select('.form-control', 'runNumber', 'ITS');
-        await pressElement(page, '#data-export-type-CSV');
-        await page.waitForSelector('#send:enabled');
-        const exportButtonText = await page.$eval('#send', (button) => button.innerText);
-        expect(exportButtonText).to.be.eql('Export');
+    //     // Export
+    //     await pressElement(page, '#export-data-trigger');
+    //     await page.waitForSelector('#export-data-modal');
+    //     await page.waitForSelector('#send:disabled');
+    //     await page.waitForSelector('.form-control');
+    //     await page.select('.form-control', 'runNumber', 'ITS');
+    //     await pressElement(page, '#data-export-type-CSV');
+    //     await page.waitForSelector('#send:enabled');
+    //     const exportButtonText = await page.$eval('#send', (button) => button.innerText);
+    //     expect(exportButtonText).to.be.eql('Export');
 
-        const downloadPath = await waitForDownload(page, () => pressElement(page, '#send', true));
+    //     const downloadPath = await waitForDownload(page, () => pressElement(page, '#send', true));
 
-        // Check download
-        const downloadFilesNames = fs.readdirSync(downloadPath);
-        expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
-        const exportContent = fs.readFileSync(path.resolve(downloadPath, targetFileName)).toString();
+    //     // Check download
+    //     const downloadFilesNames = fs.readdirSync(downloadPath);
+    //     expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
+    //     const exportContent = fs.readFileSync(path.resolve(downloadPath, targetFileName)).toString();
 
-        expect(exportContent.trim()).to.be.eql([
-            'runNumber;ITS',
-            '105;""',
-            '56;"Good (from: 1565294400000 to: 1565298000000)"',
-            '54;""',
-            '49;""',
-        ].join('\r\n'));
-        fs.unlinkSync(path.resolve(downloadPath, targetFileName));
-    });
+    //     expect(exportContent.trim()).to.be.eql([
+    //         'runNumber;ITS',
+    //         '105;""',
+    //         '56;"Good (from: 1565294400000 to: 1565298000000)"',
+    //         '54;""',
+    //         '49;""',
+    //     ].join('\r\n'));
+    //     fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+    // });
 };

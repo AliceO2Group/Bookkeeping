@@ -38,7 +38,7 @@ module.exports = () => {
         }
     });
 
-    after(async () => {
+    after(async function () {
         try {
             fs.renameSync(path.resolve(...assetsDir, 'hadron_collider_`(é_è)’.jpg'), path.resolve(...assetsDir, 'hadron_collider_(é_è).jpg'));
         } catch (_) {

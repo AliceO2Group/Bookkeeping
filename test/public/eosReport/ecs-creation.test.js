@@ -49,9 +49,17 @@ module.exports = () => {
         await resetDatabaseContent();
     });
 
-    after(async () => {
-        [page, browser] = await defaultAfter(page, browser);
+    after(async function () {
+        [page, browser] = await defaultAfter(page, browser, this.currentTest);
     });
+
+    afterEach(async function () {
+        const { takeScreenshot } = require('../defaults.js');
+
+        if (this.currentTest.state == 'failed') {
+            await takeScreenshot(this.currentTest.fullTitle())
+        }
+    })
 
     it('Should successfully display the ECS eos report creation page', async () => {
         const response = await goToPage(page, 'eos-report-create', { queryParameters: { shiftType: ShiftTypes.ECS } });

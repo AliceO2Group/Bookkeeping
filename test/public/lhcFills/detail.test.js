@@ -229,7 +229,7 @@ module.exports = () => {
         ]);
     });
 
-    after(async () => {
-        await defaultAfter(page, browser);
+    after(async function () {
+        await defaultAfter(page, browser, this.currentTest);
     });
 };

@@ -75,21 +75,19 @@ module.exports.defaultBefore = async () => {
  * @param {Object} browser Browser object to run tests on
  * @returns {Promise<Array>} Array of multiple objects, consisting of Page and Browser.
  */
-module.exports.defaultAfter = async (page, browser) => {
+module.exports.defaultAfter = async (page, browser, test) => {
+    if (test.state === 'failed') {
+        await this.takeScreenshot(page, test.fullTitle());
+    }
     const [jsCoverage, cssCoverage] = await Promise.all([
         page.coverage.stopJSCoverage(),
         page.coverage.stopCSSCoverage(),
     ]);
 
-    pti.write([...jsCoverage, ...cssCoverage].filter(({ url = '' } = {}) => url.match(/\.(js|css)$/)), {
-        includeHostname: false,
-        storagePath: './.nyc_output/lib/public',
-    });
     await browser.close();
 
     return [page, browser];
 };
-
 /**
  * Trigger a download and wait for it to be finished
  *

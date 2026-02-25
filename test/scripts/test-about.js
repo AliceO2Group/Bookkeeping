@@ -20,7 +20,7 @@ describe('Bookkeeping', () => {
         await application.connectDatabase();
     });
 
-    after(async () => {
+    after(async function () {
         await application.stop(true);
     });
 
