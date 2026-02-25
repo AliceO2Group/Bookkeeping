@@ -298,7 +298,7 @@ module.exports = () => {
 
         // range of runNumbers
         await fillInput(page, '.runs-filter input', '103-104', ['change']);
-        await waitForTableLength(page, 1);
+        await waitForTableLength(page, 1); // fault here <===============8
         // substring of a runNumber
         await fillInput(page, '.runs-filter input', '10', ['change']);
 
