@@ -82,7 +82,7 @@ module.exports = () => {
         const { takeScreenshot } = require('../defaults.js');
 
         if (this.currentTest.state == 'failed') {
-            await takeScreenshot(this.currentTest.fullTitle())
+            await takeScreenshot(page, this.currentTest.fullTitle())
         }
     })
 
