@@ -208,10 +208,10 @@ module.exports = () => {
 
         expect(eorReasons).to.lengthOf(2);
         expect(await eorReasons[0].evaluate((element) => element.innerText))
-            .to.equal('DETECTORS - TPC - Some Reason other than selected plus one');
+            .to.equal('DETECTORS - TPC - Some Reason other than selected plus one\nAnonymous');
 
         expect(await eorReasons[1].evaluate((element) => element.innerText))
-            .to.equal('DETECTORS - CPV - A new EOR reason');
+            .to.equal('DETECTORS - CPV - A new EOR reason\nAnonymous');
     });
 
     it('should successfully revert the update end of run reasons', async () => {
@@ -234,10 +234,10 @@ module.exports = () => {
 
         expect(eorReasons).to.lengthOf(2);
         expect(await eorReasons[0].evaluate((element) => element.innerText))
-            .to.equal('DETECTORS - TPC - Some Reason other than selected plus one');
+            .to.equal('DETECTORS - TPC - Some Reason other than selected plus one\nAnonymous');
 
         expect(await eorReasons[1].evaluate((element) => element.innerText))
-            .to.equal('DETECTORS - CPV - A new EOR reason');
+            .to.equal('DETECTORS - CPV - A new EOR reason\nAnonymous');
     });
 
     it('should successfully update inelasticInteractionRate values of PbPb run', async () => {
