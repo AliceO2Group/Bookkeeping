@@ -233,7 +233,7 @@ module.exports = () => {
         });
 
         it('should successfully filter by run number', async () => {
-            const response = await request(server).get('/api/logs?filter[run][values]=1,2&filter[run][operation]=and');
+            const response = await request(server).get('/api/logs?filter[runNumbers]=1,2');
             expect(response.status).to.equal(200);
 
             expect(response.body.data).to.be.an('array');
@@ -241,6 +241,30 @@ module.exports = () => {
             for (const log of response.body.data) {
                 const relatedRunNumbers = log.runs.map(({ runNumber }) => runNumber);
                 expect([1, 2].every((runNumber) => relatedRunNumbers.includes(runNumber))).to.be.true;
+            }
+        });
+
+        it('should successfully filter by lhcFillNumber', async () => {
+            const response = await request(server).get('/api/logs?filter[fillNumbers]=1,4,6');
+            expect(response.status).to.equal(200);
+
+            expect(response.body.data).to.be.an('array');
+            expect(response.body.data).to.lengthOf(1);
+            for (const { lhcFills } of response.body.data) {
+                const fillNumbers = lhcFills.map(({ fillNumber }) => fillNumber);
+                expect([1, 4, 6].every((fillNumber) => fillNumbers.includes(fillNumber))).to.be.true;
+            }
+        });
+
+        it('should successfully filter by EnvironmentIds', async () => {
+            const response = await request(server).get('/api/logs?filter[environmentIds]=Dxi029djX,eZF99lH6');
+            expect(response.status).to.equal(200);
+
+            expect(response.body.data).to.be.an('array');
+            expect(response.body.data).to.lengthOf(1);
+            for (const { environments } of response.body.data) {
+                const environmentIds = environments.map(({ id }) => id);
+                expect(["Dxi029djX", "eZF99lH6"].every((environmentId) => environmentIds.includes(environmentId))).to.be.true;
             }
         });
 
