@@ -255,11 +255,7 @@ module.exports = () => {
         expect(page3.environments.length).to.be.equal(limit);
 
         // Collect all environment IDs and verify no duplicates and all present
-        const allIds = [
-            ...page1.environments.map(({ id }) => id),
-            ...page2.environments.map(({ id }) => id),
-            ...page3.environments.map(({ id }) => id),
-        ];
+        const allIds = [page1, page2, page3].flatMap(({ environments })=> environments.map(({ id }) => id));
 
         expect(allIds.length).to.be.equal(totalMatchingFilter);
         expect(new Set(allIds).size).to.be.equal(totalMatchingFilter);
