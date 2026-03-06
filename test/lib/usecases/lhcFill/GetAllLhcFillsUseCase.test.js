@@ -317,4 +317,60 @@ module.exports = () => {
 
         expect(lhcFills).to.be.an('array').and.lengthOf(0)
     })
+
+    it('should return an array with only \'from\' values given', async () => {
+        getAllLhcFillsDto.query = {
+            filter: {
+                stableBeamsStart: {
+                    from: 1647867600000,
+                },
+                stableBeamsEnd: {
+                    from: 1647867600000,
+                },
+            },
+        };
+
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+
+        expect(lhcFills).to.be.an('array');
+        expect(lhcFills).to.have.lengthOf(3);
+    });
+
+    it('should return an array with only \'to\' values given', async () => {
+        getAllLhcFillsDto.query = {
+            filter: {
+                stableBeamsStart: { 
+                    to: 2000000000000 
+                },
+                stableBeamsEnd: { 
+                    to: 2000000000000 
+                },
+            },
+        };
+
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+
+        expect(lhcFills).to.be.an('array');
+        expect(lhcFills).to.have.lengthOf(4);
+    });
+
+    it('should return an array with fills on certain timestamps', async () => {
+        getAllLhcFillsDto.query = {
+            filter: {
+                stableBeamsStart: {
+                    from: 1647867600000,
+                    to: 1647867600000,
+                },
+                stableBeamsEnd: {
+                    from: 1647961200000,
+                    to: 1647961200000,
+                },
+            },
+        };
+
+        const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto);
+
+        expect(lhcFills).to.be.an('array');
+        expect(lhcFills).to.have.lengthOf(3);
+    });
 };
