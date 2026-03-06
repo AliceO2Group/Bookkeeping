@@ -153,15 +153,14 @@ module.exports = () => {
     });
 
     it('should display detector columns in RCT order (AOT/MUON after physical)', async () => {
-        await navigateToRunsPerDataPass(page, 1, 3, 4);
         const headers = await page.$$eval(
             'table thead th',
             (ths) => ths.map((th) => th.id).filter(Boolean),
         );
         
         // see DetectorOrders.RCT in detectorsProvider.js
-        expect(headers.indexOf('VTX')).to.be.greaterThan(headers.indexOf('EMC'));
-        expect(headers.indexOf('MUD')).to.be.greaterThan(headers.indexOf('EMC'));
+        expect(headers.indexOf('VTX')).to.be.greaterThan(headers.indexOf('ZDC'));
+        expect(headers.indexOf('MUD')).to.be.greaterThan(headers.indexOf('ZDC'));
     });
 
     it('should ignore QC flags created by services in QC summaries of AOT and MUON ', async () => {
