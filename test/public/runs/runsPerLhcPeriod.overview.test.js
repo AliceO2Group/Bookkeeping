@@ -137,7 +137,7 @@ module.exports = () => {
             (ths) => ths.map((th) => th.id).filter(Boolean),
         );
 
-        // see DetectorOrders.RCT in detectorsProvider.js
+        // See DetectorOrders.RCT in detectorOrders.js
         expect(headers.indexOf('MUD')).to.be.greaterThan(headers.indexOf('ZDC'));
     });
 
