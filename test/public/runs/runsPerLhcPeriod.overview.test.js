@@ -130,6 +130,17 @@ module.exports = () => {
         await expectInnerText(page, '#row56-FT0', '83');
     });
 
+    it('should display detector columns in RCT order (AOT/MUON after physical) for synchronous flags', async () => {
+        // Note test starts already on synchronous flags tab
+        const headers = await page.$$eval(
+            'table thead th',
+            (ths) => ths.map((th) => th.id).filter(Boolean),
+        );
+
+        // See DetectorOrders.RCT in detectorOrders.js
+        expect(headers.indexOf('MUD')).to.be.greaterThan(headers.indexOf('ZDC'));
+    });
+
     it('should successfully sort by runNumber in ascending and descending manners', async () => {
         await testTableSortingByColumn(page, 'runNumber');
     });

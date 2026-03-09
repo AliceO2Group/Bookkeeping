@@ -152,6 +152,17 @@ module.exports = () => {
             .to.be.equal('Missing 3 verifications');
     });
 
+    it('should display detector columns in RCT order (AOT/MUON after physical)', async () => {
+        const headers = await page.$$eval(
+            'table thead th',
+            (ths) => ths.map((th) => th.id).filter(Boolean),
+        );
+        
+        // See DetectorOrders.RCT in detectorOrders.js
+        expect(headers.indexOf('VTX')).to.be.greaterThan(headers.indexOf('ZDC'));
+        expect(headers.indexOf('MUD')).to.be.greaterThan(headers.indexOf('ZDC'));
+    });
+
     it('should ignore QC flags created by services in QC summaries of AOT and MUON ', async () => {
         await navigateToRunsPerDataPass(page, 2, 1, 3); // apass
         await expectInnerText(page, '#row106-VTX-text', '100');
@@ -394,10 +405,10 @@ module.exports = () => {
         const exportContent = fs.readFileSync(path.resolve(downloadPath, targetFileName)).toString();
 
         expect(exportContent.trim()).to.be.eql([
-            'runNumber;VTX;CPV',
+            'runNumber;CPV;VTX',
             '108;"";""',
-            '107;"";"Good (from: 1565290800000 to: 1565359260000) | Limited Acceptance MC Reproducible (from: 1565269140000 to: 1565290800000)"',
-            '106;"Good (from: 1565269200000 to: 1565304200000) | Good (from: 1565324200000 to: 1565359200000)";"Limited Acceptance MC Reproducible (from: 1565304200000 to: 1565324200000) | Limited acceptance (from: 1565329200000 to: 1565334200000) | Bad (from: 1565339200000 to: 1565344200000)"',
+            '107;"Good (from: 1565290800000 to: 1565359260000) | Limited Acceptance MC Reproducible (from: 1565269140000 to: 1565290800000)";""',
+            '106;"Limited Acceptance MC Reproducible (from: 1565304200000 to: 1565324200000) | Limited acceptance (from: 1565329200000 to: 1565334200000) | Bad (from: 1565339200000 to: 1565344200000)";"Good (from: 1565269200000 to: 1565304200000) | Good (from: 1565324200000 to: 1565359200000)"',
         ].join('\r\n'));
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
