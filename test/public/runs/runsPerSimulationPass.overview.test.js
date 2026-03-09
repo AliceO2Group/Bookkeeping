@@ -137,6 +137,17 @@ module.exports = () => {
         await qcFlagService.delete(tmpQcFlag.id);
     });
 
+    it('should display detector columns in RCT order (AOT/MUON after physical)', async () => {
+        const headers = await page.$$eval(
+            'table thead th',
+            (ths) => ths.map((th) => th.id).filter(Boolean),
+        );
+        
+        // See DetectorOrders.RCT in detectorOrders.js
+        expect(headers.indexOf('VTX')).to.be.greaterThan(headers.indexOf('ZDC'));
+        expect(headers.indexOf('MUD')).to.be.greaterThan(headers.indexOf('ZDC'));
+    });
+
     it('should successfully sort by runNumber in ascending and descending manners', async () => {
         await testTableSortingByColumn(page, 'runNumber');
     });
