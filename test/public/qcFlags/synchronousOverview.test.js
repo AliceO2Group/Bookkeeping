@@ -84,8 +84,8 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '2');
-        await expectInnerText(page, '#totalRowsCount', '2');
+        await expectInnerText(page, '#lastRowIndex', '3');
+        await expectInnerText(page, '#totalRowsCount', '3');
     });
 
     it('should display Comment tooltip with full information', async () => {
@@ -105,7 +105,7 @@ module.exports = () => {
     });
 
     it('should display correct Deleted text colour', async () => {
-        const deletedCell = await page.$('#row100-deleted-text:nth-child(1)');
+        const deletedCell = await page.$('#row103-deleted-text:nth-child(1)');
 
         const deletedCellText = await page.evaluate(cell => cell.textContent.trim(), deletedCell);
         expect(deletedCellText).to.equal('Yes');
