@@ -40,7 +40,7 @@
     "multer": "2.1.1",
     "node-fetch": "3.3.1",
     "protobufjs": "8.0.0",
-    "sequelize": "6.37.0",
+    "sequelize": "6.37.8",
     "umzug": "3.8.2"
   },
   "files": [
