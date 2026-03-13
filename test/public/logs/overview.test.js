@@ -34,6 +34,9 @@ const {
     waitForEmptyTable,
     waitForTableTotalRowsCountToEqual,
     waitForTableFirstRowIndexToEqual,
+    openFilteringPanel,
+    resetFilters,
+    getPeriodInputsSelectors,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -91,44 +94,41 @@ module.exports = () => {
     it('can filter by log title', async () => {
         await waitForTableLength(page, 10);
 
-        await pressElement(page, '#openFilterToggle');
-        await page.waitForSelector('#titleFilterText');
-
-        await fillInput(page, '#titleFilterText', 'first');
+        await openFilteringPanel(page)
+        await fillInput(page, '#titleFilterText', 'first', ['change']);
         await waitForTableLength(page, 1);
 
-        await fillInput(page, '#titleFilterText', 'bogusbogusbogus');
+        await fillInput(page, '#titleFilterText', 'bogusbogusbogus', ['change']);
         await waitForEmptyTable(page);
-
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
     });
 
     it('should successfully provide an input to filter on log content', async () => {
         await waitForTableLength(page, 10);
 
-        await fillInput(page, '#contentFilterText', 'particle');
+        await fillInput(page, '#contentFilterText', 'particle', ['change']);
         await waitForTableLength(page, 2);
 
-        await fillInput(page, '#titleFilterText', 'this-content-do-not-exists-anywhere');
+        await fillInput(page, '#titleFilterText', 'this-content-do-not-exists-anywhere', ['change']);
         await waitForEmptyTable(page);
 
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
     });
 
     it('can filter by log author', async () => {
         await waitForTableLength(page, 10);
 
-        await fillInput(page, '#authorFilterText', 'Jane');
+        await fillInput(page, '#authorFilterText', 'Jane', ['change']);
         await waitForEmptyTable(page);
 
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
 
         await waitForTableLength(page, 10);
 
-        await fillInput(page, '#authorFilterText', 'John');
+        await fillInput(page, '#authorFilterText', 'John', ['change']);
         await waitForTableLength(page, 5);
 
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
     });
 
     it('should successfully provide an easy-to-access button to filter in/out anonymous logs', async () => {
@@ -154,17 +154,25 @@ module.exports = () => {
     });
 
     it('can filter by creation date', async () => {
-        await pressElement(page, '#openFilterToggle');
+        await openFilteringPanel(page);
+        
+        const popoverTrigger = '.createdAt-filter .popover-trigger';
+        const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
 
         await waitForTableTotalRowsCountToEqual(page, 119);
 
-        // Insert a minimum date into the filter
+        const { fromDateSelector, toDateSelector, fromTimeSelector, toTimeSelector } = getPeriodInputsSelectors(popOverSelector);
+        
         const limit = '2020-02-02';
-        await fillInput(page, '#createdFilterFrom', limit);
-        await fillInput(page, '#createdFilterTo', limit);
-        await waitForTableLength(page, 1);
+        
+        await fillInput(page, fromDateSelector, limit, ['change']);
+        await fillInput(page, toDateSelector, limit, ['change']);
+        await fillInput(page, fromTimeSelector, '11:00', ['change']);
+        await fillInput(page, toTimeSelector, '12:00', ['change']);
 
-        await pressElement(page, '#reset-filters');
+        await waitForTableLength(page, 1);
+        await openFilteringPanel(page);
+        await resetFilters(page);
     });
 
     it('can filter by tags', async () => {
@@ -191,22 +199,20 @@ module.exports = () => {
         await pressElement(page, '#tag-filter-combination-operator-radio-button-or', true);
         await waitForTableLength(page, 3);
 
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
     });
 
     it('can filter by environments', async () => {
         await waitForTableLength(page, 10);
 
-        await fillInput(page, '.environments-filter input', '8E4aZTjY');
+        await fillInput(page, '.environments-filter input', '8E4aZTjY', ['change']);
         await waitForTableLength(page, 3);
-
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
         await waitForTableLength(page, 10);
 
-        await fillInput(page, '.environments-filter input', 'abcdefgh');
+        await fillInput(page, '.environments-filter input', 'abcdefgh', ['change']);
         await waitForEmptyTable(page);
-
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
     });
 
     it('can search for tag in the dropdown', async () => {
@@ -234,31 +240,29 @@ module.exports = () => {
         await waitForTableLength(page, 10);
 
         // Insert some text into the filter
-        await fillInput(page, '#runsFilterText', '1, 2');
+        await fillInput(page, '#runsFilterText', '1, 2', ['change']);
         await waitForTableLength(page, 2);
+        await resetFilters(page);
 
-        await pressElement(page, '#reset-filters');
         await waitForTableLength(page, 10);
 
-        await fillInput(page, '#runsFilterText', '1234567890');
+        await fillInput(page, '#runsFilterText', '1234567890', ['change']);
         await waitForEmptyTable(page);
-
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
     });
 
     it('can filter by lhc fill number', async () => {
         await waitForTableLength(page, 10);
 
-        await fillInput(page, '#lhcFillsFilter', '1, 6');
+        await fillInput(page, '#lhcFillsFilterText', '1, 6', ['change']);
         await waitForTableLength(page, 1);
+        await resetFilters(page);
 
-        await pressElement(page, '#reset-filters');
         await waitForTableLength(page, 10);
 
-        await fillInput(page, '#lhcFillsFilter', '1234567890');
+        await fillInput(page, '#lhcFillsFilterText', '1234567890', ['change']);
         await waitForEmptyTable(page);
-
-        await pressElement(page, '#reset-filters');
+        await resetFilters(page);
     });
 
     it('can sort by columns in ascending and descending manners', async () => {
