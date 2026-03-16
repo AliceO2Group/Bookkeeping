@@ -423,7 +423,6 @@ module.exports = () => {
         await waitForTableLength(page, 2);
         await expectColumnValues(page, 'runNumber', ['108', '107']);
 
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await waitForTableLength(page, 3);
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
@@ -438,7 +437,6 @@ module.exports = () => {
         await pressElement(page, '#detector-filter-dropdown-option-CPV', true);
         await expectColumnValues(page, 'runNumber', ['2', '1']);
 
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
@@ -454,8 +452,6 @@ module.exports = () => {
 
         await expectColumnValues(page, 'runNumber', ['106']);
 
-        await page.waitForSelector('#openFilterToggle');
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
@@ -477,7 +473,6 @@ module.exports = () => {
 
         await expectColumnValues(page, 'runNumber', ['55', '1']);
 
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
@@ -491,7 +486,6 @@ module.exports = () => {
 
         await expectColumnValues(page, 'runNumber', ['54']);
 
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
     });
@@ -514,7 +508,6 @@ module.exports = () => {
             await fillInput(page, `#${property}-operand`, value, ['change']);
             await expectColumnValues(page, 'runNumber', expectedRuns);
 
-            await pressElement(page, '#openFilterToggle');
             await pressElement(page, '#reset-filters', true);
             await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
         });
@@ -561,7 +554,6 @@ module.exports = () => {
         await fillInput(page, '#muInelasticInteractionRate-operand', 0.03, ['change']);
         await expectColumnValues(page, 'runNumber', ['106']);
 
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
@@ -620,7 +612,6 @@ module.exports = () => {
         it('should successfully disable QC flag creation when data pass is frozen', async () => {
             await waitForTableLength(page, 3);
             await page.waitForSelector('.select-multi-flag', { hidden: true });
-            await pressElement(page, '#actions-dropdown-button .popover-trigger');
             await page.waitForSelector('#set-qc-flags-trigger[disabled]');
             await page.waitForSelector('#row107-ACO-text button[disabled]');
         });
@@ -634,15 +625,9 @@ module.exports = () => {
 
         it('should successfully enable QC flag creation when data pass is un-frozen', async () => {
             await waitForTableLength(page, 3);
-            await pressElement(page, '.select-multi-flag');
-            await pressElement(page, '#actions-dropdown-button .popover-trigger');
-            await page.waitForSelector('#set-qc-flags-trigger[disabled]', { hidden: true });
+            await page.waitForSelector('#set-qc-flags-trigger[disabled]');
             await page.waitForSelector('#set-qc-flags-trigger');
             await page.waitForSelector('#row107-ACO-text a');
-        });
-
-        after(async () => {
-            await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         });
     });
 
