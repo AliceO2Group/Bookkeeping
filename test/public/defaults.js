@@ -61,14 +61,6 @@ module.exports.defaultBefore = async () => {
     page.setDefaultTimeout(1500);
     page.setDefaultNavigationTimeout(5000);
 
-    // page.on('pageerror', err => {
-    //     console.error('PAGE ERROR:', err);
-    // });
-
-    // page.on('console', msg => {
-    //     console.log(`BROWSER LOG [${msg.type()}]:`, msg.text());
-    // });
-
     await Promise.all([
         page.coverage.startJSCoverage({ resetOnNavigation: false }),
         page.coverage.startCSSCoverage(),
@@ -280,6 +272,7 @@ exports.waitForNavigation = waitForNavigation;
  * @param {Object} page Puppeteer page object.
  * @param {string} selector Css selector.
  * @param {boolean} [jsClick=false] if true, use js native click on the element instead of page's click method (useful if element is not visible)
+ * @param {number} [attempts=3] the number of times the function will re-attempt to press an element after a 'node detached' error
  * @returns {Promise} Whether the element was clickable or not.
  */
 module.exports.pressElement = async (page, selector, jsClick = false, attempts = 3) => {
