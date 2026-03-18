@@ -275,22 +275,27 @@ exports.waitForNavigation = waitForNavigation;
  * @param {number} [attempts=3] the number of times the function will re-attempt to press an element after a 'node detached' error
  * @returns {Promise} Whether the element was clickable or not.
  */
-module.exports.pressElement = async (page, selector, jsClick = false, attempts = 3) => {
-    try {
-        const elementHandler = await page.waitForSelector(selector);
+module.exports.pressElement = async (page, selector, jsClick = false) => {
+    await page.waitForFunction(
+        (sel, isJsClick) => {
+            const element = document.querySelector(sel);
 
-        if (jsClick) {
-            await elementHandler.evaluate((element) => element.click());
-        } else {
-            await elementHandler.click();
-        }
-    } catch (err) {
-        if (!err.message?.includes('Error: Node is detached from document') || attempts < 1) {
-            throw err;
-        }
+            if (!element) {
+                return false;
+            }
 
-        attempts--;
-        await this.pressElement(page, selector, jsClick, attempts);
+            if (isJsClick) {
+                element.click();
+            }
+
+            return true;
+        },
+        {},
+        selector, jsClick
+    );
+
+    if (!jsClick) {
+        await page.click(selector);
     }
 };
 
