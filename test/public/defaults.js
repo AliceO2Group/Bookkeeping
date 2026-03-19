@@ -275,12 +275,26 @@ exports.waitForNavigation = waitForNavigation;
  * @returns {Promise} Whether the element was clickable or not.
  */
 module.exports.pressElement = async (page, selector, jsClick = false) => {
-    const elementHandler = await page.waitForSelector(selector);
+    await page.waitForFunction(
+        (sel, isJsClick) => {
+            const element = document.querySelector(sel);
 
-    if (jsClick) {
-        await elementHandler.evaluate((element) => element.click());
-    } else {
-        await elementHandler.click(selector);
+            if (!element) {
+                return false;
+            }
+
+            if (isJsClick) {
+                element.click();
+            }
+
+            return true;
+        },
+        {},
+        selector, jsClick
+    );
+
+    if (!jsClick) {
+        await page.click(selector);
     }
 };
 
