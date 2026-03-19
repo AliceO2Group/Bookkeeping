@@ -650,8 +650,8 @@ module.exports = () => {
         // Press again actions dropdown to re-trigger render
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         setConfirmationDialogToBeAccepted(page);
-        await pressElement(page, `${popoverSelector} button:nth-child(4)`, true);
         const oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
+        await pressElement(page, `${popoverSelector} button:nth-child(4)`, true);
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await waitForTableLength(page, 3, undefined, oldTable);
         // Processing of data might take a bit of time, but then expect QC flag button to be there
