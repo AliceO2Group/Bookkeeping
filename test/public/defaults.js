@@ -869,10 +869,10 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
  * @return {Promise<void>} resolve once data was successfully validated
  */
 module.exports.validateTableData = async (page, validators) => {
-    await page.waitForSelector('table tbody');
     for (const [columnId, validator] of validators) {
+        await page.waitForSelector(`table tbody .column-${columnId}`);
+
         const columnData = await getColumnCellsInnerTexts(page, columnId);
-        expect(columnData, `Too few values for column ${columnId} or there is no such column`).to.be.length.greaterThan(0);
         expect(
             columnData.every((cellData) => validator(cellData)),
             `Invalid data in column ${columnId}: (${columnData})`,
