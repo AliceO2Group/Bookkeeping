@@ -282,7 +282,7 @@ module.exports.pressElement = async (page, selector, jsClick = false) => {
             if (!element) {
                 return false;
             }
-
+            // Moving the click to outside the function causes it to fail for unknown reasons
             if (isJsClick) {
                 element.click();
             }
