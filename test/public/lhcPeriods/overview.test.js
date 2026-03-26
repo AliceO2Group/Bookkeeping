@@ -128,7 +128,7 @@ module.exports = () => {
         await goToPage(page, 'lhc-period-overview');
         await pressElement(page, '#openFilterToggle');
         await page.waitForSelector('#reset-filters:disabled');
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22a');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22a', ['change']);
         await expectColumnValues(page, 'name', ['LHC22a']);
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'name', ['LHC23f', 'LHC22b', 'LHC22a']);
@@ -139,7 +139,7 @@ module.exports = () => {
         await goToPage(page, 'lhc-period-overview');
         await pressElement(page, '#openFilterToggle');
         await page.waitForSelector('#reset-filters:disabled');
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', '2022');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', '2022', ['change']);
         await page.waitForSelector('#reset-filters:disabled', { hidden: true, timeout: 250 });
         await expectColumnValues(page, 'year', ['2022', '2022']);
     });
@@ -148,7 +148,7 @@ module.exports = () => {
         await goToPage(page, 'lhc-period-overview');
         await pressElement(page, '#openFilterToggle');
         await page.waitForSelector('#reset-filters:disabled');
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', 'PbPb');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', 'PbPb', ['change']);
         await page.waitForSelector('#reset-filters:disabled', { hidden: true, timeout: 250 });
         await expectColumnValues(page, 'pdpBeamTypes', ['PbPb']);
     });
