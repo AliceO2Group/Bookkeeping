@@ -75,6 +75,13 @@ module.exports = () => {
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
     });
+    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
+
+    const waitForExportButton = async () =>
+        await page.waitForFunction((selector) => {
+            const button = document.querySelector(selector);
+            return button && !button.disabled;
+        }, {}, EXPORT_RUNS_TRIGGER_SELECTOR);
 
     it('loads the page successfully', async () => {
         const response = await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodId: 1 } });
@@ -204,7 +211,6 @@ module.exports = () => {
         await waitForTableLength(page, 4);
     });
 
-    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
 
     it('should successfully export all runs per lhc Period', async () => {
         await page.evaluate(() => {
@@ -213,7 +219,7 @@ module.exports = () => {
         });
 
         const targetFileName = 'data.json';
-
+        await waitForExportButton();
         // First export
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
         await page.waitForSelector('select.form-control', { timeout: 200 });
@@ -286,9 +292,9 @@ module.exports = () => {
         await navigateToRunsPerLhcPeriod(page, 1, 4);
 
         const targetFileName = 'data.csv';
-        
+        await waitForExportButton();
         // Export
-        await pressElement(page, '#export-data-trigger');
+        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         await page.waitForSelector('#export-data-modal');
         await page.waitForSelector('#send:disabled');
         await page.waitForSelector('.form-control');

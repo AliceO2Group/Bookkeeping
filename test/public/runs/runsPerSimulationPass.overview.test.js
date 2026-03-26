@@ -74,6 +74,14 @@ module.exports = () => {
         [page, browser] = await defaultAfter(page, browser);
     });
 
+    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
+
+    const waitForExportButton = async () =>
+        await page.waitForFunction((selector) => {
+            const button = document.querySelector(selector);
+            return button && !button.disabled;
+        }, {}, EXPORT_RUNS_TRIGGER_SELECTOR);
+
     it('loads the page successfully', async () => {
         const response = await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
 
@@ -235,11 +243,10 @@ module.exports = () => {
 
     it('should successfully export runs', async () => {
         await navigateToRunsPerSimulationPass(page, 1, 2, 3);
-        const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
-
         const targetFileName = 'data.json';
 
         // Export
+        await waitForExportButton();
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         await page.waitForSelector('#export-data-modal');
         await page.waitForSelector('#send:disabled');
@@ -270,7 +277,7 @@ module.exports = () => {
         const targetFileName = 'data.csv';
         
         // Export
-        await pressElement(page, '#export-data-trigger');
+        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         await page.waitForSelector('#export-data-modal');
         await page.waitForSelector('#send:disabled');
         await page.waitForSelector('.form-control');
