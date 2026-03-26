@@ -278,12 +278,7 @@ module.exports.pressElement = async (page, selector, jsClick = false) => {
     await page.waitForFunction( (sel) => !!document.querySelector(sel), {}, selector);
 
     if (jsClick) {
-        await page.evaluate((sel) => {
-            const element = document.querySelector(sel);
-            if (element) {
-                element.click();
-            }
-        }, selector);
+        await page.evaluate((sel) => document.querySelector(sel).click(), selector);
     } else {
         await page.click(selector);
     }
@@ -982,3 +977,14 @@ module.exports.resetFilters = async (page) => {
         { timeout: 5000 },
     );
 };
+
+/**
+ * Fuction that waits for a button to become active
+ * @param {puppeteer.page} page page handler
+ * @param {string} selector Css selector for the button.
+ */
+module.exports.waitForButtonToBecomeActive = async (page, selector) => await page.waitForFunction((sel) => {
+        const button = document.querySelector(sel);
+        return button && !button.disabled;
+    }, {}, selector);
+

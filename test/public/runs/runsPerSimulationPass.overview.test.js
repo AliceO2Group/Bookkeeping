@@ -31,6 +31,7 @@ const {
     testTableSortingByColumn,
     waitForTableLength,
     expectColumnValues,
+    waitForButtonToBecomeActive,
 } = require('../defaults.js');
 
 const { expect } = chai;
@@ -75,12 +76,6 @@ module.exports = () => {
     });
 
     const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
-
-    const waitForExportButton = async () =>
-        await page.waitForFunction((selector) => {
-            const button = document.querySelector(selector);
-            return button && !button.disabled;
-        }, {}, EXPORT_RUNS_TRIGGER_SELECTOR);
 
     it('loads the page successfully', async () => {
         const response = await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
@@ -246,7 +241,7 @@ module.exports = () => {
         const targetFileName = 'data.json';
 
         // Export
-        await waitForExportButton();
+        await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         await page.waitForSelector('#export-data-modal');
         await page.waitForSelector('#send:disabled');
@@ -277,6 +272,7 @@ module.exports = () => {
         const targetFileName = 'data.csv';
         
         // Export
+        await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         await page.waitForSelector('#export-data-modal');
         await page.waitForSelector('#send:disabled');

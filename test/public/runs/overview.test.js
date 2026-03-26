@@ -40,6 +40,7 @@ const {
     getColumnCellsInnerTexts,
     resetFilters,
     openFilteringPanel,
+    waitForButtonToBecomeActive,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -867,12 +868,6 @@ module.exports = () => {
     
     describe("Export", () => {
         const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
-        const waitForExportButton = async () =>
-            await page.waitForFunction((selector) => {
-                const button = document.querySelector(selector);
-                return button && !button.disabled;
-            }, {}, EXPORT_RUNS_TRIGGER_SELECTOR);
-
 
         before(() => goToPage(page, 'run-overview'));
 
@@ -891,7 +886,7 @@ module.exports = () => {
             let exportModal = await page.$('#export-data-modal');
             expect(exportModal).to.be.null;
 
-            await waitForExportButton();
+            await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
             await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
             await page.waitForSelector('#export-data-modal', { timeout: 5000 });
             exportModal = await page.$('#export-data-modal');
@@ -900,7 +895,7 @@ module.exports = () => {
         });
 
         it('should successfully display information when export will be truncated', async () => {
-            await waitForExportButton();
+            await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
             await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
 
             const truncatedExportWarning = await page.waitForSelector('#export-data-modal #truncated-export-warning');
@@ -920,7 +915,7 @@ module.exports = () => {
         });
 
         it('should successfully export filtered runs', async () => {
-            await waitForExportButton();
+            await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
             const targetFileName = 'data.json';
 
             // First export

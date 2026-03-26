@@ -32,6 +32,7 @@ const {
     expectColumnValues,
     openFilteringPanel,
     resetFilters,
+    waitForButtonToBecomeActive
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -76,12 +77,6 @@ module.exports = () => {
         [page, browser] = await defaultAfter(page, browser);
     });
     const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
-
-    const waitForExportButton = async () =>
-        await page.waitForFunction((selector) => {
-            const button = document.querySelector(selector);
-            return button && !button.disabled;
-        }, {}, EXPORT_RUNS_TRIGGER_SELECTOR);
 
     it('loads the page successfully', async () => {
         const response = await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodId: 1 } });
@@ -219,7 +214,7 @@ module.exports = () => {
         });
 
         const targetFileName = 'data.json';
-        await waitForExportButton();
+        await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         // First export
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
         await page.waitForSelector('select.form-control', { timeout: 200 });
@@ -292,7 +287,7 @@ module.exports = () => {
         await navigateToRunsPerLhcPeriod(page, 1, 4);
 
         const targetFileName = 'data.csv';
-        await waitForExportButton();
+        await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         // Export
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         await page.waitForSelector('#export-data-modal');
