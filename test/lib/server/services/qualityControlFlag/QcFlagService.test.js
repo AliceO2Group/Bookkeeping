@@ -142,15 +142,15 @@ module.exports = () => {
             const detectorId = 7;
             {
                 const { rows: flags, count } = await qcFlagService.getAllSynchronousPerRunAndDetector({ runNumber, detectorId });
-                expect(count).to.be.equal(2);
-                expect(flags.map(({ id }) => id)).to.have.all.ordered.members([101, 100]);
+                expect(count).to.be.equal(3);
+                expect(flags.map(({ id }) => id)).to.have.all.ordered.members([103, 101, 100]);
             }
             {
                 const { rows: flags, count } = await qcFlagService.getAllSynchronousPerRunAndDetector(
                     { runNumber, detectorId },
-                    { limit: 1, offset: 1 },
+                    { limit: 1, offset: 2 },
                 );
-                expect(count).to.be.equal(2);
+                expect(count).to.be.equal(3);
                 expect(flags).to.be.lengthOf(1);
                 const [flag] = flags;
                 expect(flag.id).to.be.equal(100);
@@ -2124,10 +2124,10 @@ module.exports = () => {
         });
     });
 
-    it('should successfult fiter sync flags by created by name', async () => {
+    it('should successfully filter sync flags by created by name', async () => {
         {
             const { rows } = await qcFlagService.getAllSynchronousPerRunAndDetector({ runNumber: 56, detectorId: 7 }, {}, { createdBy: { names: ['Jan Jansen'], operator: 'or' }});
-            expect(rows).to.be.lengthOf(2);
+            expect(rows).to.be.lengthOf(3);
         }
 
         {
@@ -2136,7 +2136,7 @@ module.exports = () => {
         }
     });
 
-    it('should successfult fiter data pass flags by created by name', async () => {
+    it('should successfully filter data pass flags by created by name', async () => {
         {
             const { rows } = await qcFlagService.getAllPerDataPassAndRunAndDetector({ dataPassId: 1, runNumber: 107, detectorId: 1 }, {}, { createdBy: { names: ['John Doe'], operator: 'or' }});
             expect(rows).to.be.lengthOf(2);
@@ -2148,7 +2148,7 @@ module.exports = () => {
         }
     });
 
-    it('should successfult fiter simulation pass flags by created by name', async () => {
+    it('should successfully filter simulation pass flags by created by name', async () => {
         {
             const { rows } = await qcFlagService.getAllPerSimulationPassAndRunAndDetector({ simulationPassId: 1, runNumber: 106, detectorId: 1 }, {}, { createdBy: { names: ['Jan Jansen'], operator: 'or' }});
             expect(rows).to.be.lengthOf(2);

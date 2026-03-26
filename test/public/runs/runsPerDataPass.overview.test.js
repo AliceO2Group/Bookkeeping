@@ -407,7 +407,7 @@ module.exports = () => {
         expect(exportContent.trim()).to.be.eql([
             'runNumber;CPV;VTX',
             '108;"";""',
-            '107;"Good (from: 1565290800000 to: 1565359260000) | Limited Acceptance MC Reproducible (from: 1565269140000 to: 1565290800000)";""',
+            '107;"Limited Acceptance MC Reproducible (from: 1565269140000 to: 1565290800000) | Good (from: 1565290800000 to: 1565359260000)";""',
             '106;"Limited Acceptance MC Reproducible (from: 1565304200000 to: 1565324200000) | Limited acceptance (from: 1565329200000 to: 1565334200000) | Bad (from: 1565339200000 to: 1565344200000)";"Good (from: 1565269200000 to: 1565304200000) | Good (from: 1565324200000 to: 1565359200000)"',
         ].join('\r\n'));
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
@@ -665,8 +665,8 @@ module.exports = () => {
         // Press again actions dropdown to re-trigger render
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         setConfirmationDialogToBeAccepted(page);
-        await pressElement(page, `${popoverSelector} button:nth-child(4)`, true);
         const oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
+        await pressElement(page, `${popoverSelector} button:nth-child(4)`, true);
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await waitForTableLength(page, 3, undefined, oldTable);
         // Processing of data might take a bit of time, but then expect QC flag button to be there
