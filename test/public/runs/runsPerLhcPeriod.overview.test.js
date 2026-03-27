@@ -215,9 +215,9 @@ module.exports = () => {
         const targetFileName = 'data.json';
 
         // First export
-        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
-        await page.waitForSelector('select.form-control');
-        await page.waitForSelector('option[value=runNumber]');
+        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
+        await page.waitForSelector('select.form-control', { timeout: 200 });
+        await page.waitForSelector('option[value=runNumber]', { timeout: 200 });
         await page.select('select.form-control', 'runQuality', 'runNumber', 'definition', 'lhcPeriod');
         await expectInnerText(page, '#send:enabled', 'Export');
 

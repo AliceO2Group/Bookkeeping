@@ -625,7 +625,7 @@ module.exports = () => {
 
         it('should successfully enable QC flag creation when data pass is un-frozen', async () => {
             await waitForTableLength(page, 3);
-            await page.waitForSelector('#set-qc-flags-trigger[disabled]');
+            await page.waitForSelector('#set-qc-flags-trigger[disabled]', { hidden: true });
             await page.waitForSelector('#set-qc-flags-trigger');
             await page.waitForSelector('#row107-ACO-text a');
         });
