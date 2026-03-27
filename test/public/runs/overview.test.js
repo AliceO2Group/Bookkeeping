@@ -954,9 +954,9 @@ module.exports = () => {
             await page.waitForSelector(badFilterSelector);
             await page.$eval(badFilterSelector, (element) => element.click());
             await page.waitForSelector('tbody tr:nth-child(2)');
-            await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
 
             ///// Download
+            await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
             await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
             await page.waitForSelector('#export-data-modal', { timeout: 5000 });
 
