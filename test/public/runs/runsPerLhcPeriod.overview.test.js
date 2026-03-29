@@ -201,18 +201,13 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 10;
+            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
         });
-        await waitForTableLength(page, 4);
+        await waitForTableLength(page, 2);
     });
 
 
     it('should successfully export all runs per lhc Period', async () => {
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
-        });
-
         const targetFileName = 'data.json';
         await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         // First export
