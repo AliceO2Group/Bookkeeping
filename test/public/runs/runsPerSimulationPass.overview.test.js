@@ -217,7 +217,6 @@ module.exports = () => {
         await fillInput(page, '#detectorsQc-for-1-notBadFraction-operand', '90', ['change']);
         await expectColumnValues(page, 'runNumber', ['106']);
 
-        await pressElement(page, '#openFilterToggle', true);
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['107', '106', '105']);
     });
@@ -231,7 +230,6 @@ module.exports = () => {
         await fillInput(page, '#detectorsQc-for-1-notBadFraction-operand', '90', ['change']);
         await expectColumnValues(page, 'runNumber', ['106']);
 
-        await pressElement(page, '#openFilterToggle', true);
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['107', '106', '105']);
     });
