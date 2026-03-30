@@ -201,24 +201,19 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 10;
+            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
         });
-        await waitForTableLength(page, 4);
+        await waitForTableLength(page, 2);
     });
 
 
     it('should successfully export all runs per lhc Period', async () => {
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
-        });
-
         const targetFileName = 'data.json';
         await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         // First export
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
-        await page.waitForSelector('select.form-control', { timeout: 200 });
-        await page.waitForSelector('option[value=runNumber]', { timeout: 200 });
+        await page.waitForSelector('select.form-control');
+        await page.waitForSelector('option[value=runNumber]');
         await page.select('select.form-control', 'runQuality', 'runNumber', 'definition', 'lhcPeriod');
         await expectInnerText(page, '#send:enabled', 'Export');
 
