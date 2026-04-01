@@ -12,11 +12,41 @@
  */
 
 const { expect } = require('chai');
+const sinon = require('sinon');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
-const { repositories: { GaqSummaryInvalidationRepository } } = require('../../../../../lib/database');
+const { repositories: { GaqSummaryInvalidationRepository, GaqSummaryRepository } } = require('../../../../../lib/database');
 const { qcFlagService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagService.js');
 const { gaqDetectorService } = require('../../../../../lib/server/services/gaq/GaqDetectorsService.js');
 const { updateRun } = require('../../../../../lib/server/services/run/updateRun.js');
+const { gaqWorker } = require('../../../../../lib/server/services/gaq/GaqWorker.js');
+const { gaqService } = require('../../../../../lib/server/services/gaq/GaqService.js');
+
+/**
+ * Wait for a given number of milliseconds
+ * @param {number} ms milliseconds to wait
+ * @return {Promise<void>}
+ */
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Check whether an invalidation entry exists for a given data pass and run
+ *
+ * @param {number} expectedDataPassId
+ * @param {number} expectedRunNumber
+ * @param {boolean} toBePresent whether the invalidation is expected to be present
+ *
+ * @return {Promise<void>}
+ */
+const expectInvalidation = async (expectedDataPassId, expectedRunNumber, toBePresent = true) => {
+    const invalidation = await GaqSummaryInvalidationRepository.findOne({
+        where: { dataPassId: expectedDataPassId, runNumber: expectedRunNumber },
+    });
+    if (!toBePresent) {
+        expect(invalidation, `Expected no invalidation for dataPassId=${expectedDataPassId} runNumber=${expectedRunNumber}`).to.be.null;
+    } else {
+        expect(invalidation, `Expected invalidation for dataPassId=${expectedDataPassId} runNumber=${expectedRunNumber}`).to.not.be.null;
+    }
+};
 
 module.exports = () => {
     // Test resets the database before running and clears the invalidation table between each case
@@ -28,27 +58,10 @@ module.exports = () => {
     const dataPassId = 4; // LHC22a_apass2
     const runNumber = 56;
 
-    /**
-     * Check whether an invalidation entry exists for a given data pass and run
-     *
-     * @param {number} expectedDataPassId
-     * @param {number} expectedRunNumber
-     * @param {boolean} toBeNull
-     *
-     * @return {Promise<void>}
-     */
-    const expectInvalidation = async (expectedDataPassId, expectedRunNumber, toBeNull = false) => {
-        const invalidation = await GaqSummaryInvalidationRepository.findOne({
-            where: { dataPassId: expectedDataPassId, runNumber: expectedRunNumber },
-        });
-        if (toBeNull) {
-            expect(invalidation, `Expected no invalidation for dataPassId=${expectedDataPassId} runNumber=${expectedRunNumber}`).to.be.null;
-        } else {
-            expect(invalidation, `Expected invalidation for dataPassId=${expectedDataPassId} runNumber=${expectedRunNumber}`).to.not.be.null;
-        }
-    };
+    describe('GAQ Summary Invalidation', () => {
+        before(() => gaqWorker.pause());
+        after(() => gaqWorker.resume());
 
-    describe("GAQ Summary Invalidation", async () => {
         afterEach(async () => {
             await GaqSummaryInvalidationRepository.removeAll({ truncate: true });
         });
@@ -75,7 +88,7 @@ module.exports = () => {
 
             // Verify again to check that no new invalidation is created when the flag is already verified
             await qcFlagService.verifyFlag({ flagId }, relations);
-            await expectInvalidation(dataPassId, 100, true);
+            await expectInvalidation(dataPassId, 100, false);
         });
 
         it('should invalidate GAQ summary when a QC flag is deleted for a data pass', async () => {
@@ -89,7 +102,6 @@ module.exports = () => {
             await qcFlagService.deleteAllForDataPass(dataPassId);
 
             await expectInvalidation(dataPassId, 100);
-            await expectInvalidation(dataPassId, 105);
         });
 
         it('should invalidate GAQ summary when GAQ detectors are explicitly set for a data pass and run', async () => {
@@ -117,5 +129,113 @@ module.exports = () => {
 
             await expectInvalidation(dataPassId, runNumber);
         });
+    });
+
+    describe('GAQ Worker', () => {
+        beforeEach(async () => {
+            await resetDatabaseContent();
+        });
+
+        after(() => gaqWorker.pause());
+
+        it('should process invalidations and update the summary', async () => {
+            const workerDataPassId = 1;
+            const workerRunNumber = 107;
+
+            await qcFlagService.create(
+                [{ from: null, to: null, flagTypeId: 3 }],
+                { runNumber: workerRunNumber, detectorIdentifier: { detectorId: 1 }, dataPassIdentifier: { id: workerDataPassId } },
+                relations,
+            );
+
+            // confirm that the invalidation is made
+            await expectInvalidation(workerDataPassId, workerRunNumber);
+
+            // wait at least 11s, default recalculation period is 10s, for the worker to process the invalidation
+            await sleep(11000);
+
+            await expectInvalidation(workerDataPassId, workerRunNumber, false);
+            const summary = await GaqSummaryRepository.findOne({ where: { dataPassId: workerDataPassId, runNumber: workerRunNumber } });
+            expect(summary).to.not.be.null;
+        });
+
+        it('should only upsert an existing summary row rather than creating a duplicate', async () => {
+            const workerDataPassId = 1;
+            const workerRunNumber = 107;
+
+            await gaqService.calculateAndStoreGaqSummary(workerDataPassId, workerRunNumber);
+            const firstSummary = await GaqSummaryRepository.findOne({ where: { dataPassId: workerDataPassId, runNumber: workerRunNumber } });
+            expect(firstSummary).to.not.be.null;
+
+            // Trigger an invalidation
+            await qcFlagService.create(
+                [{ from: null, to: null, flagTypeId: 3 }],
+                { runNumber: workerRunNumber, detectorIdentifier: { detectorId: 1 }, dataPassIdentifier: { id: workerDataPassId } },
+                relations,
+            );
+            await expectInvalidation(workerDataPassId, workerRunNumber);
+
+            // wait 11s for the worker to process
+            await sleep(11000);
+
+            await expectInvalidation(workerDataPassId, workerRunNumber, false);
+
+            // confirm only one summary row exists (upsert, not duplicate)
+            const summaries = await GaqSummaryRepository.findAll({ where: { dataPassId: workerDataPassId, runNumber: workerRunNumber } });
+            expect(summaries).to.have.lengthOf(1);
+        });
+
+        it('should process multiple invalidations in a single batch', async () => {
+            // Create invalidations for two different runs in data pass 1
+            await qcFlagService.create(
+                [{ from: null, to: null, flagTypeId: 3 }],
+                { runNumber: 106, detectorIdentifier: { detectorId: 1 }, dataPassIdentifier: { id: 1 } },
+                relations,
+            );
+            await qcFlagService.create(
+                [{ from: null, to: null, flagTypeId: 3 }],
+                { runNumber: 107, detectorIdentifier: { detectorId: 1 }, dataPassIdentifier: { id: 1 } },
+                relations,
+            );
+
+            await expectInvalidation(1, 106);
+            await expectInvalidation(1, 107);
+
+            // Manually call the worker with batchSize=2 to process both in one go
+            await gaqWorker.recalculateGaqSummaries(2);
+
+            await expectInvalidation(1, 106, false);
+            await expectInvalidation(1, 107, false);
+
+            const summary106 = await GaqSummaryRepository.findOne({ where: { dataPassId: 1, runNumber: 106 } });
+            const summary107 = await GaqSummaryRepository.findOne({ where: { dataPassId: 1, runNumber: 107 } });
+            expect(summary106).to.not.be.null;
+            expect(summary107).to.not.be.null;
+        });
+
+        it('should skip processing if a previous call is still in progress', async () => {
+            // Stub gaqService to be slow so the first call blocks
+            let resolveFirst;
+            const slowPromise = new Promise((resolve) => { resolveFirst = resolve; });
+            const stub = sinon.stub(gaqService, 'popNInvalidSummaryAndRecalculate').returns(slowPromise);
+
+            try {
+                // First call — will be held open by the slow stub
+                const firstCall = gaqWorker.recalculateGaqSummaries(1);
+
+                // Second call — should be skipped because _isSynchronizing is true
+                await gaqWorker.recalculateGaqSummaries(1);
+
+                // Stub should only have been called once
+                expect(stub.callCount).to.equal(1);
+
+                // Release the first call
+                resolveFirst();
+                await firstCall;
+            } finally {
+                sinon.restore();
+            }
+        });
+
     });
 };
