@@ -125,10 +125,10 @@ module.exports = () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 3 } });
         await pressElement(page, '#openFilterToggle');
 
-        await fillInput(page, '.name-filter input[type=text]', 'LHC23k6a');
+        await fillInput(page, '.name-filter input[type=text]', 'LHC23k6a', ['change']);
         await expectColumnValues(page, 'name', ['LHC23k6a']);
 
-        await fillInput(page, '.name-filter input[type=text]', 'LHC23k6a, LHC23k6b');
+        await fillInput(page, '.name-filter input[type=text]', 'LHC23k6a, LHC23k6b', ['change']);
         await expectColumnValues(page, 'name', ['LHC23k6b', 'LHC23k6a']);
     });
 };
