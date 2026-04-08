@@ -112,7 +112,7 @@ module.exports = () => {
     it('should successfully apply QC flag type bad filter', async () => {
         await waitForTableLength(page, 7);
 
-        await pressElement(page, '.bad-filter input[type=checkbox]', true);
+        await pressElement(page, '#badFilterRadioBad', true);
         await checkColumnValuesWithRegex(page, 'bad', '^Yes$');
 
         await pressElement(page, '#reset-filters', true);
