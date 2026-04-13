@@ -34,10 +34,10 @@ const {
     waitForEmptyTable,
     waitForTableTotalRowsCountToEqual,
     waitForTableFirstRowIndexToEqual,
-    openFilteringPanel,
     resetFilters,
     getPeriodInputsSelectors,
     takeScreenshot,
+    openFilteringPanel,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -366,7 +366,6 @@ module.exports = () => {
         })
 
         it('can filter by log title', async () => {
-            await openFilteringPanel(page)
             await fillInput(page, '#titleFilterText', 'first', ['change']);
             await waitForTableLength(page, 1);
 
@@ -395,8 +394,6 @@ module.exports = () => {
         });
 
         it('should successfully provide an easy-to-access button to filter in/out anonymous logs', async () => {
-            // Close the filter panel
-            await pressElement(page, '#openFilterToggle');
             await waitForTableTotalRowsCountToEqual(page, 119);
             const authors = await getColumnCellsInnerTexts(page, 'author');
 
@@ -416,8 +413,6 @@ module.exports = () => {
         });
 
         it('can filter by creation date', async () => {
-            await openFilteringPanel(page);
-            
             const popoverTrigger = '.createdAt-filter .popover-trigger';
             const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
 
@@ -433,12 +428,10 @@ module.exports = () => {
             await fillInput(page, toTimeSelector, '12:00', ['change']);
 
             await waitForTableLength(page, 1);
-            await openFilteringPanel(page);
         });
 
         it('can filter by tags', async () => {
-            await waitForTableTotalRowsCountToEqual(page, 119);
-
+            await openFilteringPanel(page);
             await pressElement(page, '.tags-filter .dropdown-trigger');
 
             // Select the second available filter and wait for the changes to be processed
