@@ -280,6 +280,34 @@ module.exports = () => {
             }
         });
 
+        it('should successfully filter by rootOnly', async () => {
+            // Limit is defined because filering by root only reduces the count by 5
+            // and by default the limit is 100, for which would still return 100 as the total number of logs is 119
+            // The latest 10 entries have 2 rows where rootLogId is not null
+            const unfilteredResponse = await request(server).get('/api/logs?page[offset]=0&page[limit]=10');
+            expect(unfilteredResponse.status).to.equal(200);
+
+            // When a log has no rootLogId the logs adapter will set the row itself as the root log
+            let rootLogs = unfilteredResponse.body.data.filter(({ rootLogId, id }) => rootLogId === id);
+
+            expect(rootLogs).to.lengthOf(8); // limit = 10; 10-2 = 8
+
+            const filteredResponse = await request(server).get('/api/logs?page[offset]=0&page[limit]=10&filter[rootOnly]=true');
+            expect(filteredResponse.status).to.equal(200);
+            rootLogs = filteredResponse.body.data.filter(({ rootLogId, id }) => rootLogId === id);
+            expect(rootLogs).to.lengthOf(10); // all of the child data has now been excluded
+        })
+
+        it('should successfully ignore rootOnly filters if rootLog is provided', async () => {
+            const response = await request(server).get('/api/logs?filter[rootOnly]=true&filter[rootLog]=1');
+            console.log(JSON.stringify(response.body));
+
+            expect(response.status).to.equal(200);
+
+            expect(response.body.data).to.lengthOf(3);
+            expect(response.body.data.every(({ rootLogId, id }) => rootLogId !== id)).to.be.true;
+        })
+
         it('should return 400 if the author filter is left empty', (done) => {
             request(server)
                 .get('/api/logs?filter[author]= ')
