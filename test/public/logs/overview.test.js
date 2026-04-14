@@ -36,7 +36,6 @@ const {
     waitForTableFirstRowIndexToEqual,
     resetFilters,
     getPeriodInputsSelectors,
-    takeScreenshot,
     openFilteringPanel,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -98,7 +97,6 @@ module.exports = () => {
 
         await page.waitForSelector('th#title');
         await page.hover('th#title');
-        await takeScreenshot(page, 'trso')
         await page.waitForSelector('#title-sort-preview');
 
         // Sort by log title in an ascending manner
