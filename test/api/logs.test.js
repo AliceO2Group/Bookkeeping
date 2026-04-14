@@ -300,7 +300,6 @@ module.exports = () => {
 
         it('should successfully ignore rootOnly filters if rootLog is provided', async () => {
             const response = await request(server).get('/api/logs?filter[rootOnly]=true&filter[rootLog]=1');
-            console.log(JSON.stringify(response.body));
 
             expect(response.status).to.equal(200);
 
@@ -656,6 +655,105 @@ module.exports = () => {
             expect(response.body.data).to.have.lengthOf(2);
             expect(response.body.meta.page.pageCount).to.equal(Math.ceil(totalNumber / 2));
             expect(response.body.meta.page.totalCount).to.equal(totalNumber);
+        });
+
+        it('should support sorting, runs DESC', (done) => {
+            request(server)
+                .get('/api/logs?sort[runs]=desc')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    const logsWithRuns = data.filter(({ runs }) => runs.length > 0);
+
+                    for (let i = 0; i < logsWithRuns.length - 1; i++) {
+                        const currentId = logsWithRuns[i].runs[0].id;
+                        const nextId = logsWithRuns[i + 1].runs[0].id;
+
+                        expect(currentId).to.be.at.least(nextId);
+                    }
+
+
+                    done();
+                });
+        });
+
+        it('should support sorting, runs ASC', (done) => {
+            request(server)
+                .get('/api/logs?sort[runs]=asc')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    const logsWithRuns = data.filter(({ runs }) => runs.length > 0);
+                    for (let i = 0; i < logsWithRuns.length - 1; i++) {
+
+                        const currentId = logsWithRuns[i].runs[0].id;
+                        const nextId = logsWithRuns[i + 1].runs[0].id;
+
+                        expect(currentId).to.be.at.most(nextId);
+                    }
+
+
+
+                    done();
+                });
+        });
+
+        it('should support sorting, environments DESC', (done) => {
+            request(server)
+                .get('/api/logs?sort[environments]=desc')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    const logsWithEnvs = data.filter(({ environments }) => environments.length > 0);
+
+                    for (let i = 0; i < logsWithEnvs.length - 1; i++) {
+                        const currentId = logsWithEnvs[i].environments[0].id;
+                        const nextId = logsWithEnvs[i + 1].environments[0].id;
+
+                        expect(currentId >= nextId).to.be.true;
+                    }
+
+                    done();
+                });
+        });
+
+        it('should support sorting, environments ASC', (done) => {
+            request(server)
+                .get('/api/logs?sort[environments]=asc')
+                .expect(200)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { data } = res.body;
+                    const logsWithEnvs = data.filter(({ environments }) => environments.length > 0);
+
+                    for (let i = 0; i < logsWithEnvs.length - 1; i++) {
+                        const currentId = logsWithEnvs[i].environments[0].id;
+                        const nextId = logsWithEnvs[i + 1].environments[0].id;
+
+                        expect(currentId <= nextId).to.be.true;
+                    }
+
+                    done();
+                });
         });
 
         it('should support sorting, id DESC', (done) => {
