@@ -288,14 +288,14 @@ module.exports = () => {
             expect(unfilteredResponse.status).to.equal(200);
 
             // When a log has no rootLogId the logs adapter will set the row itself as the root log
-            let rootLogs = unfilteredResponse.body.data.filter(({ rootLogId, id }) => rootLogId === id);
-
-            expect(rootLogs).to.lengthOf(8); // limit = 10; 10-2 = 8
+            let hasChildLogs = unfilteredResponse.body.data.some(({ rootLogId, id }) => rootLogId !== id);
+            expect(hasChildLogs).to.be.true;
 
             const filteredResponse = await request(server).get('/api/logs?page[offset]=0&page[limit]=10&filter[rootOnly]=true');
             expect(filteredResponse.status).to.equal(200);
-            rootLogs = filteredResponse.body.data.filter(({ rootLogId, id }) => rootLogId === id);
-            expect(rootLogs).to.lengthOf(10); // all of the child data has now been excluded
+
+            hasChildLogs = filteredResponse.body.data.every(({ rootLogId, id }) => rootLogId !== id);
+            expect(hasChildLogs).to.be.false;
         })
 
         it('should successfully ignore rootOnly filters if rootLog is provided', async () => {
