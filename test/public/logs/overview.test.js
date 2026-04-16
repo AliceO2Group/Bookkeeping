@@ -485,13 +485,13 @@ module.exports = () => {
 
         it('can filter by run number', async () => {
             // Insert some text into the filter
-            await fillInput(page, '#runsFilterText', '1, 2', ['change']);
+            await fillInput(page, '.runNumbers-filter', '1, 2', ['change']);
             await waitForTableLength(page, 2);
             await resetFilters(page);
 
             await waitForTableLength(page, 10);
 
-            await fillInput(page, '#runsFilterText', '1234567890', ['change']);
+            await fillInput(page, '.runNumbers-filter', '1234567890', ['change']);
             await waitForEmptyTable(page);
         });
 
