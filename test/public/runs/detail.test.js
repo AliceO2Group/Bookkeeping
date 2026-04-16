@@ -54,7 +54,7 @@ const banIconPath =
  */
 const goToRunDetails = async (page, runNumber) => {
     await waitForNavigation(page, () => pressElement(page, '#run-overview'));
-    await fillInput(page, '.runNumbers-filter`', `${runNumber},${runNumber}`, ['change']);
+    await fillInput(page, '.runNumbers-textFilter', `${runNumber},${runNumber}`, ['change']);
     await waitForTableLength(page, 1);
     return waitForNavigation(page, () => pressElement(page, `a[href="?page=run-detail&runNumber=${runNumber}"]`));
 };

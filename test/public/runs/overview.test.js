@@ -671,7 +671,7 @@ module.exports = () => {
             };
 
             // First filter validation on the main page.
-            await filterOnRun('#runOverviewFilter .runNumbers-filter');
+            await filterOnRun('#runOverviewFilter .runNumbers-textFilter');
             // Validate if the filter tab value is equal to the main page value.
             await expectInputValue(page, filterPanelRunNumbersInputSelector, inputValue);
             await resetFilters(page);
@@ -698,7 +698,7 @@ module.exports = () => {
                 await expectColumnValues(page, 'runNumber', ['10']);
             };
 
-            await filterOnRun('#runOverviewFilter .runNumbers-filter');
+            await filterOnRun('#runOverviewFilter .runNumbers-textFilter');
             await expectInputValue(page, filterPanelRunNumbersInputSelector, inputValue);
             await resetFilters(page);
             await filterOnRun(filterPanelRunNumbersInputSelector);
