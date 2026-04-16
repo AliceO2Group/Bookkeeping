@@ -706,7 +706,7 @@ module.exports = () => {
 
         it('should successfully filter on a list of fill numbers and inform the user about it', async () => {
             await page.evaluate(() => window.model.disableInputDebounce());
-            const filterInputSelector = '.fill-numbers-filter';
+            const filterInputSelector = '.fillNumbers-textFilter';
             expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 7966, 7954, 7948...');
 
             await fillInput(page, filterInputSelector, '1, 3', ['change']);
@@ -714,7 +714,7 @@ module.exports = () => {
         });
 
         it('should successfully filter on a list of environment ids and inform the user about it', async () => {
-            const filterInputSelector = '.environment-ids-filter';
+            const filterInputSelector = '.environmentIds-textFilter';
             expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. Dxi029djX, TDI59So3d...');
 
             await fillInput(page, filterInputSelector, 'Dxi029djX, TDI59So3d', ['change']);

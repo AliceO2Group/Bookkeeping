@@ -364,10 +364,10 @@ module.exports = () => {
         })
 
         it('can filter by log title', async () => {
-            await fillInput(page, '#titleFilterText', 'first', ['change']);
+            await fillInput(page, '.title-textFilter', 'first', ['change']);
             await waitForTableLength(page, 1);
 
-            await fillInput(page, '#titleFilterText', 'bogusbogusbogus', ['change']);
+            await fillInput(page, '.title-textFilter', 'bogusbogusbogus', ['change']);
             await waitForEmptyTable(page);
         });
 
@@ -384,10 +384,10 @@ module.exports = () => {
         });
 
         it('should successfully provide an input to filter on log content', async () => {
-            await fillInput(page, '#contentFilterText', 'particle', ['change']);
+            await fillInput(page, '.content-textFilter', 'particle', ['change']);
             await waitForTableLength(page, 2);
 
-            await fillInput(page, '#titleFilterText', 'this-content-do-not-exists-anywhere', ['change']);
+            await fillInput(page, '.title-textFilter', 'this-content-do-not-exists-anywhere', ['change']);
             await waitForEmptyTable(page);
         });
 
@@ -485,24 +485,24 @@ module.exports = () => {
 
         it('can filter by run number', async () => {
             // Insert some text into the filter
-            await fillInput(page, '.runNumbers-filter', '1, 2', ['change']);
+            await fillInput(page, '.runNumbers-textFilter', '1, 2', ['change']);
             await waitForTableLength(page, 2);
             await resetFilters(page);
 
             await waitForTableLength(page, 10);
 
-            await fillInput(page, '.runNumbers-filter', '1234567890', ['change']);
+            await fillInput(page, '.runNumbers-textFilter', '1234567890', ['change']);
             await waitForEmptyTable(page);
         });
 
         it('can filter by lhc fill number', async () => {
-            await fillInput(page, '#lhcFillsFilterText', '1, 6', ['change']);
+            await fillInput(page, '.fillNumbers-textFilter', '1, 6', ['change']);
             await waitForTableLength(page, 1);
             await resetFilters(page);
 
             await waitForTableLength(page, 10);
 
-            await fillInput(page, '#lhcFillsFilterText', '1234567890', ['change']);
+            await fillInput(page, '.fillNumbers-textFilter', '1234567890', ['change']);
             await waitForEmptyTable(page);
         });
     })
