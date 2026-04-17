@@ -831,7 +831,7 @@ module.exports = () => {
                 query: {
                     filter: {
                         dataPassIds,
-                        detectorsQc: {  '_1': { notBadFraction: { operator: '<', limit: 0.7 } } },
+                        detectorsQcNotBadFraction: {  '_1': { operator: '<', limit: 0.7 } },
                     },
                 },
             });
@@ -843,7 +843,7 @@ module.exports = () => {
                 query: {
                     filter: {
                         dataPassIds,
-                        detectorsQc: {  '_1': { notBadFraction: { operator: '<', limit: 0.8 } } },
+                        detectorsQcNotBadFraction: {  '_1': { operator: '<', limit: 0.8 } },
                     },
                 },
             });
@@ -855,7 +855,7 @@ module.exports = () => {
                 query: {
                     filter: {
                         dataPassIds,
-                        detectorsQc: {  '_1': { notBadFraction: { operator: '<', limit: 0.9 } }, mcReproducibleAsNotBad: true },
+                        detectorsQcNotBadFraction: {  '_1': { operator: '<', limit: 0.9 } }, mcReproducibleAsNotBad: true,
                     },
                 },
             });
@@ -867,9 +867,10 @@ module.exports = () => {
                 query: {
                     filter: {
                         dataPassIds,
-                        detectorsQc: {
-                            '_2': { notBadFraction: { operator: '>', limit: 0.8 } },
-                            '_1': { notBadFraction: {operator: '<', limit: 0.8 } },
+                        detectorsQcNotBadFraction:
+                        {
+                            '_2': { operator: '>', limit: 0.8 },
+                            '_1': { operator: '<', limit: 0.8 },
                         },
                     },
                 },
