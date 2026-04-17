@@ -30,7 +30,7 @@
     "@grpc/grpc-js": "1.14.0",
     "@grpc/proto-loader": "0.8.0",
     "cls-hooked": "4.2.2",
-    "d3": "7.8.5",
+    "d3": "7.9.0",
     "deepmerge": "4.3.0",
     "dotenv": "17.3.1",
     "joi": "18.0.0",
@@ -51,7 +51,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@stylistic/eslint-plugin-js": "^4.4.1",
-    "@types/d3": "7.4.0",
+    "@types/d3": "7.4.3",
     "chai": "4.5.0",
     "date-and-time": "3.6.0",
     "eslint": "^9.37.0",
