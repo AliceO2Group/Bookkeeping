@@ -32,7 +32,7 @@
     "cls-hooked": "4.2.2",
     "d3": "7.9.0",
     "deepmerge": "4.3.0",
-    "dotenv": "17.3.1",
+    "dotenv": "17.4.2",
     "joi": "18.1.2",
     "kafkajs": "2.2.0",
     "mariadb": "3.0.0",
