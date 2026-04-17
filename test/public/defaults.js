@@ -275,12 +275,26 @@ exports.waitForNavigation = waitForNavigation;
  * @returns {Promise} Whether the element was clickable or not.
  */
 module.exports.pressElement = async (page, selector, jsClick = false) => {
-    const elementHandler = await page.waitForSelector(selector);
+    await page.waitForFunction(
+        (sel, isJsClick) => {
+            const element = document.querySelector(sel);
 
-    if (jsClick) {
-        await elementHandler.evaluate((element) => element.click());
-    } else {
-        await elementHandler.click(selector);
+            if (!element) {
+                return false;
+            }
+            // Moving the click to outside the function causes it to fail for unknown reasons
+            if (isJsClick) {
+                element.click();
+            }
+
+            return true;
+        },
+        {},
+        selector, jsClick
+    );
+
+    if (!jsClick) {
+        await page.click(selector);
     }
 };
 
@@ -855,10 +869,10 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
  * @return {Promise<void>} resolve once data was successfully validated
  */
 module.exports.validateTableData = async (page, validators) => {
-    await page.waitForSelector('table tbody');
     for (const [columnId, validator] of validators) {
+        await page.waitForSelector(`table tbody .column-${columnId}`);
+
         const columnData = await getColumnCellsInnerTexts(page, columnId);
-        expect(columnData, `Too few values for column ${columnId} or there is no such column`).to.be.length.greaterThan(0);
         expect(
             columnData.every((cellData) => validator(cellData)),
             `Invalid data in column ${columnId}: (${columnData})`,
@@ -977,3 +991,14 @@ module.exports.resetFilters = async (page) => {
         { timeout: 5000 },
     );
 };
+
+/**
+ * Fuction that waits for a button to become active
+ * @param {puppeteer.page} page page handler
+ * @param {string} selector Css selector for the button.
+ */
+module.exports.waitForButtonToBecomeActive = async (page, selector) => await page.waitForFunction((sel) => {
+        const button = document.querySelector(sel);
+        return button && !button.disabled;
+    }, {}, selector);
+

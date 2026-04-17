@@ -407,7 +407,7 @@ module.exports = () => {
         expect(exportContent.trim()).to.be.eql([
             'runNumber;CPV;VTX',
             '108;"";""',
-            '107;"Good (from: 1565290800000 to: 1565359260000) | Limited Acceptance MC Reproducible (from: 1565269140000 to: 1565290800000)";""',
+            '107;"Limited Acceptance MC Reproducible (from: 1565269140000 to: 1565290800000) | Good (from: 1565290800000 to: 1565359260000)";""',
             '106;"Limited Acceptance MC Reproducible (from: 1565304200000 to: 1565324200000) | Limited acceptance (from: 1565329200000 to: 1565334200000) | Bad (from: 1565339200000 to: 1565344200000)";"Good (from: 1565269200000 to: 1565304200000) | Good (from: 1565324200000 to: 1565359200000)"',
         ].join('\r\n'));
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
@@ -423,7 +423,6 @@ module.exports = () => {
         await waitForTableLength(page, 2);
         await expectColumnValues(page, 'runNumber', ['108', '107']);
 
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await waitForTableLength(page, 3);
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
@@ -438,7 +437,6 @@ module.exports = () => {
         await pressElement(page, '#detector-filter-dropdown-option-CPV', true);
         await expectColumnValues(page, 'runNumber', ['2', '1']);
 
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
@@ -454,8 +452,6 @@ module.exports = () => {
 
         await expectColumnValues(page, 'runNumber', ['106']);
 
-        await page.waitForSelector('#openFilterToggle');
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
@@ -477,7 +473,6 @@ module.exports = () => {
 
         await expectColumnValues(page, 'runNumber', ['55', '1']);
 
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
@@ -491,7 +486,6 @@ module.exports = () => {
 
         await expectColumnValues(page, 'runNumber', ['54']);
 
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
     });
@@ -514,7 +508,6 @@ module.exports = () => {
             await fillInput(page, `#${property}-operand`, value, ['change']);
             await expectColumnValues(page, 'runNumber', expectedRuns);
 
-            await pressElement(page, '#openFilterToggle');
             await pressElement(page, '#reset-filters', true);
             await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
         });
@@ -554,7 +547,6 @@ module.exports = () => {
         await fillInput(page, '#muInelasticInteractionRate-operand', 0.03, ['change']);
         await expectColumnValues(page, 'runNumber', ['106']);
 
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
@@ -613,7 +605,6 @@ module.exports = () => {
         it('should successfully disable QC flag creation when data pass is frozen', async () => {
             await waitForTableLength(page, 3);
             await page.waitForSelector('.select-multi-flag', { hidden: true });
-            await pressElement(page, '#actions-dropdown-button .popover-trigger');
             await page.waitForSelector('#set-qc-flags-trigger[disabled]');
             await page.waitForSelector('#row107-ACO-text button[disabled]');
         });
@@ -627,15 +618,9 @@ module.exports = () => {
 
         it('should successfully enable QC flag creation when data pass is un-frozen', async () => {
             await waitForTableLength(page, 3);
-            await pressElement(page, '.select-multi-flag');
-            await pressElement(page, '#actions-dropdown-button .popover-trigger');
-            await page.waitForSelector('#set-qc-flags-trigger[disabled]', { hidden: true });
+            await page.waitForSelector('#set-qc-flags-trigger[disabled]');
             await page.waitForSelector('#set-qc-flags-trigger');
             await page.waitForSelector('#row107-ACO-text a');
-        });
-
-        after(async () => {
-            await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         });
     });
 
@@ -658,8 +643,8 @@ module.exports = () => {
         // Press again actions dropdown to re-trigger render
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         setConfirmationDialogToBeAccepted(page);
-        await pressElement(page, `${popoverSelector} button:nth-child(4)`, true);
         const oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
+        await pressElement(page, `${popoverSelector} button:nth-child(4)`, true);
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await waitForTableLength(page, 3, undefined, oldTable);
         // Processing of data might take a bit of time, but then expect QC flag button to be there

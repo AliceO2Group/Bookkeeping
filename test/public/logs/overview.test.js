@@ -34,9 +34,9 @@ const {
     waitForEmptyTable,
     waitForTableTotalRowsCountToEqual,
     waitForTableFirstRowIndexToEqual,
-    openFilteringPanel,
     resetFilters,
     getPeriodInputsSelectors,
+    openFilteringPanel,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -91,185 +91,8 @@ module.exports = () => {
         await checkColumnBalloon(page, 1, 5);
     });
 
-    it('can filter by log title', async () => {
-        await waitForTableLength(page, 10);
-
-        await openFilteringPanel(page)
-        await fillInput(page, '#titleFilterText', 'first', ['change']);
-        await waitForTableLength(page, 1);
-
-        await fillInput(page, '#titleFilterText', 'bogusbogusbogus', ['change']);
-        await waitForEmptyTable(page);
-        await resetFilters(page);
-    });
-
-    it('should successfully provide an input to filter on log content', async () => {
-        await waitForTableLength(page, 10);
-
-        await fillInput(page, '#contentFilterText', 'particle', ['change']);
-        await waitForTableLength(page, 2);
-
-        await fillInput(page, '#titleFilterText', 'this-content-do-not-exists-anywhere', ['change']);
-        await waitForEmptyTable(page);
-
-        await resetFilters(page);
-    });
-
-    it('can filter by log author', async () => {
-        await waitForTableLength(page, 10);
-
-        await fillInput(page, '#authorFilterText', 'Jane', ['change']);
-        await waitForEmptyTable(page);
-
-        await resetFilters(page);
-
-        await waitForTableLength(page, 10);
-
-        await fillInput(page, '#authorFilterText', 'John', ['change']);
-        await waitForTableLength(page, 5);
-
-        await resetFilters(page);
-    });
-
-    it('should successfully provide an easy-to-access button to filter in/out anonymous logs', async () => {
-        // Close the filter panel
-        await pressElement(page, '#openFilterToggle');
-        await waitForTableTotalRowsCountToEqual(page, 119);
-
-        const authors = await getColumnCellsInnerTexts(page, 'author');
-        expect(authors.some((author) => author === 'Anonymous')).to.be.true;
-
-        await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
-        await waitForTableTotalRowsCountToEqual(page, 117);
-
-        await checkColumnValuesWithRegex(page, 'author', '^Anonymous$', {
-            negation: true,
-        });
-
-        await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
-        await waitForTableTotalRowsCountToEqual(page, 119);
-        await checkColumnValuesWithRegex(page, 'author', '^Anonymous$', {
-            valuesCheckingMode: 'some',
-        });
-    });
-
-    it('can filter by creation date', async () => {
-        await openFilteringPanel(page);
-        
-        const popoverTrigger = '.createdAt-filter .popover-trigger';
-        const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
-
-        await waitForTableTotalRowsCountToEqual(page, 119);
-
-        const { fromDateSelector, toDateSelector, fromTimeSelector, toTimeSelector } = getPeriodInputsSelectors(popOverSelector);
-        
-        const limit = '2020-02-02';
-        
-        await fillInput(page, fromDateSelector, limit, ['change']);
-        await fillInput(page, toDateSelector, limit, ['change']);
-        await fillInput(page, fromTimeSelector, '11:00', ['change']);
-        await fillInput(page, toTimeSelector, '12:00', ['change']);
-
-        await waitForTableLength(page, 1);
-        await openFilteringPanel(page);
-        await resetFilters(page);
-    });
-
-    it('can filter by tags', async () => {
-        await waitForTableTotalRowsCountToEqual(page, 119);
-
-        await pressElement(page, '.tags-filter .dropdown-trigger');
-
-        // Select the second available filter and wait for the changes to be processed
-        const firstCheckboxId = 'tag-dropdown-option-DPG';
-        await pressElement(page, `#${firstCheckboxId}`, true);
-        await waitForTableLength(page, 1);
-
-        // Deselect the filter and wait for the changes to process
-        await pressElement(page, `#${firstCheckboxId}`, true);
-        await waitForTableLength(page, 10);
-
-        // Select the first available filter and the second one at once
-        const secondCheckboxId = 'tag-dropdown-option-FOOD';
-        await pressElement(page, `#${firstCheckboxId}`, true);
-        await pressElement(page, `#${secondCheckboxId}`, true);
-        await waitForEmptyTable(page);
-
-        // Set the filter operation to "OR"
-        await pressElement(page, '#tag-filter-combination-operator-radio-button-or', true);
-        await waitForTableLength(page, 3);
-
-        await resetFilters(page);
-    });
-
-    it('can filter by environments', async () => {
-        await waitForTableLength(page, 10);
-
-        await fillInput(page, '.environments-filter input', '8E4aZTjY', ['change']);
-        await waitForTableLength(page, 3);
-        await resetFilters(page);
-        await waitForTableLength(page, 10);
-
-        await fillInput(page, '.environments-filter input', 'abcdefgh', ['change']);
-        await waitForEmptyTable(page);
-        await resetFilters(page);
-    });
-
-    it('can search for tag in the dropdown', async () => {
-        await pressElement(page, '.tags-filter .dropdown-trigger');
-
-        {
-            await fillInput(page, '#tag-dropdown-search-input', 'food');
-            const popoverTrigger = await page.$('.tags-filter .popover-trigger');
-            const popoverSelector = await getPopoverSelector(popoverTrigger);
-            await page.waitForSelector(`${popoverSelector} .dropdown-option:nth-child(2)`, { hidden: true });
-            const options = await page.$$(`${popoverSelector} .dropdown-option`);
-            expect(await options[0].evaluate((option) => option.innerText)).to.equal('FOOD');
-        }
-        {
-            await fillInput(page, '#tag-dropdown-search-input', 'fOoD');
-            const popoverTrigger = await page.$('.tags-filter .popover-trigger');
-            const popoverSelector = await getPopoverSelector(popoverTrigger);
-            await page.waitForSelector(`${popoverSelector} .dropdown-option:nth-child(2)`, { hidden: true });
-            const options = await page.$$(`${popoverSelector} .dropdown-option`);
-            expect(await options[0].evaluate((option) => option.innerText)).to.equal('FOOD');
-        }
-    });
-
-    it('can filter by run number', async () => {
-        await waitForTableLength(page, 10);
-
-        // Insert some text into the filter
-        await fillInput(page, '#runsFilterText', '1, 2', ['change']);
-        await waitForTableLength(page, 2);
-        await resetFilters(page);
-
-        await waitForTableLength(page, 10);
-
-        await fillInput(page, '#runsFilterText', '1234567890', ['change']);
-        await waitForEmptyTable(page);
-        await resetFilters(page);
-    });
-
-    it('can filter by lhc fill number', async () => {
-        await waitForTableLength(page, 10);
-
-        await fillInput(page, '#lhcFillsFilterText', '1, 6', ['change']);
-        await waitForTableLength(page, 1);
-        await resetFilters(page);
-
-        await waitForTableLength(page, 10);
-
-        await fillInput(page, '#lhcFillsFilterText', '1234567890', ['change']);
-        await waitForEmptyTable(page);
-        await resetFilters(page);
-    });
-
     it('can sort by columns in ascending and descending manners', async () => {
-        await waitForTableLength(page, 10);
-
         // Close the filter panel
-        await pressElement(page, '#openFilterToggle');
         await waitForFirstRowToHaveId(page, 'row119');
 
         await page.waitForSelector('th#title');
@@ -529,4 +352,158 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, `${popoverSelector} a`))
         expectUrlParams(page, { page: 'run-detail', runNumber: 2 })
     });
+
+    describe('Filters', () => {
+        before(async () => {
+            await goToPage(page, 'log-overview');
+        })
+
+        beforeEach(async () => {
+            await resetFilters(page);
+            await waitForTableLength(page, 10);
+        })
+
+        it('can filter by log title', async () => {
+            await fillInput(page, '.title-textFilter', 'first', ['change']);
+            await waitForTableLength(page, 1);
+
+            await fillInput(page, '.title-textFilter', 'bogusbogusbogus', ['change']);
+            await waitForEmptyTable(page);
+        });
+
+        it('can filter by log author', async () => {
+            await fillInput(page, '#authorFilterText', 'Jane', ['change']);
+            await waitForEmptyTable(page);
+
+            await resetFilters(page);
+
+            await waitForTableLength(page, 10);
+
+            await fillInput(page, '#authorFilterText', 'John', ['change']);
+            await waitForTableLength(page, 5);
+        });
+
+        it('should successfully provide an input to filter on log content', async () => {
+            await fillInput(page, '.content-textFilter', 'particle', ['change']);
+            await waitForTableLength(page, 2);
+
+            await fillInput(page, '.title-textFilter', 'this-content-do-not-exists-anywhere', ['change']);
+            await waitForEmptyTable(page);
+        });
+
+        it('should successfully provide an easy-to-access button to filter in/out anonymous logs', async () => {
+            await waitForTableTotalRowsCountToEqual(page, 119);
+            const authors = await getColumnCellsInnerTexts(page, 'author');
+
+            expect(authors.some((author) => author === 'Anonymous')).to.be.true;
+
+            await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
+            await waitForTableTotalRowsCountToEqual(page, 117);
+            await checkColumnValuesWithRegex(page, 'author', '^Anonymous$', {
+                negation: true,
+            });
+
+            await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
+            await waitForTableTotalRowsCountToEqual(page, 119);
+            await checkColumnValuesWithRegex(page, 'author', '^Anonymous$', {
+                valuesCheckingMode: 'some',
+            });
+        });
+
+        it('can filter by creation date', async () => {
+            const popoverTrigger = '.createdAt-filter .popover-trigger';
+            const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
+
+            await waitForTableTotalRowsCountToEqual(page, 119);
+
+            const { fromDateSelector, toDateSelector, fromTimeSelector, toTimeSelector } = getPeriodInputsSelectors(popOverSelector);
+            
+            const limit = '2020-02-02';
+            
+            await fillInput(page, fromDateSelector, limit, ['change']);
+            await fillInput(page, toDateSelector, limit, ['change']);
+            await fillInput(page, fromTimeSelector, '11:00', ['change']);
+            await fillInput(page, toTimeSelector, '12:00', ['change']);
+
+            await waitForTableLength(page, 1);
+        });
+
+        it('can filter by tags', async () => {
+            await openFilteringPanel(page);
+            await pressElement(page, '.tags-filter .dropdown-trigger');
+
+            // Select the second available filter and wait for the changes to be processed
+            const firstCheckboxId = 'tag-dropdown-option-DPG';
+            await pressElement(page, `#${firstCheckboxId}`, true);
+            await waitForTableLength(page, 1);
+
+            // Deselect the filter and wait for the changes to process
+            await pressElement(page, `#${firstCheckboxId}`, true);
+            await waitForTableLength(page, 10);
+
+            // Select the first available filter and the second one at once
+            const secondCheckboxId = 'tag-dropdown-option-FOOD';
+            await pressElement(page, `#${firstCheckboxId}`, true);
+            await pressElement(page, `#${secondCheckboxId}`, true);
+            await waitForEmptyTable(page);
+
+            // Set the filter operation to "OR"
+            await pressElement(page, '#tag-filter-combination-operator-radio-button-or', true);
+            await waitForTableLength(page, 3);
+        });
+
+        it('can filter by environments', async () => {
+            await fillInput(page, '.environments-filter input', '8E4aZTjY', ['change']);
+            await waitForTableLength(page, 3);
+            await resetFilters(page);
+            await waitForTableLength(page, 10);
+
+            await fillInput(page, '.environments-filter input', 'abcdefgh', ['change']);
+            await waitForEmptyTable(page);
+        });
+
+        it('can search for tag in the dropdown', async () => {
+            await pressElement(page, '.tags-filter .dropdown-trigger');
+
+            {
+                await fillInput(page, '#tag-dropdown-search-input', 'food');
+                const popoverTrigger = await page.$('.tags-filter .popover-trigger');
+                const popoverSelector = await getPopoverSelector(popoverTrigger);
+                await page.waitForSelector(`${popoverSelector} .dropdown-option:nth-child(2)`, { hidden: true });
+                const options = await page.$$(`${popoverSelector} .dropdown-option`);
+                expect(await options[0].evaluate((option) => option.innerText)).to.equal('FOOD');
+            }
+            {
+                await fillInput(page, '#tag-dropdown-search-input', 'fOoD');
+                const popoverTrigger = await page.$('.tags-filter .popover-trigger');
+                const popoverSelector = await getPopoverSelector(popoverTrigger);
+                await page.waitForSelector(`${popoverSelector} .dropdown-option:nth-child(2)`, { hidden: true });
+                const options = await page.$$(`${popoverSelector} .dropdown-option`);
+                expect(await options[0].evaluate((option) => option.innerText)).to.equal('FOOD');
+            }
+        });
+
+        it('can filter by run number', async () => {
+            // Insert some text into the filter
+            await fillInput(page, '.runNumbers-textFilter', '1, 2', ['change']);
+            await waitForTableLength(page, 2);
+            await resetFilters(page);
+
+            await waitForTableLength(page, 10);
+
+            await fillInput(page, '.runNumbers-textFilter', '1234567890', ['change']);
+            await waitForEmptyTable(page);
+        });
+
+        it('can filter by lhc fill number', async () => {
+            await fillInput(page, '.fillNumbers-textFilter', '1, 6', ['change']);
+            await waitForTableLength(page, 1);
+            await resetFilters(page);
+
+            await waitForTableLength(page, 10);
+
+            await fillInput(page, '.fillNumbers-textFilter', '1234567890', ['change']);
+            await waitForEmptyTable(page);
+        });
+    })
 };
