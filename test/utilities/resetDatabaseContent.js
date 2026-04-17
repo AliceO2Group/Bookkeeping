@@ -12,9 +12,14 @@
  */
 
 const { database } = require('../../lib/application.js');
+const { gaqWorker } = require('../../lib/server/services/gaq/GaqWorker.js');
 
 exports.resetDatabaseContent = async () => {
+    // Pause GAQ worker when resetDatabaseContent() runs in between tests in the different test suites
+    // Otherwise, worker fails as the invalidation table is DROPPED. This avoids an ERROR message appearing in test logs even if the suite passed
+    gaqWorker.pause();
     await database.dropAllTables();
     await database.migrate();
     await database.seed();
+    gaqWorker.resume();
 };
