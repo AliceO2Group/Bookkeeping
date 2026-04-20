@@ -855,7 +855,7 @@ module.exports = () => {
                 query: {
                     filter: {
                         dataPassIds,
-                        detectorsQcNotBadFraction: {  '_1': { operator: '<', limit: 0.9 } }, mcReproducibleAsNotBad: true,
+                        detectorsQcNotBadFraction: {  '_1': { operator: '<', limit: 0.9 }, mcReproducibleAsNotBad: true },
                     },
                 },
             });
