@@ -454,11 +454,11 @@ module.exports = () => {
             }
         });
 
-        it('should successfully filter by detectors notBadFraction', async () => {
+        it('should successfully filter by detectorsQcNotBadFraction', async () => {
             const dataPassId = 1;
             {
                 const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}`
-                        + '&filter[detectorsQc][_1][notBadFraction][operator]=>&filter[detectorsQc][_1][notBadFraction][limit]=0.7');
+                        + '&filter[detectorsQcNotBadFraction][_1][operator]=>&filter[detectorsQcNotBadFraction][_1][limit]=0.7');
 
                 expect(response.status).to.equal(200);
                 const { data: runs } = response.body;
@@ -468,7 +468,7 @@ module.exports = () => {
             }
             {
                 const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}`
-                        + '&filter[detectorsQc][_1][notBadFraction][operator]=<&filter[detectorsQc][_1][notBadFraction][limit]=0.9&filter[detectorsQc][mcReproducibleAsNotBad]=true');
+                        + '&filter[detectorsQcNotBadFraction][_1][operator]=<&filter[detectorsQcNotBadFraction][_1][limit]=0.9&filter[detectorsQcNotBadFraction][mcReproducibleAsNotBad]=true');
 
                 expect(response.status).to.equal(200);
                 const { data: runs } = response.body;
@@ -478,8 +478,8 @@ module.exports = () => {
             }
                         {
                 const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}`
-                        + '&filter[detectorsQc][_1][notBadFraction][operator]=<&filter[detectorsQc][_1][notBadFraction][limit]=0.7'
-                        + '&filter[detectorsQc][_16][notBadFraction][operator]=>&filter[detectorsQc][_16][notBadFraction][limit]=0.9'
+                        + '&filter[detectorsQcNotBadFraction][_1][operator]=<&filter[detectorsQcNotBadFraction][_1][limit]=0.7'
+                        + '&filter[detectorsQcNotBadFraction][_16][operator]=>&filter[detectorsQcNotBadFraction][_16][limit]=0.9'
                     );
 
                 expect(response.status).to.equal(200);

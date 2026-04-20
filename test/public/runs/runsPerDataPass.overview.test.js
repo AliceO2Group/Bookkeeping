@@ -516,8 +516,6 @@ module.exports = () => {
     it('should successfully apply gaqNotBadFraction filters', async () => {
         await navigateToRunsPerDataPass(page, 2, 1, 3);
 
-        await pressElement(page, '#openFilterToggle', true);
-
         await page.waitForSelector('#gaqNotBadFraction-operator');
         await page.select('#gaqNotBadFraction-operator', '<=');
         await fillInput(page, '#gaqNotBadFraction-operand', '80', ['change']);
@@ -526,7 +524,6 @@ module.exports = () => {
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
         await expectColumnValues(page, 'runNumber', []);
 
-        await pressElement(page, '#openFilterToggle', true);
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
@@ -535,12 +532,8 @@ module.exports = () => {
         await page.waitForSelector('#detectorsQc-for-1-notBadFraction-operator');
         await page.select('#detectorsQc-for-1-notBadFraction-operator', '<=');
         await fillInput(page, '#detectorsQc-for-1-notBadFraction-operand', '90', ['change']);
-        await expectColumnValues(page, 'runNumber', ['106']);
-
-        await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
         await expectColumnValues(page, 'runNumber', ['107', '106']);
 
-        await pressElement(page, '#openFilterToggle', true);
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
