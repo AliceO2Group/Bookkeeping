@@ -311,6 +311,23 @@ module.exports = () => {
             expect(data.map(({ runNumber }) => runNumber)).to.have.all.members([1, 2, 55, 49, 54, 56, 105]);
         });
 
+        it('should return 400 if GAQ notBadFraction is used with multiple dataPassIds', (done) => {
+            request(server)
+                .get('/api/runs?filter[dataPassIds][]=2&filter[dataPassIds][]=3&filter[gaq][notBadFraction][gt]=0.5')
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    expect(errors[0].detail).to.equal('Filtering by GAQ is enabled only when filtering with one dataPassId');
+
+                    done();
+                });
+        });
+
         it('should successfully filter on simulation pass id', async () => {
             const response = await request(server).get('/api/runs?filter[simulationPassIds][]=1');
             expect(response.status).to.equal(200);
