@@ -33,7 +33,7 @@ module.exports = () => {
 
     const getQueryParameters = (page) => Object.fromEntries(new URL(page.url()).searchParams.entries());
 
-    it('Filters from LogsOverview should be set to the URL', async () => {
+    it('should set filters from LogsOverview to the URL', async () => {
         await goToPage(page, 'log-overview');
         const firstCheckboxId = 'tag-dropdown-option-DPG';
         const popoverTrigger = '.createdAt-filter .popover-trigger';
@@ -70,6 +70,37 @@ module.exports = () => {
             "filter[fillNumbers]": "1, 6",
             "filter[created][from]": "1580641200000",
             "filter[created][to]": "1580644800000"
+        });
+    });
+
+    it('should set filters from EnvironmentsOverview to the URL', async () => {
+        await goToPage(page, 'env-overview');
+        const popoverTrigger = '.createdAt-filter .popover-trigger';
+
+        await page.waitForSelector(popoverTrigger);
+        await openFilteringPanel(page);
+
+        const createdAtPopoverSelector = await getPopoverSelector(await page.$(popoverTrigger));
+        const periodInputsSelectors = getPeriodInputsSelectors(createdAtPopoverSelector);
+
+        await fillInput(page, '.runs-filter input', '10', ['change']);
+        await fillInput(page, '.id-filter input', 'Dxi029djX, TDI59So3d', ['change']);
+        await pressElement(page, '#checkboxes-checkbox-DESTROYED');
+        await fillInput(page, '.historyItems-filter input', 'C-R-D-X', ['change']);
+        await fillInput(page, periodInputsSelectors.fromDateSelector, '2019-08-09', ['change']);
+        await fillInput(page, periodInputsSelectors.toDateSelector, '2019-08-10', ['change']);
+        await fillInput(page, periodInputsSelectors.fromTimeSelector, '00:00', ['change']);
+        await fillInput(page, periodInputsSelectors.toTimeSelector, '23:59', ['change']);
+
+        const queryParameters = getQueryParameters(page);
+        expect(queryParameters).to.deep.equal({
+            "page": "env-overview",
+            "filter[created][from]": "1565308800000",
+            "filter[created][to]": "1565481540000",
+            "filter[runNumbers]": "10",
+            "filter[statusHistory]": "C-R-D-X",
+            "filter[currentStatus]": "DESTROYED",
+            "filter[ids]": "Dxi029djX, TDI59So3d"
         });
     });
 
