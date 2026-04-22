@@ -108,9 +108,7 @@ module.exports = () => {
     it('should set filters from LhcFillsOverview to the URL', async () => {
         await goToPage(page, 'lhc-fill-overview');
         await waitForTableLength(page, 5);
-        const filterSBDurationOperator= '#beam-duration-filter-operator';
         const filterSBDurationOperand= '#beam-duration-filter-operand';
-        const filterRunDurationOperator= '#run-duration-filter-operator';
         const filterRunDurationOperand= '#run-duration-filter-operand';
         const filterBeamTypeP_Pb = '#beam-types-checkbox-p-Pb';
         const sbEndPopoverTrigger = '.stableBeamsEnd-filter .popover-trigger';
@@ -133,9 +131,7 @@ module.exports = () => {
         } = getPeriodInputsSelectors(sbEndPopOverSelector);
 
         await openFilteringPanel(page);
-        await page.select(filterSBDurationOperator, '>=');
         await fillInput(page, filterSBDurationOperand, '00:01:40', ['change']);
-        await page.select(filterRunDurationOperator, '<=');
         await fillInput(page, filterRunDurationOperand, '00:00:00', ['change']);
         await pressElement(page, filterBeamTypeP_Pb);
         await fillInput(page, sbStartFromDateSelector, '2019-08-08', ['change']);
@@ -151,9 +147,9 @@ module.exports = () => {
         const queryParameters = getQueryParameters(page);
         expect(queryParameters).to.deep.equal({
             "page": "lhc-fill-overview",
-            "filter[beamDuration][operator]": ">=",
+            "filter[beamDuration][operator]": "=",
             "filter[beamDuration][limit]": "00:01:40",
-            "filter[runDuration][operator]": "<=",
+            "filter[runDuration][operator]": "=",
             "filter[runDuration][limit]": "00:00:00",
             "filter[hasStableBeams]": "true",
             "filter[stableBeamsEnd][from]": "1647910800000",
@@ -162,6 +158,82 @@ module.exports = () => {
             "filter[stableBeamsStart][to]": "1565265600000",
             "filter[beamTypes]": "p-Pb",
             "filter[schemeName]": "Single_12b_8_1024_8_2018"
+        });
+    });
+
+    it('should set filters from runsOverview to the URL', async () => {
+        await goToPage(page, 'lhc-fill-overview');
+        await goToPage(page, 'run-overview');
+        const o2StartPopoverSelector = await getPopoverSelector(await page.$('.timeO2Start-filter .popover-trigger'));
+        const { fromTimeSelector, toTimeSelector, fromDateSelector, toDateSelector } = getPeriodInputsSelectors(o2StartPopoverSelector);
+        const popoverSelector = await getPopoverSelector(await page.$('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
+
+        await openFilteringPanel(page);
+        await pressElement(page, '#detector-filter-dropdown-option-ITS', true);
+        await pressElement(page, '#tag-dropdown-option-FOOD', true);
+        await pressElement(page, '#run-definition-checkbox-PHYSICS', true);
+        await pressElement(page, '.timeO2Start-filter .popover-trigger');
+        await fillInput(page, fromTimeSelector, '11:11', ['change']);
+        await fillInput(page, toTimeSelector, '14:00', ['change']);
+        await fillInput(page, fromDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, toDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, '#duration-operand', '1500', ['change']);
+        await pressElement(page, `${popoverSelector} .dropdown-option:last-child`, true);
+        await pressElement(page, '#checkboxes-checkbox-bad');
+        await pressElement(page, '#triggerValue-checkbox-OFF');
+        await fillInput(page, '#runOverviewFilter .runNumbers-textFilter', '101');
+        await fillInput(page, '.fillNumbers-textFilter', '1, 3', ['change']);
+        await fillInput(page, '.environmentIds-textFilter', 'Dxi029djX, TDI59So3d', ['change']);
+        await pressElement(page, '#run-types-dropdown-option-2', true);
+        await pressElement(page, '#beam-mode-dropdown-option-NO\\ BEAM', true);
+        await fillInput(page, '#nDetectors-operand', '1', ['change']);
+        await fillInput(page, '#nFlps-operand', '10', ['change']);
+        await fillInput(page, '#nEpns-operand', '10', ['change']);
+        await fillInput(page, '#ctfFileCount-operand', '1', ['change']);
+        await fillInput(page, '#tfFileCount-operand', '1', ['change']);
+        await fillInput(page, '#otherFileCount-operand', '1', ['change']);
+        await pressElement(page, '#epnFilterRadioOFF', true);
+        await page.select('#eorCategories', 'DETECTORS');
+        await page.select('#eorTitles', 'CPV');
+        await fillInput(page, '#eorDescription', 'some', ['change']);
+
+        const queryParameters = getQueryParameters(page);
+        expect(queryParameters).to.deep.equal({
+            "page": "run-overview",
+            "filter[runNumbers]": "101",
+            "filter[detectors][operator]": "and",
+            "filter[detectors][values]": "ITS",
+            "filter[tags][values]": "FOOD",
+            "filter[tags][operation]": "and",
+            "filter[fillNumbers]": "1, 3",
+            "filter[o2start][from]": "1612350660000",
+            "filter[o2start][to]": "1612360800000",
+            "filter[definitions]": "PHYSICS",
+            "filter[runDuration][operator]": "=",
+            "filter[runDuration][limit]": "90000000",
+            "filter[environmentIds]": "Dxi029djX, TDI59So3d",
+            "filter[runTypes][]": "2",
+            "filter[beamModes][]": "NO BEAM",
+            "filter[runQualities]": "bad",
+            "filter[nDetectors][operator]": "=",
+            "filter[nDetectors][limit]": "1",
+            "filter[nEpns][operator]": "=",
+            "filter[nEpns][limit]": "10",
+            "filter[nFlps][operator]": "=",
+            "filter[nFlps][limit]": "10",
+            "filter[ctfFileCount][operator]": "=",
+            "filter[ctfFileCount][limit]": "1",
+            "filter[tfFileCount][operator]": "=",
+            "filter[tfFileCount][limit]": "1",
+            "filter[otherFileCount][operator]": "=",
+            "filter[otherFileCount][limit]": "1",
+            "filter[eorReason][category]": "DETECTORS",
+            "filter[eorReason][title]": "CPV",
+            "filter[eorReason][description]": "some",
+            "filter[magnets][l3]": "30003",
+            "filter[magnets][dipole]": "0",
+            "filter[epn]": "false",
+            "filter[triggerValues]": "OFF"
         });
     });
 
