@@ -312,8 +312,9 @@ module.exports = () => {
         });
 
         it('should return 400 if GAQ notBadFraction is used with multiple dataPassIds', (done) => {
+            const url = '/api/runs?filter[dataPassIds][]=2&filter[dataPassIds][]=3&filter[gaq][notBadFraction][operator]==&filter[gaq][notBadFraction][limit]=0.5';
             request(server)
-                .get('/api/runs?filter[dataPassIds][]=2&filter[dataPassIds][]=3&filter[gaq][notBadFraction][gt]=0.5')
+                .get(url)
                 .expect(400)
                 .end((err, res) => {
                     if (err) {
