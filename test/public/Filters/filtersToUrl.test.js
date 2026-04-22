@@ -21,6 +21,7 @@ const {
     getPeriodInputsSelectors,
     pressElement,
     openFilteringPanel,
+    waitForTableLength,
 } = require('../defaults.js');
 
 module.exports = () => {
@@ -101,6 +102,66 @@ module.exports = () => {
             "filter[statusHistory]": "C-R-D-X",
             "filter[currentStatus]": "DESTROYED",
             "filter[ids]": "Dxi029djX, TDI59So3d"
+        });
+    });
+
+    it('should set filters from LhcFillsOverview to the URL', async () => {
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        const filterSBDurationOperator= '#beam-duration-filter-operator';
+        const filterSBDurationOperand= '#beam-duration-filter-operand';
+        const filterRunDurationOperator= '#run-duration-filter-operator';
+        const filterRunDurationOperand= '#run-duration-filter-operand';
+        const filterBeamTypeP_Pb = '#beam-types-checkbox-p-Pb';
+        const sbEndPopoverTrigger = '.stableBeamsEnd-filter .popover-trigger';
+        const sbStartPopoverTrigger = '.stableBeamsStart-filter .popover-trigger';
+        const sbStartPopOverSelector = await getPopoverSelector(await page.$(sbStartPopoverTrigger));
+        const sbEndPopOverSelector = await getPopoverSelector(await page.$(sbEndPopoverTrigger));
+        const filterSchemeNameInputField= '.fillingSchemeName-filter input';
+        const {
+            fromDateSelector: sbStartFromDateSelector,
+            toDateSelector: sbStartToDateSelector,
+            fromTimeSelector: sbStartFromTimeSelector,
+            toTimeSelector: sbStartToTimeSelector
+        } = getPeriodInputsSelectors(sbStartPopOverSelector);
+
+        const {
+            fromDateSelector: sbEndFromDateSelector,
+            toDateSelector: sbEndToDateSelector,
+            fromTimeSelector: sbEndFromTimeSelector,
+            toTimeSelector: sbEndToTimeSelector
+        } = getPeriodInputsSelectors(sbEndPopOverSelector);
+
+        await openFilteringPanel(page);
+        await page.select(filterSBDurationOperator, '>=');
+        await fillInput(page, filterSBDurationOperand, '00:01:40', ['change']);
+        await page.select(filterRunDurationOperator, '<=');
+        await fillInput(page, filterRunDurationOperand, '00:00:00', ['change']);
+        await pressElement(page, filterBeamTypeP_Pb);
+        await fillInput(page, sbStartFromDateSelector, '2019-08-08', ['change']);
+        await fillInput(page, sbStartToDateSelector, '2019-08-08', ['change']);
+        await fillInput(page, sbStartFromTimeSelector, '10:00', ['change']);
+        await fillInput(page, sbStartToTimeSelector, '12:00', ['change']);
+        await fillInput(page, sbEndFromDateSelector, '2022-03-22', ['change']);
+        await fillInput(page, sbEndToDateSelector, '2022-03-22', ['change']);
+        await fillInput(page, sbEndFromTimeSelector, '01:00', ['change']);
+        await fillInput(page, sbEndToTimeSelector, '23:59', ['change']);
+        await fillInput(page, filterSchemeNameInputField, 'Single_12b_8_1024_8_2018', ['change']);
+
+        const queryParameters = getQueryParameters(page);
+        expect(queryParameters).to.deep.equal({
+            "page": "lhc-fill-overview",
+            "filter[beamDuration][operator]": ">=",
+            "filter[beamDuration][limit]": "00:01:40",
+            "filter[runDuration][operator]": "<=",
+            "filter[runDuration][limit]": "00:00:00",
+            "filter[hasStableBeams]": "true",
+            "filter[stableBeamsEnd][from]": "1647910800000",
+            "filter[stableBeamsEnd][to]": "1647993540000",
+            "filter[stableBeamsStart][from]": "1565258400000",
+            "filter[stableBeamsStart][to]": "1565265600000",
+            "filter[beamTypes]": "p-Pb",
+            "filter[schemeName]": "Single_12b_8_1024_8_2018"
         });
     });
 
