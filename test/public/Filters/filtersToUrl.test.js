@@ -22,6 +22,7 @@ const {
     pressElement,
     openFilteringPanel,
     waitForTableLength,
+    takeScreenshot,
 } = require('../defaults.js');
 
 module.exports = () => {
@@ -374,14 +375,154 @@ module.exports = () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 1 }});
 
         await fillInput(page, '.name-filter input', 'LHC23k6c', ['input']);
-        await pressElement(page, '#checkboxes-checkbox-test', true);
-
 
         const queryParameters = getQueryParameters(page);
         expect(queryParameters).to.deep.equal({
             "page": "anchored-simulation-passes-overview",
             "dataPassId": "1",
             "filter[names][]": "LHC23k6c"
+        });
+    });
+
+    it('should set filters from RunsPerSimulationPass to the URL', async () => {
+        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 }});
+
+        const dipolePopoverSelector = await getPopoverSelector(await page.$('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
+        const startPopoverSelector = await getPopoverSelector(await page.$('.timeO2Start-filter .popover-trigger'));
+        const endPopoverSelector = await getPopoverSelector(await page.$('.timeO2End-filter .popover-trigger'));
+
+        const {
+            fromDateSelector: startFromDateSelector,
+            toDateSelector: startToDateSelector,
+            fromTimeSelector: startFromTimeSelector,
+            toTimeSelector: startToTimeSelector
+        } = getPeriodInputsSelectors(startPopoverSelector);
+
+        const {
+            fromDateSelector: endFromDateSelector,
+            toDateSelector: endToDateSelector,
+            fromTimeSelector: endFromTimeSelector,
+            toTimeSelector: endToTimeSelector
+        } = getPeriodInputsSelectors(endPopoverSelector);
+
+        await openFilteringPanel(page);
+        await pressElement(page, '.timeO2Start-filter .popover-trigger');
+        await fillInput(page, startFromTimeSelector, '11:11', ['change']);
+        await fillInput(page, startToTimeSelector, '14:00', ['change']);
+        await fillInput(page, startFromDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, startToDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, endFromTimeSelector, '11:11', ['change']);
+        await fillInput(page, endToTimeSelector, '14:00', ['change']);
+        await fillInput(page, endFromDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, endToDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, '.inelasticInteractionRateAtMid-filter input', '1', ['change']);
+        await fillInput(page, '.inelasticInteractionRateAtEnd-filter input', '1', ['change']);
+        await fillInput(page, '.inelasticInteractionRateAtStart-filter input', '1', ['change']);
+        await pressElement(page, `${dipolePopoverSelector} .dropdown-option:last-child`, true);
+        await pressElement(page, '#mcReproducibleAsNotBadToggle', true);
+
+        // These two are detectorQCNotBadFraction[_id] filters. There are a dozen more, but they are all identical hence why only these were tested
+        await fillInput(page, '.QC-SPECIFIC-filter input', '1', ['change']);
+        await fillInput(page, '.ACO-filter input', '1', ['change']);
+
+        const queryParameters = getQueryParameters(page);
+        expect(queryParameters).to.deep.equal({
+            "page": "runs-per-simulation-pass",
+            "simulationPassId": "2",
+            "filter[o2end][from]": "1612350660000",
+            "filter[o2start][from]": "1612350660000",
+            "filter[o2end][to]": "1612360800000",
+            "filter[o2start][to]": "1612360800000",
+            "filter[magnets][l3]": "30003",
+            "filter[magnets][dipole]": "0",
+            "filter[inelasticInteractionRateAtStart][operator]": "=",
+            "filter[inelasticInteractionRateAtStart][limit]": "1",
+            "filter[inelasticInteractionRateAtMid][operator]": "=",
+            "filter[inelasticInteractionRateAtMid][limit]": "1",
+            "filter[inelasticInteractionRateAtEnd][operator]": "=",
+            "filter[inelasticInteractionRateAtEnd][limit]": "1",
+            "filter[detectorsQcNotBadFraction][mcReproducibleAsNotBad]": "true",
+            "filter[detectorsQcNotBadFraction][_20][operator]": "=",
+            "filter[detectorsQcNotBadFraction][_20][limit]": "0.01",
+            "filter[detectorsQcNotBadFraction][_17][operator]": "=",
+            "filter[detectorsQcNotBadFraction][_17][limit]": "0.01"
+        });
+    });
+
+    it('should set filters from RunsPerSimulationPass to the URL', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 1 }});
+
+        const dipolePopoverSelector = await getPopoverSelector(await page.$('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
+        const startPopoverSelector = await getPopoverSelector(await page.$('.timeO2Start-filter .popover-trigger'));
+        const endPopoverSelector = await getPopoverSelector(await page.$('.timeO2End-filter .popover-trigger'));
+
+        const {
+            fromDateSelector: startFromDateSelector,
+            toDateSelector: startToDateSelector,
+            fromTimeSelector: startFromTimeSelector,
+            toTimeSelector: startToTimeSelector
+        } = getPeriodInputsSelectors(startPopoverSelector);
+
+        const {
+            fromDateSelector: endFromDateSelector,
+            toDateSelector: endToDateSelector,
+            fromTimeSelector: endFromTimeSelector,
+            toTimeSelector: endToTimeSelector
+        } = getPeriodInputsSelectors(endPopoverSelector);
+
+        await openFilteringPanel(page);
+        await pressElement(page, '#detector-filter-dropdown-option-ITS', true);
+        await pressElement(page, '#tag-dropdown-option-FOOD', true);
+        await pressElement(page, '.timeO2Start-filter .popover-trigger');
+        await fillInput(page, startFromTimeSelector, '11:11', ['change']);
+        await fillInput(page, startToTimeSelector, '14:00', ['change']);
+        await fillInput(page, startFromDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, startToDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, endFromTimeSelector, '11:11', ['change']);
+        await fillInput(page, endToTimeSelector, '14:00', ['change']);
+        await fillInput(page, endFromDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, endToDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, '#duration-operand', '1500', ['change']);
+        await fillInput(page, '.muInelasticInteractionRate-filter input', '1', ['change']);
+        await fillInput(page, '.inelasticInteractionRateAvg-filter input', '1', ['change']);
+        await fillInput(page, '.globalAggregatedQuality-filter input', '1', ['change']);
+
+        await pressElement(page, `${dipolePopoverSelector} .dropdown-option:last-child`, true);
+        await pressElement(page, '#mcReproducibleAsNotBadToggle', true);
+
+        // These two are detectorQCNotBadFraction[_id] filters. There are a dozen more, but they are all identical hence why only these were tested
+        await fillInput(page, '.QC-SPECIFIC-filter input', '1', ['change']);
+        await fillInput(page, '.ACO-filter input', '1', ['change']);
+
+        const queryParameters = getQueryParameters(page);
+        expect(queryParameters).to.deep.equal({
+            "page": "runs-per-data-pass",
+            "dataPassId": "1",
+            "filter[detectors][operator]": "and",
+            "filter[detectors][values]": "ITS",
+            "filter[tags][values]": "FOOD",
+            "filter[tags][operation]": "and",
+            "filter[o2end][from]": "1612350660000",
+            "filter[o2end][to]": "1612360800000",
+            "filter[o2start][from]": "1612350660000",
+            "filter[o2start][to]": "1612360800000",
+            "filter[runDuration][limit]": "90000000",
+            "filter[runDuration][operator]": "=",
+            "filter[runDuration][limit]": "90000000",
+            "filter[magnets][l3]": "30003",
+            "filter[magnets][dipole]": "0",
+            "filter[muInelasticInteractionRate][operator]": "=",
+            "filter[muInelasticInteractionRate][limit]": "1",
+            "filter[inelasticInteractionRateAvg][operator]": "=",
+            "filter[inelasticInteractionRateAvg][limit]": "1",
+            "filter[detectorsQcNotBadFraction][mcReproducibleAsNotBad]": "true",
+            "filter[detectorsQcNotBadFraction][_20][operator]": "=",
+            "filter[detectorsQcNotBadFraction][_20][limit]": "0.01",
+            "filter[detectorsQcNotBadFraction][_17][operator]": "=",
+            "filter[detectorsQcNotBadFraction][_17][limit]": "0.01",
+            "filter[gaq][notBadFraction][operator]": "=",
+            "filter[gaq][notBadFraction][limit]": "0.01",
+            "filter[gaq][mcReproducibleAsNotBad]": "true"
         });
     });
 
