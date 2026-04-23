@@ -355,5 +355,20 @@ module.exports = () => {
         });
     });
 
+    it('should set filters from AnchoredSimulationPassesOverview to the URL', async () => {
+        await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 1 }});
+
+        await fillInput(page, 'name-filter input', 'LHC23k6c', ['input']);
+        await pressElement(page, '#checkboxes-checkbox-test', true);
+
+
+        const queryParameters = getQueryParameters(page);
+        expect(queryParameters).to.deep.equal({
+            "page": "anchored-simulation-passes-overview",
+            "dataPassId": "1",
+            "filter[names][]": "LHC23k6c"
+        });
+    });
+
     after(async () => await defaultAfter(page, browser));
 }
