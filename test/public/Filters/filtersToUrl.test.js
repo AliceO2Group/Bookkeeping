@@ -355,10 +355,25 @@ module.exports = () => {
         });
     });
 
+    it('should set filters from DataPassesPerSimulationPassOverview to the URL', async () => {
+        await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 }});
+
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1', ['change']);
+        await pressElement(page, '#checkboxes-checkbox-test', true);
+
+        const queryParameters = getQueryParameters(page);
+        expect(queryParameters).to.deep.equal({
+            "page": "data-passes-per-simulation-pass-overview",
+            "simulationPassId": "1",
+            "filter[names][]": "LHC22b_apass1",
+            "filter[include][byName]": "test"
+        });
+    });
+
     it('should set filters from AnchoredSimulationPassesOverview to the URL', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 1 }});
 
-        await fillInput(page, 'name-filter input', 'LHC23k6c', ['input']);
+        await fillInput(page, '.name-filter input', 'LHC23k6c', ['input']);
         await pressElement(page, '#checkboxes-checkbox-test', true);
 
 
