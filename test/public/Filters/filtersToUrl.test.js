@@ -339,5 +339,21 @@ module.exports = () => {
         });
     });
 
+    it('should set filters from DataPassesPerLhcPeriodOverview to the URL', async () => {
+        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 }});
+
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1', ['change']);
+        await pressElement(page, '#checkboxes-checkbox-test', true);
+
+
+        const queryParameters = getQueryParameters(page);
+        expect(queryParameters).to.deep.equal({
+            "page": "data-passes-per-lhc-period-overview",
+            "lhcPeriodId": "2",
+            "filter[names][]": "LHC22b_apass1",
+            "filter[include][byName]": "test"
+        });
+    });
+
     after(async () => await defaultAfter(page, browser));
 }
