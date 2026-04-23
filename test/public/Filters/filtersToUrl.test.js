@@ -160,21 +160,39 @@ module.exports = () => {
 
     it('should set filters from runsOverview to the URL', async () => {
         await goToPage(page, 'run-overview');
-        const o2StartPopoverSelector = await getPopoverSelector(await page.$('.timeO2Start-filter .popover-trigger'));
-        const { fromTimeSelector, toTimeSelector, fromDateSelector, toDateSelector } = getPeriodInputsSelectors(o2StartPopoverSelector);
-        const popoverSelector = await getPopoverSelector(await page.$('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
+        const dipolePopoverSelector = await getPopoverSelector(await page.$('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
+        const startPopoverSelector = await getPopoverSelector(await page.$('.timeO2Start-filter .popover-trigger'));
+        const endPopoverSelector = await getPopoverSelector(await page.$('.timeO2End-filter .popover-trigger'));
+
+        const {
+            fromDateSelector: startFromDateSelector,
+            toDateSelector: startToDateSelector,
+            fromTimeSelector: startFromTimeSelector,
+            toTimeSelector: startToTimeSelector
+        } = getPeriodInputsSelectors(startPopoverSelector);
+
+        const {
+            fromDateSelector: endFromDateSelector,
+            toDateSelector: endToDateSelector,
+            fromTimeSelector: endFromTimeSelector,
+            toTimeSelector: endToTimeSelector
+        } = getPeriodInputsSelectors(endPopoverSelector);
 
         await openFilteringPanel(page);
         await pressElement(page, '#detector-filter-dropdown-option-ITS', true);
         await pressElement(page, '#tag-dropdown-option-FOOD', true);
         await pressElement(page, '#run-definition-checkbox-PHYSICS', true);
         await pressElement(page, '.timeO2Start-filter .popover-trigger');
-        await fillInput(page, fromTimeSelector, '11:11', ['change']);
-        await fillInput(page, toTimeSelector, '14:00', ['change']);
-        await fillInput(page, fromDateSelector, '2021-02-03', ['change']);
-        await fillInput(page, toDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, startFromTimeSelector, '11:11', ['change']);
+        await fillInput(page, startToTimeSelector, '14:00', ['change']);
+        await fillInput(page, startFromDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, startToDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, endFromTimeSelector, '11:11', ['change']);
+        await fillInput(page, endToTimeSelector, '14:00', ['change']);
+        await fillInput(page, endFromDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, endToDateSelector, '2021-02-03', ['change']);
         await fillInput(page, '#duration-operand', '1500', ['change']);
-        await pressElement(page, `${popoverSelector} .dropdown-option:last-child`, true);
+        await pressElement(page, `${dipolePopoverSelector} .dropdown-option:last-child`, true);
         await pressElement(page, '#checkboxes-checkbox-bad');
         await pressElement(page, '#triggerValue-checkbox-OFF');
         await fillInput(page, '#runOverviewFilter .runNumbers-textFilter', '101');
@@ -204,6 +222,8 @@ module.exports = () => {
             "filter[fillNumbers]": "1, 3",
             "filter[o2start][from]": "1612350660000",
             "filter[o2start][to]": "1612360800000",
+            "filter[o2end][from]": "1612350660000",
+            "filter[o2end][to]": "1612360800000",
             "filter[definitions]": "PHYSICS",
             "filter[runDuration][operator]": "=",
             "filter[runDuration][limit]": "90000000",
@@ -264,19 +284,58 @@ module.exports = () => {
         });
     });
 
-    it.skip('should set filters from runsPerLhcPeriodOverview to the URL', async () => {
-        await goToPage(page, 'runs-per-lhc-period');
+    it('should set filters from runsPerLhcPeriodOverview to the URL', async () => {
+        await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodId: 2 }});
+        const startPopoverSelector = await getPopoverSelector(await page.$('.timeO2Start-filter .popover-trigger'));
+        const endPopoverSelector = await getPopoverSelector(await page.$('.timeO2End-filter .popover-trigger'));
+        const dipolePopoverSelector = await getPopoverSelector(await page.$('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
 
-        await fillInput(page, '.name-filter input[type=text]', 'bad');
-        await fillInput(page, '.method-filter input[type=text]', 'bad');
-        await pressElement(page, '#badFilterRadioBad', true);
+        const {
+            fromDateSelector: startFromDateSelector,
+            toDateSelector: startToDateSelector,
+            fromTimeSelector: startFromTimeSelector,
+            toTimeSelector: startToTimeSelector
+        } = getPeriodInputsSelectors(startPopoverSelector);
+
+        const {
+            fromDateSelector: endFromDateSelector,
+            toDateSelector: endToDateSelector,
+            fromTimeSelector: endFromTimeSelector,
+            toTimeSelector: endToTimeSelector
+        } = getPeriodInputsSelectors(endPopoverSelector);
+
+        await fillInput(page, '#inelasticInteractionRateAvg-operand', '100000', ['change']);
+        await fillInput(page, '#muInelasticInteractionRate-operand', '100000', ['change']);
+        await fillInput(page, '#runOverviewFilter .runNumbers-textFilter', '101');
+        await fillInput(page, '.fillNumbers-textFilter', '1, 3', ['change']);
+
+        await pressElement(page, `${dipolePopoverSelector} .dropdown-option:last-child`, true);
+        await fillInput(page, startFromTimeSelector, '11:11', ['change']);
+        await fillInput(page, startToTimeSelector, '14:00', ['change']);
+        await fillInput(page, startFromDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, startToDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, endFromTimeSelector, '11:11', ['change']);
+        await fillInput(page, endToTimeSelector, '14:00', ['change']);
+        await fillInput(page, endFromDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, endToDateSelector, '2021-02-03', ['change']);
+
 
         const queryParameters = getQueryParameters(page);
         expect(queryParameters).to.deep.equal({
-            "page": "qc-flag-types-overview",
-            "filter[names][]": "bad",
-            "filter[methods][]": "bad",
-            "filter[bad]": "true"
+            "page": "runs-per-lhc-period",
+            "lhcPeriodId": "2",
+            "filter[runNumbers]": "101",
+            "filter[fillNumbers]": "1, 3",
+            "filter[o2end][from]": "1612350660000",
+            "filter[o2end][to]": "1612360800000",
+            "filter[o2start][from]": "1612350660000",
+            "filter[o2start][to]": "1612360800000",
+            "filter[magnets][l3]": "30003",
+            "filter[magnets][dipole]": "0",
+            "filter[muInelasticInteractionRate][operator]": "=",
+            "filter[muInelasticInteractionRate][limit]": "100000",
+            "filter[inelasticInteractionRateAvg][operator]": "=",
+            "filter[inelasticInteractionRateAvg][limit]": "100000"
         });
     });
 
