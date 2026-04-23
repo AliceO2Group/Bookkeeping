@@ -108,9 +108,6 @@ module.exports = () => {
     it('should set filters from LhcFillsOverview to the URL', async () => {
         await goToPage(page, 'lhc-fill-overview');
         await waitForTableLength(page, 5);
-        const filterSBDurationOperand= '#beam-duration-filter-operand';
-        const filterRunDurationOperand= '#run-duration-filter-operand';
-        const filterBeamTypeP_Pb = '#beam-types-checkbox-p-Pb';
         const sbEndPopoverTrigger = '.stableBeamsEnd-filter .popover-trigger';
         const sbStartPopoverTrigger = '.stableBeamsStart-filter .popover-trigger';
         const sbStartPopOverSelector = await getPopoverSelector(await page.$(sbStartPopoverTrigger));
@@ -131,9 +128,9 @@ module.exports = () => {
         } = getPeriodInputsSelectors(sbEndPopOverSelector);
 
         await openFilteringPanel(page);
-        await fillInput(page, filterSBDurationOperand, '00:01:40', ['change']);
-        await fillInput(page, filterRunDurationOperand, '00:00:00', ['change']);
-        await pressElement(page, filterBeamTypeP_Pb);
+        await fillInput(page, '#beam-duration-filter-operand', '00:01:40', ['change']);
+        await fillInput(page, '#run-duration-filter-operand', '00:00:00', ['change']);
+        await pressElement(page, '#beam-types-checkbox-p-Pb');
         await fillInput(page, sbStartFromDateSelector, '2019-08-08', ['change']);
         await fillInput(page, sbStartToDateSelector, '2019-08-08', ['change']);
         await fillInput(page, sbStartFromTimeSelector, '10:00', ['change']);
@@ -162,7 +159,6 @@ module.exports = () => {
     });
 
     it('should set filters from runsOverview to the URL', async () => {
-        await goToPage(page, 'lhc-fill-overview');
         await goToPage(page, 'run-overview');
         const o2StartPopoverSelector = await getPopoverSelector(await page.$('.timeO2Start-filter .popover-trigger'));
         const { fromTimeSelector, toTimeSelector, fromDateSelector, toDateSelector } = getPeriodInputsSelectors(o2StartPopoverSelector);
@@ -234,6 +230,53 @@ module.exports = () => {
             "filter[magnets][dipole]": "0",
             "filter[epn]": "false",
             "filter[triggerValues]": "OFF"
+        });
+    });
+
+    it('should set filters from lhcPriodOverview to the URL', async () => {
+        await goToPage(page, 'lhc-period-overview');
+
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22a');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', '2022');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', 'PbPb');
+        const queryParameters = getQueryParameters(page);
+        expect(queryParameters).to.deep.equal({
+            "page": "lhc-period-overview",
+            "filter[names][]": "LHC22a",
+            "filter[years][]": "2022",
+            "filter[pdpBeamTypes][]": "PbPb"
+        });
+    });
+
+    it('should set filters from qcFlagTypesOverview to the URL', async () => {
+        await goToPage(page, 'qc-flag-types-overview');
+
+        await fillInput(page, '.name-filter input[type=text]', 'bad');
+        await fillInput(page, '.method-filter input[type=text]', 'bad');
+        await pressElement(page, '#badFilterRadioBad', true);
+
+        const queryParameters = getQueryParameters(page);
+        expect(queryParameters).to.deep.equal({
+            "page": "qc-flag-types-overview",
+            "filter[names][]": "bad",
+            "filter[methods][]": "bad",
+            "filter[bad]": "true"
+        });
+    });
+
+    it.skip('should set filters from runsPerLhcPeriodOverview to the URL', async () => {
+        await goToPage(page, 'runs-per-lhc-period');
+
+        await fillInput(page, '.name-filter input[type=text]', 'bad');
+        await fillInput(page, '.method-filter input[type=text]', 'bad');
+        await pressElement(page, '#badFilterRadioBad', true);
+
+        const queryParameters = getQueryParameters(page);
+        expect(queryParameters).to.deep.equal({
+            "page": "qc-flag-types-overview",
+            "filter[names][]": "bad",
+            "filter[methods][]": "bad",
+            "filter[bad]": "true"
         });
     });
 
