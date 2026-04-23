@@ -22,7 +22,6 @@ const {
     pressElement,
     openFilteringPanel,
     waitForTableLength,
-    takeScreenshot,
 } = require('../defaults.js');
 
 module.exports = () => {
@@ -508,7 +507,6 @@ module.exports = () => {
             "filter[o2start][to]": "1612360800000",
             "filter[runDuration][limit]": "90000000",
             "filter[runDuration][operator]": "=",
-            "filter[runDuration][limit]": "90000000",
             "filter[magnets][l3]": "30003",
             "filter[magnets][dipole]": "0",
             "filter[muInelasticInteractionRate][operator]": "=",
