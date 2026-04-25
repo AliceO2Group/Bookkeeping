@@ -228,8 +228,8 @@ module.exports = () => {
             "filter[runDuration][operator]": "=",
             "filter[runDuration][limit]": "90000000",
             "filter[environmentIds]": "Dxi029djX, TDI59So3d",
-            "filter[runTypes][]": "2",
-            "filter[beamModes][]": "NO BEAM",
+            "filter[runTypes]": "2",
+            "filter[beamModes]": "NO BEAM",
             "filter[runQualities]": "bad",
             "filter[nDetectors][operator]": "=",
             "filter[nDetectors][limit]": "1",
@@ -351,7 +351,7 @@ module.exports = () => {
             "page": "data-passes-per-lhc-period-overview",
             "lhcPeriodId": "2",
             "filter[names][]": "LHC22b_apass1",
-            "filter[include][byName]": "test"
+            "filter[permittedNonPhysicsNames]": "test"
         });
     });
 
@@ -366,7 +366,7 @@ module.exports = () => {
             "page": "data-passes-per-simulation-pass-overview",
             "simulationPassId": "1",
             "filter[names][]": "LHC22b_apass1",
-            "filter[include][byName]": "test"
+            "filter[permittedNonPhysicsNames]": "test"
         });
     });
 
