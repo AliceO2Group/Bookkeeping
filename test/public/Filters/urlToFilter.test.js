@@ -11,17 +11,14 @@
  * or submit itself to any jurisdiction.
  */
 
-const { expect } = require('chai');
 const {
     defaultBefore,
     defaultAfter,
-    goToPage,
     fillInput,
     getPopoverSelector,
     getPeriodInputsSelectors,
     pressElement,
     openFilteringPanel,
-    waitForTableLength,
     expectInputValue,
 } = require('../defaults.js');
 
@@ -32,8 +29,6 @@ module.exports = () => {
     before(async () => {
         [page, browser] = await defaultBefore();
     });
-
-    const getQueryParameters = (page) => Object.fromEntries(new URL(page.url()).searchParams.entries());
 
     it('should apply filters from url in logsOverviewPage', async () => {
         const url = 'http://localhost:4000/?page=log-overview&filter[author]=Jane&filter[title]=bogusbogusbogus&filter[content]=particle'+
