@@ -12,7 +12,9 @@
  */
 
 const ToUrlSuite = require('./filtersToUrl.test.js');
+const ToFilterSuite = require('./urlToFilter.test.js');
 
 module.exports = () => {
-    describe('Filters to URL', ToUrlSuite);
+    // describe('Filters to URL', ToUrlSuite);
+    describe('URL to Filters', ToFilterSuite);
 };
