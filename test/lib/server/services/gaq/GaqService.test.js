@@ -72,12 +72,13 @@ module.exports = () => {
             expect(rows).to.have.lengthOf(1);
         });
 
-        it('should not store a summary when there is no coverage data for the run', async () => {
+        it('should store a summary with calculation failed when there is no coverage data for the run', async () => {
             // Run 49 has no QC flags seeded for data pass 1
             await gaqService.calculateAndStoreGaqSummary(dataPassId, 49);
 
             const summary = await findSummary(dataPassId, 49);
-            expect(summary).to.be.null;
+            expect(summary).to.not.be.null;
+            expect(summary.calculationFailed).to.be.true;
         });
     });
 
