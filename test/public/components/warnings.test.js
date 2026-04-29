@@ -16,6 +16,7 @@ const {
     defaultBefore,
     defaultAfter,
     getInnerText,
+    pressElement,
 } = require('../defaults.js');
 
 module.exports = () => {
@@ -32,6 +33,13 @@ module.exports = () => {
         const warningText = await getInnerText('.alert-warning > ul');
 
         expect(warningText).to.equal('Unknown Filters: fake');
+    });
+
+    it('Should remove warnings entry after clicking the x icon', async () => {
+        await pressElement(page, '.alert-warning .btn', true);
+        const warning = await page.$('.alert-warning');
+
+        expect(warning).to.be.null;
     });
 
     after(async () => {
