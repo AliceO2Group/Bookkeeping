@@ -12,7 +12,9 @@
  */
 
 const NavBarSuite = require('./navBar.test')
+const WarningSuite = require('./warnings.test')
 
 module.exports = () => {
     describe('Navbar component', NavBarSuite);
+    describe('Warning component', WarningSuite)
 };
