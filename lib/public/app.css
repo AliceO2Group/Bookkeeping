@@ -718,6 +718,33 @@ label {
     opacity: 0.5;
 }
 
+.active-filters-indicator {
+    border-radius: .25rem;
+    padding: var(--space-xs) var(--space-s) var(--space-xs) var(--space-s);
+    margin: 0 0 0 var(--space-s);
+}
+
+.inactive {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.pulse-green {
+  animation: pulseGreen 2s infinite;
+}
+
+@keyframes pulseGreen {
+  0% {
+    box-shadow: 0 0 0px rgba(102, 255, 7, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(102, 255, 7, 0.9);
+  }
+  100% {
+    box-shadow: 0 0 0px rgba(102, 255, 7, 0.6);
+  }
+}
+
 /**
  * Breakpoints :
  * small :           x <  600 (default styles)
