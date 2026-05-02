@@ -32,6 +32,7 @@ const {
     getPopoverSelector,
     getInnerText,
     getPopoverInnerText,
+    getColumnCellsInnerTexts,
     testTableSortingByColumn,
     setConfirmationDialogToBeAccepted,
     unsetConfirmationDialogActions,
@@ -497,11 +498,13 @@ module.exports = () => {
         await fillInput(page, '#duration-operand', '10', ['change']);
         await waitForTableLength(page, 2);
 
-        await expectColumnValues(page, 'runNumber', ['55', '1']);
+        // Made order-independent assertion as sometimes the run with 55 minutes duration is loaded before the one with 1 minute duration and sometimes the opposite happens, which causes test to fail if exact order is asserted
+        await expectColumnValues(page, 'runNumber', ['55', '1'], { orderMatters: false });
 
         await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
-        await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
+        await waitForTableLength(page, 3);
+        await expectColumnValues(page, 'runNumber', ['55', '2', '1'], { orderMatters: false });
     });
 
     it('should successfully apply alice currents filters', async () => {
