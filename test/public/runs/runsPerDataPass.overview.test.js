@@ -38,11 +38,23 @@ const {
     checkPopoverInnerText,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
+const { repositories: { GaqSummaryRepository, GaqSummaryInvalidationRepository } } = require('../../../lib/database');
 const DataPassRepository = require('../../../lib/database/repositories/DataPassRepository.js');
 const { BkpRoles } = require('../../../lib/domain/enums/BkpRoles.js');
 const { navigateToRunsPerDataPass } = require('./navigationUtils.js');
+const { invalid } = require('joi');
+const { gaqWorker } = require('../../../lib/server/services/gaq/GaqWorker.js');
+
 
 const { expect } = chai;
+
+/**
+ * Wait for a given number of milliseconds
+ * @param {number} ms milliseconds to wait
+ * @return {Promise<void>}
+ */
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 
 const DETECTORS = [
     'CPV',
@@ -74,6 +86,27 @@ module.exports = () => {
             deviceScaleFactor: 1,
         });
         await resetDatabaseContent();
+
+        await GaqSummaryRepository.upsert({
+            dataPassId: 1,
+            runNumber: 106,
+            badRunCoverage: 0,
+            explicitlyNotBadRunCoverage: 0,
+            mcReproducibleCoverage: 0,
+            missingVerificationsCount: 3,
+            undefinedQualityPeriodsCount: 11,
+            calculationFailed: false,
+        });
+        await GaqSummaryRepository.upsert({
+            dataPassId: 1,
+            runNumber: 107,
+            badRunCoverage: 0,
+            explicitlyNotBadRunCoverage: 0.759654,
+            mcReproducibleCoverage: 0.240346,
+            missingVerificationsCount: 3,
+            undefinedQualityPeriodsCount: 0,
+            calculationFailed: false,
+        });
     });
 
     after(async () => {
@@ -602,8 +635,8 @@ module.exports = () => {
             await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
             const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
 
-            await expectInnerText(page, `${popoverSelector} button:nth-child(3)`, 'Freeze the data pass');
-            await pressElement(page, `${popoverSelector} button:nth-child(3)`, true);
+            await expectInnerText(page, `${popoverSelector} button:nth-child(4)`, 'Freeze the data pass');
+            await pressElement(page, `${popoverSelector} button:nth-child(4)`, true);
         });
 
         it('should successfully disable QC flag creation when data pass is frozen', async () => {
@@ -617,8 +650,8 @@ module.exports = () => {
         it('should successfully un-freeze a given data pass', async () => {
             const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
 
-            await expectInnerText(page, `${popoverSelector} button:nth-child(3)`, 'Unfreeze the data pass');
-            await pressElement(page, `${popoverSelector} button:nth-child(3)`);
+            await expectInnerText(page, `${popoverSelector} button:nth-child(4)`, 'Unfreeze the data pass');
+            await pressElement(page, `${popoverSelector} button:nth-child(4)`);
         });
 
         it('should successfully enable QC flag creation when data pass is un-frozen', async () => {
@@ -638,7 +671,7 @@ module.exports = () => {
     it('should successfully not display button to discard all QC flags for the data pass', async () => {
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
-        await page.waitForSelector(`${popoverSelector} button:nth-child(4)`, { hidden: true });
+        await page.waitForSelector(`${popoverSelector} button:nth-child(5)`, { hidden: true });
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
     });
 
@@ -654,7 +687,7 @@ module.exports = () => {
         // Press again actions dropdown to re-trigger render
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         setConfirmationDialogToBeAccepted(page);
-        await pressElement(page, `${popoverSelector} button:nth-child(4)`, true);
+        await pressElement(page, `${popoverSelector} button:nth-child(5)`, true);
         const oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await waitForTableLength(page, 3, undefined, oldTable);
@@ -680,6 +713,141 @@ module.exports = () => {
         await page.waitForSelector('#VTX', { hidden: true });
         await page.waitForSelector('#EVS');
         await page.waitForSelector('#MUD');
+    });
+
+    describe('GAQ summary button', async () => {
+        before(async () => {
+            await page.evaluate((role) => {
+                // eslint-disable-next-line no-undef
+                const session = sessionService.get();
+                session.access = session.access.filter((r) => r !== role);
+            }, BkpRoles.DPG_ASYNC_QC_ADMIN);
+        });
+
+        it('should not display the recalculate GAQ summary button for non-admin users', async () => {
+            await navigateToRunsPerDataPass(page, 2, 1, 3);
+            await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+            await page.waitForSelector('#recalculate-gaq-summary-trigger', { hidden: true });
+            await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+            await page.waitForSelector('[title="Recalculate GAQ for this run"]', { hidden: true });
+        });
+
+        it('should display a secondary GAQ button for runs without a calculated summary', async () => {
+            await navigateToRunsPerDataPass(page, 2, 1, 3);
+
+            // Run 108 has no seeded GAQ summary
+            await page.waitForSelector('#row108-globalAggregatedQuality button');
+            expect(await getPopoverInnerText(await page.waitForSelector('#row108-globalAggregatedQuality .popover-trigger')))
+                .to.be.equal('GAQ summary has not yet been calculated');
+        });
+
+        describe('with DPG_ASYNC_QC_ADMIN role', async () => {
+            before(async () => {
+                await page.evaluate((role) => {
+                    // eslint-disable-next-line no-undef
+                    sessionService.get().token = role;
+                    // eslint-disable-next-line no-undef
+                    sessionService.get().access.push(role);
+                }, BkpRoles.DPG_ASYNC_QC_ADMIN);
+
+                gaqWorker.pause();
+            });
+
+            after(async () => {
+                gaqWorker.resume();
+
+                await page.evaluate((role) => {
+                    // eslint-disable-next-line no-undef
+                    const session = sessionService.get();
+                    session.access = session.access.filter((r) => r !== role);
+                }, BkpRoles.DPG_ASYNC_QC_ADMIN);
+            });
+
+            it('should display the recalculate GAQ summary button for admin users', async () => {
+                await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+                await expectInnerText(page, '#recalculate-gaq-summary-trigger', 'Recalculate GAQ summary');
+                await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+            });
+
+            it('should display a per-row recalculate GAQ button for each run with a GAQ summary', async () => {
+                await page.waitForSelector('#row106 [title="Recalculate GAQ for this run"]');
+                await page.waitForSelector('#row107 [title="Recalculate GAQ for this run"]');
+            });
+
+            describe('GAQ summary invalidation and recalculation', async () => {
+
+                beforeEach(async () => {
+                    await resetDatabaseContent();
+                    await navigateToRunsPerDataPass(page, 2, 1, 3);
+                });
+
+                it('should create GAQ summary invalidation entries when the specific run recalculate button is clicked', async () => {
+                    await expectInnerText(page, '#row107-globalAggregatedQuality', 'GAQ');
+
+                    await pressElement(page, '#row107 [title="Recalculate GAQ for this run"]');
+
+                    // After clicking recalculate, the cell should show a clock icon indicating the summary has been fetched again and we can check db entries
+                    await page.waitForSelector('#row107-globalAggregatedQuality #clock-icon');
+
+                    const allInvalidations = await GaqSummaryInvalidationRepository.findAll({});
+                    expect(allInvalidations).to.have.lengthOf(1);
+                    const invalidatedRunNumbers = allInvalidations.map((i) => i.runNumber);
+                    expect(invalidatedRunNumbers).to.be.eql([107]);
+                });
+
+                it('should create GAQ summary invalidation entries when the recalculate for the whole dataPass button is clicked', async () => {
+                    await expectInnerText(page, '#row107-globalAggregatedQuality', 'GAQ');
+
+                    await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+                    setConfirmationDialogToBeAccepted(page);
+                    await pressElement(page, '#recalculate-gaq-summary-trigger', true);
+                    unsetConfirmationDialogActions(page);
+                    await page.waitForSelector('#row107-globalAggregatedQuality #clock-icon');
+
+                    const allInvalidationsBefore = await GaqSummaryInvalidationRepository.findAll({});
+                    expect(allInvalidationsBefore).to.have.lengthOf(3);
+                    const invalidatedRunNumbers = allInvalidationsBefore.map((i) => i.runNumber);
+                    expect(invalidatedRunNumbers).to.have.members([106, 107, 108]);
+                });
+
+                it('should update the GAQ cell appropriately after each step in the GAQ summary lifecycle', async () => {
+                    await page.waitForSelector('#row107-globalAggregatedQuality #warning-icon');
+                    await expectInnerText(page, '#row107-globalAggregatedQuality', 'GAQ');
+                    
+                    const notYetCalculatedIconPopoverContent = await getPopoverContent(await page.waitForSelector('#row107-globalAggregatedQuality .popover-trigger'));
+                    expect(notYetCalculatedIconPopoverContent).to.equal('GAQ summary has not yet been calculated');
+
+                    await pressElement(page, '#row107 [title="Recalculate GAQ for this run"]');
+
+                    await page.waitForSelector('#row107-globalAggregatedQuality #clock-icon');
+
+                    // Normal popover content executes too fast and grabs the old popover content thus the waitForFunction
+                    await page.waitForFunction(
+                        (triggerSelector, expectedText) => {
+                            const trigger = document.querySelector(triggerSelector);
+                            const key = trigger.dataset.popoverKey;
+
+                            const popover = document.querySelector(`.popover[data-popover-key="${key}"]`);
+                            return popover?.innerText === expectedText;
+                        },
+                        { timeout: 5000 },
+                        '#row107-globalAggregatedQuality .popover-trigger',
+                        'Summary is invalid. New summary will be calculated shortly. Please wait and refresh the page.',
+                    );
+
+                    const invalidatedIconPopoverContent = await getPopoverContent(await page.waitForSelector('#row107-globalAggregatedQuality .popover-trigger'));
+                    expect(invalidatedIconPopoverContent).to.equal('Summary is invalid. New summary will be calculated shortly. Please wait and refresh the page.');
+
+                    await gaqWorker.recalculateGaqSummaries(1);
+
+                    await navigateToRunsPerDataPass(page, 2, 1, 3);
+
+                    await page.waitForSelector('#row107-globalAggregatedQuality #clock-icon', { hidden: true });
+                    await expectInnerText(page, '#row107-globalAggregatedQuality', '76');
+                });
+            
+            });
+        });
     });
 
     
