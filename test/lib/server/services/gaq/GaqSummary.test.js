@@ -13,13 +13,12 @@
 
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
-const { repositories: { GaqSummaryInvalidationRepository } } = require('../../../../../lib/database');
+const { repositories: { GaqSummaryRepository } } = require('../../../../../lib/database');
 const { qcFlagService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagService.js');
 const { gaqDetectorService } = require('../../../../../lib/server/services/gaq/GaqDetectorsService.js');
 const { updateRun } = require('../../../../../lib/server/services/run/updateRun.js');
 
 module.exports = () => {
-    // Test resets the database before running and clears the invalidation table between each case
     before(async () => {
         await resetDatabaseContent();
     });
@@ -38,19 +37,20 @@ module.exports = () => {
      * @return {Promise<void>}
      */
     const expectInvalidation = async (expectedDataPassId, expectedRunNumber, toBeNull = false) => {
-        const invalidation = await GaqSummaryInvalidationRepository.findOne({
+        const summary = await GaqSummaryRepository.findOne({
             where: { dataPassId: expectedDataPassId, runNumber: expectedRunNumber },
         });
         if (toBeNull) {
-            expect(invalidation, `Expected no invalidation for dataPassId=${expectedDataPassId} runNumber=${expectedRunNumber}`).to.be.null;
+            expect(summary?.invalidatedAt, `Expected no invalidation for dataPassId=${expectedDataPassId} runNumber=${expectedRunNumber}`).to.be.null;
         } else {
-            expect(invalidation, `Expected invalidation for dataPassId=${expectedDataPassId} runNumber=${expectedRunNumber}`).to.not.be.null;
+            expect(summary?.invalidatedAt, `Expected invalidation for dataPassId=${expectedDataPassId} runNumber=${expectedRunNumber}`).to.not.be.null;
         }
     };
 
     describe("GAQ Summary Invalidation", async () => {
+        // Resetting the invalidated column between each case
         afterEach(async () => {
-            await GaqSummaryInvalidationRepository.removeAll({ truncate: true });
+            await GaqSummaryRepository.updateAll({ invalidatedAt: null }, { where: {} });
         });
 
         it('should invalidate GAQ summary when a QC flag is created for a data pass', async () => {
@@ -71,7 +71,7 @@ module.exports = () => {
             await expectInvalidation(dataPassId, 100);
 
             // Clear invalidation
-            await GaqSummaryInvalidationRepository.removeAll({ where: { dataPassId, runNumber: 100 } });
+            await GaqSummaryRepository.updateAll({ invalidatedAt: null }, { where: { dataPassId, runNumber: 100 } });
 
             // Verify again to check that no new invalidation is created when the flag is already verified
             await qcFlagService.verifyFlag({ flagId }, relations);
