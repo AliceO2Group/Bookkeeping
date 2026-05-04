@@ -601,7 +601,7 @@ module.exports = () => {
 
         it('Should successfully filter runs by their trigger value', async () => {
             await navigateToRunsOverview(page);
-            const filterInputSelectorPrefix = '#triggerValueCheckbox';
+            const filterInputSelectorPrefix = '#triggerValue-checkbox-';
             const offFilterSelector = `${filterInputSelectorPrefix}OFF`;
             const ltuFilterSelector = `${filterInputSelectorPrefix}LTU`;
 
