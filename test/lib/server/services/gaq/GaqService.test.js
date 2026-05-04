@@ -13,8 +13,9 @@
 
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
-const { repositories: { GaqSummaryRepository, GaqSummaryInvalidationRepository } } = require('../../../../../lib/database');
+const { repositories: { GaqSummaryRepository} } = require('../../../../../lib/database');
 const { gaqService } = require('../../../../../lib/server/services/gaq/GaqService.js');
+const { Op } = require('sequelize');
 
 /**
  * Find the GAQ summary row for a given data pass and run
@@ -32,7 +33,7 @@ const findSummary = (dataPassId, runNumber) => GaqSummaryRepository.findOne({ wh
  * @return {Promise<void>}
  */
 const insertInvalidation = (dataPassId, runNumber, createdAt) =>
-    GaqSummaryInvalidationRepository.insert({ dataPassId, runNumber, createdAt: new Date(createdAt) });
+    GaqSummaryRepository.upsert({ dataPassId, runNumber, invalidatedAt: new Date(createdAt) });
 
 // Tests for GaqService are split between QcFlagService.test.js and GaqSummary.test.js
 // GaqService.test.js (this file) focuses on the summary recalculation and invalidation processing logic
@@ -72,19 +73,19 @@ module.exports = () => {
             expect(rows).to.have.lengthOf(1);
         });
 
-        it('should store a summary with calculation failed when there is no coverage data for the run', async () => {
+        it('should store a summary with notComputable set to true when there is no coverage data for the run', async () => {
             // Run 49 has no QC flags seeded for data pass 1
             await gaqService.calculateAndStoreGaqSummary(dataPassId, 49);
 
             const summary = await findSummary(dataPassId, 49);
             expect(summary).to.not.be.null;
-            expect(summary.calculationFailed).to.be.true;
+            expect(summary.notComputable).to.be.true;
         });
     });
 
     describe('popNInvalidSummaryAndRecalculate', () => {
         beforeEach(async () => {
-            await GaqSummaryInvalidationRepository.removeAll({ truncate: true });
+            await GaqSummaryRepository.updateAll({ invalidatedAt: null }, { where: {} });
         });
 
         it('should do nothing when the invalidation table is empty', async () => {
@@ -102,7 +103,7 @@ module.exports = () => {
             // Process only 1 — should pick run 106 (oldest)
             await gaqService.popNInvalidSummaryAndRecalculate(1);
 
-            const remaining = await GaqSummaryInvalidationRepository.findOne({ where: { dataPassId, runNumber: 107 } });
+            const remaining = await GaqSummaryRepository.findOne({ where: { dataPassId, runNumber: 107, invalidatedAt: { [Op.not]: null } } });
             expect(remaining).to.not.be.null;
         });
 
@@ -112,7 +113,7 @@ module.exports = () => {
 
             await gaqService.popNInvalidSummaryAndRecalculate(10);
 
-            const count = await GaqSummaryInvalidationRepository.count({ where: { dataPassId } });
+            const count = await GaqSummaryRepository.count({ where: { dataPassId, invalidatedAt: { [Op.not]: null } } });
             expect(count).to.equal(0);
         });
     });

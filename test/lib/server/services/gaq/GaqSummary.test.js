@@ -88,7 +88,7 @@ module.exports = () => {
 
             // Verify again to check that no new invalidation is created when the flag is already verified
             await qcFlagService.verifyFlag({ flagId }, relations);
-            await expectInvalidation(dataPassId, 100, false);
+            await expectInvalidation(dataPassId, 100, true);
         });
 
         it('should invalidate GAQ summary when a QC flag is deleted for a data pass', async () => {
@@ -154,9 +154,9 @@ module.exports = () => {
             // wait at least 11s, default recalculation period is 10s, for the worker to process the invalidation
             await sleep(11000);
 
-            await expectInvalidation(workerDataPassId, workerRunNumber, false);
+            await expectInvalidation(workerDataPassId, workerRunNumber, true);
             const summary = await GaqSummaryRepository.findOne({ where: { dataPassId: workerDataPassId, runNumber: workerRunNumber } });
-            expect(summary).to.not.be.null;
+            expect(summary.badRunCoverage).to.not.be.null;
         });
 
         it('should only upsert an existing summary row rather than creating a duplicate', async () => {
@@ -178,7 +178,7 @@ module.exports = () => {
             // wait 11s for the worker to process
             await sleep(11000);
 
-            await expectInvalidation(workerDataPassId, workerRunNumber, false);
+            await expectInvalidation(workerDataPassId, workerRunNumber, true);
 
             // confirm only one summary row exists (upsert, not duplicate)
             const summaries = await GaqSummaryRepository.findAll({ where: { dataPassId: workerDataPassId, runNumber: workerRunNumber } });
@@ -204,8 +204,8 @@ module.exports = () => {
             // Manually call the worker with batchSize=2 to process both in one go
             await gaqWorker.recalculateGaqSummaries(2);
 
-            await expectInvalidation(1, 106, false);
-            await expectInvalidation(1, 107, false);
+            await expectInvalidation(1, 106, true);
+            await expectInvalidation(1, 107, true);
 
             const summary106 = await GaqSummaryRepository.findOne({ where: { dataPassId: 1, runNumber: 106 } });
             const summary107 = await GaqSummaryRepository.findOne({ where: { dataPassId: 1, runNumber: 107 } });
