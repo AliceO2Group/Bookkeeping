@@ -151,8 +151,8 @@ module.exports = () => {
             // confirm that the invalidation is made
             await expectInvalidation(workerDataPassId, workerRunNumber);
 
-            // wait at least 11s, default recalculation period is 10s, for the worker to process the invalidation
-            await sleep(11000);
+            // wait at least 2s, recalculation period is 1s in test env, for the worker to process the invalidation
+            await sleep(2000);
 
             await expectInvalidation(workerDataPassId, workerRunNumber, true);
             const summary = await GaqSummaryRepository.findOne({ where: { dataPassId: workerDataPassId, runNumber: workerRunNumber } });
@@ -175,8 +175,7 @@ module.exports = () => {
             );
             await expectInvalidation(workerDataPassId, workerRunNumber);
 
-            // wait 11s for the worker to process
-            await sleep(11000);
+            await sleep(2000);
 
             await expectInvalidation(workerDataPassId, workerRunNumber, true);
 
