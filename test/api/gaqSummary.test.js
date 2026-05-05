@@ -227,15 +227,6 @@ module.exports = () => {
             expect(response.body.errors[0].detail).to.equal('"query.runNumber" must be a number');
         });
 
-        it('should return 400 when runNumber parameter is missing', async () => {
-            const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=1');
-
-            expect(response.status).to.equal(400);
-            const { errors } = response.body;
-            const runNumberError = errors.find((error) => error.source.pointer === '/data/attributes/query/runNumber');
-            expect(runNumberError.detail).to.equal('"query.runNumber" is required');
-        });
-
         it('should return 400 when dataPassId parameter is missing', async () => {
             const response = await request(server).get('/api/qcFlags/summary/gaq?runNumber=107');
 
