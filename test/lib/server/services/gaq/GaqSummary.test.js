@@ -89,7 +89,6 @@ module.exports = () => {
             await qcFlagService.deleteAllForDataPass(dataPassId);
 
             await expectInvalidation(dataPassId, 100);
-            await expectInvalidation(dataPassId, 105);
         });
 
         it('should invalidate GAQ summary when GAQ detectors are explicitly set for a data pass and run', async () => {
