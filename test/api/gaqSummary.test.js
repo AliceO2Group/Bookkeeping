@@ -16,7 +16,8 @@ const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const { BkpRoles } = require('../../lib/domain/enums/BkpRoles');
-const { repositories: { GaqSummaryInvalidationRepository, GaqSummaryRepository } } = require('../../lib/database');
+const { repositories: { GaqSummaryRepository } } = require('../../lib/database');
+const { Op } = require('sequelize');
 
 /**
  * Check whether an invalidation entry exists for a given data pass and run
@@ -28,8 +29,8 @@ const { repositories: { GaqSummaryInvalidationRepository, GaqSummaryRepository }
  * @return {Promise<void>}
  */
 const expectInvalidation = async (expectedDataPassId, expectedRunNumber, toBePresent = true) => {
-    const invalidation = await GaqSummaryInvalidationRepository.findOne({
-        where: { dataPassId: expectedDataPassId, runNumber: expectedRunNumber },
+    const invalidation = await GaqSummaryRepository.findOne({
+        where: { dataPassId: expectedDataPassId, runNumber: expectedRunNumber, invalidatedAt: { [Op.not]: null } },
     });
     if (!toBePresent) {
         expect(invalidation, `Expected no invalidation for dataPassId=${expectedDataPassId} runNumber=${expectedRunNumber}`).to.be.null;
@@ -132,7 +133,8 @@ module.exports = () => {
                 mcReproducibleCoverage: 0.240346,
                 missingVerificationsCount: 3,
                 undefinedQualityPeriodsCount: 0,
-                calculationFailed: false,
+                notComputable: false,
+                invalidatedAt: null,
             });
         });
 
@@ -147,8 +149,8 @@ module.exports = () => {
                 mcReproducible: true,
                 missingVerificationsCount: 3,
                 undefinedQualityPeriodsCount: 0,
-                calculationFailed: false,
-                invalidated: false,
+                notComputable: false,
+                invalidatedAt: null,
             });
         });
 
@@ -163,39 +165,38 @@ module.exports = () => {
                 mcReproducible: true,
                 missingVerificationsCount: 3,
                 undefinedQualityPeriodsCount: 0,
-                calculationFailed: false,
-                invalidated: false,
+                notComputable: false,
+                invalidatedAt: null,
             });
         });
 
         it('should return 200 with a calculated summary that is invalidated', async () => {
-            await GaqSummaryInvalidationRepository.insert({ dataPassId: 1, runNumber: 107 });
+            await GaqSummaryRepository.upsert({ dataPassId: 1, runNumber: 107, invalidatedAt: new Date() });
 
             const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=1&mcReproducibleAsNotBad=false&runNumber=107');
 
             expect(response.status).to.equal(200);
             const { data } = response.body;
+            expect(data.invalidatedAt).to.not.be.null;
+            delete data.invalidatedAt;
             expect(data).to.deep.equal({
                 badEffectiveRunCoverage: 0.240346,
                 explicitlyNotBadEffectiveRunCoverage: 0.759654,
                 mcReproducible: true,
                 missingVerificationsCount: 3,
                 undefinedQualityPeriodsCount: 0,
-                calculationFailed: false,
-                invalidated: true,
+                notComputable: false,
             });
         });
 
         it('should return 200 with a not-calculated summary that is invalidated', async () => {
-            await GaqSummaryInvalidationRepository.insert({ dataPassId: 1, runNumber: 106 });
+            await GaqSummaryRepository.insert({ dataPassId: 1, runNumber: 106, invalidatedAt: new Date() });
 
             const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=1&mcReproducibleAsNotBad=false&runNumber=106');
 
             expect(response.status).to.equal(200);
             const { data } = response.body;
-            expect(data).to.deep.equal({
-                invalidated: true,
-            });
+            expect(data.invalidatedAt).to.not.be.null;
         });
 
         it('should return 400 if dataPassId is not positive', async () => {

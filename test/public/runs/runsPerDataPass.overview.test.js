@@ -39,12 +39,13 @@ const {
     checkPopoverInnerText,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
-const { repositories: { GaqSummaryRepository, GaqSummaryInvalidationRepository } } = require('../../../lib/database');
+const { repositories: { GaqSummaryRepository } } = require('../../../lib/database');
 const DataPassRepository = require('../../../lib/database/repositories/DataPassRepository.js');
 const { BkpRoles } = require('../../../lib/domain/enums/BkpRoles.js');
 const { navigateToRunsPerDataPass } = require('./navigationUtils.js');
 const { invalid } = require('joi');
 const { gaqWorker } = require('../../../lib/server/services/gaq/GaqWorker.js');
+const { Op } = require('sequelize');
 
 
 const { expect } = chai;
@@ -792,7 +793,9 @@ module.exports = () => {
                     // After clicking recalculate, the cell should show a clock icon indicating the summary has been fetched again and we can check db entries
                     await page.waitForSelector('#row107-globalAggregatedQuality #clock-icon');
 
-                    const allInvalidations = await GaqSummaryInvalidationRepository.findAll({});
+                    const allInvalidations = await GaqSummaryRepository.findAll({
+                        where: { invalidatedAt: { [Op.not]: null } },
+                    });
                     expect(allInvalidations).to.have.lengthOf(1);
                     const invalidatedRunNumbers = allInvalidations.map((i) => i.runNumber);
                     expect(invalidatedRunNumbers).to.be.eql([107]);
@@ -806,10 +809,11 @@ module.exports = () => {
                     await pressElement(page, '#recalculate-gaq-summary-trigger', true);
                     unsetConfirmationDialogActions(page);
                     await page.waitForSelector('#row107-globalAggregatedQuality #clock-icon');
-
-                    const allInvalidationsBefore = await GaqSummaryInvalidationRepository.findAll({});
-                    expect(allInvalidationsBefore).to.have.lengthOf(3);
-                    const invalidatedRunNumbers = allInvalidationsBefore.map((i) => i.runNumber);
+                    const allInvalidations = await GaqSummaryRepository.findAll({
+                        where: { invalidatedAt: { [Op.not]: null } },
+                    });
+                    expect(allInvalidations).to.have.lengthOf(3);
+                    const invalidatedRunNumbers = allInvalidations.map((i) => i.runNumber);
                     expect(invalidatedRunNumbers).to.have.members([106, 107, 108]);
                 });
 
