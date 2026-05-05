@@ -335,7 +335,8 @@ module.exports = () => {
             "filter[muInelasticInteractionRate][operator]": "=",
             "filter[muInelasticInteractionRate][limit]": "100000",
             "filter[inelasticInteractionRateAvg][operator]": "=",
-            "filter[inelasticInteractionRateAvg][limit]": "100000"
+            "filter[inelasticInteractionRateAvg][limit]": "100000",
+            "filter[detectorsQcNotBadFraction][mcReproducibleAsNotBad]": "false"
         });
     });
 
