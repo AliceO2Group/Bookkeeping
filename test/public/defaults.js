@@ -667,14 +667,24 @@ module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
  * @return {Promise} resolves once the value has been typed
  */
 module.exports.fillInput = async (page, inputSelector, value, events = ['input']) => {
-    await page.waitForSelector(inputSelector);
-    await page.evaluate((inputSelector, value, events) => {
+    await page.waitForFunction((inputSelector, value, events) => {
         const element = document.querySelector(inputSelector);
+
+        if (!element) {
+            return false;
+        }
+
         element.value = value;
+
         for (const eventKey of events) {
             element.dispatchEvent(new Event(eventKey, { bubbles: true }));
         }
-    }, inputSelector, value, events);
+
+        return true;
+    },
+    {},
+    inputSelector, value, events
+    );
 };
 
 /**
