@@ -22,7 +22,7 @@ const { Op } = require('sequelize');
 const { buildUrl } = require('@aliceo2/web-ui');
 const { BkpRoles } = require('../../lib/domain/enums/BkpRoles.js');
 
-const LHC22b_apass1 = {
+const LHC22b_apass1_summary = {
     id: 1,
     name: 'LHC22b_apass1',
     pdpBeamTypes: ['pp'],
@@ -30,28 +30,10 @@ const LHC22b_apass1 = {
     isFrozen: false,
     versions: [
         {
-            id: 1,
-            dataPassId: 1,
             description: 'Some random desc',
             reconstructedEventsCount: 50948694,
             outputSize: 56875682112600,
-            lastSeen: 108,
-            statusHistory: [
-                {
-                    createdAt: 1704884400000,
-                    dataPassVersionId: 1,
-                    id: 1,
-                    status: 'Running',
-                },
-                {
-                    createdAt: 1704885060000,
-                    dataPassVersionId: 1,
-                    id: 2,
-                    status: 'Deleted',
-                },
-            ],
-            createdAt: 1704884400000,
-            updatedAt: 1704884400000,
+            statusHistory: [{ status: 'Running' }, { status: 'Deleted' }],
         },
     ],
     runsCount: 3,
@@ -94,7 +76,7 @@ module.exports = () => {
                     expect(meta).to.be.eql({ page: { totalCount: 1, pageCount: 1 } });
                     expect(data).to.be.an('array');
                     expect(data).to.be.lengthOf(1);
-                    expect(data[0]).to.be.eql(LHC22b_apass1);
+                    expect(data[0]).to.be.eql(LHC22b_apass1_summary);
 
                     done();
                 });
