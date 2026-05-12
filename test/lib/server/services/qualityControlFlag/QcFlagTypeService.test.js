@@ -68,117 +68,67 @@ module.exports = () => {
             })).to.have.all.deep.members([
                 {
                     id: 2,
-                    name: 'Unknown Quality',
-                    method: 'UnknownQuality',
                     bad: true,
                     color: null,
-                    mcReproducible: false,
-
-                    archived: false,
-                    archivedAt: null,
-
-                    createdById: 1,
-                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
-                    lastUpdatedById: null,
-                    lastUpdatedBy: null,
+                    method: "UnknownQuality",
+                    name: "Unknown Quality",
+                    createdBy: { name: "John Doe" },
+                    lastUpdatedBy: null
                 },
                 {
                     id: 3,
-                    name: 'Good',
-                    method: 'Good',
                     bad: false,
                     color: null,
-                    mcReproducible: false,
-
-                    archived: false,
-                    archivedAt: null,
-
-                    createdById: 1,
-                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
-                    lastUpdatedById: null,
-                    lastUpdatedBy: null,
+                    method: "Good",
+                    name: "Good",
+                    createdBy: { name: "John Doe" },
+                    lastUpdatedBy: null
                 },
                 {
                     id: 5,
-                    name: 'Limited Acceptance MC Reproducible',
-                    method: 'LimitedAcceptanceMCReproducible',
                     bad: true,
-                    color: '#FFFF00',
-                    mcReproducible: true,
-
-                    archived: false,
-                    archivedAt: null,
-
-                    createdById: 1,
-                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
-                    lastUpdatedById: null,
-                    lastUpdatedBy: null,
+                    color: "#FFFF00",
+                    method: "LimitedAcceptanceMCReproducible",
+                    name: "Limited Acceptance MC Reproducible",
+                    createdBy: { name: "John Doe" },
+                    lastUpdatedBy: null
                 },
                 {
                     id: 11,
-                    name: 'Limited acceptance',
-                    method: 'LimitedAcceptance',
                     bad: true,
-                    color: '#FFFF00',
-                    mcReproducible: false,
-
-                    archived: false,
-                    archivedAt: null,
-
-                    createdById: 1,
-                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
-                    lastUpdatedById: null,
-                    lastUpdatedBy: null,
+                    color: "#FFFF00",
+                    method: "LimitedAcceptance",
+                    name: "Limited acceptance",
+                    createdBy: { name: "John Doe" },
+                    lastUpdatedBy: null
                 },
                 {
                     id: 12,
-                    name: 'Bad PID',
-                    method: 'BadPID',
                     bad: true,
                     color: null,
-                    mcReproducible: false,
-
-                    archived: false,
-                    archivedAt: null,
-
-                    createdById: 1,
-                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
-                    lastUpdatedById: null,
-                    lastUpdatedBy: null,
+                    method: "BadPID",
+                    name: "Bad PID",
+                    createdBy: { name: "John Doe" },
+                    lastUpdatedBy: null
                 },
                 {
                     id: 13,
-                    name: 'Bad',
-                    method: 'Bad',
                     bad: true,
                     color: null,
-                    mcReproducible: false,
-
-                    archived: false,
-                    archivedAt: null,
-
-                    createdById: 1,
-                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
-                    lastUpdatedById: null,
-                    lastUpdatedBy: null,
+                    method: "Bad",
+                    name: "Bad",
+                    createdBy: { name: "John Doe" },
+                    lastUpdatedBy: null
                 },
                 {
                     id: 20,
-                    name: 'Archived',
-                    method: 'Archived',
                     bad: false,
                     color: null,
-                    mcReproducible: false,
-
-                    createdById: 1,
-                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
-
-                    archived: true,
-                    archivedAt: 1710504000000,
-
-                    lastUpdatedById: null,
-                    lastUpdatedBy: null,
-                },
+                    method: "Archived",
+                    name: "Archived",
+                    createdBy: { name: "John Doe" },
+                    lastUpdatedBy: null
+                }
             ]);
         });
 
