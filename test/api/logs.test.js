@@ -269,15 +269,14 @@ module.exports = () => {
         });
 
         it('should successfully filter by content', async () => {
+            const expectedLogIds = [3, 2];
             const response = await request(server).get('/api/logs?filter[content]=particle');
             expect(response.status).to.equal(200);
 
             expect(response.body.data).to.be.an('array');
             // 3 logs created in public tests
             expect(response.body.data).to.lengthOf(2);
-            for (const log of response.body.data) {
-                expect(log.text.includes('particle')).to.be.true;
-            }
+            expect(response.body.data.map(({ id }) => id)).to.deep.equals(expectedLogIds);
         });
 
         it('should successfully filter by rootOnly', async () => {
@@ -546,6 +545,7 @@ module.exports = () => {
         });
 
         it('should support filtering by origin (process)', (done) => {
+            const humanLogs = [48, 45, 4, 3, 1];
             request(server)
                 .get('/api/logs?filter[origin]=process')
                 .expect(200)
@@ -555,16 +555,14 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res.body.data).to.be.an('array');
-                    for (const log of res.body.data) {
-                        expect(log.origin).to.equal('process');
-                    }
-
+                    const ids = res.body.data.map(({ id }) => id);
+                    expect(ids.some(id => humanLogs.includes(id))).to.be.false;
                     done();
                 });
         });
 
         it('should support filtering by origin (human)', (done) => {
+            const humanLogs = [48, 45, 4, 3, 1];
             request(server)
                 .get('/api/logs?filter[origin]=human')
                 .expect(200)
@@ -574,11 +572,8 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res.body.data).to.be.an('array');
-                    for (const log of res.body.data) {
-                        expect(log.origin).to.equal('human');
-                    }
-
+                    const ids = res.body.data.map(({ id }) => id);
+                    expect(ids).to.deep.equals(humanLogs);
                     done();
                 });
         });
