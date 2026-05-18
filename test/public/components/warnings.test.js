@@ -30,9 +30,9 @@ module.exports = () => {
 
     it('Should show warning when a filter in the url is not recognised', async () => {
         await page.goto('http://localhost:4000/?page=log-overview&filter[fake]=fake', { waitUntil: 'load' });
-        const warningText = await getInnerText('.alert-warning > ul');
+        const warningText = await getInnerText(await page.waitForSelector('.alert-warning > ul'));
 
-        expect(warningText).to.equal('Unknown Filters: fake');
+        expect(warningText).to.equal('Unknown Filters:\nThe filters: [\'fake\']; are not reccognised. Check if they are spelled correctly.');
     });
 
     it('Should remove warnings entry after clicking the x icon', async () => {
