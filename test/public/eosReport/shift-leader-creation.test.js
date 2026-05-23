@@ -77,7 +77,7 @@ module.exports = () => {
 
         await reloadPage(page);
 
-        const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+        const currentShift = shiftService.getUserPendingShiftOrFail();
         const magnetStart = formatShiftDate(currentShift.start, { time: true });
 
         const { formatTimestampForDateTimeInput } = await import('../../../lib/public/utilities/formatting/dateTimeInputFormatters.mjs');
