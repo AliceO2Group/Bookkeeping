@@ -16,7 +16,7 @@ const ToFilterSuite = require('./urlToFilter.test.js');
 const FilteringModelSuite = require('./filteringModel.test.js');
 
 module.exports = () => {
-    // describe('Filters to URL', ToUrlSuite);
-    // describe('URL to Filters', ToFilterSuite);
+    describe('Filters to URL', ToUrlSuite);
+    describe('URL to Filters', ToFilterSuite);
     describe('FilteringModel', FilteringModelSuite);
 };
