@@ -352,7 +352,7 @@ module.exports = () => {
             "page": "data-passes-per-lhc-period-overview",
             "lhcPeriodId": "2",
             "filter[names][]": "LHC22b_apass1",
-            "filter[include][byName]": "test"
+            "filter[permittedNonPhysicsNames]": "test"
         });
     });
 
@@ -367,7 +367,7 @@ module.exports = () => {
             "page": "data-passes-per-simulation-pass-overview",
             "simulationPassId": "1",
             "filter[names][]": "LHC22b_apass1",
-            "filter[include][byName]": "test"
+            "filter[permittedNonPhysicsNames]": "test"
         });
     });
 
