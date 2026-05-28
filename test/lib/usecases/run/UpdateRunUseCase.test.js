@@ -15,7 +15,7 @@
 const { run: { UpdateRunUseCase, GetRunUseCase } } = require('../../../../lib/usecases/index.js');
 const { dtos: { UpdateRunDto, GetRunDto, UpdateRunByRunNumberDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
-const { GetAllLogsUseCase } = require('../../../../lib/usecases/log/index.js');
+const { GetAllLogsUseCase, GetLogUseCase } = require('../../../../lib/usecases/log/index.js');
 const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
 const { RunDetectorQualities } = require('../../../../lib/domain/enums/RunDetectorQualities.js');
 
@@ -123,7 +123,10 @@ module.exports = () => {
             const expectLastLogToBeForQualityChange = async (previousQuality, newQuality, expectedTags) => {
                 const { logs } = await new GetAllLogsUseCase().execute({ query: { page: { offset: 0, limit: 1 } } });
                 expect(logs).to.have.lengthOf(1);
-                const [log] = logs;
+                const logId = logs[0].id;
+                
+                const log = await new GetLogUseCase().execute({ params: { logId } });
+
                 expect(log.title).to.equal(`Run 106 quality has changed to ${newQuality}`);
                 expect(log.text
                     .startsWith(`The run quality for run 106 from period LHC22b has been changed from ${previousQuality} to ${newQuality} on `))
@@ -246,7 +249,9 @@ module.exports = () => {
             const expectLastLogToBeForDetectorQualityChange = async (newQuality) => {
                 const { logs } = await new GetAllLogsUseCase().execute({ query: { page: { offset: 0, limit: 1 } } });
                 expect(logs).to.have.lengthOf(1);
-                const [log] = logs;
+                const logId = logs[0].id;
+                const log = await new GetLogUseCase().execute({ params: { logId } });
+
                 expect(log.title).to.equal('Detector(s) quality for run 1 has been changed');
                 expect(log.text.startsWith('Here are the updated detector\'s qualities for run 1')).to.be.true;
                 expect(log.text.endsWith(`- CPV: ${newQuality}\nReason: ${justification}`)).to.be.true;

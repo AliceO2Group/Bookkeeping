@@ -36,11 +36,11 @@ module.exports = () => {
         getAllLogsDto.query = { filter: { origin: 'human' } };
         const { logs } = await new GetAllLogsUseCase()
             .execute(getAllLogsDto);
+        
+        const humanLogIds = [48, 45, 4, 3, 1];
 
         expect(logs).to.be.an('array');
-        for (const log of logs) {
-            expect(log.origin).to.equal('human');
-        }
+        expect(logs.map(({ id }) => id)).to.deep.equal(humanLogIds);
     });
 
     it('should return logs with a full tag collection regardless of filter', async () => {
@@ -53,6 +53,8 @@ module.exports = () => {
         const unfilteredResult = await new GetAllLogsUseCase().execute();
         const firstUnfilteredLog = unfilteredResult.logs.find((log) => log.id === firstFilteredLog.id);
 
+        console.log('firstUnfilteredLog', JSON.stringify(firstUnfilteredLog))
+        console.log('firstFilteredLog', JSON.stringify(firstFilteredLog))
         expect(firstUnfilteredLog.tags).to.deep.equal(firstFilteredLog.tags);
     });
 
@@ -89,12 +91,12 @@ module.exports = () => {
         const content = 'particle';
         getAllLogsDto.query = { filter: { content } };
 
+        const particleContentIds = [3, 2];
+
         {
             const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
             expect(filteredResult).to.lengthOf(2);
-            for (const log of filteredResult) {
-                expect(log.text.includes(content)).to.be.true;
-            }
+            expect(filteredResult.map(({ id }) => id)).to.deep.equal(particleContentIds);
         }
 
         getAllLogsDto.query = { filter: { content: 'this-content-do-not-exists-anywhere' } };

@@ -59,6 +59,24 @@ const LHC22b_apass1 = {
     simulationPassesCount: 1,
 };
 
+const LHC22b_apass1_summary = {
+    id: 1,
+    name: 'LHC22b_apass1',
+    pdpBeamTypes: ['pp'],
+    skimmingStage: SkimmingStage.SKIMMABLE,
+    isFrozen: false,
+    versions: [
+        {
+            description: 'Some random desc',
+            reconstructedEventsCount: 50948694,
+            outputSize: 56875682112600,
+            statusHistory: [{ status: 'Running' }, { status: 'Deleted' }],
+        },
+    ],
+    runsCount: 3,
+    simulationPassesCount: 1,
+};
+
 module.exports = () => {
     before(resetDatabaseContent);
 
@@ -95,7 +113,7 @@ module.exports = () => {
             };
             const { rows: dataPasses } = await dataPassService.getAll(dto.query);
             expect(dataPasses).to.be.lengthOf(1);
-            expect(dataPasses[0]).to.be.eql(LHC22b_apass1);
+            expect(dataPasses[0]).to.be.eql(LHC22b_apass1_summary);
         });
 
         it('should successfully filter data passes on ids', async () => {
