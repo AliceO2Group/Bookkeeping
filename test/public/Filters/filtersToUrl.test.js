@@ -343,7 +343,7 @@ module.exports = () => {
     it('should set filters from DataPassesPerLhcPeriodOverview to the URL', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 }});
 
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1', ['change']);
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1', ['input']);
         await pressElement(page, '#checkboxes-checkbox-test', true);
 
 
@@ -359,7 +359,7 @@ module.exports = () => {
     it('should set filters from DataPassesPerSimulationPassOverview to the URL', async () => {
         await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 }});
 
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1', ['change']);
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1', ['input']);
         await pressElement(page, '#checkboxes-checkbox-test', true);
 
         const queryParameters = getQueryParameters(page);
