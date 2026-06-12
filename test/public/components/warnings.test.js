@@ -22,7 +22,6 @@ const {
 module.exports = () => {
     let page;
     let browser;
-    const navTabSelector = 'a.btn-tab[id]'; // ALI FLP doesn't have an id, nor a functional href, hence why it is excluded like this
 
     before(async () => {
         [page, browser] = await defaultBefore();
