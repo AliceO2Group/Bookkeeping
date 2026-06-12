@@ -198,14 +198,15 @@ module.exports.waitForTableLength = waitForTableToLength;
  * Wait for the total number of elements to be the expected one
  *
  * @param {puppeteer.Page} page The puppeteer page where the table is located
- * @param {number} amount the expected amount of items
+ * @param {number} amount the expected amount of items. If amount is 0 it is converted to undefined, as empty tables don't display a row count
  * @return {Promise<void>} resolves once the expected amount is present
  */
 module.exports.waitForTableTotalRowsCountToEqual = async (page, amount) => {
     try {
+        amount = amount === 0 ? undefined : `${amount}`;
         await page.waitForSelector('#totalRowsCount');
         await page.waitForFunction(
-            (amount) => document.querySelector('#totalRowsCount').innerText === `${amount}`,
+            (amount) => document.querySelector('#totalRowsCount')?.innerText === amount,
             {},
             amount,
         );
