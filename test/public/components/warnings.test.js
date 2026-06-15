@@ -41,6 +41,17 @@ module.exports = () => {
         expect(warning).to.be.null;
     });
 
+    it('Should show warning when a url filter cannot be parsed/normalized', async () => {
+        await page.goto('http://localhost:4000/?page=run-overview&filter[detectors][operator]=or&filter[detecttors][values]=CTP&filter[tagss][values]=CPV&filter[tags][operation]=or', { waitUntil: 'load' });
+        const unparsableWarningText = await getInnerText(await page.waitForSelector('.alert-warning > ul > li:nth-of-type(1)'));
+        const unknownFilterWarningText = await getInnerText(await page.waitForSelector('.alert-warning > ul > li:nth-of-type(2)'));
+
+        // The tags and detectors filters will fail if it has no value.
+        // However, if the url also contains its operator, it will still attempt to set the filters, which would fail, hence the warning
+        expect(unparsableWarningText).to.equal('Unparsable Filters:\nThe following filter-value pairs could not be parsed: [detectors[operator]=or, tags[operation]=or]');
+        expect(unknownFilterWarningText).to.equal('Unknown Filters:\nThe filters: [\'detecttors\', \'tagss\']; are not reccognised. Check if they are spelled correctly.');
+    });
+    
     after(async () => {
         await defaultAfter(page, browser);
     });
