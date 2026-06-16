@@ -266,6 +266,12 @@ th.text-center, td.text-center {
     border-color: #f5c6cb;
 }
 
+.alert-warning {
+    color: var(--color-warning);
+    background-color: #ffe8c8;
+    border-color: #fdd69f;
+}
+
 .alert-danger hr {
     border-top-color: #f1b0b7;
 }

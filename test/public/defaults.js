@@ -198,14 +198,15 @@ module.exports.waitForTableLength = waitForTableToLength;
  * Wait for the total number of elements to be the expected one
  *
  * @param {puppeteer.Page} page The puppeteer page where the table is located
- * @param {number} amount the expected amount of items
+ * @param {number} amount the expected amount of items. If amount is 0 it is converted to undefined, as empty tables don't display a row count
  * @return {Promise<void>} resolves once the expected amount is present
  */
 module.exports.waitForTableTotalRowsCountToEqual = async (page, amount) => {
     try {
+        amount = amount === 0 ? undefined : `${amount}`;
         await page.waitForSelector('#totalRowsCount');
         await page.waitForFunction(
-            (amount) => document.querySelector('#totalRowsCount').innerText === `${amount}`,
+            (amount) => document.querySelector('#totalRowsCount')?.innerText === amount,
             {},
             amount,
         );
@@ -667,14 +668,24 @@ module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
  * @return {Promise} resolves once the value has been typed
  */
 module.exports.fillInput = async (page, inputSelector, value, events = ['input']) => {
-    await page.waitForSelector(inputSelector);
-    await page.evaluate((inputSelector, value, events) => {
+    await page.waitForFunction((inputSelector, value, events) => {
         const element = document.querySelector(inputSelector);
+
+        if (!element) {
+            return false;
+        }
+
         element.value = value;
+
         for (const eventKey of events) {
             element.dispatchEvent(new Event(eventKey, { bubbles: true }));
         }
-    }, inputSelector, value, events);
+
+        return true;
+    },
+    {},
+    inputSelector, value, events
+    );
 };
 
 /**
