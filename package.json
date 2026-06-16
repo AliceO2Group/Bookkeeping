@@ -39,7 +39,6 @@
     "mkdirp": "3.0.1",
     "multer": "2.1.1",
     "node-fetch": "3.3.1",
-    "protobufjs": "8.6.3",
     "sequelize": "6.37.8",
     "umzug": "3.8.2"
   },
@@ -79,7 +78,6 @@
     "mariadb",
     "multer",
     "node-fetch",
-    "protobufjs",
     "sequelize",
     "umzug"
   ]
