@@ -311,6 +311,24 @@ module.exports = () => {
             expect(data.map(({ runNumber }) => runNumber)).to.have.all.members([1, 2, 55, 49, 54, 56, 105]);
         });
 
+        it('should return 400 if GAQ notBadFraction is used with multiple dataPassIds', (done) => {
+            const url = '/api/runs?filter[dataPassIds][]=2&filter[dataPassIds][]=3&filter[gaq][notBadFraction][operator]==&filter[gaq][notBadFraction][limit]=0.5';
+            request(server)
+                .get(url)
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    expect(errors[0].detail).to.equal('Filtering by GAQ is enabled only when filtering with one dataPassId');
+
+                    done();
+                });
+        });
+
         it('should successfully filter on simulation pass id', async () => {
             const response = await request(server).get('/api/runs?filter[simulationPassIds][]=1');
             expect(response.status).to.equal(200);
@@ -454,11 +472,11 @@ module.exports = () => {
             }
         });
 
-        it('should successfully filter by detectors notBadFraction', async () => {
+        it('should successfully filter by detectorsQcNotBadFraction', async () => {
             const dataPassId = 1;
             {
                 const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}`
-                        + '&filter[detectorsQc][_1][notBadFraction][operator]=>&filter[detectorsQc][_1][notBadFraction][limit]=0.7');
+                        + '&filter[detectorsQcNotBadFraction][_1][operator]=>&filter[detectorsQcNotBadFraction][_1][limit]=0.7');
 
                 expect(response.status).to.equal(200);
                 const { data: runs } = response.body;
@@ -468,7 +486,7 @@ module.exports = () => {
             }
             {
                 const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}`
-                        + '&filter[detectorsQc][_1][notBadFraction][operator]=<&filter[detectorsQc][_1][notBadFraction][limit]=0.9&filter[detectorsQc][mcReproducibleAsNotBad]=true');
+                        + '&filter[detectorsQcNotBadFraction][_1][operator]=<&filter[detectorsQcNotBadFraction][_1][limit]=0.9&filter[detectorsQcNotBadFraction][mcReproducibleAsNotBad]=true');
 
                 expect(response.status).to.equal(200);
                 const { data: runs } = response.body;
@@ -478,8 +496,8 @@ module.exports = () => {
             }
                         {
                 const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}`
-                        + '&filter[detectorsQc][_1][notBadFraction][operator]=<&filter[detectorsQc][_1][notBadFraction][limit]=0.7'
-                        + '&filter[detectorsQc][_16][notBadFraction][operator]=>&filter[detectorsQc][_16][notBadFraction][limit]=0.9'
+                        + '&filter[detectorsQcNotBadFraction][_1][operator]=<&filter[detectorsQcNotBadFraction][_1][limit]=0.7'
+                        + '&filter[detectorsQcNotBadFraction][_16][operator]=>&filter[detectorsQcNotBadFraction][_16][limit]=0.9'
                     );
 
                 expect(response.status).to.equal(200);
