@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { defaultBefore, defaultAfter, pressElement, takeScreenshot, expectInputValue } = require('../defaults.js');
+const { defaultBefore, defaultAfter, pressElement, takeScreenshot, expectInputValue, goToPage, getInnerText } = require('../defaults.js');
 
 module.exports = () => {
     let page;
@@ -69,15 +69,24 @@ module.exports = () => {
 
         await page.goto(url, { waitUntil: 'load' });
 
-        await page.evaluate(async (url) => await navigator.clipboard.writeText(url), url);
         await pressElement(page, '.dropdown #reset-filters', true);
-
         const actualUrl = page.url();
         expect(actualUrl).to.equal('http://localhost:4000/?page=lhc-period-overview');
 
         await expectInputValue(page, '.name-filter input', '');
         await expectInputValue(page, '.year-filter input', '');
         await expectInputValue(page, '.pdpBeamTypes-filter input', '');
+    });
+
+    it('Should show warning if filters are pasted on the wrong page', async () => {
+        const url = 'http://localhost:4000/?page=lhc-period-overview&filter[names][]=name';
+        await goToPage(page, 'log-overview');
+
+        await page.evaluate(async (url) => await navigator.clipboard.writeText(url), url);
+        await pressElement(page, '.dropdown #paste-filter', true);
+
+        const warningText = await getInnerText(await page.waitForSelector('.alert-warning > ul'));
+        expect(warningText).to.equal('Page-Filter mismatch:\nThe filters you tried applying were meant for lhc-period-overview');
     });
 
     after(async () => {
