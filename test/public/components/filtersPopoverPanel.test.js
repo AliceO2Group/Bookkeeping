@@ -86,7 +86,7 @@ module.exports = () => {
         await pressElement(page, '.dropdown #paste-filter', true);
 
         const warningText = await getInnerText(await page.waitForSelector('.alert-warning > ul'));
-        expect(warningText).to.equal('Page-Filter mismatch:\nThe filters you tried applying were meant for lhc-period-overview');
+        expect(warningText).to.equal('Page-Filter mismatch:\nThe filters provided were meant for lhc-period-overview');
     });
 
     after(async () => {
