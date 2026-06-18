@@ -727,28 +727,28 @@ label {
     margin: 0 0 0 var(--space-s);
 }
 
-.active-filters-indicator:has(+ .clear-filter-icon) {
+.active-filters-indicator:has(+ .clear-filter-icon-container) {
     border-right: 0;
     border-radius: .25rem 0 0 .25rem
 }
 
-.clear-filter-icon {
+.clear-filter-icon-container {
     background-color: white;
     border-radius: 0 .25rem .25rem 0;
-    color: var(--color-danger);
     font-weight: 700;
     cursor: pointer;
 }
 
-.clear-filter-icon > * {
+.clear-filter-icon {
     padding: var(--space-xs);
     background-color: white;
+    color: var(--color-danger);
     position: relative;
     border-radius: 0 .25rem .25rem 0;
     z-index: 10;
 }
 
-.clear-filter-icon > *:hover {
+.clear-filter-icon:hover {
     background-color: var(--color-danger);
     color: white;
 }
