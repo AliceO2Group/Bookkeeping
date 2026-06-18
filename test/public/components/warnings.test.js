@@ -18,12 +18,12 @@ const {
     getInnerText,
     pressElement,
     goToPage,
-    takeScreenshot,
 } = require('../defaults.js');
 
 module.exports = () => {
     let page;
     let browser;
+    let url;
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);

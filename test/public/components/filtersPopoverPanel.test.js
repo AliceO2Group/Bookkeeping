@@ -12,7 +12,7 @@
  */
 
 const { expect } = require('chai');
-const { defaultBefore, defaultAfter, pressElement, takeScreenshot, expectInputValue, goToPage, getInnerText } = require('../defaults.js');
+const { defaultBefore, defaultAfter, pressElement, takeScreenshot, expectInputValue } = require('../defaults.js');
 
 module.exports = () => {
     let page;
