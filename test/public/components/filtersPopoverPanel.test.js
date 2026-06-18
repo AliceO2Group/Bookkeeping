@@ -30,7 +30,7 @@ module.exports = () => {
         const url = 'http://localhost:4000/?page=lhc-period-overview&filter[names][]=name&filter[years][]=100&filter[pdpBeamTypes][]=PbPb';
         await page.goto(url, { waitUntil: 'load' });
         await takeScreenshot(page, 'test');
-        await pressElement(page, '#copy-filter', true);
+        await pressElement(page, '#copy-filters', true);
 
         const clipboardContents = await page.evaluate(async () => decodeURI(await navigator.clipboard.readText()));
         expect(clipboardContents).to.equal(url);
@@ -40,7 +40,7 @@ module.exports = () => {
         const url = 'http://localhost:4000/?page=lhc-period-overview&filter[names][]=name&filter[years][]=100&filter[pdpBeamTypes][]=PbPb';
 
         await page.evaluate(async (url) => await navigator.clipboard.writeText(url), url);
-        await pressElement(page, '#paste-filter', true);
+        await pressElement(page, '#paste-filters', true);
 
         const actualUrl = page.url();
         expect(actualUrl).to.equal(url);

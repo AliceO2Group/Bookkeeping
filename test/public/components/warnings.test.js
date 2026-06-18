@@ -61,7 +61,7 @@ module.exports = () => {
         await goToPage(page, 'log-overview');
 
         await page.evaluate(async (url) => await navigator.clipboard.writeText(url), url);
-        await pressElement(page, '.dropdown #paste-filter', true);
+        await pressElement(page, '.dropdown #paste-filters', true);
 
         const warningText = await getInnerText(await page.waitForSelector('.alert-warning > ul'));
         expect(warningText).to.equal('Unparseable URL:\nURL could not be parsed. URL: unparsable url');
@@ -72,7 +72,7 @@ module.exports = () => {
         await goToPage(page, 'log-overview');
 
         await page.evaluate(async (url) => await navigator.clipboard.writeText(url), url);
-        await pressElement(page, '.dropdown #paste-filter', true);
+        await pressElement(page, '.dropdown #paste-filters', true);
 
         const warningText = await getInnerText(await page.waitForSelector('.alert-warning > ul'));
         expect(warningText).to.equal('Page-Filter mismatch:\nThe filters provided were meant for lhc-period-overview');
