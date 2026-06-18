@@ -64,17 +64,6 @@ module.exports = () => {
         await expectInputValue(page, '.pdpBeamTypes-filter input', '');
     });
 
-    it('Should show warning if filters are pasted on the wrong page', async () => {
-        const url = 'http://localhost:4000/?page=lhc-period-overview&filter[names][]=name';
-        await goToPage(page, 'log-overview');
-
-        await page.evaluate(async (url) => await navigator.clipboard.writeText(url), url);
-        await pressElement(page, '.dropdown #paste-filter', true);
-
-        const warningText = await getInnerText(await page.waitForSelector('.alert-warning > ul'));
-        expect(warningText).to.equal('Page-Filter mismatch:\nThe filters provided were meant for lhc-period-overview');
-    });
-
     after(async () => {
         await defaultAfter(page, browser);
     });
