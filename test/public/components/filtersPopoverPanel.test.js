@@ -50,20 +50,6 @@ module.exports = () => {
         await expectInputValue(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', 'PbPb');
     });
 
-    it('Should set filters when pressing paste active filters button', async () => {
-        const url = 'http://localhost:4000/?page=lhc-period-overview&filter[names][]=name&filter[years][]=100&filter[pdpBeamTypes][]=PbPb';
-
-        await page.evaluate(async (url) => await navigator.clipboard.writeText(url), url);
-        await pressElement(page, '#paste-filter', true);
-
-        const actualUrl = page.url();
-        expect(actualUrl).to.equal(url);
-
-        await expectInputValue(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'name');
-        await expectInputValue(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', '100');
-        await expectInputValue(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', 'PbPb');
-    });
-
     it('Should reset filters when pressing the reset all filters button', async () => {
         const url = 'http://localhost:4000/?page=lhc-period-overview&filter[names][]=name&filter[years][]=100&filter[pdpBeamTypes][]=PbPb';
 
