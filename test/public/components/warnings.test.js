@@ -24,6 +24,7 @@ module.exports = () => {
     let page;
     let browser;
     let url;
+    let context;
 
     before(async () => {
         [page, browser, url] = await defaultBefore(page, browser);
