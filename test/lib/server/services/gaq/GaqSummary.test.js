@@ -129,6 +129,26 @@ module.exports = () => {
 
             await expectInvalidation(dataPassId, runNumber);
         });
+
+        it('should NOT invalidate GAQ summary when updateRun patch does not touch QC time source fields', async () => {
+            await updateRun(
+                { runNumber },
+                { runPatch: { definition: 'PHYSICS' } },
+            );
+
+            await expectInvalidation(dataPassId, runNumber, true);
+        });
+
+        it('should NOT invalidate GAQ summary when a QC time source field is patched but qcTimeStart/qcTimeEnd do not change', async () => {
+            // Run 56 has a non-null time_trg_start, so qc_time_start resolves to time_trg_start regardless of time_o2_start.
+            // Patching only time_o2_start moves a source field but does not change the virtual qcTimeStart / qcTimeEnd, so no invalidation should fire.
+            await updateRun(
+                { runNumber },
+                { runPatch: { timeO2Start: new Date('2019-08-08 18:00:00') } },
+            );
+
+            await expectInvalidation(dataPassId, runNumber, true);
+        });
     });
 
     describe('GAQ Worker', () => {
@@ -200,8 +220,8 @@ module.exports = () => {
             await expectInvalidation(1, 106);
             await expectInvalidation(1, 107);
 
-            // Manually call the worker with batchSize=2 to process both in one go
-            await gaqWorker.recalculateGaqSummaries(2);
+            // Manually call the worker with min/max batchSize=2 to process both in one go
+            await gaqWorker.recalculateGaqSummaries(2, 2);
 
             await expectInvalidation(1, 106, true);
             await expectInvalidation(1, 107, true);
@@ -220,16 +240,16 @@ module.exports = () => {
 
             try {
                 // First call — will be held open by the slow stub
-                const firstCall = gaqWorker.recalculateGaqSummaries(1);
+                const firstCall = gaqWorker.recalculateGaqSummaries(1, 1);
 
-                // Second call — should be skipped because _isSynchronizing is true
-                await gaqWorker.recalculateGaqSummaries(1);
+                // Second call — should be skipped because a previous run is still in flight
+                await gaqWorker.recalculateGaqSummaries(1, 1);
 
                 // Stub should only have been called once
                 expect(stub.callCount).to.equal(1);
 
-                // Release the first call
-                resolveFirst();
+                // Release the first call with the shape popNInvalidSummaryAndRecalculate normally returns
+                resolveFirst({ processedCount: 0, totalInvalidCount: 0 });
                 await firstCall;
             } finally {
                 sinon.restore();

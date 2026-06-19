@@ -12,7 +12,8 @@ services:
       CCDB_SYNCHRONIZATION_PERIOD: 3153600000000 # 100y in milliseconds, to be sure all the runs are included when testing sync
       GAQ_ENABLE_RECALCULATION: "True"
       GAQ_RECALCULATION_PERIOD: 1000
-      GAQ_RECALCULATION_BATCH_SIZE: 1
+      GAQ_RECALCULATION_MIN_BATCH_SIZE: 1
+      GAQ_RECALCULATION_MAX_BATCH_SIZE: 1
     restart: "no"
 
   database:
