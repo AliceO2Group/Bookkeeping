@@ -73,7 +73,7 @@ module.exports = () => {
 
     it('should successfully filter on run numbers', async () => {
         const runNumbers = [1, 2];
-        getAllLogsDto.query = { filter: { runNumbers } };
+        getAllLogsDto.query = { filter: { run: { operation: 'and', values: runNumbers } } };
 
         {
             const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
@@ -81,6 +81,17 @@ module.exports = () => {
             for (const log of filteredResult) {
                 const relatedRunNumbers = log.runs.map(({ runNumber }) => runNumber);
                 expect(runNumbers.every((runNumber) => relatedRunNumbers.includes(runNumber))).to.be.true;
+            }
+        }
+
+        getAllLogsDto.query = { filter: { run: { operation: 'or', values: runNumbers } } };
+
+        {
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            expect(filteredResult).to.lengthOf(6);
+            for (const log of filteredResult) {
+                const relatedRunNumbers = log.runs.map(({ runNumber }) => runNumber);
+                expect(runNumbers.some((runNumber) => relatedRunNumbers.includes(runNumber))).to.be.true;
             }
         }
     });
@@ -106,9 +117,9 @@ module.exports = () => {
     });
 
     it('should successfully filter on lhc fills', async () => {
-        const fillNumbers = [1, 6];
+        const lhcFills = [1, 6];
 
-        getAllLogsDto.query = { filter: { fillNumbers } };
+        getAllLogsDto.query = { filter: { lhcFills: { operation: 'and', values: lhcFills } } };
         {
             const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
             expect(filteredResult).to.have.lengthOf(1);
@@ -117,24 +128,47 @@ module.exports = () => {
 
             // For each returned log, check at least one of the associated fill numbers was in the filter query
             expect(fillNumbersPerLog.every((logFillNumbers) =>
-                logFillNumbers.includes(fillNumbers[0]) && logFillNumbers.includes(fillNumbers[1]))).to.be.true;
+                logFillNumbers.includes(lhcFills[0]) && logFillNumbers.includes(lhcFills[1]))).to.be.true;
+        }
+
+        getAllLogsDto.query = { filter: { lhcFills: { operation: 'or', values: lhcFills } } };
+        {
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            expect(filteredResult).to.have.lengthOf(3);
+
+            const fillNumbersPerLog = filteredResult.map(({ lhcFills }) => lhcFills.map(({ fillNumber }) => fillNumber));
+
+            // For each returned log, check at least one of the associated fill numbers was in the filter query
+            expect(fillNumbersPerLog.every((logFillNumbers) =>
+                logFillNumbers.includes(lhcFills[0]) || logFillNumbers.includes(lhcFills[1]))).to.be.true;
         }
     });
 
     it ('should successfully filter on log environment', async () => {
-        const environmentIds = ['8E4aZTjY', 'eZF99lH6'];
-        getAllLogsDto.query = { filter: { environmentIds } };
+        const environments = ['8E4aZTjY', 'eZF99lH6'];
+        getAllLogsDto.query = { filter: { environments: { operation: 'and', values: environments } } };
 
         {
             const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
             expect(filteredResult).to.lengthOf(2);
             for (const log of filteredResult) {
-                const relatedenvironmentIds = log.environments.map(({ id }) => id);
-                expect(environmentIds.every((env) => relatedenvironmentIds.includes(env))).to.be.true;
+                const relatedEnvironments = log.environments.map(({ id }) => id);
+                expect(environments.every((env) => relatedEnvironments.includes(env))).to.be.true;
             }
         }
 
-        getAllLogsDto.query = { filter: { environmentIds: ['non-existent-environment'] } };
+        getAllLogsDto.query = { filter: { environments: { operation: 'or', values: environments } } };
+
+        {
+            const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+            expect(filteredResult).to.lengthOf(5);
+            for (const log of filteredResult) {
+                const relatedEnvironments = log.environments.map(({ id }) => id);
+                expect(environments.some((env) => relatedEnvironments.includes(env))).to.be.true;
+            }
+        }
+
+        getAllLogsDto.query = { filter: { environments: { operation: 'and', values: ['non-existent-environment'] } } };
 
         {
             const { logs: filteredResult } = await new GetAllLogsUseCase().execute(getAllLogsDto);

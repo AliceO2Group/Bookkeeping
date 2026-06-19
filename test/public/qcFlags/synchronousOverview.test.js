@@ -22,7 +22,6 @@ const {
     expectUrlParams,
     waitForNavigation,
     getColumnCellsInnerTexts,
-    getPopoverContent,
 } = require('../defaults.js');
 
 const { expect } = chai;
@@ -60,21 +59,14 @@ module.exports = () => {
 
     it('shows correct datatypes in respective columns', async () => {
         // eslint-disable-next-line require-jsdoc
-        const validateDate = (date) => date === '-' || !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY, hh:mm:ss'));
+        const validateDate = (date) => date === '-' || !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY hh:mm:ss'));
         const tableDataValidators = {
             flagType: (flagType) => flagType && flagType !== '-',
-            from: (cellContent) => {
-                const match = cellContent.match(/^From:\s*(.+)\nTo:\s*(.+)$/);
-                if (!match) return false;
-                const [, from, to] = match;
-                return (['Whole run coverage', 'Since run start'].includes(from) || validateDate(from))
-                    && (['Whole run coverage', 'Until run end'].includes(to) || validateDate(to));
-            },
-            deleted: (value) => value === 'Yes' || value === 'No',
-            createdBy: (cellContent) => {
-                const match = cellContent.match(/^By:\s*(.+)\nAt:\s*(.+)$/);
-                return match && match[1] !== '-' && validateDate(match[2]);
-            },
+            createdBy: (userName) => userName && userName !== '-',
+            from: (timestamp) => timestamp === 'Whole run coverage' || timestamp === 'Since run start' || validateDate(timestamp),
+            to: (timestamp) => timestamp === 'Whole run coverage' || timestamp === 'Until run end' || validateDate(timestamp),
+            createdAt: validateDate,
+            updatedAt: validateDate,
         };
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
@@ -84,34 +76,8 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '3');
-        await expectInnerText(page, '#totalRowsCount', '3');
-    });
-
-    it('should display Comment tooltip with full information', async () => {
-        let popoverTrigger = await page.$(`#row100-comment .popover-trigger`);
-        expect(popoverTrigger).to.not.be.null;
-
-        const popoverContent = await getPopoverContent(popoverTrigger);
-        expect(popoverContent).to.equal('first part good');
-    });
-
-    it('should display CreatedBy tooltip with full information', async () => {
-        let popoverTrigger = await page.$(`#row100-createdBy .popover-trigger`);
-        expect(popoverTrigger).to.not.be.null;
-
-        const popoverContent = await getPopoverContent(popoverTrigger);
-        expect(popoverContent).to.equal('By: Jan JansenAt: 12/08/2024, 12:00:00');
-    });
-
-    it('should display correct Deleted text colour', async () => {
-        const deletedCell = await page.$('#row103-deleted-text:nth-child(1)');
-
-        const deletedCellText = await page.evaluate(cell => cell.textContent.trim(), deletedCell);
-        expect(deletedCellText).to.equal('Yes');
-
-        const deletedCellFirstChildClass = await page.evaluate(cell => cell.firstElementChild.className, deletedCell);
-        expect(deletedCellFirstChildClass).to.include('danger');
+        await expectInnerText(page, '#lastRowIndex', '2');
+        await expectInnerText(page, '#totalRowsCount', '2');
     });
 
     it('can navigate to run details page from breadcrumbs link', async () => {

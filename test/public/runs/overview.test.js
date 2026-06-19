@@ -40,7 +40,6 @@ const {
     getColumnCellsInnerTexts,
     resetFilters,
     openFilteringPanel,
-    waitForButtonToBecomeActive,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -601,7 +600,7 @@ module.exports = () => {
 
         it('Should successfully filter runs by their trigger value', async () => {
             await navigateToRunsOverview(page);
-            const filterInputSelectorPrefix = '#triggerValue-checkbox-';
+            const filterInputSelectorPrefix = '#triggerValueCheckbox';
             const offFilterSelector = `${filterInputSelectorPrefix}OFF`;
             const ltuFilterSelector = `${filterInputSelectorPrefix}LTU`;
 
@@ -671,7 +670,7 @@ module.exports = () => {
             };
 
             // First filter validation on the main page.
-            await filterOnRun('#runOverviewFilter .runNumbers-textFilter');
+            await filterOnRun('#runOverviewFilter .run-numbers-filter');
             // Validate if the filter tab value is equal to the main page value.
             await expectInputValue(page, filterPanelRunNumbersInputSelector, inputValue);
             await resetFilters(page);
@@ -698,7 +697,7 @@ module.exports = () => {
                 await expectColumnValues(page, 'runNumber', ['10']);
             };
 
-            await filterOnRun('#runOverviewFilter .runNumbers-textFilter');
+            await filterOnRun('#runOverviewFilter .run-numbers-filter');
             await expectInputValue(page, filterPanelRunNumbersInputSelector, inputValue);
             await resetFilters(page);
             await filterOnRun(filterPanelRunNumbersInputSelector);
@@ -706,7 +705,7 @@ module.exports = () => {
 
         it('should successfully filter on a list of fill numbers and inform the user about it', async () => {
             await page.evaluate(() => window.model.disableInputDebounce());
-            const filterInputSelector = '.fillNumbers-textFilter';
+            const filterInputSelector = '.fill-numbers-filter';
             expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 7966, 7954, 7948...');
 
             await fillInput(page, filterInputSelector, '1, 3', ['change']);
@@ -714,7 +713,7 @@ module.exports = () => {
         });
 
         it('should successfully filter on a list of environment ids and inform the user about it', async () => {
-            const filterInputSelector = '.environmentIds-textFilter';
+            const filterInputSelector = '.environment-ids-filter';
             expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. Dxi029djX, TDI59So3d...');
 
             await fillInput(page, filterInputSelector, 'Dxi029djX, TDI59So3d', ['change']);
@@ -886,7 +885,6 @@ module.exports = () => {
             let exportModal = await page.$('#export-data-modal');
             expect(exportModal).to.be.null;
 
-            await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
             await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
             await page.waitForSelector('#export-data-modal', { timeout: 5000 });
             exportModal = await page.$('#export-data-modal');
@@ -895,7 +893,6 @@ module.exports = () => {
         });
 
         it('should successfully display information when export will be truncated', async () => {
-            await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
             await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
 
             const truncatedExportWarning = await page.waitForSelector('#export-data-modal #truncated-export-warning');
@@ -915,7 +912,6 @@ module.exports = () => {
         });
 
         it('should successfully export filtered runs', async () => {
-            await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
             const targetFileName = 'data.json';
 
             // First export
@@ -954,9 +950,9 @@ module.exports = () => {
             await page.waitForSelector(badFilterSelector);
             await page.$eval(badFilterSelector, (element) => element.click());
             await page.waitForSelector('tbody tr:nth-child(2)');
+            await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
 
             ///// Download
-            await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
             await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
             await page.waitForSelector('#export-data-modal', { timeout: 5000 });
 

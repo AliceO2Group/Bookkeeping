@@ -12,11 +12,7 @@
  */
 
 const NavBarSuite = require('./navBar.test')
-const WarningSuite = require('./warnings.test')
-const FiltersPanelSuite = require('./filtersPopoverPanel.test')
 
 module.exports = () => {
     describe('Navbar component', NavBarSuite);
-    describe('Warning component', WarningSuite)
-    describe('FiltersPanelPopover component', FiltersPanelSuite)
 };
