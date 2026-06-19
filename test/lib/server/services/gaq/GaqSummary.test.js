@@ -242,6 +242,7 @@ module.exports = () => {
                 // First call — will be held open by the slow stub
                 const firstCall = gaqWorker.recalculateGaqSummaries(1);
 
+                // Second call — should be skipped because a previous run is still in flight
                 await gaqWorker.recalculateGaqSummaries(1);
 
                 // Stub should only have been called once
