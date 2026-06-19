@@ -743,8 +743,8 @@ module.exports = () => {
             const response = await request(server).get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}`);
             expect(response.status).to.be.equal(200);
             const { data: flags, meta } = response.body;
-            expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 1 } });
-            expect(flags.map(({ id }) => id)).to.have.all.ordered.members([101, 100]);
+            expect(meta).to.be.eql({ page: { totalCount: 3, pageCount: 1 } });
+            expect(flags.map(({ id }) => id)).to.have.all.ordered.members([103, 101, 100]);
         });
 
         it('should successfully fetch synchronous flags with pagination', async () => {
@@ -752,11 +752,11 @@ module.exports = () => {
             const detectorId = 7;
             {
                 const response = await request(server)
-                    .get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}&page[limit]=1&page[offset]=1`);
+                    .get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}&page[limit]=1&page[offset]=2`);
 
                 expect(response.status).to.be.equal(200);
                 const { data: flags, meta } = response.body;
-                expect(meta).to.be.eql({ page: { totalCount: 2, pageCount: 2 } });
+                expect(meta).to.be.eql({ page: { totalCount: 3, pageCount: 3 } });
                 expect(flags).to.be.lengthOf(1);
                 const [flag] = flags;
                 expect(flag.id).to.be.equal(100);
@@ -770,7 +770,7 @@ module.exports = () => {
             {
                 const response = await request(server)
                     .get(`/api/qcFlags/synchronous?runNumber=${runNumber}&detectorId=${detectorId}&filter[createdBy][names]=Jan%20Jansen&filter[createdBy][operator]=or`);
-                expect(response.body.data).to.be.lengthOf(2);
+                expect(response.body.data).to.be.lengthOf(3);
             }
 
             {
