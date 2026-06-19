@@ -80,6 +80,37 @@ module.exports = () => {
             const summary = await findSummary(dataPassId, 49);
             expect(summary).to.not.be.null;
             expect(summary.notComputable).to.be.true;
+
+            await GaqSummaryRepository.removeAll({ where: { dataPassId, runNumber: 49 } });
+        });
+
+        it('should clear stale coverage fields when a previously-computable row becomes notComputable', async () => {
+            // Seed a row that has values but will become notComputable after recalculation due to missing QC flags
+            const staleRunNumber = 49;
+            await GaqSummaryRepository.upsert({
+                dataPassId,
+                runNumber: staleRunNumber,
+                badRunCoverage: 0.5,
+                explicitlyNotBadRunCoverage: 0.4,
+                mcReproducibleCoverage: 0.1,
+                missingVerificationsCount: 2,
+                undefinedQualityPeriodsCount: 1,
+                notComputable: false,
+            });
+
+            // Run 49 has no QC flags seeded for data pass 1, so _computeSummary returns null
+            await gaqService.calculateAndStoreGaqSummary(dataPassId, staleRunNumber);
+
+            const summary = await findSummary(dataPassId, staleRunNumber);
+            expect(summary).to.not.be.null;
+            expect(summary.notComputable).to.be.true;
+            expect(summary.badRunCoverage).to.be.null;
+            expect(summary.explicitlyNotBadRunCoverage).to.be.null;
+            expect(summary.mcReproducibleCoverage).to.be.null;
+            expect(summary.missingVerificationsCount).to.be.null;
+            expect(summary.undefinedQualityPeriodsCount).to.be.null;
+
+            await GaqSummaryRepository.removeAll({ where: { dataPassId, runNumber: staleRunNumber } });
         });
     });
 
