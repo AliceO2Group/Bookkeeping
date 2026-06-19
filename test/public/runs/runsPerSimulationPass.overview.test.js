@@ -31,6 +31,7 @@ const {
     testTableSortingByColumn,
     waitForTableLength,
     expectColumnValues,
+    waitForButtonToBecomeActive,
 } = require('../defaults.js');
 
 const { expect } = chai;
@@ -73,6 +74,8 @@ module.exports = () => {
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
     });
+
+    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
 
     it('loads the page successfully', async () => {
         const response = await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
@@ -135,6 +138,17 @@ module.exports = () => {
         await page.waitForSelector('tr#row56 .column-ITS a .icon');
 
         await qcFlagService.delete(tmpQcFlag.id);
+    });
+
+    it('should display detector columns in RCT order (AOT/MUON after physical)', async () => {
+        const headers = await page.$$eval(
+            'table thead th',
+            (ths) => ths.map((th) => th.id).filter(Boolean),
+        );
+        
+        // See DetectorOrders.RCT in detectorOrders.js
+        expect(headers.indexOf('VTX')).to.be.greaterThan(headers.indexOf('ZDC'));
+        expect(headers.indexOf('MUD')).to.be.greaterThan(headers.indexOf('ZDC'));
     });
 
     it('should successfully sort by runNumber in ascending and descending manners', async () => {
@@ -203,7 +217,6 @@ module.exports = () => {
         await fillInput(page, '#detectorsQc-for-1-notBadFraction-operand', '90', ['change']);
         await expectColumnValues(page, 'runNumber', ['106']);
 
-        await pressElement(page, '#openFilterToggle', true);
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['107', '106', '105']);
     });
@@ -217,18 +230,16 @@ module.exports = () => {
         await fillInput(page, '#detectorsQc-for-1-notBadFraction-operand', '90', ['change']);
         await expectColumnValues(page, 'runNumber', ['106']);
 
-        await pressElement(page, '#openFilterToggle', true);
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['107', '106', '105']);
     });
 
     it('should successfully export runs', async () => {
         await navigateToRunsPerSimulationPass(page, 1, 2, 3);
-        const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
-
         const targetFileName = 'data.json';
 
         // Export
+        await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         await page.waitForSelector('#export-data-modal');
         await page.waitForSelector('#send:disabled');
@@ -259,7 +270,8 @@ module.exports = () => {
         const targetFileName = 'data.csv';
         
         // Export
-        await pressElement(page, '#export-data-trigger');
+        await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
+        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         await page.waitForSelector('#export-data-modal');
         await page.waitForSelector('#send:disabled');
         await page.waitForSelector('.form-control');

@@ -225,4 +225,40 @@ module.exports = () => {
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(0); // Environments from seeders
     });
+
+    it('should return correct total count and all filtered results across pages', async () => {
+        const totalMatchingFilter = 6; // 'RUNNING, ERROR' matches 6 environments at this point
+        const limit = 2;
+
+        // First page
+        getAllEnvsDto.query = { page: { limit, offset: 0 }, filter: { currentStatus: 'RUNNING, ERROR' } };
+        const page1 = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(page1.count).to.be.equal(totalMatchingFilter);
+        expect(page1.environments).to.be.an('array');
+        expect(page1.environments.length).to.be.equal(limit);
+
+        // Second page
+        getAllEnvsDto.query = { page: { limit, offset: 2 }, filter: { currentStatus: 'RUNNING, ERROR' } };
+        const page2 = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(page2.count).to.be.equal(totalMatchingFilter);
+        expect(page2.environments).to.be.an('array');
+        expect(page2.environments.length).to.be.equal(limit);
+
+        // Third page
+        getAllEnvsDto.query = { page: { limit, offset: 4 }, filter: { currentStatus: 'RUNNING, ERROR' } };
+        const page3 = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(page3.count).to.be.equal(totalMatchingFilter);
+        expect(page3.environments).to.be.an('array');
+        expect(page3.environments.length).to.be.equal(limit);
+
+        // Collect all environment IDs and verify no duplicates and all present
+        const allIds = [page1, page2, page3].flatMap(({ environments })=> environments.map(({ id }) => id));
+
+        expect(allIds.length).to.be.equal(totalMatchingFilter);
+        expect(new Set(allIds).size).to.be.equal(totalMatchingFilter);
+        expect(allIds).to.have.members(['SomeId', 'newId', 'CmCvjNbg', 'EIDO13i3D', '8E4aZTjY', 'Dxi029djX']);
+    });
 };

@@ -11,15 +11,12 @@
  * or submit itself to any jurisdiction.
  */
 
-import { rawTextFilter } from '../common/filters/rawTextFilter.js';
+const ToUrlSuite = require('./filtersToUrl.test.js');
+const ToFilterSuite = require('./urlToFilter.test.js');
+const FilteringModelSuite = require('./filteringModel.test.js');
 
-/**
- * Component to filter runs on run number
- *
- * @param {RawTextFilterModel} filterModel the filter model
- * @return {Component} the filter
- */
-export const runNumbersFilter = (filterModel) => rawTextFilter(
-    filterModel,
-    { classes: ['w-100', 'run-numbers-filter'], placeholder: 'e.g. 534454, 534455...' },
-);
+module.exports = () => {
+    describe('Filters to URL', ToUrlSuite);
+    describe('URL to Filters', ToFilterSuite);
+    describe('FilteringModel', FilteringModelSuite);
+};
