@@ -220,8 +220,8 @@ module.exports = () => {
             await expectInvalidation(1, 106);
             await expectInvalidation(1, 107);
 
-            // Manually call the worker with batchSize=2 to process both in one go
-            await gaqWorker.recalculateGaqSummaries(2);
+            // Manually call the worker with min/max batchSize=2 to process both in one go
+            await gaqWorker.recalculateGaqSummaries(2, 2);
 
             await expectInvalidation(1, 106, true);
             await expectInvalidation(1, 107, true);
@@ -240,10 +240,10 @@ module.exports = () => {
 
             try {
                 // First call — will be held open by the slow stub
-                const firstCall = gaqWorker.recalculateGaqSummaries(1);
+                const firstCall = gaqWorker.recalculateGaqSummaries(1, 1);
 
                 // Second call — should be skipped because a previous run is still in flight
-                await gaqWorker.recalculateGaqSummaries(1);
+                await gaqWorker.recalculateGaqSummaries(1, 1);
 
                 // Stub should only have been called once
                 expect(stub.callCount).to.equal(1);
