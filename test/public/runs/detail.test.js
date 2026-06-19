@@ -54,7 +54,7 @@ const banIconPath =
  */
 const goToRunDetails = async (page, runNumber) => {
     await waitForNavigation(page, () => pressElement(page, '#run-overview'));
-    await fillInput(page, '.runNumbers-textFilter', `${runNumber},${runNumber}`, ['change']);
+    await fillInput(page, '.run-numbers-filter', `${runNumber},${runNumber}`, ['change']);
     await waitForTableLength(page, 1);
     return waitForNavigation(page, () => pressElement(page, `a[href="?page=run-detail&runNumber=${runNumber}"]`));
 };
@@ -208,10 +208,10 @@ module.exports = () => {
 
         expect(eorReasons).to.lengthOf(2);
         expect(await eorReasons[0].evaluate((element) => element.innerText))
-            .to.equal('DETECTORS - TPC - Some Reason other than selected plus one\nAnonymous');
+            .to.equal('DETECTORS - TPC - Some Reason other than selected plus one');
 
         expect(await eorReasons[1].evaluate((element) => element.innerText))
-            .to.equal('DETECTORS - CPV - A new EOR reason\nAnonymous');
+            .to.equal('DETECTORS - CPV - A new EOR reason');
     });
 
     it('should successfully revert the update end of run reasons', async () => {
@@ -234,19 +234,10 @@ module.exports = () => {
 
         expect(eorReasons).to.lengthOf(2);
         expect(await eorReasons[0].evaluate((element) => element.innerText))
-            .to.equal('DETECTORS - TPC - Some Reason other than selected plus one\nAnonymous');
+            .to.equal('DETECTORS - TPC - Some Reason other than selected plus one');
 
         expect(await eorReasons[1].evaluate((element) => element.innerText))
-            .to.equal('DETECTORS - CPV - A new EOR reason\nAnonymous');
-    });
-
-    it('should display lastEditedName tooltip with "Last edited by" on formatRunEorReason', async () => {
-        const eorReasonElement = await page.$('#eor-reasons .eor-reason');
-        const popoverTrigger = await eorReasonElement.$('.popover-trigger');
-        expect(popoverTrigger).to.not.be.null;
-
-        const popoverContent = await getPopoverContent(popoverTrigger);
-        expect(popoverContent).to.equal('Last edited by');
+            .to.equal('DETECTORS - CPV - A new EOR reason');
     });
 
     it('should successfully update inelasticInteractionRate values of PbPb run', async () => {

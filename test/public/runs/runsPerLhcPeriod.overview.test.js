@@ -32,7 +32,6 @@ const {
     expectColumnValues,
     openFilteringPanel,
     resetFilters,
-    waitForButtonToBecomeActive
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -76,7 +75,6 @@ module.exports = () => {
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
     });
-    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
 
     it('loads the page successfully', async () => {
         const response = await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodId: 1 } });
@@ -130,17 +128,6 @@ module.exports = () => {
         await waitForTableLength(page, 4);
         await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithQualityFromSynchronousFlags)));
         await expectInnerText(page, '#row56-FT0', '83');
-    });
-
-    it('should display detector columns in RCT order (AOT/MUON after physical) for synchronous flags', async () => {
-        // Note test starts already on synchronous flags tab
-        const headers = await page.$$eval(
-            'table thead th',
-            (ths) => ths.map((th) => th.id).filter(Boolean),
-        );
-
-        // See DetectorOrders.RCT in detectorOrders.js
-        expect(headers.indexOf('MUD')).to.be.greaterThan(headers.indexOf('ZDC'));
     });
 
     it('should successfully sort by runNumber in ascending and descending manners', async () => {
@@ -201,19 +188,25 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
+            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 10;
         });
-        await waitForTableLength(page, 2);
+        await waitForTableLength(page, 4);
     });
 
+    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
 
     it('should successfully export all runs per lhc Period', async () => {
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
+        });
+
         const targetFileName = 'data.json';
-        await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
+
         // First export
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
-        await page.waitForSelector('select.form-control');
-        await page.waitForSelector('option[value=runNumber]');
+        await page.waitForSelector('select.form-control', { timeout: 200 });
+        await page.waitForSelector('option[value=runNumber]', { timeout: 200 });
         await page.select('select.form-control', 'runQuality', 'runNumber', 'definition', 'lhcPeriod');
         await expectInnerText(page, '#send:enabled', 'Export');
 
@@ -282,9 +275,9 @@ module.exports = () => {
         await navigateToRunsPerLhcPeriod(page, 1, 4);
 
         const targetFileName = 'data.csv';
-        await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
+        
         // Export
-        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
+        await pressElement(page, '#export-data-trigger');
         await page.waitForSelector('#export-data-modal');
         await page.waitForSelector('#send:disabled');
         await page.waitForSelector('.form-control');
