@@ -129,6 +129,26 @@ module.exports = () => {
 
             await expectInvalidation(dataPassId, runNumber);
         });
+
+        it('should NOT invalidate GAQ summary when updateRun patch does not touch QC time source fields', async () => {
+            await updateRun(
+                { runNumber },
+                { runPatch: { definition: 'PHYSICS' } },
+            );
+
+            await expectInvalidation(dataPassId, runNumber, true);
+        });
+
+        it('should NOT invalidate GAQ summary when a QC time source field is patched but qcTimeStart/qcTimeEnd do not change', async () => {
+            // Run 56 has a non-null time_trg_start, so qc_time_start resolves to time_trg_start regardless of time_o2_start.
+            // Patching only time_o2_start moves a source field but does not change the virtual qcTimeStart / qcTimeEnd, so no invalidation should fire.
+            await updateRun(
+                { runNumber },
+                { runPatch: { timeO2Start: new Date('2019-08-08 18:00:00') } },
+            );
+
+            await expectInvalidation(dataPassId, runNumber, true);
+        });
     });
 
     describe('GAQ Worker', () => {
