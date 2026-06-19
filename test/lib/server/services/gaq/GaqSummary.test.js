@@ -242,14 +242,13 @@ module.exports = () => {
                 // First call — will be held open by the slow stub
                 const firstCall = gaqWorker.recalculateGaqSummaries(1);
 
-                // Second call — should be skipped because _isSynchronizing is true
                 await gaqWorker.recalculateGaqSummaries(1);
 
                 // Stub should only have been called once
                 expect(stub.callCount).to.equal(1);
 
-                // Release the first call
-                resolveFirst();
+                // Release the first call with the shape popNInvalidSummaryAndRecalculate normally returns
+                resolveFirst({ processedCount: 0, totalInvalidCount: 0 });
                 await firstCall;
             } finally {
                 sinon.restore();
