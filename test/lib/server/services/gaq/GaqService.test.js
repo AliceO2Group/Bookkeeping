@@ -12,6 +12,7 @@
  */
 
 const { expect } = require('chai');
+const sinon = require('sinon');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { repositories: { GaqSummaryRepository} } = require('../../../../../lib/database');
 const { gaqService } = require('../../../../../lib/server/services/gaq/GaqService.js');
@@ -111,6 +112,40 @@ module.exports = () => {
             expect(summary.undefinedQualityPeriodsCount).to.be.null;
 
             await GaqSummaryRepository.removeAll({ where: { dataPassId, runNumber: staleRunNumber } });
+        });
+
+        it('should not clear invalidatedAt if the row was re-invalidated during compute', async () => {
+            // Seed an initial invalidation so the row has a known invalidatedAt
+            await GaqSummaryRepository.invalidate(dataPassId, runNumber);
+            const initial = await findSummary(dataPassId, runNumber);
+            expect(initial.invalidatedAt).to.not.be.null;
+
+            // Simulate a concurrent invalidate by mocking _computeSummary to invalidate the row again but still return a valid summary
+            sinon.stub(gaqService, '_computeSummary').callsFake(async () => {
+                await GaqSummaryRepository.invalidate(dataPassId, runNumber);
+                return {
+                    badRunCoverage: 0,
+                    explicitlyNotBadRunCoverage: 1,
+                    mcReproducibleCoverage: 0,
+                    missingVerificationsCount: 0,
+                    undefinedQualityPeriodsCount: 0,
+                };
+            });
+
+            try {
+                await gaqService.calculateAndStoreGaqSummary(
+                    dataPassId,
+                    runNumber,
+                    { expectedInvalidatedAt: initial.invalidatedAt },
+                );
+            } finally {
+                sinon.restore();
+            }
+
+            const after = await findSummary(dataPassId, runNumber);
+            // InvalidatedAt should not have been cleared because the row was re-invalidated during compute
+            expect(after.invalidatedAt).to.not.be.null;
+            expect(after.invalidatedAt).to.be.greaterThan(initial.invalidatedAt);
         });
     });
 
