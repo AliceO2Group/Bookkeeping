@@ -256,9 +256,9 @@ module.exports = () => {
     it('should set filters from lhcPriodOverview to the URL', async () => {
         await goToPage(page, 'lhc-period-overview');
 
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22a');
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', '2022');
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', 'PbPb');
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22a', ['change']);
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(2) input[type=text]', '2022', ['change']);
+        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(3) input[type=text]', 'PbPb', ['change']);
         const queryParameters = getQueryParameters(page);
         expect(queryParameters).to.deep.equal({
             "page": "lhc-period-overview",
@@ -271,8 +271,8 @@ module.exports = () => {
     it('should set filters from qcFlagTypesOverview to the URL', async () => {
         await goToPage(page, 'qc-flag-types-overview');
 
-        await fillInput(page, '.name-filter input[type=text]', 'bad');
-        await fillInput(page, '.method-filter input[type=text]', 'bad');
+        await fillInput(page, '.name-filter input[type=text]', 'bad', ['change']);
+        await fillInput(page, '.method-filter input[type=text]', 'bad', ['change']);
         await pressElement(page, '#badFilterRadioBad', true);
 
         const queryParameters = getQueryParameters(page);
@@ -343,7 +343,7 @@ module.exports = () => {
     it('should set filters from DataPassesPerLhcPeriodOverview to the URL', async () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 }});
 
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1', ['input']);
+        await fillInput(page, '.names-textFilter', 'LHC22b_apass1', ['change']);
         await pressElement(page, '#checkboxes-checkbox-test', true);
 
 
@@ -359,7 +359,7 @@ module.exports = () => {
     it('should set filters from DataPassesPerSimulationPassOverview to the URL', async () => {
         await goToPage(page, 'data-passes-per-simulation-pass-overview', { queryParameters: { simulationPassId: 1 }});
 
-        await fillInput(page, 'div.flex-row.items-baseline:nth-of-type(1) input[type=text]', 'LHC22b_apass1', ['input']);
+        await fillInput(page, '.names-textFilter', 'LHC22b_apass1', ['change']);
         await pressElement(page, '#checkboxes-checkbox-test', true);
 
         const queryParameters = getQueryParameters(page);
@@ -374,7 +374,7 @@ module.exports = () => {
     it('should set filters from AnchoredSimulationPassesOverview to the URL', async () => {
         await goToPage(page, 'anchored-simulation-passes-overview', { queryParameters: { dataPassId: 1 }});
 
-        await fillInput(page, '.name-filter input', 'LHC23k6c', ['input']);
+        await fillInput(page, '.names-textFilter', 'LHC23k6c', ['change']);
 
         const queryParameters = getQueryParameters(page);
         expect(queryParameters).to.deep.equal({
