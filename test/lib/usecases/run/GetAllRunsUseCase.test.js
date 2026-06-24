@@ -43,7 +43,7 @@ module.exports = () => {
             }
             expect(comparitor(fileCount)).to.be.true;
         }
-    }
+    };
 
     beforeEach(async () => {
         getAllRunsDto = await GetAllRunsDto.validateAsync({});
