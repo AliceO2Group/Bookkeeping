@@ -12,9 +12,14 @@
  */
 
 const { database } = require('../../lib/application.js');
+const { gaqWorker } = require('../../lib/server/services/gaq/GaqWorker.js');
 
 exports.resetDatabaseContent = async () => {
+    // Pause GAQ worker and await any in-flight call before dropping tables, otherwise a tick
+    // already past the guard would hit dropped tables and log a spurious ERROR
+    await gaqWorker.pause();
     await database.dropAllTables();
     await database.migrate();
     await database.seed();
+    gaqWorker.resume();
 };
