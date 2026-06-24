@@ -94,7 +94,7 @@ module.exports = () => {
         await waitForTableLength(page, 7);
 
         await pressElement(page, '#openFilterToggle');
-        await fillInput(page, '.name-filter input[type=text]', 'bad');
+        await fillInput(page, '.name-filter input[type=text]', 'bad', ['change']);
         await checkColumnValuesWithRegex(page, 'name', '[Bb][Aa][Dd]');
 
         await pressElement(page, '#reset-filters', true);
@@ -103,7 +103,7 @@ module.exports = () => {
     it('should successfully apply QC flag type method filter', async () => {
         await waitForTableLength(page, 7);
 
-        await fillInput(page, '.method-filter input[type=text]', 'bad');
+        await fillInput(page, '.method-filter input[type=text]', 'bad', ['change']);
         await checkColumnValuesWithRegex(page, 'method', '[Bb][Aa][Dd]');
 
         await pressElement(page, '#reset-filters', true);

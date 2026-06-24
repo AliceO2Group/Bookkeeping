@@ -143,9 +143,9 @@ module.exports = () => {
         await waitForTableTotalRowsCountToEqual(page, 3);
         
         // Name
-        await fillInput(page, '.name-filter input', 'LHC23f');
+        await fillInput(page, '.names-textFilter', 'LHC23f', ['change']);
         await waitForTableTotalRowsCountToEqual(page, 1);
-        await fillInput(page, '.name-filter input', 'bogus');
+        await fillInput(page, '.names-textFilter', 'bogus', ['change']);
         await waitForTableTotalRowsCountToEqual(page, 0);
         await page.goBack();
         await waitForTableTotalRowsCountToEqual(page, 1);
