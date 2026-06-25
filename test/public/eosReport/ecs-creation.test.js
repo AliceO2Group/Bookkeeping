@@ -33,7 +33,7 @@ const { getOrCreateAllDataTakingDetectorsByName } = require('../../../lib/server
 const EorReasonRepository = require('../../../lib/database/repositories/EorReasonRepository.js');
 const { ShiftTypes } = require('../../../lib/domain/enums/ShiftTypes.js');
 const { eosReportService } = require('../../../lib/server/services/eosReport/EosReportService.js');
-const { SHIFT_DURATION } = require('../../../lib/server/services/shift/getShiftFromTimestamp.js');
+const { shiftService } = require('../../../lib/server/services/shift/ShiftService.js');
 
 module.exports = () => {
     let page;
@@ -92,11 +92,11 @@ module.exports = () => {
         }
 
         // Create the expected previous EoS report
-        const past = new Date(Date.now() - SHIFT_DURATION);
+        const past = shiftService.getUserPreviousShiftOrFail();
         const info = 'Important information for the next tester';
         const request = {
             ...emptyECSEosReportRequest,
-            shiftStart: past,
+            shiftStart: past.start,
             infoForNextShifter: info,
         };
 
