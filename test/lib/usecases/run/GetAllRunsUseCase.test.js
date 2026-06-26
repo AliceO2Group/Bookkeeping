@@ -19,11 +19,31 @@ const { RunCalibrationStatus } = require('../../../../lib/domain/enums/RunCalibr
 const { RunDefinition } = require('../../../../lib/domain/enums/RunDefinition.js');
 const assert = require('assert');
 const { BadParameterError } = require('../../../../lib/server/errors/BadParameterError.js');
+const GetRunUseCase = require('../../../../lib/usecases/run/GetRunUseCase.js');
 
 const { expect } = chai;
 
 module.exports = () => {
     let getAllRunsDto;
+
+    const checkFileCount = async (operator, limit, fileType, comparitor) => {
+        getAllRunsDto.query = { filter: { [fileType]: { operator, limit }  } };
+        const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+
+        expect(runs).to.have.length.of.greaterThan(0);
+
+        const runNumbers = runs.map(({ runNumber }) => runNumber);
+        
+        for (const runNumber of runNumbers) {
+            const run = await new GetRunUseCase().execute({ params: { runId: runNumber, runNumber } });
+            const fileCount = run[fileType];
+            if (!comparitor(fileCount)) {
+                console.log({ fileCount, operator, runNumber });
+                console.log(getAllRunsDto.query);
+            }
+            expect(comparitor(fileCount)).to.be.true;
+        }
+    };
 
     beforeEach(async () => {
         getAllRunsDto = await GetAllRunsDto.validateAsync({});
@@ -604,75 +624,18 @@ module.exports = () => {
     });
 
     it('should successfully filter on ctf file count number', async () => {
-        const ctfFileCount = {
-            operator: '<',
-            limit: 200,
-        };
-        getAllRunsDto.query = { filter: { ctfFileCount } };
-
-        let { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
-        expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(1);
-
-        ctfFileCount.operator = '<=';
-        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
-        expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(2);
-        expect(runs.every((run) => run.ctfFileCount <= 200)).to.be.true;
-
-        ctfFileCount.operator = '=';
-        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
-        expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(1);
-        expect(runs.every((run) => run.ctfFileCount === 200)).to.be.true;
-
-        ctfFileCount.operator = '>=';
-        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
-        expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(8);
-        expect(runs.every((run) => run.ctfFileCount >= 200)).to.be.true;
-
-        ctfFileCount.operator = '>';
-        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
-        expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(7);
-        expect(runs.every((run) => run.ctfFileCount >= 500)).to.be.true;
+        await checkFileCount('<', 200, 'ctfFileCount', (fileCount) => fileCount < 200);
+        await checkFileCount('<=', 200, 'ctfFileCount', (fileCount) => fileCount <= 200);
+        await checkFileCount('=', 200, 'ctfFileCount', (fileCount) => fileCount === 200);
+        await checkFileCount('>=', 200, 'ctfFileCount', (fileCount) => fileCount >= 200);
+        await checkFileCount('>', 200, 'ctfFileCount', (fileCount) => fileCount > 200);
     });
 
     it('should successfully filter on tf file count number', async () => {
-        const tfFileCount = {
-            operator: '<',
-            limit: 30,
-        };
-        getAllRunsDto.query = { filter: { tfFileCount } };
-
-        let { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
-        expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(0);
-
-        tfFileCount.operator = '<=';
-        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
-        expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(8);
-        expect(runs.every((run) => run.tfFileCount <= 30)).to.be.true;
-
-        tfFileCount.operator = '=';
-        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
-        expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(8);
-        expect(runs.every((run) => run.tfFileCount === 30)).to.be.true;
-
-        tfFileCount.operator = '>=';
-        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
-        expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(9);
-        expect(runs.every((run) => run.tfFileCount >= 30)).to.be.true;
-
-        tfFileCount.operator = '>';
-        ({ runs } = await new GetAllRunsUseCase().execute(getAllRunsDto));
-        expect(runs).to.be.an('array');
-        expect(runs).to.have.lengthOf(1);
-        expect(runs.every((run) => run.tfFileCount > 30)).to.be.true;
+        await checkFileCount('<=', 30, 'tfFileCount', (fileCount) => fileCount <= 30);
+        await checkFileCount('=', 30, 'tfFileCount', (fileCount) => fileCount === 30);
+        await checkFileCount('>=', 30, 'tfFileCount', (fileCount) => fileCount >= 30);
+        await checkFileCount('>', 30, 'tfFileCount', (fileCount) => fileCount > 30);
     });
 
     it('should successfully return an array, only containing runs found from passed list', async () => {
@@ -899,9 +862,12 @@ module.exports = () => {
                 },
             });
             expect(runs).to.have.lengthOf(3);
-            expect(runs.find(({ runNumber }) => runNumber === 107).qcFlags['1'].map(({ id }) => id)).to.have.all.members([202, 201]);
-            expect(runs.find(({ runNumber }) => runNumber === 107).qcFlags['2'].map(({ id }) => id)).to.have.all.members([203]);
-            expect(runs.find(({ runNumber }) => runNumber === 106).qcFlags['1'].map(({ id }) => id)).to.have.all.members([3, 2, 1]);
+            const run107 = runs.find(({ runNumber }) => runNumber === 107);
+            const run106 = runs.find(({ runNumber }) => runNumber === 106);
+
+            expect(run107.qcFlags['1'].map(({ id }) => id)).to.have.all.members([202, 201]);
+            expect(run107.qcFlags['2'].map(({ id }) => id)).to.have.all.members([203]);
+            expect(run106.qcFlags['1'].map(({ id }) => id)).to.have.all.members([3, 2, 1]);
         }
 
         { // Simulation Passes

@@ -327,8 +327,7 @@ module.exports = () => {
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
             model.runs.perDataPassOverviewModel.pagination.reset();
-            // eslint-disable-next-line no-undef
-            model.runs.perDataPassOverviewModel.notify();
+            model.runs.perDataPassOverviewModel.pagination.provideDefaultItemsPerPage(null);
         });
         await waitForTableLength(page, 4);
     });
