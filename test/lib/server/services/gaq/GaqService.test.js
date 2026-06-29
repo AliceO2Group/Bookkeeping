@@ -16,6 +16,7 @@ const sinon = require('sinon');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const { repositories: { GaqSummaryRepository} } = require('../../../../../lib/database');
 const { gaqService } = require('../../../../../lib/server/services/gaq/GaqService.js');
+const { gaqWorker } = require('../../../../../lib/server/services/gaq/GaqWorker.js');
 const { Op } = require('sequelize');
 
 /**
@@ -146,6 +147,126 @@ module.exports = () => {
             // InvalidatedAt should not have been cleared because the row was re-invalidated during compute
             expect(after.invalidatedAt).to.not.be.null;
             expect(after.invalidatedAt).to.be.greaterThan(initial.invalidatedAt);
+        });
+    });
+
+    describe('getSummary', () => {
+        before(() => gaqWorker.pause());
+        after(() => gaqWorker.resume());
+
+        afterEach(async () => {
+            await GaqSummaryRepository.removeAll({ where: { dataPassId } });
+        });
+
+        it('should return the summary for a single run when runNumber is given', async () => {
+            await gaqService.calculateAndStoreGaqSummary(dataPassId, runNumber);
+
+            const result = await gaqService.getSummary(dataPassId, { runNumber });
+            expect(result).to.be.an('object');
+            expect(result).to.have.all.keys(
+                'badEffectiveRunCoverage',
+                'explicitlyNotBadEffectiveRunCoverage',
+                'mcReproducible',
+                'missingVerificationsCount',
+                'undefinedQualityPeriodsCount',
+            );
+            expect(result.missingVerificationsCount).to.equal(3);
+            expect(result.mcReproducible).to.be.true;
+        });
+
+        it('should return null when runNumber is given and no row exists', async () => {
+            const result = await gaqService.getSummary(dataPassId, { runNumber: 999999 });
+            expect(result).to.be.null;
+        });
+
+        it('should return a summary with null coverage fields when the row is notComputable', async () => {
+            // Run 49 has no QC flags in data pass 1, so calculateAndStoreGaqSummary writes a notComputable row
+            await gaqService.calculateAndStoreGaqSummary(dataPassId, 49);
+
+            const result = await gaqService.getSummary(dataPassId, { runNumber: 49 });
+            expect(result).to.deep.equal({
+                badEffectiveRunCoverage: null,
+                explicitlyNotBadEffectiveRunCoverage: null,
+                mcReproducible: false,
+                missingVerificationsCount: null,
+                undefinedQualityPeriodsCount: null,
+            });
+        });
+
+        it('should return a summary with null coverage fields when the row is invalidated but never computed', async () => {
+            await GaqSummaryRepository.invalidate(dataPassId, runNumber);
+
+            const result = await gaqService.getSummary(dataPassId, { runNumber });
+            expect(result).to.deep.equal({
+                badEffectiveRunCoverage: null,
+                explicitlyNotBadEffectiveRunCoverage: null,
+                mcReproducible: false,
+                missingVerificationsCount: null,
+                undefinedQualityPeriodsCount: null,
+            });
+        });
+
+        it('should include every existing row in the map, with null fields for those without coverage values', async () => {
+            await gaqService.calculateAndStoreGaqSummary(dataPassId, runNumber);
+            await gaqService.calculateAndStoreGaqSummary(dataPassId, 49); // notComputable
+            await GaqSummaryRepository.invalidate(dataPassId, 106); // invalidated, never computed
+
+            const result = await gaqService.getSummary(dataPassId);
+            expect(Object.keys(result).map(Number).sort()).to.deep.equal([49, 106, runNumber].sort());
+            expect(result[runNumber].badEffectiveRunCoverage).to.not.be.null;
+            expect(result[49].badEffectiveRunCoverage).to.be.null;
+            expect(result[106].badEffectiveRunCoverage).to.be.null;
+        });
+
+        it('should return the previously-computed values for a row that has been invalidated but not yet recomputed', async () => {
+            await gaqService.calculateAndStoreGaqSummary(dataPassId, runNumber);
+            const expected = await gaqService.getSummary(dataPassId, { runNumber });
+
+            await GaqSummaryRepository.invalidate(dataPassId, runNumber);
+
+            const result = await gaqService.getSummary(dataPassId, { runNumber });
+            expect(result).to.deep.equal(expected);
+        });
+
+        it('should not leak rows from other data passes into the result', async () => {
+            const otherDataPassId = 2;
+            await gaqService.calculateAndStoreGaqSummary(dataPassId, runNumber);
+            await GaqSummaryRepository.upsert({
+                dataPassId: otherDataPassId,
+                runNumber,
+                badRunCoverage: 0.5,
+                explicitlyNotBadRunCoverage: 0.5,
+                mcReproducibleCoverage: 0,
+                missingVerificationsCount: 0,
+                undefinedQualityPeriodsCount: 0,
+                notComputable: false,
+            });
+
+            try {
+                const result = await gaqService.getSummary(dataPassId);
+                expect(Object.keys(result).map(Number)).to.have.members([runNumber]);
+            } finally {
+                await GaqSummaryRepository.removeAll({ where: { dataPassId: otherDataPassId, runNumber } });
+            }
+        });
+
+        it('should return an empty map when no summary rows exist for the data pass', async () => {
+            const result = await gaqService.getSummary(dataPassId);
+            expect(result).to.deep.equal({});
+        });
+
+        it('should treat mcReproducible coverage as not-bad when mcReproducibleAsNotBad is true', async () => {
+            await gaqService.calculateAndStoreGaqSummary(dataPassId, runNumber);
+
+            const defaultResult = await gaqService.getSummary(dataPassId, { runNumber });
+            const asNotBadResult = await gaqService.getSummary(dataPassId, { runNumber, mcReproducibleAsNotBad: true });
+
+            expect(asNotBadResult.badEffectiveRunCoverage).to.be.lessThan(defaultResult.badEffectiveRunCoverage + 1e-9);
+            expect(asNotBadResult.explicitlyNotBadEffectiveRunCoverage)
+                .to.be.greaterThan(defaultResult.explicitlyNotBadEffectiveRunCoverage - 1e-9);
+            const defaultTotal = defaultResult.badEffectiveRunCoverage + defaultResult.explicitlyNotBadEffectiveRunCoverage;
+            const asNotBadTotal = asNotBadResult.badEffectiveRunCoverage + asNotBadResult.explicitlyNotBadEffectiveRunCoverage;
+            expect(asNotBadTotal).to.be.closeTo(defaultTotal, 1e-9);
         });
     });
 
