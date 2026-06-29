@@ -198,14 +198,15 @@ module.exports.waitForTableLength = waitForTableToLength;
  * Wait for the total number of elements to be the expected one
  *
  * @param {puppeteer.Page} page The puppeteer page where the table is located
- * @param {number} amount the expected amount of items
+ * @param {number} amount the expected amount of items. If amount is 0 it is converted to undefined, as empty tables don't display a row count
  * @return {Promise<void>} resolves once the expected amount is present
  */
 module.exports.waitForTableTotalRowsCountToEqual = async (page, amount) => {
     try {
+        amount = amount === 0 ? undefined : `${amount}`;
         await page.waitForSelector('#totalRowsCount');
         await page.waitForFunction(
-            (amount) => document.querySelector('#totalRowsCount').innerText === `${amount}`,
+            (amount) => document.querySelector('#totalRowsCount')?.innerText === amount,
             {},
             amount,
         );
@@ -275,12 +276,26 @@ exports.waitForNavigation = waitForNavigation;
  * @returns {Promise} Whether the element was clickable or not.
  */
 module.exports.pressElement = async (page, selector, jsClick = false) => {
-    const elementHandler = await page.waitForSelector(selector);
+    await page.waitForFunction(
+        (sel, isJsClick) => {
+            const element = document.querySelector(sel);
 
-    if (jsClick) {
-        await elementHandler.evaluate((element) => element.click());
-    } else {
-        await elementHandler.click(selector);
+            if (!element) {
+                return false;
+            }
+            // Moving the click to outside the function causes it to fail for unknown reasons
+            if (isJsClick) {
+                element.click();
+            }
+
+            return true;
+        },
+        {},
+        selector, jsClick
+    );
+
+    if (!jsClick) {
+        await page.click(selector);
     }
 };
 
@@ -653,14 +668,24 @@ module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
  * @return {Promise} resolves once the value has been typed
  */
 module.exports.fillInput = async (page, inputSelector, value, events = ['input']) => {
-    await page.waitForSelector(inputSelector);
-    await page.evaluate((inputSelector, value, events) => {
+    await page.waitForFunction((inputSelector, value, events) => {
         const element = document.querySelector(inputSelector);
+
+        if (!element) {
+            return false;
+        }
+
         element.value = value;
+
         for (const eventKey of events) {
             element.dispatchEvent(new Event(eventKey, { bubbles: true }));
         }
-    }, inputSelector, value, events);
+
+        return true;
+    },
+    {},
+    inputSelector, value, events
+    );
 };
 
 /**
@@ -863,10 +888,10 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
  * @return {Promise<void>} resolve once data was successfully validated
  */
 module.exports.validateTableData = async (page, validators) => {
-    await page.waitForSelector('table tbody');
     for (const [columnId, validator] of validators) {
+        await page.waitForSelector(`table tbody .column-${columnId}`);
+
         const columnData = await getColumnCellsInnerTexts(page, columnId);
-        expect(columnData, `Too few values for column ${columnId} or there is no such column`).to.be.length.greaterThan(0);
         expect(
             columnData.every((cellData) => validator(cellData)),
             `Invalid data in column ${columnId}: (${columnData})`,
@@ -985,3 +1010,14 @@ module.exports.resetFilters = async (page) => {
         { timeout: 5000 },
     );
 };
+
+/**
+ * Fuction that waits for a button to become active
+ * @param {puppeteer.page} page page handler
+ * @param {string} selector Css selector for the button.
+ */
+module.exports.waitForButtonToBecomeActive = async (page, selector) => await page.waitForFunction((sel) => {
+        const button = document.querySelector(sel);
+        return button && !button.disabled;
+    }, {}, selector);
+

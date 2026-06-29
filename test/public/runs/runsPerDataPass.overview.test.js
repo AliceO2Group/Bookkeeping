@@ -187,6 +187,17 @@ module.exports = () => {
             .to.be.equal('Missing 3 verifications');
     });
 
+    it('should display detector columns in RCT order (AOT/MUON after physical)', async () => {
+        const headers = await page.$$eval(
+            'table thead th',
+            (ths) => ths.map((th) => th.id).filter(Boolean),
+        );
+        
+        // See DetectorOrders.RCT in detectorOrders.js
+        expect(headers.indexOf('VTX')).to.be.greaterThan(headers.indexOf('ZDC'));
+        expect(headers.indexOf('MUD')).to.be.greaterThan(headers.indexOf('ZDC'));
+    });
+
     it('should ignore QC flags created by services in QC summaries of AOT and MUON ', async () => {
         await navigateToRunsPerDataPass(page, 2, 1, 3); // apass
         await expectInnerText(page, '#row106-VTX-text', '100');
@@ -429,10 +440,10 @@ module.exports = () => {
         const exportContent = fs.readFileSync(path.resolve(downloadPath, targetFileName)).toString();
 
         expect(exportContent.trim()).to.be.eql([
-            'runNumber;VTX;CPV',
+            'runNumber;CPV;VTX',
             '108;"";""',
-            '107;"";"Good (from: 1565290800000 to: 1565359260000) | Limited Acceptance MC Reproducible (from: 1565269140000 to: 1565290800000)"',
-            '106;"Good (from: 1565269200000 to: 1565304200000) | Good (from: 1565324200000 to: 1565359200000)";"Limited Acceptance MC Reproducible (from: 1565304200000 to: 1565324200000) | Limited acceptance (from: 1565329200000 to: 1565334200000) | Bad (from: 1565339200000 to: 1565344200000)"',
+            '107;"Limited Acceptance MC Reproducible (from: 1565269140000 to: 1565290800000) | Good (from: 1565290800000 to: 1565359260000)";""',
+            '106;"Limited Acceptance MC Reproducible (from: 1565304200000 to: 1565324200000) | Limited acceptance (from: 1565329200000 to: 1565334200000) | Bad (from: 1565339200000 to: 1565344200000)";"Good (from: 1565269200000 to: 1565304200000) | Good (from: 1565324200000 to: 1565359200000)"',
         ].join('\r\n'));
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
@@ -447,7 +458,6 @@ module.exports = () => {
         await waitForTableLength(page, 2);
         await expectColumnValues(page, 'runNumber', ['108', '107']);
 
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await waitForTableLength(page, 3);
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
@@ -462,7 +472,6 @@ module.exports = () => {
         await pressElement(page, '#detector-filter-dropdown-option-CPV', true);
         await expectColumnValues(page, 'runNumber', ['2', '1']);
 
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['55', '2', '1']);
     });
@@ -478,8 +487,6 @@ module.exports = () => {
 
         await expectColumnValues(page, 'runNumber', ['106']);
 
-        await page.waitForSelector('#openFilterToggle');
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
@@ -502,7 +509,6 @@ module.exports = () => {
         // Made order-independent assertion as sometimes the run with 55 minutes duration is loaded before the one with 1 minute duration and sometimes the opposite happens, which causes test to fail if exact order is asserted
         await expectColumnValues(page, 'runNumber', ['55', '1'], { orderMatters: false });
 
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await waitForTableLength(page, 3);
         await expectColumnValues(page, 'runNumber', ['55', '2', '1'], { orderMatters: false });
@@ -517,7 +523,6 @@ module.exports = () => {
 
         await expectColumnValues(page, 'runNumber', ['54']);
 
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters');
         await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
     });
@@ -540,7 +545,6 @@ module.exports = () => {
             await fillInput(page, `#${property}-operand`, value, ['change']);
             await expectColumnValues(page, 'runNumber', expectedRuns);
 
-            await pressElement(page, '#openFilterToggle');
             await pressElement(page, '#reset-filters', true);
             await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
         });
@@ -548,8 +552,6 @@ module.exports = () => {
 
     it('should successfully apply gaqNotBadFraction filters', async () => {
         await navigateToRunsPerDataPass(page, 2, 1, 3);
-
-        await pressElement(page, '#openFilterToggle', true);
 
         await page.waitForSelector('#gaqNotBadFraction-operator');
         await page.select('#gaqNotBadFraction-operator', '<=');
@@ -559,7 +561,6 @@ module.exports = () => {
         await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
         await expectColumnValues(page, 'runNumber', []);
 
-        await pressElement(page, '#openFilterToggle', true);
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
@@ -568,12 +569,8 @@ module.exports = () => {
         await page.waitForSelector('#detectorsQc-for-1-notBadFraction-operator');
         await page.select('#detectorsQc-for-1-notBadFraction-operator', '<=');
         await fillInput(page, '#detectorsQc-for-1-notBadFraction-operand', '90', ['change']);
-        await expectColumnValues(page, 'runNumber', ['106']);
-
-        await pressElement(page, '#mcReproducibleAsNotBadToggle input', true);
         await expectColumnValues(page, 'runNumber', ['107', '106']);
 
-        await pressElement(page, '#openFilterToggle', true);
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
@@ -587,7 +584,6 @@ module.exports = () => {
         await fillInput(page, '#muInelasticInteractionRate-operand', 0.03, ['change']);
         await expectColumnValues(page, 'runNumber', ['106']);
 
-        await pressElement(page, '#openFilterToggle');
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['108', '107', '106']);
     });
@@ -646,7 +642,6 @@ module.exports = () => {
         it('should successfully disable QC flag creation when data pass is frozen', async () => {
             await waitForTableLength(page, 3);
             await page.waitForSelector('.select-multi-flag', { hidden: true });
-            await pressElement(page, '#actions-dropdown-button .popover-trigger');
             await page.waitForSelector('#set-qc-flags-trigger[disabled]');
             await page.waitForSelector('#row107-ACO-text button[disabled]');
         });
@@ -660,15 +655,9 @@ module.exports = () => {
 
         it('should successfully enable QC flag creation when data pass is un-frozen', async () => {
             await waitForTableLength(page, 3);
-            await pressElement(page, '.select-multi-flag');
-            await pressElement(page, '#actions-dropdown-button .popover-trigger');
-            await page.waitForSelector('#set-qc-flags-trigger[disabled]', { hidden: true });
+            await page.waitForSelector('#set-qc-flags-trigger[disabled]');
             await page.waitForSelector('#set-qc-flags-trigger');
             await page.waitForSelector('#row107-ACO-text a');
-        });
-
-        after(async () => {
-            await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         });
     });
 
@@ -693,6 +682,7 @@ module.exports = () => {
         setConfirmationDialogToBeAccepted(page);
         await pressElement(page, `${popoverSelector} button:nth-child(5)`, true);
         const oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
+        await pressElement(page, `${popoverSelector} button:nth-child(4)`, true);
         await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
         await waitForTableLength(page, 3, undefined, oldTable);
         // Processing of data might take a bit of time, but then expect QC flag button to be there
