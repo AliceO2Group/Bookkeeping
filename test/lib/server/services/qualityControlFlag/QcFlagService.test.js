@@ -2074,6 +2074,9 @@ module.exports = () => {
             expectedGaqSummary.missingVerificationsCount = 11;
             expectedGaqSummary.undefinedQualityPeriodsCount = 8;
 
+            // getSummary now reads from the summary table, so compute first
+            await gaqService.calculateAndStoreGaqSummary(dataPassId, runNumber);
+
             const { [runNumber]: runGaqSummary } = await gaqService.getSummary(dataPassId);
             expect(runGaqSummary).to.be.eql(expectedGaqSummary);
 
@@ -2102,6 +2105,9 @@ module.exports = () => {
                 { ...scope, detectorIdentifier: { detectorId: itsId } },
                 relations,
             );
+
+            await gaqService.calculateAndStoreGaqSummary(dataPassId, 56);
+            await gaqService.calculateAndStoreGaqSummary(dataPassId, 54);
 
             const gaqSummary = await gaqService.getSummary(dataPassId);
             expect(gaqSummary).to.be.eql({
