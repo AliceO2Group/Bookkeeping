@@ -166,8 +166,10 @@ module.exports = () => {
             expect(result).to.have.all.keys(
                 'badEffectiveRunCoverage',
                 'explicitlyNotBadEffectiveRunCoverage',
+                'invalidatedAt',
                 'mcReproducible',
                 'missingVerificationsCount',
+                'notComputable',
                 'undefinedQualityPeriodsCount',
             );
             expect(result.missingVerificationsCount).to.equal(3);
@@ -190,6 +192,8 @@ module.exports = () => {
                 mcReproducible: false,
                 missingVerificationsCount: null,
                 undefinedQualityPeriodsCount: null,
+                notComputable: true,
+                invalidatedAt: result.invalidatedAt,
             });
         });
 
@@ -203,6 +207,8 @@ module.exports = () => {
                 mcReproducible: false,
                 missingVerificationsCount: null,
                 undefinedQualityPeriodsCount: null,
+                notComputable: false,
+                invalidatedAt: result.invalidatedAt,
             });
         });
 
@@ -225,7 +231,8 @@ module.exports = () => {
             await GaqSummaryRepository.invalidate(dataPassId, runNumber);
 
             const result = await gaqService.getSummary(dataPassId, { runNumber });
-            expect(result).to.deep.equal(expected);
+            expect(result).to.deep.equal({ ...expected, invalidatedAt: result.invalidatedAt });
+            expect(result.invalidatedAt).to.not.be.null;
         });
 
         it('should not leak rows from other data passes into the result', async () => {

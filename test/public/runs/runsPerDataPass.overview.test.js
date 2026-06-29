@@ -776,7 +776,7 @@ module.exports = () => {
                 });
 
                 it('should create GAQ summary invalidation entries when the specific run recalculate button is clicked', async () => {
-                    await expectInnerText(page, '#row107-globalAggregatedQuality', 'GAQ');
+                    await expectInnerText(page, '#row107-globalAggregatedQuality', '76');
 
                     await pressElement(page, '#row107 [title="Recalculate GAQ for this run"]');
 
@@ -792,7 +792,7 @@ module.exports = () => {
                 });
 
                 it('should create GAQ summary invalidation entries when the recalculate for the whole dataPass button is clicked', async () => {
-                    await expectInnerText(page, '#row107-globalAggregatedQuality', 'GAQ');
+                    await expectInnerText(page, '#row107-globalAggregatedQuality', '76');
 
                     await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
                     setConfirmationDialogToBeAccepted(page);
@@ -808,6 +808,10 @@ module.exports = () => {
                 });
 
                 it('should update the GAQ cell appropriately after each step in the GAQ summary lifecycle', async () => {
+                    // remove it from the db to simulate a run without a GAQ summary as it gets seeded in resetDatabaseContent
+                    await GaqSummaryRepository.removeAll({ where: { runNumber: 107 } });
+                    await navigateToRunsPerDataPass(page, 2, 1, 3);
+
                     await page.waitForSelector('#row107-globalAggregatedQuality #warning-icon');
                     await expectInnerText(page, '#row107-globalAggregatedQuality', 'GAQ');
                     
@@ -834,8 +838,9 @@ module.exports = () => {
 
                     const invalidatedIconPopoverContent = await getPopoverContent(await page.waitForSelector('#row107-globalAggregatedQuality .popover-trigger'));
                     expect(invalidatedIconPopoverContent).to.equal('Summary is invalid. New summary will be calculated shortly. Please wait and refresh the page.');
-
-                    await gaqWorker.recalculateGaqSummaries(1);
+                    
+                    await gaqWorker.resume();
+                    await gaqWorker.recalculateGaqSummaries(1, 1);
 
                     await navigateToRunsPerDataPass(page, 2, 1, 3);
 

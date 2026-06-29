@@ -190,7 +190,7 @@ module.exports = () => {
         });
 
         it('should return 200 with a not-calculated summary that is invalidated', async () => {
-            await GaqSummaryRepository.insert({ dataPassId: 1, runNumber: 106, invalidatedAt: new Date() });
+            await GaqSummaryRepository.upsert({ dataPassId: 1, runNumber: 106, invalidatedAt: new Date() });
 
             const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=1&mcReproducibleAsNotBad=false&runNumber=106');
 
