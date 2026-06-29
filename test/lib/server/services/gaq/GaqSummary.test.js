@@ -195,7 +195,7 @@ module.exports = () => {
             );
             await expectInvalidation(workerDataPassId, workerRunNumber);
 
-            await sleep(2000);
+            await sleep(3000);
 
             await expectInvalidation(workerDataPassId, workerRunNumber, true);
 
