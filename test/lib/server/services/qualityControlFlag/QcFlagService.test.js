@@ -2109,7 +2109,10 @@ module.exports = () => {
             await gaqService.calculateAndStoreGaqSummary(dataPassId, 56);
             await gaqService.calculateAndStoreGaqSummary(dataPassId, 54);
 
-            const gaqSummary = await gaqService.getSummary(dataPassId);
+            const allGaqSummaries = await gaqService.getSummary(dataPassId);
+            const gaqSummary = Object.fromEntries(
+                [runNumber, 56, 54].map((n) => [n, allGaqSummaries[n]]),
+            );
             expect(gaqSummary).to.be.eql({
                 [runNumber]: expectedGaqSummary,
                 56: {

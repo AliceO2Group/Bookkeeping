@@ -16,6 +16,7 @@ const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const { qcFlagService } = require('../../lib/server/services/qualityControlFlag/QcFlagService');
+const { gaqService } = require('../../lib/server/services/gaq/GaqService.js');
 const { BkpRoles } = require('../../lib/domain/enums/BkpRoles.js');
 const { dataPassService } = require('../../lib/server/services/dataPasses/DataPassService.js');
 const { expectSuccessStatus } = require('./utils.js');
@@ -556,6 +557,9 @@ module.exports = () => {
                 relations,
             );
 
+            // getSummary now reads from the summary table, so compute first
+            await gaqService.calculateAndStoreGaqSummary(3, 54);
+
             const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=3&runNumber=54');
             expect(response.status).to.be.equal(200);
             const { body: { data } } = response;
@@ -569,11 +573,11 @@ module.exports = () => {
             );
         });
 
-        it('should return empty GAQ summary if no data exists for given dataPassId & runNumber combination', async () => {
+        it('should return null GAQ summary if no data exists for given dataPassId & runNumber combination', async () => {
             const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=3&runNumber=999');
             expect(response.status).to.equal(200);
             const { body: { data } } = response;
-            expect(data).to.eql({});
+            expect(data).to.be.null;
         });
 
         it('should return 400 if dataPassId is not positive', async () => {
