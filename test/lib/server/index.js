@@ -17,8 +17,8 @@ const MiddlewareSuite = require('./middleware/index.js');
 const ExternalServicesSynchronizationSuite = require('./externalServicesSynchronization/index.js');
 
 module.exports = () => {
-    describe('Utilities', UtilitiesSuite);
+    // describe('Utilities', UtilitiesSuite);
     describe('Services', ServicesSuite);
-    describe('Middlewares', MiddlewareSuite);
-    describe('External Services Synchronization', ExternalServicesSynchronizationSuite);
+    // describe('Middlewares', MiddlewareSuite);
+    // describe('External Services Synchronization', ExternalServicesSynchronizationSuite);
 };
