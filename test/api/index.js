@@ -35,6 +35,7 @@ const DplDetectorsSuite = require('./dplDetectors.test.js');
 const QcFlagsSuite = require('./qcFlags.test.js');
 const CtpTriggerCountersSuite = require('./ctpTriggerCounters.test');
 const GaqDetectorsSuite = require('./gaqDetectors.test.js');
+const GaqSummarySuite = require('./gaqSummary.test.js');
 
 module.exports = () => {
     describe('Attachments API', AttachmentsSuite);
@@ -61,4 +62,5 @@ module.exports = () => {
     describe('QcFlagTypes API', QcFlagTypesSuite);
     describe('QcFlags API', QcFlagsSuite);
     describe('CtpTriggerCounters API', CtpTriggerCountersSuite);
+    describe('GaqSummary API', GaqSummarySuite);
 };
