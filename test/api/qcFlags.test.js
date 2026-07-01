@@ -569,6 +569,8 @@ module.exports = () => {
                     badEffectiveRunCoverage: 1,
                     explicitlyNotBadEffectiveRunCoverage: 0,
                     undefinedQualityPeriodsCount: 0,
+                    notComputable: false,
+                    invalidatedAt: null,
                 },
             );
         });

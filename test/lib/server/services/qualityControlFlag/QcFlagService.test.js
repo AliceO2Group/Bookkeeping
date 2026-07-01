@@ -2073,6 +2073,8 @@ module.exports = () => {
             expectedGaqSummary.explicitlyNotBadEffectiveRunCoverage /= timeTrgEnd - timeTrgStart;
             expectedGaqSummary.missingVerificationsCount = 11;
             expectedGaqSummary.undefinedQualityPeriodsCount = 8;
+            expectedGaqSummary.invalidatedAt = null;
+            expectedGaqSummary.notComputable = false;
 
             // getSummary now reads from the summary table, so compute first
             await gaqService.calculateAndStoreGaqSummary(dataPassId, runNumber);
@@ -2121,6 +2123,8 @@ module.exports = () => {
                     badEffectiveRunCoverage: 0,
                     mcReproducible: false,
                     undefinedQualityPeriodsCount: 0,
+                    invalidatedAt: null,
+                    notComputable: false,
                 },
                 54: {
                     missingVerificationsCount: 1,
@@ -2128,6 +2132,8 @@ module.exports = () => {
                     badEffectiveRunCoverage: 1,
                     mcReproducible: false,
                     undefinedQualityPeriodsCount: 0,
+                    invalidatedAt: null,
+                    notComputable: false,
                 },
             });
         });
