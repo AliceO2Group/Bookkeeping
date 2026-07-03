@@ -61,14 +61,16 @@ module.exports = () => {
     it('shows correct datatypes in respective columns', async () => {
         // eslint-disable-next-line require-jsdoc
         const validateDate = (date) => date === '-' || !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY, hh:mm:ss'));
+        const validateQcFlagDate = (date) => date === '-' || !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY, hh:mm:ss.SSS'));
+        
         const tableDataValidators = {
             flagType: (flagType) => flagType && flagType !== '-',
             from: (cellContent) => {
                 const match = cellContent.match(/^From:\s*(.+)\nTo:\s*(.+)$/);
                 if (!match) return false;
                 const [, from, to] = match;
-                return (['Whole run coverage', 'Since run start'].includes(from) || validateDate(from))
-                    && (['Whole run coverage', 'Until run end'].includes(to) || validateDate(to));
+                return (['Whole run coverage', 'Since run start'].includes(from) || validateQcFlagDate(from))
+                    && (['Whole run coverage', 'Until run end'].includes(to) || validateQcFlagDate(to));
             },
             deleted: (value) => value === 'Yes' || value === 'No',
             createdBy: (cellContent) => {
