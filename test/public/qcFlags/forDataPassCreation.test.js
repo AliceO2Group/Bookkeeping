@@ -158,8 +158,8 @@ module.exports = () => {
 
         await expectRowValues(page, 1, {
             flagType: 'Limited acceptance',
-            from: '08/08/2019\n13:01:01',
-            to: '09/08/2019\n13:50:59',
+            from: '08/08/2019,\n13:01:01.000',
+            to: '09/08/2019,\n13:50:59.000',
         });
     });
 
