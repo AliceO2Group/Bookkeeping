@@ -780,6 +780,8 @@ label {
   }
 }
 
+.magnet-dynamic-width { min-width: 4rem; flex: 1 1 12rem; }
+
 /**
  * Breakpoints :
  * small :           x <  600 (default styles)

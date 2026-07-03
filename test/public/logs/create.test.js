@@ -665,11 +665,11 @@ ${actions}\
         ]);
         const magnet0DateTime = getLocaleDateAndTime(extractTimestampFromDateTimeInput({ date: magnet0Date, time: magnet0Time }));
 
-        await fillInput(page, '#magnets-1 > div > div > input:nth-of-type(1)', magnetDate, ['change']);
-        await fillInput(page, '#magnets-1 > div > div > input:nth-of-type(2)', magnetTime, ['change']);
-        await page.focus('#magnets-1 > div > input:nth-of-type(1)');
+        await fillInput(page, '#magnets-1 > div:nth-of-type(2) > div > input:nth-of-type(1)', magnetDate, ['change']);
+        await fillInput(page, '#magnets-1 > div:nth-of-type(2) > div > input:nth-of-type(2)', magnetTime, ['change']);
+        await page.focus('#magnets-1 > div:nth-of-type(2) > div:nth-of-type(3) > input');
         await page.keyboard.type('dipole-1');
-        await page.focus('#magnets-1 > div > input:nth-of-type(2)');
+        await page.focus('#magnets-1 > div:nth-of-type(2) > div:nth-of-type(5) > input');
         await page.keyboard.type('solenoid-1');
 
         const alicePlans = 'Alice\nPlans';
