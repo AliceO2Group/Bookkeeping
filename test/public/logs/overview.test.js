@@ -346,11 +346,17 @@ module.exports = () => {
 
     it('should successfult navigate to run details via popover', async () => {
         await goToPage(page, 'log-overview');
-        const cellSelector = 'td#row119-runs'
-        await page.hover(cellSelector);
-        const popoverSelector = await getPopoverSelector(await page.waitForSelector(`${cellSelector} .popover-trigger`));
-        await waitForNavigation(page, () => pressElement(page, `${popoverSelector} a`))
-        expectUrlParams(page, { page: 'run-detail', runNumber: 2 })
+        await waitForFirstRowToHaveId(page, 'row119');
+
+        const cellSelector = 'td#row119-runs';
+        const popoverTriggerSelector = `${cellSelector} .popover-trigger`;
+        const popoverTrigger = await page.waitForSelector(popoverTriggerSelector);
+
+        await popoverTrigger.hover();
+
+        const popoverSelector = await getPopoverSelector(popoverTrigger);
+        await waitForNavigation(page, () => pressElement(page, `${popoverSelector} a`));
+        expectUrlParams(page, { page: 'run-detail', runNumber: 2 });
     });
 
     describe('Filters', () => {
