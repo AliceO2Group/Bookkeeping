@@ -575,11 +575,11 @@ module.exports = () => {
             );
         });
 
-        it('should return null GAQ summary if no data exists for given dataPassId & runNumber combination', async () => {
+        it('should return empty GAQ summary if no data exists for given dataPassId & runNumber combination', async () => {
             const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=3&runNumber=999');
             expect(response.status).to.equal(200);
             const { body: { data } } = response;
-            expect(data).to.be.null;
+            expect(data).to.eql({});
         });
 
         it('should return 400 if dataPassId is not positive', async () => {
