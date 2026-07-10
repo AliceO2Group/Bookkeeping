@@ -32,7 +32,7 @@ const UserSuite = require('./user/index.js');
 const SimulationPassesSuite = require('./simulationPasses/index.js');
 const QcFlagsSuite = require('./qualityControlFlag/index.js');
 const CtpTriggerCountersSuite = require('./ctpTriggerCounters/index.js');
-const GaqDetectorSuite = require('./gaq');
+const GaqSuite = require('./gaq');
 
 module.exports = () => {
     before(resetDatabaseContent);
@@ -46,7 +46,7 @@ module.exports = () => {
     describe('Environment history item', EnvironmentHistoryItemSuite);
     describe('EOS report', EosReportSuite);
     describe('Flp role', FlpRoleSuite);
-    describe('GaqDetector', GaqDetectorSuite);
+    describe('GAQ', GaqSuite);
     describe('LHC fill suite', LhcFillSuite);
     describe('Logs', LogSuite);
     describe('RunType', RunTypeSuite);
