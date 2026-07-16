@@ -98,8 +98,8 @@ module.exports = () => {
         });
 
         await page.waitForSelector('button#submit[disabled]');
-        await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '08/08/2019\n13:00:00');
-        await expectInnerText(page, 'table > tbody > tr > td:nth-child(4) > div', '09/08/2019\n14:00:00');
+        await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '08/08/2019\n13:00:00.000');
+        await expectInnerText(page, 'table > tbody > tr > td:nth-child(4) > div', '09/08/2019\n14:00:00.000');
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
 
         await pressElement(page, '#flag-type-panel .popover-trigger');
@@ -130,8 +130,8 @@ module.exports = () => {
         });
 
         await page.waitForSelector('button#submit[disabled]');
-        await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '08/08/2019\n13:00:00');
-        await expectInnerText(page, 'table > tbody > tr > td:nth-child(4) > div', '09/08/2019\n14:00:00');
+        await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '08/08/2019\n13:00:00.000');
+        await expectInnerText(page, 'table > tbody > tr > td:nth-child(4) > div', '09/08/2019\n14:00:00.000');
         await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
 
         await pressElement(page, '#flag-type-panel .popover-trigger');
@@ -140,8 +140,8 @@ module.exports = () => {
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
         await pressElement(page, '#time-based-toggle', true);
 
-        await fillInput(page, '.flex-column.g1:nth-of-type(1) > div input[type="time"]', '13:01:01', ['change']);
-        await fillInput(page, '.flex-column.g1:nth-of-type(2) > div input[type="time"]', '13:50:59', ['change']);
+        await fillInput(page, '.flex-column.g1:nth-of-type(1) > div input[type="time"]', '13:01:01.123', ['change']);
+        await fillInput(page, '.flex-column.g1:nth-of-type(2) > div input[type="time"]', '13:50:59.456', ['change']);
 
         await waitForNavigation(page, () => pressElement(page, 'button#submit'));
         expectUrlParams(page, {
@@ -154,8 +154,8 @@ module.exports = () => {
 
         await expectRowValues(page, 1, {
             flagType: 'Limited acceptance',
-            from: '08/08/2019,\n13:01:01.000',
-            to: '09/08/2019,\n13:50:59.000',
+            from: '08/08/2019,\n13:01:01.123',
+            to: '09/08/2019,\n13:50:59.456',
         });
     });
 
