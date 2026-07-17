@@ -308,11 +308,9 @@ module.exports = () => {
         await fillInput(page, '.historyItems-filter input', 'C-R-D-X', ['change']);
         
         const createdAtPopoverSelector = await getPopoverSelector(await page.$('.createdAt-filter .popover-trigger'));
-        const periodInputsSelectors = getPeriodInputsSelectors(createdAtPopoverSelector);
-        await fillInput(page, periodInputsSelectors.fromDateSelector, '2019-08-09', ['change']);
-        await fillInput(page, periodInputsSelectors.toDateSelector, '2019-08-10', ['change']);
-        await fillInput(page, periodInputsSelectors.fromTimeSelector, '00:00', ['change']);
-        await fillInput(page, periodInputsSelectors.toTimeSelector, '23:59', ['change']);
+        const {fromDateTimeSelector, toDateTimeSelector} = getPeriodInputsSelectors(createdAtPopoverSelector);
+        await fillInput(page, fromDateTimeSelector, '2019-08-09T00:00', ['change']);
+        await fillInput(page, toDateTimeSelector, '2019-08-10T23:59', ['change']);
 
         await waitForTableLength(page, 1);
         expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['rowTDI59So3d']);

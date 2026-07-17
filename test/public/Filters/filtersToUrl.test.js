@@ -82,16 +82,14 @@ module.exports = () => {
         await openFilteringPanel(page);
 
         const createdAtPopoverSelector = await getPopoverSelector(await page.$(popoverTrigger));
-        const periodInputsSelectors = getPeriodInputsSelectors(createdAtPopoverSelector);
+        const {fromDateTimeSelector, toDateTimeSelector } = getPeriodInputsSelectors(createdAtPopoverSelector);
 
         await fillInput(page, '.runs-filter input', '10', ['change']);
         await fillInput(page, '.id-filter input', 'Dxi029djX, TDI59So3d', ['change']);
         await pressElement(page, '#checkboxes-checkbox-DESTROYED');
         await fillInput(page, '.historyItems-filter input', 'C-R-D-X', ['change']);
-        await fillInput(page, periodInputsSelectors.fromDateSelector, '2019-08-09', ['change']);
-        await fillInput(page, periodInputsSelectors.toDateSelector, '2019-08-10', ['change']);
-        await fillInput(page, periodInputsSelectors.fromTimeSelector, '00:00', ['change']);
-        await fillInput(page, periodInputsSelectors.toTimeSelector, '23:59', ['change']);
+        await fillInput(page, fromDateTimeSelector, '2019-08-09T00:00', ['change']);
+        await fillInput(page, toDateTimeSelector, '2019-08-10T23:59', ['change']);
 
         const queryParameters = getQueryParameters(page);
         expect(queryParameters).to.deep.equal({
@@ -114,31 +112,23 @@ module.exports = () => {
         const sbEndPopOverSelector = await getPopoverSelector(await page.$(sbEndPopoverTrigger));
         const filterSchemeNameInputField= '.fillingSchemeName-filter input';
         const {
-            fromDateSelector: sbStartFromDateSelector,
-            toDateSelector: sbStartToDateSelector,
-            fromTimeSelector: sbStartFromTimeSelector,
-            toTimeSelector: sbStartToTimeSelector
+            fromDateTimeSelector: sbStartFromDateTimeSelector,
+            toDateTimeSelector: sbStartToDateTimeSelector
         } = getPeriodInputsSelectors(sbStartPopOverSelector);
 
         const {
-            fromDateSelector: sbEndFromDateSelector,
-            toDateSelector: sbEndToDateSelector,
-            fromTimeSelector: sbEndFromTimeSelector,
-            toTimeSelector: sbEndToTimeSelector
+            fromDateTimeSelector: sbEndFromDateTimeSelector,
+            toDateTimeSelector: sbEndToDateTimeSelector
         } = getPeriodInputsSelectors(sbEndPopOverSelector);
 
         await openFilteringPanel(page);
         await fillInput(page, '#beam-duration-filter-operand', '00:01:40', ['change']);
         await fillInput(page, '#run-duration-filter-operand', '00:00:00', ['change']);
         await pressElement(page, '#beam-types-checkbox-p-Pb');
-        await fillInput(page, sbStartFromDateSelector, '2019-08-08', ['change']);
-        await fillInput(page, sbStartToDateSelector, '2019-08-08', ['change']);
-        await fillInput(page, sbStartFromTimeSelector, '10:00', ['change']);
-        await fillInput(page, sbStartToTimeSelector, '12:00', ['change']);
-        await fillInput(page, sbEndFromDateSelector, '2022-03-22', ['change']);
-        await fillInput(page, sbEndToDateSelector, '2022-03-22', ['change']);
-        await fillInput(page, sbEndFromTimeSelector, '01:00', ['change']);
-        await fillInput(page, sbEndToTimeSelector, '23:59', ['change']);
+        await fillInput(page, sbStartFromDateTimeSelector, '2019-08-08T10:00', ['change']);
+        await fillInput(page, sbStartToDateTimeSelector, '2019-08-08T12:00', ['change']);
+        await fillInput(page, sbEndFromDateTimeSelector, '2022-03-22T01:00', ['change']);
+        await fillInput(page, sbEndToDateTimeSelector, '2022-03-22T23:59', ['change']);
         await fillInput(page, filterSchemeNameInputField, 'Single_12b_8_1024_8_2018', ['change']);
 
         const queryParameters = getQueryParameters(page);
@@ -165,17 +155,13 @@ module.exports = () => {
         const endPopoverSelector = await getPopoverSelector(await page.$('.timeO2End-filter .popover-trigger'));
 
         const {
-            fromDateSelector: startFromDateSelector,
-            toDateSelector: startToDateSelector,
-            fromTimeSelector: startFromTimeSelector,
-            toTimeSelector: startToTimeSelector
+            fromDateTimeSelector: startFromDateTimeSelector,
+            toDateTimeSelector: startToDateTimeSelector,
         } = getPeriodInputsSelectors(startPopoverSelector);
 
         const {
-            fromDateSelector: endFromDateSelector,
-            toDateSelector: endToDateSelector,
-            fromTimeSelector: endFromTimeSelector,
-            toTimeSelector: endToTimeSelector
+            fromDateTimeSelector: endFromDateTimeSelector,
+            toDateTimeSelector: endToDateTimeSelector,
         } = getPeriodInputsSelectors(endPopoverSelector);
 
         await openFilteringPanel(page);
@@ -183,14 +169,10 @@ module.exports = () => {
         await pressElement(page, '#tag-dropdown-option-FOOD', true);
         await pressElement(page, '#run-definition-checkbox-PHYSICS', true);
         await pressElement(page, '.timeO2Start-filter .popover-trigger');
-        await fillInput(page, startFromTimeSelector, '11:11', ['change']);
-        await fillInput(page, startToTimeSelector, '14:00', ['change']);
-        await fillInput(page, startFromDateSelector, '2021-02-03', ['change']);
-        await fillInput(page, startToDateSelector, '2021-02-03', ['change']);
-        await fillInput(page, endFromTimeSelector, '11:11', ['change']);
-        await fillInput(page, endToTimeSelector, '14:00', ['change']);
-        await fillInput(page, endFromDateSelector, '2021-02-03', ['change']);
-        await fillInput(page, endToDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, startFromDateTimeSelector, '2021-02-03T11:11', ['change']);
+        await fillInput(page, startToDateTimeSelector, '2021-02-03T14:00', ['change']);
+        await fillInput(page, endFromDateTimeSelector, '2021-02-03T11:11', ['change']);
+        await fillInput(page, endToDateTimeSelector, '2021-02-03T14:00', ['change']);
         await fillInput(page, '#duration-operand', '1500', ['change']);
         await pressElement(page, `${dipolePopoverSelector} .dropdown-option:last-child`, true);
         await pressElement(page, '#checkboxes-checkbox-bad');
@@ -291,17 +273,13 @@ module.exports = () => {
         const dipolePopoverSelector = await getPopoverSelector(await page.$('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
 
         const {
-            fromDateSelector: startFromDateSelector,
-            toDateSelector: startToDateSelector,
-            fromTimeSelector: startFromTimeSelector,
-            toTimeSelector: startToTimeSelector
+            fromDateTimeSelector: startFromDateTimeSelector,
+            toDateTimeSelector: startToDateTimeSelector,
         } = getPeriodInputsSelectors(startPopoverSelector);
 
         const {
-            fromDateSelector: endFromDateSelector,
-            toDateSelector: endToDateSelector,
-            fromTimeSelector: endFromTimeSelector,
-            toTimeSelector: endToTimeSelector
+            fromDateTimeSelector: endFromDateTimeSelector,
+            toDateTimeSelector: endToDateTimeSelector,
         } = getPeriodInputsSelectors(endPopoverSelector);
 
         await fillInput(page, '#inelasticInteractionRateAvg-operand', '100000', ['change']);
@@ -310,14 +288,10 @@ module.exports = () => {
         await fillInput(page, '.fillNumbers-textFilter', '1, 3', ['change']);
 
         await pressElement(page, `${dipolePopoverSelector} .dropdown-option:last-child`, true);
-        await fillInput(page, startFromTimeSelector, '11:11', ['change']);
-        await fillInput(page, startToTimeSelector, '14:00', ['change']);
-        await fillInput(page, startFromDateSelector, '2021-02-03', ['change']);
-        await fillInput(page, startToDateSelector, '2021-02-03', ['change']);
-        await fillInput(page, endFromTimeSelector, '11:11', ['change']);
-        await fillInput(page, endToTimeSelector, '14:00', ['change']);
-        await fillInput(page, endFromDateSelector, '2021-02-03', ['change']);
-        await fillInput(page, endToDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, startFromDateTimeSelector, '2021-02-03T11:11', ['change']);
+        await fillInput(page, startToDateTimeSelector, '2021-02-03T14:00', ['change']);
+        await fillInput(page, endFromDateTimeSelector, '2021-02-03T11:11', ['change']);
+        await fillInput(page, endToDateTimeSelector, '2021-02-03T14:00', ['change']);
 
 
         const queryParameters = getQueryParameters(page);
@@ -392,29 +366,21 @@ module.exports = () => {
         const endPopoverSelector = await getPopoverSelector(await page.$('.timeO2End-filter .popover-trigger'));
 
         const {
-            fromDateSelector: startFromDateSelector,
-            toDateSelector: startToDateSelector,
-            fromTimeSelector: startFromTimeSelector,
-            toTimeSelector: startToTimeSelector
+            fromDateTimeSelector: startFromDateTimeSelector,
+            toDateTimeSelector: startToDateTimeSelector,
         } = getPeriodInputsSelectors(startPopoverSelector);
 
         const {
-            fromDateSelector: endFromDateSelector,
-            toDateSelector: endToDateSelector,
-            fromTimeSelector: endFromTimeSelector,
-            toTimeSelector: endToTimeSelector
+            fromDateTimeSelector: endFromDateTimeSelector,
+            toDateTimeSelector: endToDateTimeSelector,
         } = getPeriodInputsSelectors(endPopoverSelector);
 
         await openFilteringPanel(page);
         await pressElement(page, '.timeO2Start-filter .popover-trigger');
-        await fillInput(page, startFromTimeSelector, '11:11', ['change']);
-        await fillInput(page, startToTimeSelector, '14:00', ['change']);
-        await fillInput(page, startFromDateSelector, '2021-02-03', ['change']);
-        await fillInput(page, startToDateSelector, '2021-02-03', ['change']);
-        await fillInput(page, endFromTimeSelector, '11:11', ['change']);
-        await fillInput(page, endToTimeSelector, '14:00', ['change']);
-        await fillInput(page, endFromDateSelector, '2021-02-03', ['change']);
-        await fillInput(page, endToDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, startFromDateTimeSelector, '2021-02-03T11:11', ['change']);
+        await fillInput(page, startToDateTimeSelector, '2021-02-03T14:00', ['change']);
+        await fillInput(page, endFromDateTimeSelector, '2021-02-03T11:11', ['change']);
+        await fillInput(page, endToDateTimeSelector, '2021-02-03T14:00', ['change']);
         await fillInput(page, '.inelasticInteractionRateAtMid-filter input', '1', ['change']);
         await fillInput(page, '.inelasticInteractionRateAtEnd-filter input', '1', ['change']);
         await fillInput(page, '.inelasticInteractionRateAtStart-filter input', '1', ['change']);
@@ -457,31 +423,23 @@ module.exports = () => {
         const endPopoverSelector = await getPopoverSelector(await page.$('.timeO2End-filter .popover-trigger'));
 
         const {
-            fromDateSelector: startFromDateSelector,
-            toDateSelector: startToDateSelector,
-            fromTimeSelector: startFromTimeSelector,
-            toTimeSelector: startToTimeSelector
+            fromDateTimeSelector: startFromDateTimeSelector,
+            toDateTimeSelector: startToDateTimeSelector
         } = getPeriodInputsSelectors(startPopoverSelector);
 
         const {
-            fromDateSelector: endFromDateSelector,
-            toDateSelector: endToDateSelector,
-            fromTimeSelector: endFromTimeSelector,
-            toTimeSelector: endToTimeSelector
+            fromDateTimeSelector: endFromDateTimeSelector,
+            toDateTimeSelector: endToDateTimeSelector
         } = getPeriodInputsSelectors(endPopoverSelector);
 
         await openFilteringPanel(page);
         await pressElement(page, '#detector-filter-dropdown-option-ITS', true);
         await pressElement(page, '#tag-dropdown-option-FOOD', true);
         await pressElement(page, '.timeO2Start-filter .popover-trigger');
-        await fillInput(page, startFromTimeSelector, '11:11', ['change']);
-        await fillInput(page, startToTimeSelector, '14:00', ['change']);
-        await fillInput(page, startFromDateSelector, '2021-02-03', ['change']);
-        await fillInput(page, startToDateSelector, '2021-02-03', ['change']);
-        await fillInput(page, endFromTimeSelector, '11:11', ['change']);
-        await fillInput(page, endToTimeSelector, '14:00', ['change']);
-        await fillInput(page, endFromDateSelector, '2021-02-03', ['change']);
-        await fillInput(page, endToDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, startFromDateTimeSelector, '2021-02-03T11:11', ['change']);
+        await fillInput(page, startToDateTimeSelector, '2021-02-03T14:00', ['change']);
+        await fillInput(page, endFromDateTimeSelector, '2021-02-03T11:11', ['change']);
+        await fillInput(page, endToDateTimeSelector, '2021-02-03T14:00', ['change']);
         await fillInput(page, '#duration-operand', '1500', ['change']);
         await fillInput(page, '.muInelasticInteractionRate-filter input', '1', ['change']);
         await fillInput(page, '.inelasticInteractionRateAvg-filter input', '1', ['change']);

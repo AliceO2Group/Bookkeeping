@@ -487,30 +487,21 @@ module.exports = () => {
             await pressElement(page, '.timeO2Start-filter .popover-trigger');
 
             const o2StartPopoverSelector = await getPopoverSelector(await page.$('.timeO2Start-filter .popover-trigger'));
-            const periodInputsSelectors = getPeriodInputsSelectors(o2StartPopoverSelector);
+            const { fromDateTimeSelector, toDateTimeSelector } = getPeriodInputsSelectors(o2StartPopoverSelector);
 
-            await fillInput(page, periodInputsSelectors.fromTimeSelector, '11:11', ['change']);
-            await fillInput(page, periodInputsSelectors.toTimeSelector, '14:00', ['change']);
-
-            // American style input
-            await fillInput(page, periodInputsSelectors.fromDateSelector, '2021-02-03', ['change']);
-            await fillInput(page, periodInputsSelectors.toDateSelector, '2021-02-03', ['change']);
+            await fillInput(page, fromDateTimeSelector, '2021-02-03T11:11', ['change']);
+            await fillInput(page, toDateTimeSelector, '2021-02-03T14:00', ['change']);
 
             // Wait for page to be refreshed
-            await expectAttributeValue(page, periodInputsSelectors.toTimeSelector, 'min', '11:12');
-            await expectAttributeValue(page, periodInputsSelectors.toDateSelector, 'min', '2021-02-03');
-
-            await expectAttributeValue(page, periodInputsSelectors.fromTimeSelector, 'max', '13:59');
-            await expectAttributeValue(page, periodInputsSelectors.fromDateSelector, 'max', '2021-02-03');
+            await expectAttributeValue(page, toDateTimeSelector, 'min', '2021-02-03T11:12');
+            await expectAttributeValue(page, fromDateTimeSelector, 'max', '2021-02-03T13:59');
 
             // Setting different dates, still american style input
-            await fillInput(page, periodInputsSelectors.toDateSelector, '2021-02-05', ['change']);
+            await fillInput(page, toDateTimeSelector, '2021-02-05T14:00', ['change']);
 
-            await expectAttributeValue(page, periodInputsSelectors.toTimeSelector, 'min', '');
-            await expectAttributeValue(page, periodInputsSelectors.toDateSelector, 'min', '2021-02-03');
-
-            await expectAttributeValue(page, periodInputsSelectors.fromTimeSelector, 'max', '');
-            await expectAttributeValue(page, periodInputsSelectors.fromDateSelector, 'max', '2021-02-05');
+            await expectInputValue(page, toDateTimeSelector, '2021-02-05T14:00');
+            await expectAttributeValue(page, toDateTimeSelector, 'min', '2021-02-03T11:12');
+            await expectAttributeValue(page, fromDateTimeSelector, 'max', '2021-02-05T13:59');
         });
 
         it('should successfully filter on duration', async () => {

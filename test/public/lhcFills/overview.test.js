@@ -372,12 +372,10 @@ module.exports = () => {
         await openFilteringPanel(page);
 
         const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
-        const { fromDateSelector, toDateSelector, fromTimeSelector, toTimeSelector } = getPeriodInputsSelectors(popOverSelector);
-        
-        await fillInput(page, fromDateSelector, '2019-08-08', ['change']);
-        await fillInput(page, toDateSelector, '2019-08-08', ['change']);
-        await fillInput(page, fromTimeSelector, '10:00', ['change']);
-        await fillInput(page, toTimeSelector, '12:00', ['change']);
+        const { fromDateTimeSelector, toDateTimeSelector } = getPeriodInputsSelectors(popOverSelector);
+
+        await fillInput(page, fromDateTimeSelector, '2019-08-08T10:00', ['change']);
+        await fillInput(page, toDateTimeSelector, '2019-08-08T12:00', ['change']);
         
         await openFilteringPanel(page);
         await pressElement(page, popoverTrigger);
@@ -393,12 +391,10 @@ module.exports = () => {
         await openFilteringPanel(page);
 
         const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
-        const { fromDateSelector, toDateSelector, fromTimeSelector, toTimeSelector } = getPeriodInputsSelectors(popOverSelector);
+        const { fromDateTimeSelector, toDateTimeSelector } = getPeriodInputsSelectors(popOverSelector);
 
-        await fillInput(page, fromDateSelector, '2022-03-22', ['change']);
-        await fillInput(page, toDateSelector, '2022-03-22', ['change']);
-        await fillInput(page, fromTimeSelector, '01:00', ['change']);
-        await fillInput(page, toTimeSelector, '23:59', ['change']);
+        await fillInput(page, fromDateTimeSelector, '2022-03-22T01:00', ['change']);
+        await fillInput(page, toDateTimeSelector, '2022-03-22T23:59', ['change']);
         await openFilteringPanel(page);
         await pressElement(page, popoverTrigger);
         await waitForTableLength(page, 3);

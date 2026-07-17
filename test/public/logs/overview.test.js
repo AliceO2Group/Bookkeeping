@@ -422,14 +422,12 @@ module.exports = () => {
 
             await waitForTableTotalRowsCountToEqual(page, 119);
 
-            const { fromDateSelector, toDateSelector, fromTimeSelector, toTimeSelector } = getPeriodInputsSelectors(popOverSelector);
+            const { fromDateTimeSelector, toDateTimeSelector } = getPeriodInputsSelectors(popOverSelector);
             
             const limit = '2020-02-02';
             
-            await fillInput(page, fromDateSelector, limit, ['change']);
-            await fillInput(page, toDateSelector, limit, ['change']);
-            await fillInput(page, fromTimeSelector, '11:00', ['change']);
-            await fillInput(page, toTimeSelector, '12:00', ['change']);
+            await fillInput(page, fromDateTimeSelector, '2020-02-02T11:00', ['change']);
+            await fillInput(page, toDateTimeSelector, '2020-02-02T12:00', ['change']);
 
             await waitForTableLength(page, 1);
         });

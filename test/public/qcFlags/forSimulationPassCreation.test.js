@@ -100,7 +100,7 @@ module.exports = () => {
         await page.waitForSelector('button#submit[disabled]');
         await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '08/08/2019\n13:00:00.000');
         await expectInnerText(page, 'table > tbody > tr > td:nth-child(4) > div', '09/08/2019\n14:00:00.000');
-        await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
+        await page.waitForSelector('input[type="datetime-local"]', { hidden: true, timeout: 250 });
 
         await pressElement(page, '#flag-type-panel .popover-trigger');
         await pressElement(page, '#flag-type-dropdown-option-2', true);
@@ -132,7 +132,7 @@ module.exports = () => {
         await page.waitForSelector('button#submit[disabled]');
         await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '08/08/2019\n13:00:00.000');
         await expectInnerText(page, 'table > tbody > tr > td:nth-child(4) > div', '09/08/2019\n14:00:00.000');
-        await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
+        await page.waitForSelector('input[type="datetime-local"]', { hidden: true, timeout: 250 });
 
         await pressElement(page, '#flag-type-panel .popover-trigger');
         await pressElement(page, '#flag-type-dropdown-option-11', true);
@@ -140,8 +140,8 @@ module.exports = () => {
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
         await pressElement(page, '#time-based-toggle', true);
 
-        await fillInput(page, '.flex-column.g1:nth-of-type(1) > div input[type="time"]', '13:01:01.123', ['change']);
-        await fillInput(page, '.flex-column.g1:nth-of-type(2) > div input[type="time"]', '13:50:59.456', ['change']);
+        await fillInput(page, '.flex-column.g1:nth-of-type(1) > div input[type=datetime-local]', '2019-08-08T13:01:01.123', ['change']);
+        await fillInput(page, '.flex-column.g1:nth-of-type(2) > div input[type=datetime-local]', '2019-08-09T13:50:59.456', ['change']);
 
         await waitForNavigation(page, () => pressElement(page, 'button#submit'));
         expectUrlParams(page, {
@@ -173,7 +173,7 @@ module.exports = () => {
             'Missing start/stop, the flag will be applied on the full run',
         );
         await page.waitForSelector('button#submit[disabled]');
-        await page.waitForSelector('input[type="time"]', { hidden: true });
+        await page.waitForSelector('input[type="datetime-local"]', { hidden: true });
         await pressElement(page, '#flag-type-panel .popover-trigger');
         await pressElement(page, '#flag-type-dropdown-option-2', true);
         await page.waitForSelector('button#submit[disabled]', { hidden: true });

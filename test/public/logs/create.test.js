@@ -657,16 +657,12 @@ ${actions}\
         const { getLocaleDateAndTime, formatFullDate } = await import('../../../lib/public/utilities/dateUtils.mjs');
 
         const magnetTimestamp = new Date() - 10000;
-        const { date: magnetDate, time: magnetTime } = formatTimestampForDateTimeInput(magnetTimestamp, true);
+        const magnetDateTime = formatTimestampForDateTimeInput(magnetTimestamp, true);
 
-        const [magnet0Date, magnet0Time] = await Promise.all([
-            getInputValue(page, '#magnets-0 > div > div > input:nth-of-type(1)'),
-            getInputValue(page, '#magnets-0 > div > div > input:nth-of-type(2)'),
-        ]);
-        const magnet0DateTime = getLocaleDateAndTime(extractTimestampFromDateTimeInput({ date: magnet0Date, time: magnet0Time }));
+        const magnet0DateTimeRaw = await getInputValue(page, '#magnets-0 > div > div > input');
+        const magnet0DateTime = getLocaleDateAndTime(extractTimestampFromDateTimeInput(magnet0DateTimeRaw));
 
-        await fillInput(page, '#magnets-1 > div:nth-of-type(2) > div > input:nth-of-type(1)', magnetDate, ['change']);
-        await fillInput(page, '#magnets-1 > div:nth-of-type(2) > div > input:nth-of-type(2)', magnetTime, ['change']);
+        await fillInput(page, '#magnets-1 > div:nth-of-type(2) > div > input', magnetDateTime, ['change']);
         await page.focus('#magnets-1 > div:nth-of-type(2) > div:nth-of-type(3) > input');
         await page.keyboard.type('dipole-1');
         await page.focus('#magnets-1 > div:nth-of-type(2) > div:nth-of-type(5) > input');
