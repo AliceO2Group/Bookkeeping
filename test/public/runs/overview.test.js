@@ -499,7 +499,7 @@ module.exports = () => {
             // Setting different dates, still american style input
             await fillInput(page, toDateTimeSelector, '2021-02-05T14:00', ['change']);
 
-            await expectAttributeValue(page, toDateTimeSelector, 'value', '2021-02-05T14:00');
+            await expectInputValue(page, toDateTimeSelector, '2021-02-05T14:00');
             await expectAttributeValue(page, toDateTimeSelector, 'min', '2021-02-03T11:12');
             await expectAttributeValue(page, fromDateTimeSelector, 'max', '2021-02-05T13:59');
         });
