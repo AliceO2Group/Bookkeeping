@@ -492,21 +492,16 @@ module.exports = () => {
             await fillInput(page, fromDateTimeSelector, '2021-02-03T11:11', ['change']);
             await fillInput(page, toDateTimeSelector, '2021-02-03T14:00', ['change']);
 
-            // American style input
-            await fillInput(page, fromDateTimeSelector, '2021-02-03T11:11', ['change']);
-            await fillInput(page, toDateTimeSelector, '2021-02-03T14:00', ['change']);
-
             // Wait for page to be refreshed
             await expectAttributeValue(page, toDateTimeSelector, 'min', '2021-02-03T11:12');
-
             await expectAttributeValue(page, fromDateTimeSelector, 'max', '2021-02-03T13:59');
 
             // Setting different dates, still american style input
             await fillInput(page, toDateTimeSelector, '2021-02-05T14:00', ['change']);
 
-            await expectAttributeValue(page, toDateTimeSelector, 'min', '2021-02-03T--:--');
-
-            await expectAttributeValue(page, fromDateTimeSelector, 'max', '2021-02-05T--:--');
+            await expectAttributeValue(page, toDateTimeSelector, 'value', '2021-02-05T14:00');
+            await expectAttributeValue(page, toDateTimeSelector, 'min', '2021-02-03T11:12');
+            await expectAttributeValue(page, fromDateTimeSelector, 'max', '2021-02-05T13:59');
         });
 
         it('should successfully filter on duration', async () => {
