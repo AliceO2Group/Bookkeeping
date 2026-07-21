@@ -13,7 +13,7 @@
 
 const ToUrlSuite = require('./filtersToUrl.test.js');
 const ToFilterSuite = require('./urlToFilter.test.js');
-const FilteringModelSuite = require('./filteringModel.test.js');
+const FilteringModelSuite = require('./FilteringModel.test.js');
 
 module.exports = () => {
     describe('Filters to URL', ToUrlSuite);

@@ -346,11 +346,17 @@ module.exports = () => {
 
     it('should successfult navigate to run details via popover', async () => {
         await goToPage(page, 'log-overview');
-        const cellSelector = 'td#row119-runs'
-        await page.hover(cellSelector);
-        const popoverSelector = await getPopoverSelector(await page.waitForSelector(`${cellSelector} .popover-trigger`));
-        await waitForNavigation(page, () => pressElement(page, `${popoverSelector} a`))
-        expectUrlParams(page, { page: 'run-detail', runNumber: 2 })
+        await waitForFirstRowToHaveId(page, 'row119');
+
+        const cellSelector = 'td#row119-runs';
+        const popoverTriggerSelector = `${cellSelector} .popover-trigger`;
+        const popoverTrigger = await page.waitForSelector(popoverTriggerSelector);
+
+        await popoverTrigger.hover();
+
+        const popoverSelector = await getPopoverSelector(popoverTrigger);
+        await waitForNavigation(page, () => pressElement(page, `${popoverSelector} a`));
+        expectUrlParams(page, { page: 'run-detail', runNumber: 2 });
     });
 
     describe('Filters', () => {
@@ -416,14 +422,12 @@ module.exports = () => {
 
             await waitForTableTotalRowsCountToEqual(page, 119);
 
-            const { fromDateSelector, toDateSelector, fromTimeSelector, toTimeSelector } = getPeriodInputsSelectors(popOverSelector);
+            const { fromDateTimeSelector, toDateTimeSelector } = getPeriodInputsSelectors(popOverSelector);
             
             const limit = '2020-02-02';
             
-            await fillInput(page, fromDateSelector, limit, ['change']);
-            await fillInput(page, toDateSelector, limit, ['change']);
-            await fillInput(page, fromTimeSelector, '11:00', ['change']);
-            await fillInput(page, toTimeSelector, '12:00', ['change']);
+            await fillInput(page, fromDateTimeSelector, '2020-02-02T11:00', ['change']);
+            await fillInput(page, toDateTimeSelector, '2020-02-02T12:00', ['change']);
 
             await waitForTableLength(page, 1);
         });

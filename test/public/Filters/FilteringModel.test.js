@@ -75,7 +75,7 @@ module.exports = () => {
         const baseRowCount = 109;
         const startPopoverSelector = await getPopoverSelector(await page.$('.timeO2Start-filter .popover-trigger'));
 
-        const { fromDateSelector, fromTimeSelector } = getPeriodInputsSelectors(startPopoverSelector);
+        const { fromDateTimeSelector } = getPeriodInputsSelectors(startPopoverSelector);
 
         await checkSelectionFilters(runSelectionFiltersChecks, baseRowCount);
 
@@ -105,10 +105,9 @@ module.exports = () => {
         await waitForTableTotalRowsCountToEqual(page, baseRowCount);
 
         // O2 Start Filter:
-        await fillInput(page, fromTimeSelector, '11:11', ['change']);
-        await fillInput(page, fromDateSelector, '2021-02-03', ['change']);
+        await fillInput(page, fromDateTimeSelector, '2021-02-03T11:11', ['change']);
         await waitForTableTotalRowsCountToEqual(page, 1);
-        await fillInput(page, fromDateSelector, '2020-02-03', ['change']);
+        await fillInput(page, fromDateTimeSelector, '2020-02-03T11:11', ['change']);
         await waitForTableTotalRowsCountToEqual(page, 2);
         await page.goBack();
         await waitForTableTotalRowsCountToEqual(page, 1);
@@ -143,9 +142,9 @@ module.exports = () => {
         await waitForTableTotalRowsCountToEqual(page, 3);
         
         // Name
-        await fillInput(page, '.name-filter input', 'LHC23f');
+        await fillInput(page, '.names-textFilter', 'LHC23f', ['change']);
         await waitForTableTotalRowsCountToEqual(page, 1);
-        await fillInput(page, '.name-filter input', 'bogus');
+        await fillInput(page, '.names-textFilter', 'bogus', ['change']);
         await waitForTableTotalRowsCountToEqual(page, 0);
         await page.goBack();
         await waitForTableTotalRowsCountToEqual(page, 1);

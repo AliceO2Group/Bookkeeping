@@ -106,34 +106,25 @@ module.exports = () => {
             inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
         };
 
-        // By default current tab is 'detectorsQualities'
-        const tableDataValidatorsWithDetectorQualities = {
+        // Detector columns now combine, in a single cell, both the detector's quality and its synchronous QC flags summary
+        const combinedDetectorCellValidator = (cellText) => {
+            const lines = cellText.split('\n').map((line) => line.trim()).filter(Boolean);
+            return lines.length <= 2 && lines.every((line) => RUN_QUALITIES.includes(line) || !isNaN(Number(line)));
+        };
+
+        const tableDataValidatorsWithDetectorColumns = {
             ...tableDataValidators,
-            ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).oneOf([...RUN_QUALITIES, ''])])),
+            ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, combinedDetectorCellValidator])),
         };
 
         await waitForTableLength(page, 4);
-        await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithDetectorQualities)));
+        await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithDetectorColumns)));
 
-        await waitForNavigation(page, () => pressElement(page, '#synchronousFlags-tab'));
-
-        await page.waitForSelector('tbody tr:not(.loading-row)');
-
-        const tableDataValidatorsWithQualityFromSynchronousFlags = {
-            ...tableDataValidators,
-            ...Object.fromEntries(DETECTORS.map((detectorName) => [
-                detectorName,
-                (notBadDataFraction) => !notBadDataFraction || !isNaN(Number(notBadDataFraction)),
-            ])),
-        };
-
-        await waitForTableLength(page, 4);
-        await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithQualityFromSynchronousFlags)));
-        await expectInnerText(page, '#row56-FT0', '83');
+        const ft0CellText = await getInnerText(await page.waitForSelector('#row56-FT0'));
+        expect(ft0CellText).to.include('83');
     });
 
     it('should display detector columns in RCT order (AOT/MUON after physical) for synchronous flags', async () => {
-        // Note test starts already on synchronous flags tab
         const headers = await page.$$eval(
             'table thead th',
             (ths) => ths.map((th) => th.id).filter(Boolean),
