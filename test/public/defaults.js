@@ -751,30 +751,38 @@ module.exports.expectUrlParams = (page, expectedUrlParameters, ignoreParams = []
  *
  * @return {Promise<void>} resolve once column values were checked
  */
-module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValues) => {
+module.exports.expectColumnValues = async (page, columnId, expectedInnerTextValues, { orderMatters = true } = {}) => {
     try {
         await page.waitForFunction(
-            (columnId, expectedInnerTextValues) => {
+            (columnId, expectedInnerTextValues, orderMatters) => {
                 const cells = document.querySelectorAll(`table tbody .column-${columnId}`);
                 if (cells.length !== expectedInnerTextValues.length) {
                     return false;
                 }
 
-                for (const rowIndex in expectedInnerTextValues) {
-                    if (cells[rowIndex].innerText !== expectedInnerTextValues[rowIndex]) {
-                        return false;
-                    }
+                const actualValues = [...cells].map((cell) => cell.innerText);
+
+                if (orderMatters) {
+                    return actualValues.every((value, index) => value === expectedInnerTextValues[index]);
                 }
 
-                return true;
+                const sortedActual = [...actualValues].sort();
+                const sortedExpected = [...expectedInnerTextValues].sort();
+                return sortedActual.every((value, index) => value === sortedExpected[index]);
             },
             {},
             columnId,
             expectedInnerTextValues,
+            orderMatters,
         );
     } catch (_) {
         // Use expect to have explicit error message
-        expect(await getColumnCellsInnerTexts(page, columnId)).to.deep.equal(expectedInnerTextValues);
+        const actual = await getColumnCellsInnerTexts(page, columnId);
+        if (orderMatters) {
+            expect(actual).to.deep.equal(expectedInnerTextValues);
+        } else {
+            expect(actual).to.have.members(expectedInnerTextValues);
+        }
     }
 };
 

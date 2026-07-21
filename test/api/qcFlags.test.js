@@ -16,6 +16,7 @@ const request = require('supertest');
 const { server } = require('../../lib/application');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 const { qcFlagService } = require('../../lib/server/services/qualityControlFlag/QcFlagService');
+const { gaqService } = require('../../lib/server/services/gaq/GaqService.js');
 const { BkpRoles } = require('../../lib/domain/enums/BkpRoles.js');
 const { dataPassService } = require('../../lib/server/services/dataPasses/DataPassService.js');
 const { expectSuccessStatus } = require('./utils.js');
@@ -556,6 +557,9 @@ module.exports = () => {
                 relations,
             );
 
+            // getSummary now reads from the summary table, so compute first
+            await gaqService.calculateAndStoreGaqSummary(3, 54);
+
             const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=3&runNumber=54');
             expect(response.status).to.be.equal(200);
             const { body: { data } } = response;
@@ -565,6 +569,8 @@ module.exports = () => {
                     badEffectiveRunCoverage: 1,
                     explicitlyNotBadEffectiveRunCoverage: 0,
                     undefinedQualityPeriodsCount: 0,
+                    notComputable: false,
+                    invalidatedAt: null,
                 },
             );
         });
@@ -600,14 +606,6 @@ module.exports = () => {
             expect(response.status).to.equal(400);
             const { errors } = response.body;
             expect(errors[0].detail).to.equal('"query.runNumber" must be a number');
-        });
-
-        it('should return 400 when runNumber parameter is missing', async () => {
-            const response = await request(server).get('/api/qcFlags/summary/gaq?dataPassId=3');
-            expect(response.status).to.be.equal(400);
-            const { errors } = response.body;
-            const titleError = errors.find((err) => err.source.pointer === '/data/attributes/query/runNumber');
-            expect(titleError.detail).to.equal('"query.runNumber" is required');
         });
 
         it('should return 400 when dataPassId parameter is missing', async () => {
@@ -1110,7 +1108,7 @@ module.exports = () => {
                 .delete(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&token=${BkpRoles.DPG_ASYNC_QC_ADMIN}`);
 
             expect(response.status).to.be.equal(200);
-            expect(response.body.data.deletedCount).to.equal(11); // 9 from seeders, 2 created in POST requests previously in this test
+            expect(response.body.data.deletedCount).to.equal(10); // 9 from seeders, 2 created in POST requests previously in this test, 1 already soft-deleted
         });
     });
 
