@@ -25,7 +25,7 @@ const {
     expectUrlParams,
 } = require('../defaults.js');
 const path = require('path');
-const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
+const { GetAllLogsUseCase, GetLogUseCase } = require('../../../lib/usecases/log/index.js');
 const fs = require('fs');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -37,7 +37,9 @@ const { expect } = chai;
  * @return {Promise<Log>} the last log
  */
 const getLastLog = async () => {
-    const { logs: [lastLog] } = await new GetAllLogsUseCase().execute({ body: {}, params: {}, query: { page: { limit: 1, offset: 0 } } });
+    const { logs: [{ id }] } = await new GetAllLogsUseCase().execute({ body: {}, params: {}, query: { page: { limit: 1, offset: 0 } } });
+    const lastLog = await new GetLogUseCase().execute({ params: { logId: id } });
+
     return lastLog;
 };
 

@@ -80,14 +80,8 @@ module.exports = () => {
                     method: 'UnknownQuality',
                     bad: true,
                     color: null,
-                    mcReproducible: false,
 
-                    archived: false,
-                    archivedAt: null,
-
-                    createdById: 1,
-                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
-                    lastUpdatedById: null,
+                    createdBy: { name: 'John Doe' },
                     lastUpdatedBy: null,
                 },
                 {
@@ -96,14 +90,8 @@ module.exports = () => {
                     method: 'Good',
                     bad: false,
                     color: null,
-                    mcReproducible: false,
 
-                    archived: false,
-                    archivedAt: null,
-
-                    createdById: 1,
-                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
-                    lastUpdatedById: null,
+                    createdBy: { name: 'John Doe' },
                     lastUpdatedBy: null,
                 },
                 {
@@ -112,14 +100,8 @@ module.exports = () => {
                     method: 'LimitedAcceptanceMCReproducible',
                     bad: true,
                     color: '#FFFF00',
-                    mcReproducible: true,
 
-                    archived: false,
-                    archivedAt: null,
-
-                    createdById: 1,
-                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
-                    lastUpdatedById: null,
+                    createdBy: { name: 'John Doe' },
                     lastUpdatedBy: null,
                 },
                 {
@@ -128,14 +110,8 @@ module.exports = () => {
                     method: 'LimitedAcceptance',
                     bad: true,
                     color: '#FFFF00',
-                    mcReproducible: false,
 
-                    archived: false,
-                    archivedAt: null,
-
-                    createdById: 1,
-                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
-                    lastUpdatedById: null,
+                    createdBy: { name: 'John Doe' },
                     lastUpdatedBy: null,
                 },
                 {
@@ -144,14 +120,8 @@ module.exports = () => {
                     method: 'BadPID',
                     bad: true,
                     color: null,
-                    mcReproducible: false,
 
-                    archived: false,
-                    archivedAt: null,
-
-                    createdById: 1,
-                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
-                    lastUpdatedById: null,
+                    createdBy: { name: 'John Doe' },
                     lastUpdatedBy: null,
                 },
                 {
@@ -160,14 +130,8 @@ module.exports = () => {
                     method: 'Bad',
                     bad: true,
                     color: null,
-                    mcReproducible: false,
 
-                    archived: false,
-                    archivedAt: null,
-
-                    createdById: 1,
-                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
-                    lastUpdatedById: null,
+                    createdBy: { name: 'John Doe' },
                     lastUpdatedBy: null,
                 },
                 {
@@ -176,15 +140,9 @@ module.exports = () => {
                     method: 'Archived',
                     bad: false,
                     color: null,
-                    mcReproducible: false,
 
-                    createdById: 1,
-                    createdBy: { id: 1, externalId: 1, name: 'John Doe' },
+                    createdBy: { name: 'John Doe' },
 
-                    archived: true,
-                    archivedAt: 1710504000000,
-
-                    lastUpdatedById: null,
                     lastUpdatedBy: null,
                 },
             ]);
