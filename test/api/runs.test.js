@@ -160,6 +160,54 @@ module.exports = () => {
             expect(runs).to.lengthOf(6);
         });
 
+        it('should successfully filter with single beamType', async () => {
+            const beamType = 'p-p';
+            const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamType}`);
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf.greaterThan(0);
+            expect(runs.every(({ lhcFill }) => lhcFill?.beamType === beamType)).to.be.true;
+        });
+
+        it('should successfully filter with single beamType containing spaces around hyphen', async () => {
+            const beamType = 'NE10 - NE10';
+            const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamType}`);
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf.greaterThan(0);
+            expect(runs.every(({ lhcFill }) => lhcFill?.beamType === beamType)).to.be.true;
+        });
+
+        it('should successfully filter with multiple beamTypes', async () => {
+            const beamTypes = ['p-p', 'Pb-Pb'];
+            const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamTypes.join(',')}`);
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf.greaterThan(0);
+            expect(runs.every(({ lhcFill }) => beamTypes.includes(lhcFill?.beamType))).to.be.true;
+        });
+
+        it('should return 400 if beamTypes filter has the incorrect format', async () => {
+            const beamTypeString = 'DOES NOT EXIST';
+            const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamTypeString}`);
+
+            expect(response.status).to.equal(400);
+
+            const { errors: [error] } = response.body;
+
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal(`Invalid beam type format: ${beamTypeString}`);
+        });
+
         it('should return 400 if beamModes filter has the incorrect format', async () => {
             const beamModeString = '*THERE\'S NON LETTERS IN HERE';
             const response = await request(server).get(`/api/runs?filter[beamModes]=${beamModeString}`);
