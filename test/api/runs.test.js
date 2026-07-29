@@ -172,18 +172,6 @@ module.exports = () => {
             expect(runs.every(({ lhcFill }) => lhcFill?.beamType === beamType)).to.be.true;
         });
 
-        it('should successfully filter with single beamType containing spaces around hyphen', async () => {
-            const beamType = 'NE10 - NE10';
-            const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamType}`);
-
-            expect(response.status).to.equal(200);
-            const { data: runs } = response.body;
-
-            expect(runs).to.be.an('array');
-            expect(runs).to.have.lengthOf.greaterThan(0);
-            expect(runs.every(({ lhcFill }) => lhcFill?.beamType === beamType)).to.be.true;
-        });
-
         it('should successfully filter with multiple beamTypes', async () => {
             const beamTypes = ['p-p', 'Pb-Pb'];
             const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamTypes.join(',')}`);

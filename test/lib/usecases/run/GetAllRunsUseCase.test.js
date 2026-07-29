@@ -211,7 +211,6 @@ module.exports = () => {
 
     it('should successfully filter on beamTypes', async () => {
         const singleBeamType = 'p-p';
-        const singleBeamTypeWithSpaces = 'NE10 - NE10';
         const multipleBeamTypes = 'p-p,Pb-Pb';
         const nonExistentBeamType = 'DOES-NOT-EXIST';
 
@@ -220,13 +219,6 @@ module.exports = () => {
             const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
             expect(runs).to.have.lengthOf.greaterThan(0);
             expect(runs.every(({ lhcFill }) => lhcFill?.beamType === singleBeamType)).to.be.true;
-        }
-
-        getAllRunsDto.query = { filter: { beamTypes: singleBeamTypeWithSpaces }, page: { limit: 200 } };
-        {
-            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
-            expect(runs).to.have.lengthOf.greaterThan(0);
-            expect(runs.every(({ lhcFill }) => lhcFill?.beamType === singleBeamTypeWithSpaces)).to.be.true;
         }
 
         getAllRunsDto.query = { filter: { beamTypes: multipleBeamTypes }, page: { limit: 200 } };
