@@ -771,7 +771,7 @@ module.exports = () => {
 
                     const { errors: [error] } = res.body;
                     expect(error.title).to.equal('Invalid Attribute');
-                    expect(error.detail).to.equal('"query.filter.beamTypes" is not allowed to be empty');
+                    expect(error.detail).to.equal('"query.filter.beamTypes[0]" is not allowed to be empty');
                     done();
                 });
         });
