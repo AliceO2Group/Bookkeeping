@@ -196,6 +196,52 @@ module.exports = () => {
             expect(error.detail).to.equal(`"query.filter.beamTypes[0]" with value "${beamTypes}" fails to match the required pattern: /^[A-Za-z0-9]+ ?- ?[A-Za-z0-9]+$/`);
         });
 
+        it('should successfully filter runs with pdpBeamType', async () => {
+            const pdpBeamType = 'pp';
+        const response = await request(server).get(`/api/runs?filter[pdpBeamTypes]=${pdpBeamType}`);
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf(6);
+            expect(runs.every(({ pdpBeamType: type }) => type === pdpBeamType)).to.be.true;
+        });
+
+        it('should successfully filter runs with multiple pdpBeamTypes', async () => {
+            const pdpBeamTypes = 'pp,PbPb';
+            const response = await request(server).get(`/api/runs?filter[pdpBeamTypes]=${pdpBeamTypes}`);
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf(10);
+            expect(runs.every(({ pdpBeamType: type }) => pdpBeamTypes.includes(type))).to.be.true;
+        });
+
+        it('should return 400 if pdpBeamTypes filter has the incorrect format', async () => {
+            const pdpBeamTypes = 'S'; // Too short
+            const response = await request(server).get(`/api/runs?filter[pdpBeamTypes]=${pdpBeamTypes}`);
+
+            expect(response.status).to.equal(400);
+
+            let { errors: [error] } = response.body;
+
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal(`"query.filter.pdpBeamTypes[0]" length must be at least 2 characters long`);
+
+            const pdpBeamTypesLong = 'This is definitely not a pdp beam type'; // Too short
+            const responseLong = await request(server).get(`/api/runs?filter[pdpBeamTypes]=${pdpBeamTypesLong}`);
+
+            expect(responseLong.status).to.equal(400);
+
+            ({ errors: [error] } = responseLong.body);
+
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal(`"query.filter.pdpBeamTypes[0]" length must be less than or equal to 20 characters long`);
+        });
+
         it('should return 400 if beamModes filter has the incorrect format', async () => {
             const beamModeString = '*THERE\'S NON LETTERS IN HERE';
             const response = await request(server).get(`/api/runs?filter[beamModes]=${beamModeString}`);
@@ -727,7 +773,6 @@ module.exports = () => {
         });
     });
 
-
     describe('GET /api/runs/beamModes', () => {
         it('should successfully return status 200 and list of beam modes', async () => {
             const { body } = await request(server)
@@ -740,6 +785,25 @@ module.exports = () => {
             expect(body.data[0].name).to.equal('STABLE BEAMS');
         });
     });
+
+    describe('GET /api/runs/pdpBeamTypes', () => {
+        it('should successfully return status 200 and list of pdp beam types', async () => {
+            const { body } = await request(server)
+                .get('/api/runs/pdpBeamTypes')
+                .expect(200);
+
+            expect(body.data).to.be.an('array');
+            expect(body.data).to.have.lengthOf(5);
+            expect(body.data).to.deep.equal([
+                { name: 'pp' },
+                { name: 'PbPb' },
+                { name: 'technical' },
+                { name: 'cosmic' },
+                { name: 'OO' },
+            ]);
+        });
+    });
+
     describe('GET /api/runs/reasonTypes', () => {
         it('should successfully return status 200 and list of reason types', async () => {
             const { body } = await request(server)
