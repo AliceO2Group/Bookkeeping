@@ -290,14 +290,18 @@ module.exports.pressElement = async (page, selector, jsClick = false) => {
                     element.click();
                 });
             } else {
-                await page.waitForSelector(selector, { visible: true });
-                await page.click(selector);
+                const elementHandle = await page.waitForSelector(selector, { visible: true });
+                await elementHandle.click();
+                await elementHandle.dispose();
             }
             return;
         } catch (error) {
             const errorMessage = String(error?.message ?? '');
             const isRetryable = errorMessage.includes('detached from document')
-                || errorMessage.includes('Node is detached from document');
+                || errorMessage.includes('Node is detached from document')
+                || errorMessage.includes('Node is either not clickable or not an Element')
+                || errorMessage.includes('not visible')
+                || errorMessage.includes('No node found for selector');
 
             if (!isRetryable || attempt === maxAttempts) {
                 throw error;
