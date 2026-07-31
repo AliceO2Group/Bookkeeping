@@ -286,9 +286,11 @@ module.exports.pressElement = async (page, selector, jsClick = false) => {
 
         try {
             if (jsClick) {
-                await page.$eval(selector, (element) => {
+                const elementHandle = await page.waitForSelector(selector);
+                await elementHandle.evaluate((element) => {
                     element.click();
                 });
+                await elementHandle.dispose();
             } else {
                 const elementHandle = await page.waitForSelector(selector, { visible: true });
                 await elementHandle.click();
@@ -872,15 +874,15 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
 
     // Sort in ASCENDING manner
     await this.pressElement(page, `th#${columnId}`, true);
-    this.expectColumnValues(page, columnId, [...notOrderData].sort());
+    await this.expectColumnValues(page, columnId, [...notOrderData].sort());
 
     // Sort in DESCENDING manner
     await this.pressElement(page, `th#${columnId}`, true);
-    this.expectColumnValues(page, columnId, [...notOrderData].sort().reverse());
+    await this.expectColumnValues(page, columnId, [...notOrderData].sort().reverse());
 
     // Revoke sorting
     await this.pressElement(page, `th#${columnId}`, true);
-    this.expectColumnValues(page, columnId, notOrderData);
+    await this.expectColumnValues(page, columnId, notOrderData);
 };
 
 /**
