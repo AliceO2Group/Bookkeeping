@@ -276,26 +276,33 @@ exports.waitForNavigation = waitForNavigation;
  * @returns {Promise} Whether the element was clickable or not.
  */
 module.exports.pressElement = async (page, selector, jsClick = false) => {
-    await page.waitForFunction(
-        (sel, isJsClick) => {
-            const element = document.querySelector(sel);
+    const maxAttempts = 3;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        await page.waitForFunction(
+            (sel) => Boolean(document.querySelector(sel)),
+            {},
+            selector
+        );
 
-            if (!element) {
-                return false;
+        try {
+            if (jsClick) {
+                await page.$eval(selector, (element) => {
+                    element.click();
+                });
+            } else {
+                await page.waitForSelector(selector, { visible: true });
+                await page.click(selector);
             }
-            // Moving the click to outside the function causes it to fail for unknown reasons
-            if (isJsClick) {
-                element.click();
+            return;
+        } catch (error) {
+            const errorMessage = String(error?.message ?? '');
+            const isRetryable = errorMessage.includes('detached from document')
+                || errorMessage.includes('Node is detached from document');
+
+            if (!isRetryable || attempt === maxAttempts) {
+                throw error;
             }
-
-            return true;
-        },
-        {},
-        selector, jsClick
-    );
-
-    if (!jsClick) {
-        await page.click(selector);
+        }
     }
 };
 
