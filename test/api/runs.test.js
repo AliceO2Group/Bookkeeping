@@ -161,7 +161,7 @@ module.exports = () => {
         });
 
         it('should successfully filter with single beamType', async () => {
-            const beamType = ['p-p'];
+            const beamType = 'p-p';
             const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamType}`);
 
             expect(response.status).to.equal(200);
@@ -173,7 +173,7 @@ module.exports = () => {
         });
 
         it('should successfully filter with multiple beamTypes', async () => {
-            const beamTypes = ['p-p', 'Pb-Pb'];
+            const beamTypes = 'p-p,Pb-Pb';
             const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamTypes}`);
 
             expect(response.status).to.equal(200);
@@ -185,7 +185,7 @@ module.exports = () => {
         });
 
         it('should return 400 if beamTypes filter has the incorrect format', async () => {
-            const beamTypes = ['DOES NOT EXIST'];
+            const beamTypes = 'DOES NOT EXIST';
             const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamTypes}`);
 
             expect(response.status).to.equal(400);
@@ -193,7 +193,7 @@ module.exports = () => {
             const { errors: [error] } = response.body;
 
             expect(error.title).to.equal('Invalid Attribute');
-            expect(error.detail).to.equal(`Invalid beam type format: ${beamTypes}`);
+            expect(error.detail).to.equal(`"query.filter.beamTypes[0]" with value "${beamTypes}" fails to match the required pattern: /^[A-Za-z0-9]+ ?- ?[A-Za-z0-9]+$/`);
         });
 
         it('should return 400 if beamModes filter has the incorrect format', async () => {
