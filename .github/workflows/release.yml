@@ -15,7 +15,7 @@ jobs:
       VERSION: ${{ steps.set-project.outputs.version }}
     steps:
     - uses: actions/checkout@v7
-    - uses: actions/setup-node@v6
+    - uses: actions/setup-node@v7
       with:
         node-version: '24.x'
         registry-url: 'https://registry.npmjs.org'
@@ -43,7 +43,7 @@ jobs:
       ASSET_URL: ${{ steps.upload.outputs.asset_url }}
     steps:
     - uses: actions/checkout@v7
-    - uses: actions/setup-node@v6
+    - uses: actions/setup-node@v7
       with:
         node-version: '22.x'
         registry-url: 'https://registry.npmjs.org'
