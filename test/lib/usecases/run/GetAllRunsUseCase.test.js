@@ -209,6 +209,33 @@ module.exports = () => {
         }
     });
 
+    it('should successfully filter on beamTypes', async () => {
+        const singleBeamType = 'p-p';
+        const multipleBeamTypes = 'p-p,Pb-Pb';
+        const nonExistentBeamType = 'DOES-NOT-EXIST';
+
+        getAllRunsDto.query = { filter: { beamTypes: singleBeamType }, page: { limit: 200 } };
+        {
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.have.lengthOf.greaterThan(0);
+            expect(runs.every(({ lhcFill }) => lhcFill?.beamType === singleBeamType)).to.be.true;
+        }
+
+        getAllRunsDto.query = { filter: { beamTypes: multipleBeamTypes }, page: { limit: 200 } };
+        {
+            const acceptedBeamTypes = multipleBeamTypes.split(',');
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.have.lengthOf.greaterThan(0);
+            expect(runs.every(({ lhcFill }) => acceptedBeamTypes.includes(lhcFill?.beamType))).to.be.true;
+        }
+
+        getAllRunsDto.query = { filter: { beamTypes: nonExistentBeamType } };
+        {
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.have.lengthOf(0);
+        }
+    });
+
     it('should successfully filter on run definition', async () => {
         const PHYSICS_COUNT = 7;
         const COSMICS_COUNT = 2;
