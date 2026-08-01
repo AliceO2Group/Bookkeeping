@@ -28,7 +28,7 @@
   "dependencies": {
     "@aliceo2/web-ui": "2.11.0",
     "@grpc/grpc-js": "1.14.4",
-    "@grpc/proto-loader": "0.8.0",
+    "@grpc/proto-loader": "0.8.1",
     "cls-hooked": "4.2.2",
     "d3": "7.9.0",
     "deepmerge": "4.3.0",
@@ -79,5 +79,8 @@
     "node-fetch",
     "sequelize",
     "umzug"
-  ]
+  ],
+  "overrides": {
+    "protobufjs": "7.5.5"
+  }
 }
