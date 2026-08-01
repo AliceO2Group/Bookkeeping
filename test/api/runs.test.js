@@ -193,7 +193,7 @@ module.exports = () => {
             const { errors: [error] } = response.body;
 
             expect(error.title).to.equal('Invalid Attribute');
-            expect(error.detail).to.equal(`"query.filter.beamTypes[0]" with value "${beamTypes}" fails to match the required pattern: /^[A-Za-z0-9]+ ?- ?[A-Za-z0-9]+$/`);
+            expect(error.detail).to.equal(`Beam type must look like "PROTON - PROTON", "NE10 - NE10", etc.`);
         });
 
         it('should return 400 if beamModes filter has the incorrect format', async () => {
