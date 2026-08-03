@@ -229,9 +229,9 @@ module.exports = () => {
             let { errors: [error] } = response.body;
 
             expect(error.title).to.equal('Invalid Attribute');
-            expect(error.detail).to.equal(`"query.filter.pdpBeamTypes[0]" length must be at least 2 characters long`);
+            expect(error.detail).to.equal(`PDP beam type must be at least 2 characters long`);
 
-            const pdpBeamTypesLong = 'This is definitely not a pdp beam type'; // Too short
+            const pdpBeamTypesLong = 'This is definitely not a pdp beam type'; // Too long
             const responseLong = await request(server).get(`/api/runs?filter[pdpBeamTypes]=${pdpBeamTypesLong}`);
 
             expect(responseLong.status).to.equal(400);
@@ -239,7 +239,7 @@ module.exports = () => {
             ({ errors: [error] } = responseLong.body);
 
             expect(error.title).to.equal('Invalid Attribute');
-            expect(error.detail).to.equal(`"query.filter.pdpBeamTypes[0]" length must be less than or equal to 20 characters long`);
+            expect(error.detail).to.equal(`PDP beam type must be at most 10 characters long`);
         });
 
         it('should return 400 if beamModes filter has the incorrect format', async () => {
