@@ -173,8 +173,8 @@ module.exports = () => {
         });
 
         it('should successfully filter with multiple beamTypes', async () => {
-            const beamTypes = ['p-p', 'Pb-Pb'];
-            const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamTypes.join(',')}`);
+            const beamTypes = 'p-p,Pb-Pb';
+            const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamTypes}`);
 
             expect(response.status).to.equal(200);
             const { data: runs } = response.body;
@@ -185,15 +185,15 @@ module.exports = () => {
         });
 
         it('should return 400 if beamTypes filter has the incorrect format', async () => {
-            const beamTypeString = 'DOES NOT EXIST';
-            const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamTypeString}`);
+            const beamTypes = 'DOES NOT EXIST';
+            const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamTypes}`);
 
             expect(response.status).to.equal(400);
 
             const { errors: [error] } = response.body;
 
             expect(error.title).to.equal('Invalid Attribute');
-            expect(error.detail).to.equal(`Invalid beam type format: ${beamTypeString}`);
+            expect(error.detail).to.equal(`Beam type must look like "PROTON - PROTON", "NE10 - NE10", etc.`);
         });
 
         it('should return 400 if beamModes filter has the incorrect format', async () => {
