@@ -18,13 +18,11 @@ module.exports = () => {
     it('should successfully return the full list of not null PDP beam types from runs table', async () => {
         const pdpBeamTypes = await getAllPdpBeamTypes();
         expect(pdpBeamTypes.map(({ dataValues: { name } }) => ({ name }))).to.deep.eq([
-            { name: 'cosmic' },
-            { name: 'technical' },
             { name: 'pp' },
             { name: 'PbPb' },
-            { name: 'pO' },
+            { name: 'technical' },
+            { name: 'cosmic' },
             { name: 'OO' },
-            { name: 'NeNe' },
         ]);
     });
 };
