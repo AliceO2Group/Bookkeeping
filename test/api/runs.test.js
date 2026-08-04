@@ -193,7 +193,7 @@ module.exports = () => {
             const { errors: [error] } = response.body;
 
             expect(error.title).to.equal('Invalid Attribute');
-            expect(error.detail).to.equal(`"query.filter.beamTypes[0]" with value "${beamTypes}" fails to match the required pattern: /^[A-Za-z0-9]+ ?- ?[A-Za-z0-9]+$/`);
+            expect(error.detail).to.equal(`Beam type must look like "PROTON - PROTON", "NE10 - NE10", etc.`);
         });
 
         it('should successfully filter runs with pdpBeamType', async () => {
@@ -229,9 +229,9 @@ module.exports = () => {
             let { errors: [error] } = response.body;
 
             expect(error.title).to.equal('Invalid Attribute');
-            expect(error.detail).to.equal(`"query.filter.pdpBeamTypes[0]" length must be at least 2 characters long`);
+            expect(error.detail).to.equal(`PDP beam type must be at least 2 characters long`);
 
-            const pdpBeamTypesLong = 'This is definitely not a pdp beam type'; // Too short
+            const pdpBeamTypesLong = 'This is definitely not a pdp beam type'; // Too long
             const responseLong = await request(server).get(`/api/runs?filter[pdpBeamTypes]=${pdpBeamTypesLong}`);
 
             expect(responseLong.status).to.equal(400);
@@ -239,7 +239,17 @@ module.exports = () => {
             ({ errors: [error] } = responseLong.body);
 
             expect(error.title).to.equal('Invalid Attribute');
-            expect(error.detail).to.equal(`"query.filter.pdpBeamTypes[0]" length must be less than or equal to 20 characters long`);
+            expect(error.detail).to.equal(`PDP beam type must be at most 10 characters long`);
+
+            const pdpBeamTypeWithDigits = 'pp1';
+            const responseWithDigits = await request(server).get(`/api/runs?filter[pdpBeamTypes]=${pdpBeamTypeWithDigits}`);
+
+            expect(responseWithDigits.status).to.equal(400);
+            ({ errors: [error] } = responseWithDigits.body);
+
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal(`PDP beam type must look like "pp", "pPb", "NeNe", "OO", "cosmic", "technical", etc.`);
+
         });
 
         it('should return 400 if beamModes filter has the incorrect format', async () => {
