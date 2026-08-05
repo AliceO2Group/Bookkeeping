@@ -805,11 +805,11 @@ module.exports = () => {
             expect(body.data).to.be.an('array');
             expect(body.data).to.have.lengthOf(5);
             expect(body.data).to.deep.equal([
-                { name: 'pp' },
-                { name: 'PbPb' },
-                { name: 'technical' },
-                { name: 'cosmic' },
-                { name: 'OO' },
+                { beam_type: 'pp' },
+                { beam_type: 'PbPb' },
+                { beam_type: 'technical' },
+                { beam_type: 'cosmic' },
+                { beam_type: 'OO' },
             ]);
         });
     });

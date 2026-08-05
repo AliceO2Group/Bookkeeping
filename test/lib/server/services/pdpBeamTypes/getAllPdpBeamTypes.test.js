@@ -17,7 +17,7 @@ const { getAllPdpBeamTypes } =  require('../../../../../lib/server/services/beam
 module.exports = () => {
     it('should successfully return the full list of not null PDP beam types from runs table', async () => {
         const pdpBeamTypes = await getAllPdpBeamTypes();
-        expect(pdpBeamTypes.map(({ dataValues: { name } }) => ({ name }))).to.deep.eq([
+        expect(pdpBeamTypes.map(({ dataValues: { beam_type } }) => ({ beam_type }))).to.deep.eq([
             { beam_type: 'pp' },
             { beam_type: 'PbPb' },
             { beam_type: 'technical' },
