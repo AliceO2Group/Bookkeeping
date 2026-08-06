@@ -143,38 +143,70 @@ module.exports.waitForTimeout = waitForTimeout;
 /**
  * Waits for the number of table rows to meet the expected size.
  *
+ * This function continuously polls the page until the table has exactly the expected number of rows,
+ * excluding rows with the CSS classes 'loading-row' or 'empty-row'. If an old table fingerprint is
+ * provided, it also verifies that the table content has actually changed before resolving.
+ *
  * @param {puppeteer.Page} page - The puppeteer page where the table is located.
  * @param {number} expectedSize - The expected number of table rows, excluding rows marked as loading or empty.
- * @return {Promise<void>} Resolves once the expected number of rows is met, or the timeout is reached.
+ * @param {number} [timeout] - Max wait time in ms; if omitted, uses the page default timeout.
+ * @param {string} [oldTableFingerprint] - HTML innerHTML of the previous table state. When provided,
+ *                                         the function ensures the table content has changed even if the row
+ *                                         count matches, preventing false positives during updates.
+ * @return {Promise<void>} Resolves once the expected number of rows is met (and table content has changed if
+ *                         oldTableFingerprint was provided).
+ * @throws {Error} Throws an error if the timeout is reached before the condition is met.
  */
-const waitForTableToLength = async (page, expectedSize) => {
+const waitForTableToLength = async (page, expectedSize, timeout, oldTableFingerprint) => {
+    const tableRowsSelector = 'table tbody tr:not(.loading-row):not(.empty-row)';
+    const tableSelector = 'table';
     try {
         await page.waitForFunction(
-            (expectedSize) => document.querySelectorAll('table tbody tr:not(.loading-row):not(.empty-row)').length === expectedSize,
-            {},
+            (expectedSize, oldTableFingerprint, tableRowsSelector, tableSelector) => {
+                const actualSize = document.querySelectorAll(tableRowsSelector).length;
+
+                if (actualSize === expectedSize) {
+                    if (oldTableFingerprint) {
+                        const currentTable = document.querySelector(tableSelector).innerHTML;
+                        // Ensure table content has changed, useful if row count was the same before
+                        return currentTable !== oldTableFingerprint;
+                    }
+                    return true;
+                }
+                return false;
+            },
+            timeout ? { timeout } : undefined,
             expectedSize,
+            oldTableFingerprint,
+            tableRowsSelector,
+            tableSelector,
         );
     } catch {
-        const actualSize = (await page.$$('tbody tr')).length;
-        const isThereLoadingRow = !!(await page.$$('table body tr.loading-row'))
-        throw new Error(`Expected table of length ${expectedSize}, but got ${actualSize} ${isThereLoadingRow ? ', loading-row' : ''}`);
+        // Gather information to provide helpful error message
+        const actualSize = (await page.$$(tableRowsSelector)).length;
+        const isThereLoadingRow = (await page.$$('table tbody tr.loading-row')).length > 0;
+        const currentTable = await page.$eval(tableSelector, (t) => t.innerHTML).catch(() => null);
+        const tableUnchanged = oldTableFingerprint && currentTable === oldTableFingerprint;
+        throw new Error(`Expected table of length ${expectedSize}, but got ${actualSize}${isThereLoadingRow ? ' (loading-row present)' : ''}${tableUnchanged ? ' (table content unchanged)' : ''}`);
     }
 };
 
 module.exports.waitForTableLength = waitForTableToLength;
 
+
 /**
  * Wait for the total number of elements to be the expected one
  *
  * @param {puppeteer.Page} page The puppeteer page where the table is located
- * @param {number} amount the expected amount of items
+ * @param {number} amount the expected amount of items. If amount is 0 it is converted to undefined, as empty tables don't display a row count
  * @return {Promise<void>} resolves once the expected amount is present
  */
 module.exports.waitForTableTotalRowsCountToEqual = async (page, amount) => {
     try {
+        amount = amount === 0 ? undefined : `${amount}`;
         await page.waitForSelector('#totalRowsCount');
         await page.waitForFunction(
-            (amount) => document.querySelector('#totalRowsCount').innerText === `${amount}`,
+            (amount) => document.querySelector('#totalRowsCount')?.innerText === amount,
             {},
             amount,
         );
@@ -244,12 +276,26 @@ exports.waitForNavigation = waitForNavigation;
  * @returns {Promise} Whether the element was clickable or not.
  */
 module.exports.pressElement = async (page, selector, jsClick = false) => {
-    const elementHandler = await page.waitForSelector(selector);
+    await page.waitForFunction(
+        (sel, isJsClick) => {
+            const element = document.querySelector(sel);
 
-    if (jsClick) {
-        await elementHandler.evaluate((element) => element.click());
-    } else {
-        await elementHandler.click(selector);
+            if (!element) {
+                return false;
+            }
+            // Moving the click to outside the function causes it to fail for unknown reasons
+            if (isJsClick) {
+                element.click();
+            }
+
+            return true;
+        },
+        {},
+        selector, jsClick
+    );
+
+    if (!jsClick) {
+        await page.click(selector);
     }
 };
 
@@ -559,6 +605,28 @@ const getPopoverInnerText = (popoverTrigger) => {
 
 module.exports.getPopoverInnerText = getPopoverInnerText;
 
+
+/**
+ * Check if popover of given trigger has expected inner text
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string} popoverTriggerSelector popover trigger selector
+ * @returns {Promise<void>} resolve once popover is validated
+ */
+const checkPopoverInnerText = async (page, popoverTriggerSelector, expectedText) => {
+    const popoverTrigger = await page.waitForSelector(popoverTriggerSelector);
+    const popoverSelector = await this.getPopoverSelector(popoverTrigger);
+
+    await this.expectInnerTextTo(
+        page,
+        popoverSelector,
+        // Newlines may be inconsistent between balloon and original data
+        (popoverContent) => popoverContent.replaceAll('\n', '') === expectedText.replaceAll('\n', ''),
+    );
+};
+
+module.exports.checkPopoverInnerText = checkPopoverInnerText;
+
 /**
  * Check that the fist cell of the given column contains a popover displayed if the text overflows (named balloon) and that the popover's
  * content is correct
@@ -600,14 +668,24 @@ module.exports.checkColumnBalloon = async (page, rowIndex, columnIndex) => {
  * @return {Promise} resolves once the value has been typed
  */
 module.exports.fillInput = async (page, inputSelector, value, events = ['input']) => {
-    await page.waitForSelector(inputSelector);
-    await page.evaluate((inputSelector, value, events) => {
+    await page.waitForFunction((inputSelector, value, events) => {
         const element = document.querySelector(inputSelector);
+
+        if (!element) {
+            return false;
+        }
+
         element.value = value;
+
         for (const eventKey of events) {
             element.dispatchEvent(new Event(eventKey, { bubbles: true }));
         }
-    }, inputSelector, value, events);
+
+        return true;
+    },
+    {},
+    inputSelector, value, events
+    );
 };
 
 /**
@@ -802,10 +880,10 @@ module.exports.testTableSortingByColumn = async (page, columnId) => {
  * @return {Promise<void>} resolve once data was successfully validated
  */
 module.exports.validateTableData = async (page, validators) => {
-    await page.waitForSelector('table tbody');
     for (const [columnId, validator] of validators) {
+        await page.waitForSelector(`table tbody .column-${columnId}`);
+
         const columnData = await getColumnCellsInnerTexts(page, columnId);
-        expect(columnData, `Too few values for column ${columnId} or there is no such column`).to.be.length.greaterThan(0);
         expect(
             columnData.every((cellData) => validator(cellData)),
             `Invalid data in column ${columnId}: (${columnData})`,
@@ -883,15 +961,13 @@ module.exports.validateDate = (date, format = 'DD/MM/YYYY hh:mm:ss') => !isNaN(d
  * Return the selector for all the inputs composing a period inputs
  *
  * @param {string} popoverSelector the selector of the period inputs parent
- * @return {{fromDateSelector: string, fromTimeSelector: string, toDateSelector: string, toTimeSelector: string}} the selectors
+ * @return {{fromDateTimeSelector: string, toDateTimeSelector: string}} the selectors
  */
 module.exports.getPeriodInputsSelectors = (popoverSelector) => {
     const commonInputsAncestor = `${popoverSelector} > div > div > div > div`;
     return {
-        fromDateSelector: `${commonInputsAncestor} > div:nth-child(1) input:nth-child(1)`,
-        fromTimeSelector: `${commonInputsAncestor} > div:nth-child(1) input:nth-child(2)`,
-        toDateSelector: `${commonInputsAncestor} > div:nth-child(2) input:nth-child(1)`,
-        toTimeSelector: `${commonInputsAncestor} > div:nth-child(2) input:nth-child(2)`,
+        fromDateTimeSelector: `${commonInputsAncestor} > div:nth-child(1) input[type="datetime-local"]:nth-child(1)`,
+        toDateTimeSelector: `${commonInputsAncestor} > div:nth-child(2) input[type="datetime-local"]:nth-child(1)`,
     };
 };
 
@@ -911,9 +987,27 @@ module.exports.openFilteringPanel = async (page) => {
  * @param {puppeteer.page} page page handler
  */
 module.exports.resetFilters = async (page) => {
-    await page.waitForSelector('#reset-filters', { visible: true }).then(() => this.pressElement(page, '#reset-filters')).catch(async () => {
-        await this.pressElement(page, '#openFilterToggle');
-        await this.pressElement(page, '#reset-filters');
-        await this.pressElement(page, '#openFilterToggle');
-    })
+    await page.waitForSelector('#reset-filters', { visible: true })
+        .then(() => this.pressElement(page, '#reset-filters', true))
+        .catch(async () => {
+            await this.pressElement(page, '#openFilterToggle', true);
+            await this.pressElement(page, '#reset-filters', true);
+            await this.pressElement(page, '#openFilterToggle', true);
+        });
+
+        await page.waitForFunction(
+        () => document.querySelectorAll('table tbody tr.loading-row').length === 0,
+        { timeout: 5000 },
+    );
 };
+
+/**
+ * Fuction that waits for a button to become active
+ * @param {puppeteer.page} page page handler
+ * @param {string} selector Css selector for the button.
+ */
+module.exports.waitForButtonToBecomeActive = async (page, selector) => await page.waitForFunction((sel) => {
+        const button = document.querySelector(sel);
+        return button && !button.disabled;
+    }, {}, selector);
+

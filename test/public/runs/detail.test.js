@@ -54,7 +54,7 @@ const banIconPath =
  */
 const goToRunDetails = async (page, runNumber) => {
     await waitForNavigation(page, () => pressElement(page, '#run-overview'));
-    await fillInput(page, '.run-numbers-filter', `${runNumber},${runNumber}`, ['change']);
+    await fillInput(page, '.runNumbers-textFilter', `${runNumber},${runNumber}`, ['change']);
     await waitForTableLength(page, 1);
     return waitForNavigation(page, () => pressElement(page, `a[href="?page=run-detail&runNumber=${runNumber}"]`));
 };
@@ -208,10 +208,10 @@ module.exports = () => {
 
         expect(eorReasons).to.lengthOf(2);
         expect(await eorReasons[0].evaluate((element) => element.innerText))
-            .to.equal('DETECTORS - TPC - Some Reason other than selected plus one');
+            .to.equal('DETECTORS - TPC - Some Reason other than selected plus one\nAnonymous');
 
         expect(await eorReasons[1].evaluate((element) => element.innerText))
-            .to.equal('DETECTORS - CPV - A new EOR reason');
+            .to.equal('DETECTORS - CPV - A new EOR reason\nAnonymous');
     });
 
     it('should successfully revert the update end of run reasons', async () => {
@@ -234,10 +234,19 @@ module.exports = () => {
 
         expect(eorReasons).to.lengthOf(2);
         expect(await eorReasons[0].evaluate((element) => element.innerText))
-            .to.equal('DETECTORS - TPC - Some Reason other than selected plus one');
+            .to.equal('DETECTORS - TPC - Some Reason other than selected plus one\nAnonymous');
 
         expect(await eorReasons[1].evaluate((element) => element.innerText))
-            .to.equal('DETECTORS - CPV - A new EOR reason');
+            .to.equal('DETECTORS - CPV - A new EOR reason\nAnonymous');
+    });
+
+    it('should display lastEditedName tooltip with "Last edited by" on formatRunEorReason', async () => {
+        const eorReasonElement = await page.$('#eor-reasons .eor-reason');
+        const popoverTrigger = await eorReasonElement.$('.popover-trigger');
+        expect(popoverTrigger).to.not.be.null;
+
+        const popoverContent = await getPopoverContent(popoverTrigger);
+        expect(popoverContent).to.equal('Last edited by');
     });
 
     it('should successfully update inelasticInteractionRate values of PbPb run', async () => {
@@ -274,19 +283,21 @@ module.exports = () => {
     it('should successfully show luminosity information of pp run', async () => {
         await goToRunDetails(page, 108);
         await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(1) div:nth-child(2)', '1,064,637.582\nµb\n-1');
-        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(2) div:nth-child(2)', '0.051');
-        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(3) div:nth-child(2)', '78,600 µb');
-        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(4) div:nth-child(2)', '1');
-        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(5) div:nth-child(2)', '0.757');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(2) div:nth-child(2)', '686,291.355');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(3) div:nth-child(2)', '0.051');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(4) div:nth-child(2)', '78,600 µb');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(5) div:nth-child(2)', '1');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(6) div:nth-child(2)', '0.757');
     });
 
     it('should successfully show luminosity information of PbPb run', async () => {
         await goToRunDetails(page, 54);
         await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(1) div:nth-child(2)', '100,130.863\nµb\n-1');
-        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(2) div:nth-child(2)', '0.072');
-        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(3) div:nth-child(2)', '78,600 µb');
-        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(4) div:nth-child(2)', '1');
-        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(5) div:nth-child(2)', '0.757');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(2) div:nth-child(2)', '798,438.48');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(3) div:nth-child(2)', '0.072');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(4) div:nth-child(2)', '78,600 µb');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(5) div:nth-child(2)', '1');
+        await expectInnerText(page, '#luminosity div:nth-child(2) div:nth-child(6) div:nth-child(2)', '0.757');
     });
 
     it('should show lhc data in normal mode', async () => {
@@ -519,8 +530,10 @@ module.exports = () => {
 
     it('should successfully display links to infologger and QCG', async () => {
         await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
+        await page.waitForSelector('#row108 a');
         await waitForNavigation(page, () => pressElement(page, '#row108 a'));
 
+        await page.waitForSelector('a.external-link');
         await expectLink(page, 'a.external-link', {
             innerText: 'FLP',
             href: 'http://localhost:8081/?q={%22run%22:{%22match%22:%22108%22},%22severity%22:{%22in%22:%22W%20E%20F%22}}',

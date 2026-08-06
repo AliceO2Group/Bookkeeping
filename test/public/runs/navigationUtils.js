@@ -32,11 +32,10 @@ exports.navigateToRunsOverview = async (page) => {
  * @param {number} expectedRowsCount expected number of rows on runs per data pass page
  * @return {Promise<void>} promise
  */
-exports.navigateToRunsPerLhcPeriod = async (page, lhcPeriodId, expectedRowsCount, tabPanel='detectorQualities') => {
+exports.navigateToRunsPerLhcPeriod = async (page, lhcPeriodId, expectedRowsCount) => {
     await waitForNavigation(page, () => pressElement(page, 'a#lhc-period-overview', true));
     await waitForNavigation(page, () => pressElement(page, `#row${lhcPeriodId}-associatedRuns a`, true));
-    await pressElement(page, `#${tabPanel}-tab`, true);
-    expectUrlParams(page, { page: 'runs-per-lhc-period', lhcPeriodId, panel: tabPanel }, ['pdpBeamType']);
+    expectUrlParams(page, { page: 'runs-per-lhc-period', lhcPeriodId }, ['pdpBeamType']);
     await waitForTableLength(page, expectedRowsCount);
 };
 

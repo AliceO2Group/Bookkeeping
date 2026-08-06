@@ -69,8 +69,8 @@ module.exports = () => {
     it('should successfully display runs statistics', async () => {
         await goToPage(page, 'lhc-fill-details', { queryParameters: { fillNumber: 6 } });
 
-        await page.waitForSelector('#statistics');
-        const statisticsContent = await page.$eval('#statistics', (element) => element.innerText);
+        await page.waitForSelector('#runStatistics');
+        const statisticsContent = await page.$eval('#runStatistics', (element) => element.innerText);
 
         expect(statisticsContent).to.include('Over 2 minutes');
         expect(statisticsContent).to.include('Under 2 minutes');

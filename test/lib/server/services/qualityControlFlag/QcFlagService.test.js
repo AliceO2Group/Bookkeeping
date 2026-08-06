@@ -142,15 +142,15 @@ module.exports = () => {
             const detectorId = 7;
             {
                 const { rows: flags, count } = await qcFlagService.getAllSynchronousPerRunAndDetector({ runNumber, detectorId });
-                expect(count).to.be.equal(2);
-                expect(flags.map(({ id }) => id)).to.have.all.ordered.members([101, 100]);
+                expect(count).to.be.equal(3);
+                expect(flags.map(({ id }) => id)).to.have.all.ordered.members([103, 101, 100]);
             }
             {
                 const { rows: flags, count } = await qcFlagService.getAllSynchronousPerRunAndDetector(
                     { runNumber, detectorId },
-                    { limit: 1, offset: 1 },
+                    { limit: 1, offset: 2 },
                 );
-                expect(count).to.be.equal(2);
+                expect(count).to.be.equal(3);
                 expect(flags).to.be.lengthOf(1);
                 const [flag] = flags;
                 expect(flag.id).to.be.equal(100);
@@ -169,18 +169,64 @@ module.exports = () => {
                         mcReproducible: true,
                         badEffectiveRunCoverage: 0.3333333,
                         explicitlyNotBadEffectiveRunCoverage: 0,
+                        minifiedFlags: [
+                            {
+                                id: 1,
+                                comment: "Some qc comment 1",
+                                flagType: {
+                                    name: "Limited Acceptance MC Reproducible",
+                                    color: "#FFFF00"
+                                }
+                            },
+                            {
+                                id: 2,
+                                comment: "Some qc comment 2",
+                                flagType: {
+                                    name: "Limited acceptance",
+                                    color: "#FFFF00"
+                                }
+                            },
+                            {
+                                id: 3,
+                                comment: "Some qc comment 3",
+                                flagType: {
+                                    name: "Bad",
+                                    color: null
+                                }
+                            }
+                        ],
                     },
                     16: {
                         badEffectiveRunCoverage: 0,
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: false,
                         missingVerificationsCount: 1,
+                        minifiedFlags: [
+                            {
+                                id: 7,
+                                comment: "Some qc comment 7",
+                                flagType: {
+                                    name: "Good",
+                                    color: null
+                                }
+                            }
+                        ],
                     },
                     22: {
                         badEffectiveRunCoverage: 0.2222222,
                         explicitlyNotBadEffectiveRunCoverage: 0.7777778,
                         mcReproducible: false,
-                        missingVerificationsCount: 2
+                        missingVerificationsCount: 2,
+                        minifiedFlags: [
+                            {
+                                comment: 'lala',
+                                flagType: {
+                                    color: null,
+                                    name: "Good",
+                                },
+                                id: 300,
+                            }
+                        ],
                     },
                 },
                 107: {
@@ -189,12 +235,40 @@ module.exports = () => {
                         explicitlyNotBadEffectiveRunCoverage: 0.7596538,
                         mcReproducible: true,
                         missingVerificationsCount: 2,
+                        minifiedFlags: [
+                            {
+                                id: 202,
+                                comment: "Some qc comment 1",
+                                flagType: {
+                                    name: "Good",
+                                    color: null
+                                }
+                            },
+                            {
+                                id: 201,
+                                comment: "Some qc comment 1",
+                                flagType: {
+                                    name: "Limited Acceptance MC Reproducible",
+                                    color: "#FFFF00"
+                                }
+                            }
+                        ],
                     },
                     2: {
                         badEffectiveRunCoverage: 0,
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: false,
                         missingVerificationsCount: 1,
+                        minifiedFlags: [
+                           {
+                                id: 203,
+                                comment: "Some qc comment 1",
+                                flagType: {
+                                    name: "Good",
+                                    color: null
+                                }
+                            }
+                        ],
                     },
                 },
             });
@@ -208,18 +282,52 @@ module.exports = () => {
                         mcReproducible: true,
                         badEffectiveRunCoverage: 0.1111111,
                         explicitlyNotBadEffectiveRunCoverage: 0.2222222,
+                        minifiedFlags: [
+                            {
+                                id: 1,
+                                comment: 'Some qc comment 1',
+                                flagType: { name: 'Limited Acceptance MC Reproducible', color: '#FFFF00' },
+                            },
+                            {
+                                id: 2,
+                                comment: 'Some qc comment 2',
+                                flagType: { name: 'Limited acceptance', color: '#FFFF00' },
+                            },
+                            {
+                                id: 3,
+                                comment: 'Some qc comment 3',
+                                flagType: { name: 'Bad', color: null },
+                            },
+                        ],
                     },
                     16: {
                         badEffectiveRunCoverage: 0,
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: false,
                         missingVerificationsCount: 1,
+                        minifiedFlags: [
+                            {
+                                id: 7,
+                                comment: 'Some qc comment 7',
+                                flagType: { name: 'Good', color: null },
+                            },
+                        ],
                     },
                     22: {
                         badEffectiveRunCoverage: 0.2222222,
                         explicitlyNotBadEffectiveRunCoverage: 0.7777778,
                         mcReproducible: false,
-                        missingVerificationsCount: 2
+                        missingVerificationsCount: 2,
+                        minifiedFlags: [
+                            {
+                                comment: 'lala',
+                                flagType: {
+                                    color: null,
+                                    name: "Good",
+                                },
+                                id: 300,
+                            }
+                        ],
                     },
                 },
                 107: {
@@ -228,12 +336,31 @@ module.exports = () => {
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: true,
                         missingVerificationsCount: 2,
+                        minifiedFlags: [
+                            {
+                                id: 201,
+                                comment: 'Some qc comment 1',
+                                flagType: { name: 'Limited Acceptance MC Reproducible', color: '#FFFF00' },
+                            },
+                            {
+                                id: 202,
+                                comment: 'Some qc comment 1',
+                                flagType: { name: 'Good', color: null },
+                            },
+                        ],
                     },
                     2: {
                         badEffectiveRunCoverage: 0,
                         explicitlyNotBadEffectiveRunCoverage: 1,
                         mcReproducible: false,
                         missingVerificationsCount: 1,
+                        minifiedFlags: [
+                            {
+                                id: 203,
+                                comment: 'Some qc comment 1',
+                                flagType: { name: 'Good', color: null },
+                            },
+                        ],
                     },
                 },
             });
@@ -272,6 +399,13 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0.0769231,
                         explicitlyNotBadEffectiveRunCoverage: 0,
+                        minifiedFlags: [
+                            {
+                                id: 4,
+                                comment: 'Some qc comment 4',
+                                flagType: { name: 'Bad', color: null },
+                            },
+                        ],
                     },
                 },
             });
@@ -289,6 +423,13 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0.0769231,
                         explicitlyNotBadEffectiveRunCoverage: 0,
+                        minifiedFlags: [
+                            {
+                                id: 4,
+                                comment: 'Some qc comment 4',
+                                flagType: { name: 'Bad', color: null },
+                            },
+                        ],
                     },
                 },
             });
@@ -306,6 +447,18 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0.9288889,
                         explicitlyNotBadEffectiveRunCoverage: 0,
+                        minifiedFlags: [
+                            {
+                                id: 5,
+                                comment: 'Some qc comment 4',
+                                flagType: { name: 'Bad', color: null },
+                            },
+                            {
+                                id: 6,
+                                comment: 'Some qc comment 4',
+                                flagType: { name: 'Bad', color: null },
+                            },
+                        ],
                     },
                 },
             });
@@ -324,6 +477,18 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0.1666667,
                         explicitlyNotBadEffectiveRunCoverage: 0.8333333,
+                        minifiedFlags: [
+                            {
+                                id: 100,
+                                comment: 'first part good',
+                                flagType: { name: 'Good', color: null },
+                            },
+                            {
+                                id: 101,
+                                comment: 'second part bad',
+                                flagType: { name: 'Bad PID', color: null },
+                            },
+                        ],
                     },
 
                     // ITS
@@ -332,6 +497,13 @@ module.exports = () => {
                         mcReproducible: false,
                         badEffectiveRunCoverage: 0,
                         explicitlyNotBadEffectiveRunCoverage: 1,
+                        minifiedFlags: [
+                            {
+                                id: 102,
+                                comment: 'all good',
+                                flagType: { name: 'Good', color: null },
+                            },
+                        ],
                     },
                 },
             });
@@ -346,13 +518,49 @@ module.exports = () => {
                             badEffectiveRunCoverage: 0.2222222,
                             explicitlyNotBadEffectiveRunCoverage: 0.7777778,
                             mcReproducible: false,
-                            missingVerificationsCount: 2
+                            missingVerificationsCount: 2,
+                            minifiedFlags: [
+                                {
+                                    comment: 'lala',
+                                    flagType: {
+                                        color: null,
+                                        name: 'Good',
+                                    },
+                                    id: 300,
+                                }
+                            ]
                         },
                         1: {
                             missingVerificationsCount: 3,
                             mcReproducible: true,
                             badEffectiveRunCoverage: 0.3333333,
                             explicitlyNotBadEffectiveRunCoverage: 0,
+                            minifiedFlags: [
+                                {
+                                    comment: "Some qc comment 1",
+                                    flagType: {
+                                        color: "#FFFF00",
+                                        name: "Limited Acceptance MC Reproducible",
+                                    },
+                                    id: 1,
+                                },
+                                {
+                                    comment: "Some qc comment 2",
+                                    flagType: {
+                                        color: "#FFFF00",
+                                        name: "Limited acceptance",
+                                    },
+                                    id: 2,
+                                },
+                                {
+                                    comment: "Some qc comment 3",
+                                    flagType: {
+                                        color: null,
+                                        name: 'Bad',
+                                    },
+                                    id: 3,
+                                }
+                            ],
                         },
                     },
                     107: {
@@ -361,6 +569,24 @@ module.exports = () => {
                             explicitlyNotBadEffectiveRunCoverage: 0.7596538,
                             mcReproducible: true,
                             missingVerificationsCount: 2,
+                            minifiedFlags: [
+                                {
+                                    comment: "Some qc comment 1",
+                                    flagType: {
+                                        color: null,
+                                        name: "Good",
+                                    },
+                                    id: 202,
+                                },
+                                {
+                                    comment: "Some qc comment 1",
+                                    flagType: {
+                                        color: "#FFFF00",
+                                        name: "Limited Acceptance MC Reproducible",
+                                    },
+                                    id: 201,
+                                },
+                            ],
                         },
                     },
                 });
@@ -378,13 +604,49 @@ module.exports = () => {
                             badEffectiveRunCoverage: 0,
                             explicitlyNotBadEffectiveRunCoverage: 0.7777778,
                             mcReproducible: false,
-                            missingVerificationsCount: 1
+                            missingVerificationsCount: 1,
+                            minifiedFlags: [
+                                {
+                                    comment: 'lala',
+                                    flagType: {
+                                        color: null,
+                                        name: "Good",
+                                    },
+                                    id: 300,
+                                }
+                            ],
                         },
                         1: {
                             missingVerificationsCount: 3,
                             mcReproducible: true,
                             badEffectiveRunCoverage: 0.3333333,
                             explicitlyNotBadEffectiveRunCoverage: 0,
+                            minifiedFlags: [
+                                {
+                                    id: 1,
+                                    comment: "Some qc comment 1",
+                                    flagType: {
+                                        name: "Limited Acceptance MC Reproducible",
+                                        color: "#FFFF00"
+                                    }
+                                },
+                                {
+                                    id: 2,
+                                    comment: "Some qc comment 2",
+                                    flagType: {
+                                        name: "Limited acceptance",
+                                        color: "#FFFF00"
+                                    }
+                                },
+                                {
+                                    id: 3,
+                                    comment: "Some qc comment 3",
+                                    flagType: {
+                                        name: "Bad",
+                                        color: null
+                                    }
+                                }
+                            ],
                         },
                     },
                     107: {
@@ -393,6 +655,24 @@ module.exports = () => {
                             explicitlyNotBadEffectiveRunCoverage: 0.7596538,
                             mcReproducible: true,
                             missingVerificationsCount: 2,
+                            minifiedFlags: [
+                                {
+                                    comment: "Some qc comment 1",
+                                    flagType: {
+                                        color: null,
+                                        name: "Good",
+                                    },
+                                    id: 202,
+                                },
+                                {
+                                    comment: "Some qc comment 1",
+                                    flagType: {
+                                        color: "#FFFF00",
+                                        name: "Limited Acceptance MC Reproducible",
+                                    },
+                                    id: 201,
+                                },
+                            ],
                         },
                     },
                 });
@@ -1588,6 +1868,27 @@ module.exports = () => {
             );
         });
 
+        it('should allow QC flag creators to verify their own flags', async () => {
+            const relations = { user: { roles: ['admin'], externalUserId: 456 } };
+            const scope = {
+                runNumber: 106,
+                dataPassIdentifier: { id: 1 },
+                detectorIdentifier: { detectorId: 1 },
+            };
+
+            const [verifiedFlag] = await qcFlagService.create([
+                { flagTypeId: goodFlagTypeId, verify: true },
+            ], scope, relations);
+
+            expect(verifiedFlag.verifications).to.be.an('array');
+            expect(verifiedFlag.verifications).to.have.lengthOf(1);
+
+            const [verification] = verifiedFlag.verifications;
+            expect(verification.flagId).to.equal(verifiedFlag.id);
+            expect(verification.comment).to.be.null;
+            expect(verification.createdById).to.equal(verifiedFlag.createdById);
+        });
+
         it('should successfully verify QC flag when not being owner', async () => {
             const qcFlag = {
                 flagId: 3,
@@ -1823,10 +2124,10 @@ module.exports = () => {
         });
     });
 
-    it('should successfult fiter sync flags by created by name', async () => {
+    it('should successfully filter sync flags by created by name', async () => {
         {
             const { rows } = await qcFlagService.getAllSynchronousPerRunAndDetector({ runNumber: 56, detectorId: 7 }, {}, { createdBy: { names: ['Jan Jansen'], operator: 'or' }});
-            expect(rows).to.be.lengthOf(2);
+            expect(rows).to.be.lengthOf(3);
         }
 
         {
@@ -1835,7 +2136,7 @@ module.exports = () => {
         }
     });
 
-    it('should successfult fiter data pass flags by created by name', async () => {
+    it('should successfully filter data pass flags by created by name', async () => {
         {
             const { rows } = await qcFlagService.getAllPerDataPassAndRunAndDetector({ dataPassId: 1, runNumber: 107, detectorId: 1 }, {}, { createdBy: { names: ['John Doe'], operator: 'or' }});
             expect(rows).to.be.lengthOf(2);
@@ -1847,7 +2148,7 @@ module.exports = () => {
         }
     });
 
-    it('should successfult fiter simulation pass flags by created by name', async () => {
+    it('should successfully filter simulation pass flags by created by name', async () => {
         {
             const { rows } = await qcFlagService.getAllPerSimulationPassAndRunAndDetector({ simulationPassId: 1, runNumber: 106, detectorId: 1 }, {}, { createdBy: { names: ['Jan Jansen'], operator: 'or' }});
             expect(rows).to.be.lengthOf(2);

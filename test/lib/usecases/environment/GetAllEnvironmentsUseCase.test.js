@@ -162,6 +162,33 @@ module.exports = () => {
         expect(environments.map(({ id }) => id)).to.have.members(['TDI59So3d', 'Dxi029djX']);
     });
 
+    it('should successfully filter environments on a run number range spanning multiple environments', async () => {
+        getAllEnvsDto.query = { filter: { runNumbers: '100-103' } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(2);
+        expect(environments.map(({ id }) => id)).to.have.members(['Dxi029djX', 'TDI59So3d']);
+    });
+
+    it('should successfully filter environments on a single-value run number range', async () => {
+        getAllEnvsDto.query = { filter: { runNumbers: '105-105' } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(1);
+        expect(environments[0].id).to.be.equal('TDI59So3d');
+    });
+
+    it('should successfully filter environments when run number filter includes empty entries', async () => {
+        getAllEnvsDto.query = { filter: { runNumbers: '103, ' } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(1);
+        expect(environments[0].id).to.be.equal('TDI59So3d');
+    });
+
     it('should successfully filter environments on created from and to', async () => {
         const from = Date.now() - 24 * 60 * 60 * 1000; // environment from 24h ago which was created by CreateEnvironmentUseCase.test.js
         const to = Date.now() - 10;
@@ -197,5 +224,41 @@ module.exports = () => {
         const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
         expect(environments).to.be.an('array');
         expect(environments.length).to.be.equal(0); // Environments from seeders
+    });
+
+    it('should return correct total count and all filtered results across pages', async () => {
+        const totalMatchingFilter = 6; // 'RUNNING, ERROR' matches 6 environments at this point
+        const limit = 2;
+
+        // First page
+        getAllEnvsDto.query = { page: { limit, offset: 0 }, filter: { currentStatus: 'RUNNING, ERROR' } };
+        const page1 = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(page1.count).to.be.equal(totalMatchingFilter);
+        expect(page1.environments).to.be.an('array');
+        expect(page1.environments.length).to.be.equal(limit);
+
+        // Second page
+        getAllEnvsDto.query = { page: { limit, offset: 2 }, filter: { currentStatus: 'RUNNING, ERROR' } };
+        const page2 = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(page2.count).to.be.equal(totalMatchingFilter);
+        expect(page2.environments).to.be.an('array');
+        expect(page2.environments.length).to.be.equal(limit);
+
+        // Third page
+        getAllEnvsDto.query = { page: { limit, offset: 4 }, filter: { currentStatus: 'RUNNING, ERROR' } };
+        const page3 = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+
+        expect(page3.count).to.be.equal(totalMatchingFilter);
+        expect(page3.environments).to.be.an('array');
+        expect(page3.environments.length).to.be.equal(limit);
+
+        // Collect all environment IDs and verify no duplicates and all present
+        const allIds = [page1, page2, page3].flatMap(({ environments })=> environments.map(({ id }) => id));
+
+        expect(allIds.length).to.be.equal(totalMatchingFilter);
+        expect(new Set(allIds).size).to.be.equal(totalMatchingFilter);
+        expect(allIds).to.have.members(['SomeId', 'newId', 'CmCvjNbg', 'EIDO13i3D', '8E4aZTjY', 'Dxi029djX']);
     });
 };

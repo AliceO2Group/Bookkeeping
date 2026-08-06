@@ -83,10 +83,10 @@ module.exports = () => {
         const { formatTimestampForDateTimeInput } = await import('../../../lib/public/utilities/formatting/dateTimeInputFormatters.mjs');
 
         const magnet1Timestamp = currentShift.start + 3600 * 4 * 1000;
-        const { date: magnet1Date, time: magnet1Time } = formatTimestampForDateTimeInput(magnet1Timestamp, true);
+        const magnet1DateTime = formatTimestampForDateTimeInput(magnet1Timestamp, true);
 
         const magnet2Timestamp = currentShift.start + 3600 * 2 * 1000;
-        const { date: magnet2Date, time: magnet2Time } = formatTimestampForDateTimeInput(magnet2Timestamp, true);
+        const magnet2DateTime = formatTimestampForDateTimeInput(magnet2Timestamp, true);
 
         const magnetEnd = formatShiftDate(currentShift.end, { time: true });
 
@@ -108,9 +108,9 @@ module.exports = () => {
         await page.keyboard.type('Shift flow\nOn multiple lines');
 
         await page.waitForSelector('#type-specific #magnets-start input:nth-of-type(1)');
-        await page.focus('#type-specific #magnets-start input:nth-of-type(1)');
+        await page.focus('#type-specific #magnets-start div:nth-of-type(2) input');
         await page.keyboard.type('dipole-start');
-        await page.focus('#type-specific #magnets-start input:nth-of-type(2)');
+        await page.focus('#type-specific #magnets-start div:nth-of-type(4) input');
         await page.keyboard.type('solenoid-start');
 
         await page.click('#type-specific #magnets-add');
@@ -119,23 +119,21 @@ module.exports = () => {
         await page.waitForSelector('#type-specific #magnets-0 .btn-danger');
         await page.click('#type-specific #magnets-0 .btn-danger');
 
-        await fillInput(page, '#type-specific #magnets-1 > div > div > input:nth-of-type(1)', magnet1Date, ['change']);
-        await fillInput(page, '#type-specific #magnets-1 > div > div > input:nth-of-type(2)', magnet1Time, ['change']);
-        await page.focus('#type-specific #magnets-1 > div > input:nth-of-type(1)');
+        await fillInput(page, '#type-specific #magnets-1 > div:nth-of-type(2) > div > input:nth-of-type(1)', magnet1DateTime, ['change']);
+        await page.focus('#type-specific #magnets-1 > div:nth-of-type(2) > div:nth-of-type(3) > input');
         await page.keyboard.type('dipole-1');
-        await page.focus('#type-specific #magnets-1 > div > input:nth-of-type(2)');
+        await page.focus('#type-specific #magnets-1 > div:nth-of-type(2) > div:nth-of-type(5) > input');
         await page.keyboard.type('solenoid-1');
 
-        await fillInput(page, '#type-specific #magnets-2 > div > div > input:nth-of-type(1)', magnet2Date, ['change']);
-        await fillInput(page, '#type-specific #magnets-2 > div > div > input:nth-of-type(2)', magnet2Time, ['change']);
-        await page.focus('#type-specific #magnets-2 > div > input:nth-of-type(1)');
+        await fillInput(page, '#type-specific #magnets-2 > div:nth-of-type(2) > div > input:nth-of-type(1)', magnet2DateTime, ['change']);
+        await page.focus('#type-specific #magnets-2 > div:nth-of-type(2) > div:nth-of-type(3) > input');
         await page.keyboard.type('dipole-2');
-        await page.focus('#type-specific #magnets-2 > div > input:nth-of-type(2)');
+        await page.focus('#type-specific #magnets-2 > div:nth-of-type(2) > div:nth-of-type(5) > input');
         await page.keyboard.type('solenoid-2');
 
-        await page.focus('#type-specific #magnets-end input:nth-of-type(1)');
+        await page.focus('#type-specific #magnets-end div:nth-of-type(2) input');
         await page.keyboard.type('dipole-end');
-        await page.focus('#type-specific #magnets-end input:nth-of-type(2)');
+        await page.focus('#type-specific #magnets-end div:nth-of-type(4) input');
         await page.keyboard.type('solenoid-end');
 
         await page.waitForSelector('#from-previous-shifter .CodeMirror textarea');

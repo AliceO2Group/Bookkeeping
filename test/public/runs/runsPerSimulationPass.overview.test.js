@@ -31,6 +31,7 @@ const {
     testTableSortingByColumn,
     waitForTableLength,
     expectColumnValues,
+    waitForButtonToBecomeActive,
 } = require('../defaults.js');
 
 const { expect } = chai;
@@ -73,6 +74,8 @@ module.exports = () => {
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
     });
+
+    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
 
     it('loads the page successfully', async () => {
         const response = await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
@@ -137,6 +140,17 @@ module.exports = () => {
         await qcFlagService.delete(tmpQcFlag.id);
     });
 
+    it('should display detector columns in RCT order (AOT/MUON after physical)', async () => {
+        const headers = await page.$$eval(
+            'table thead th',
+            (ths) => ths.map((th) => th.id).filter(Boolean),
+        );
+        
+        // See DetectorOrders.RCT in detectorOrders.js
+        expect(headers.indexOf('VTX')).to.be.greaterThan(headers.indexOf('ZDC'));
+        expect(headers.indexOf('MUD')).to.be.greaterThan(headers.indexOf('ZDC'));
+    });
+
     it('should successfully sort by runNumber in ascending and descending manners', async () => {
         await testTableSortingByColumn(page, 'runNumber');
     });
@@ -166,6 +180,7 @@ module.exports = () => {
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
 
+        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
         await fillInput(page, `${amountSelectorId} input[type=number]`, 1111);
         await page.waitForSelector(amountSelectorId);
     });
@@ -202,10 +217,8 @@ module.exports = () => {
         await fillInput(page, '#detectorsQc-for-1-notBadFraction-operand', '90', ['change']);
         await expectColumnValues(page, 'runNumber', ['106']);
 
-        await pressElement(page, '#openFilterToggle', true);
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['107', '106', '105']);
-        await navigateToRunsPerSimulationPass(page, 1, 2, 3);
     });
 
     it('should successfully apply detectors notBadFraction filters', async () => {
@@ -217,18 +230,16 @@ module.exports = () => {
         await fillInput(page, '#detectorsQc-for-1-notBadFraction-operand', '90', ['change']);
         await expectColumnValues(page, 'runNumber', ['106']);
 
-        await pressElement(page, '#openFilterToggle', true);
         await pressElement(page, '#reset-filters', true);
         await expectColumnValues(page, 'runNumber', ['107', '106', '105']);
-        await navigateToRunsPerSimulationPass(page, 1, 2, 3);
     });
 
     it('should successfully export runs', async () => {
-        const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
-
+        await navigateToRunsPerSimulationPass(page, 1, 2, 3);
         const targetFileName = 'data.json';
 
-        // First export
+        // Export
+        await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         await page.waitForSelector('#export-data-modal');
         await page.waitForSelector('#send:disabled');
@@ -250,6 +261,39 @@ module.exports = () => {
             { runNumber: 54, runQuality: 'good' },
             { runNumber: 49, runQuality: 'good' },
         ]);
+        fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+    });
+
+    it('should successfully export runs with QC flags as CSV', async () => {
+        await navigateToRunsPerSimulationPass(page, 2, 1, 3);
+
+        const targetFileName = 'data.csv';
+        
+        // Export
+        await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
+        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
+        await page.waitForSelector('#export-data-modal');
+        await page.waitForSelector('#send:disabled');
+        await page.waitForSelector('.form-control');
+        await page.select('.form-control', 'runNumber', 'CPV');
+        await pressElement(page, '#data-export-type-CSV');
+        await page.waitForSelector('#send:enabled');
+        const exportButtonText = await page.$eval('#send', (button) => button.innerText);
+        expect(exportButtonText).to.be.eql('Export');
+
+        const downloadPath = await waitForDownload(page, () => pressElement(page, '#send', true));
+
+        // Check download
+        const downloadFilesNames = fs.readdirSync(downloadPath);
+        expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
+        const exportContent = fs.readFileSync(path.resolve(downloadPath, targetFileName)).toString();
+
+        expect(exportContent.trim()).to.be.eql([
+            'runNumber;CPV',
+            '107;""',
+            '106;"Bad (from: 1565272000000 to: 1565337000000) | Bad (from: 1565340600000 to: 1565359200000)"',
+            '105;""',
+        ].join('\r\n'));
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
 };

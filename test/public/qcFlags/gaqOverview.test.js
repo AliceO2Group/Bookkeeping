@@ -64,11 +64,11 @@ module.exports = () => {
 
     it('shows correct datatypes in respective columns', async () => {
         // eslint-disable-next-line require-jsdoc
-        const validateDate = (date) => date === '-' || !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY hh:mm:ss'));
+        const validateQcFlagDate = (date) => date === '-' || !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY, hh:mm:ss.SSS'));
         const tableDataValidators = {
             generalQuality: (generalQuality) => ['good', 'bad', 'MC.R', ''].includes(generalQuality),
-            from: (timestamp) => timestamp === 'Whole run coverage' || validateDate(timestamp),
-            to: (timestamp) => timestamp === 'Whole run coverage' || validateDate(timestamp),
+            from: (timestamp) => timestamp === 'Whole run coverage' || validateQcFlagDate(timestamp),
+            to: (timestamp) => timestamp === 'Whole run coverage' || validateQcFlagDate(timestamp),
         };
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
@@ -77,22 +77,22 @@ module.exports = () => {
         expect(await getTableContent(page)).to.have.all.deep.ordered.members([
             [
                 '',
-                '08/08/2019\n22:43:20',
-                '09/08/2019\n04:16:40',
+                '08/08/2019,\n22:43:20.000',
+                '09/08/2019,\n04:16:40.000',
                 'Limited Acceptance MC Reproducible',
                 '',
             ],
             [
                 '',
-                '09/08/2019\n05:40:00',
-                '09/08/2019\n07:03:20',
+                '09/08/2019,\n05:40:00.000',
+                '09/08/2019,\n07:03:20.000',
                 'Limited acceptance',
                 '',
             ],
             [
                 '',
-                '09/08/2019\n08:26:40',
-                '09/08/2019\n09:50:00',
+                '09/08/2019,\n08:26:40.000',
+                '09/08/2019,\n09:50:00.000',
                 'Bad',
                 '',
             ],
@@ -112,50 +112,50 @@ module.exports = () => {
         expect(await getTableContent(page)).to.have.all.deep.ordered.members([
             [
                 '',
-                '08/08/2019\n13:00:00',
-                '08/08/2019\n22:43:20',
+                '08/08/2019,\n13:00:00.000',
+                '08/08/2019,\n22:43:20.000',
                 '',
                 'Good',
             ],
             [
                 'MC.R',
-                '08/08/2019\n22:43:20',
-                '09/08/2019\n04:16:40',
+                '08/08/2019,\n22:43:20.000',
+                '09/08/2019,\n04:16:40.000',
                 'Limited Acceptance MC Reproducible',
                 'Good',
             ],
             [
                 '',
-                '09/08/2019\n04:16:40',
-                '09/08/2019\n05:40:00',
+                '09/08/2019,\n04:16:40.000',
+                '09/08/2019,\n05:40:00.000',
                 '',
                 'Good',
             ],
             [
                 'bad',
-                '09/08/2019\n05:40:00',
-                '09/08/2019\n07:03:20',
+                '09/08/2019,\n05:40:00.000',
+                '09/08/2019,\n07:03:20.000',
                 'Limited acceptance',
                 'Good',
             ],
             [
                 '',
-                '09/08/2019\n07:03:20',
-                '09/08/2019\n08:26:40',
+                '09/08/2019,\n07:03:20.000',
+                '09/08/2019,\n08:26:40.000',
                 '',
                 'Good',
             ],
             [
                 'bad',
-                '09/08/2019\n08:26:40',
-                '09/08/2019\n09:50:00',
+                '09/08/2019,\n08:26:40.000',
+                '09/08/2019,\n09:50:00.000',
                 'Bad',
                 'Good',
             ],
             [
                 '',
-                '09/08/2019\n09:50:00',
-                '09/08/2019\n14:00:00',
+                '09/08/2019,\n09:50:00.000',
+                '09/08/2019,\n14:00:00.000',
                 '',
                 'Good',
             ],

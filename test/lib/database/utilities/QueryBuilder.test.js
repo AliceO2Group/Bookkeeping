@@ -14,6 +14,7 @@
 const {
     repositories: {
         LogRepository,
+        RunRepository,
     },
     utilities: {
         QueryBuilder,
@@ -205,6 +206,85 @@ module.exports = () => {
                 expect(result).to.not.be.null;
                 result.forEach(({ title }) => {
                     expect(title.includes('entr')).to.be.false;
+                });
+            });
+        });
+
+        // 104 runs with null inelastic_interaction_rate_avg
+        // 5 runs with inelastic_interaction_rate_avg values: 20000, 40000, 500000, 600000, 755311
+
+        describe('greaterThanOrNull', () => {
+            it('should return entities with inelastic_interaction_rate_avg greater than or equal to 40000 or null', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('inelastic_interaction_rate_avg').greaterThanOrNull(40000);
+
+                const result = await RunRepository.findAll(queryBuilder);
+                expect(result).to.not.be.null;
+                expect(result).to.have.lengthOf(108);
+                result.forEach(({ inelasticInteractionRateAvg }) => {
+                    expect(inelasticInteractionRateAvg === null || inelasticInteractionRateAvg >= 40000).to.be.true;
+                });
+            });
+
+            it('should return entities with inelastic_interaction_rate_avg greater than 40000 or null', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('inelastic_interaction_rate_avg').greaterThanOrNull(40000, true);
+
+                const result = await RunRepository.findAll(queryBuilder);
+                expect(result).to.not.be.null;
+                expect(result).to.have.lengthOf(107);
+                result.forEach(({ inelasticInteractionRateAvg }) => {
+                    expect(inelasticInteractionRateAvg === null || inelasticInteractionRateAvg > 40000).to.be.true;
+                });
+            });
+
+            it('should return entities with not (inelasticInteractionRateAvg >= 40000 or null)', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('inelastic_interaction_rate_avg').not().greaterThanOrNull(40000);
+
+                const result = await RunRepository.findAll(queryBuilder);
+                expect(result).to.not.be.null;
+                expect(result).to.have.lengthOf(1);
+                result.forEach(({ inelasticInteractionRateAvg }) => {
+                    expect(inelasticInteractionRateAvg < 40000).to.be.true;
+                });
+            });
+        });
+
+        describe('lowerThanOrNull', () => {
+            it('should return entities with inelastic_interaction_rate_avg lower than or equal to 500000 or null', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('inelastic_interaction_rate_avg').lowerThanOrNull(500000);
+
+                const result = await RunRepository.findAll(queryBuilder);
+                expect(result).to.not.be.null;
+                expect(result).to.have.lengthOf(107);
+                result.forEach(({ inelasticInteractionRateAvg }) => {
+                    expect(inelasticInteractionRateAvg === null || inelasticInteractionRateAvg <= 500000).to.be.true;
+                });
+            });
+
+            it('should return entities with inelastic_interaction_rate_avg lower than 500000 or null', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('inelastic_interaction_rate_avg').lowerThanOrNull(500000, true);
+
+                const result = await RunRepository.findAll(queryBuilder);
+                expect(result).to.not.be.null;
+                expect(result).to.have.lengthOf(106);
+                result.forEach(({ inelasticInteractionRateAvg }) => {
+                    expect(inelasticInteractionRateAvg === null || inelasticInteractionRateAvg < 500000).to.be.true;
+                });
+            });
+
+            it('should return entities with not (inelastic_interaction_rate_avg <= 500000 or null)', async () => {
+                const queryBuilder = new QueryBuilder();
+                queryBuilder.where('inelastic_interaction_rate_avg').not().lowerThanOrNull(500000);
+
+                const result = await RunRepository.findAll(queryBuilder);
+                expect(result).to.not.be.null;
+                expect(result).to.have.lengthOf(2);
+                result.forEach(({ inelasticInteractionRateAvg }) => {
+                    expect(inelasticInteractionRateAvg > 500000).to.be.true;
                 });
             });
         });

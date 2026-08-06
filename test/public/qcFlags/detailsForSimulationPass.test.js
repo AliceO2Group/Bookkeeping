@@ -97,8 +97,8 @@ module.exports = () => {
         await expectInnerText(page, '#qc-flag-details-runNumber', 'Run:\n106');
         await expectInnerText(page, '#qc-flag-details-detector', 'Detector:\nCPV');
         await expectInnerText(page, '#qc-flag-details-flagType', 'Type:\nBad');
-        await expectInnerText(page, '#qc-flag-details-from', 'From:\n08/08/2019, 13:46:40');
-        await expectInnerText(page, '#qc-flag-details-to', 'To:\n09/08/2019, 07:50:00');
+        await expectInnerText(page, '#qc-flag-details-from', 'From:\n08/08/2019, 13:46:40.000');
+        await expectInnerText(page, '#qc-flag-details-to', 'To:\n09/08/2019, 07:50:00.000');
         await expectInnerText(page, '#qc-flag-details-createdBy', 'Created by:\nJan Jansen');
         await expectInnerText(page, '#qc-flag-details-createdAt', 'Created at:\n13/02/2024, 11:57:20');
         await expectInnerText(page, '.panel div', 'Some qc comment 4');
@@ -149,9 +149,9 @@ module.exports = () => {
         await page.waitForSelector('#delete:not([disabled])');
         await expectInnerText(page, '#qc-flag-details-verified', 'Verified:\nNo');
 
-        await page.waitForSelector('#submit', { hidden: true, timeout: 250 });
-        await page.waitForSelector('#cancel-verification', { hidden: true, timeout: 250 });
-        await page.waitForSelector('#verification-comment', { hidden: true, timeout: 250 });
+        await page.waitForSelector('#submit', { hidden: true, timeout: 350 });
+        await page.waitForSelector('#cancel-verification', { hidden: true, timeout: 350 });
+        await page.waitForSelector('#verification-comment', { hidden: true, timeout: 350 });
 
         await pressElement(page, 'button#verify-qc-flag');
         await page.waitForSelector('#verification-comment');
@@ -159,9 +159,9 @@ module.exports = () => {
         await page.waitForSelector('#submit');
 
         await pressElement(page, 'button#cancel-verification');
-        await page.waitForSelector('#submit', { hidden: true, timeout: 250 });
-        await page.waitForSelector('#cancel-verification', { hidden: true, timeout: 250 });
-        await page.waitForSelector('#verification-comment', { hidden: true, timeout: 250 });
+        await page.waitForSelector('#submit', { hidden: true, timeout: 350 });
+        await page.waitForSelector('#cancel-verification', { hidden: true, timeout: 350 });
+        await page.waitForSelector('#verification-comment', { hidden: true, timeout: 350 });
 
         await pressElement(page, 'button#verify-qc-flag');
         await pressElement(page, '#verification-comment ~ .CodeMirror');

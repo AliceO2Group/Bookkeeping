@@ -24,6 +24,8 @@ const {
     expectRowValues,
     expectUrlParams,
     waitForTableLength,
+    waitForNonEmptyTable,
+    getTableContent,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const { navigateToRunsPerDataPass } = require('../runs/navigationUtils.js');
@@ -100,9 +102,9 @@ module.exports = () => {
         });
 
         await page.waitForSelector('button#submit[disabled]');
-        await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '08/08/2019\n13:00:00');
-        await expectInnerText(page, 'table > tbody > tr > td:nth-child(4) > div', '09/08/2019\n14:00:00');
-        await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
+        await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '08/08/2019\n13:00:00.000');
+        await expectInnerText(page, 'table > tbody > tr > td:nth-child(4) > div', '09/08/2019\n14:00:00.000');
+        await page.waitForSelector('input[type="datetime-local"]', { hidden: true, timeout: 250 });
 
         await pressElement(page, '#flag-type-panel .popover-trigger');
         await pressElement(page, '#flag-type-dropdown-option-2', true);
@@ -132,9 +134,9 @@ module.exports = () => {
         });
 
         await page.waitForSelector('button#submit[disabled]');
-        await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '08/08/2019\n13:00:00');
-        await expectInnerText(page, 'table > tbody > tr > td:nth-child(4) > div', '09/08/2019\n14:00:00');
-        await page.waitForSelector('input[type="time"]', { hidden: true });
+        await expectInnerText(page, 'table > tbody > tr > td:nth-child(3) > div', '08/08/2019\n13:00:00.000');
+        await expectInnerText(page, 'table > tbody > tr > td:nth-child(4) > div', '09/08/2019\n14:00:00.000');
+        await page.waitForSelector('input[type="datetime-local"]', { hidden: true });
 
         await pressElement(page, '#flag-type-panel .popover-trigger');
         await pressElement(page, '#flag-type-dropdown-option-11', true);
@@ -142,8 +144,8 @@ module.exports = () => {
         await page.waitForSelector('button#submit[disabled]', { hidden: true });
         await pressElement(page, '#time-based-toggle', true);
 
-        await fillInput(page, 'div:nth-child(1) > div > input:nth-child(2)', '13:01:01', ['change']);
-        await fillInput(page, 'div:nth-child(2) > div > input:nth-child(2)', '13:50:59', ['change']);
+        await fillInput(page, 'div:nth-child(1) > div > input[type=datetime-local]', '2019-08-08T13:01:01.123', ['change']);
+        await fillInput(page, 'div:nth-child(2) > div > input[type=datetime-local]', '2019-08-09T13:50:59.456', ['change']);
 
         await waitForNavigation(page, () => pressElement(page, 'button#submit'));
         expectUrlParams(page, {
@@ -156,8 +158,8 @@ module.exports = () => {
 
         await expectRowValues(page, 1, {
             flagType: 'Limited acceptance',
-            from: '08/08/2019\n13:01:01',
-            to: '09/08/2019\n13:50:59',
+            from: '08/08/2019,\n13:01:01.123',
+            to: '09/08/2019,\n13:50:59.456',
         });
     });
 
@@ -175,7 +177,7 @@ module.exports = () => {
             'Missing start/stop, the flag will be applied on the full run',
         );
         await page.waitForSelector('button#submit[disabled]');
-        await page.waitForSelector('input[type="time"]', { hidden: true, timeout: 250 });
+        await page.waitForSelector('input[type="datetime-local"]', { hidden: true, timeout: 250 });
         await pressElement(page, '#flag-type-panel .popover-trigger');
         await pressElement(page, '#flag-type-dropdown-option-2', true);
         await page.waitForSelector('button#submit[disabled]', { hidden: true, timeout: 250 });
@@ -243,7 +245,7 @@ module.exports = () => {
         await waitForNavigation(page, () => pressElement(page, '#set-qc-flags-trigger'));
 
         await expectInnerText(page, 'div.panel.flex-grow.items-center > div > em', 'The selected runs don\'t have overlapping start/stop times');
-        await page.waitForSelector('input[type="time"]', { hidden: true });
+        await page.waitForSelector('input[type="datetime-local"]', { hidden: true });
     });
 
     it('should set the timebased unavailable if at least one run has no end time and multiple are selected', async () => {
@@ -283,5 +285,33 @@ module.exports = () => {
         });
 
         await waitForTableLength(page, 4);
+    });
+
+    it('should create and verify a QC flag in a single submission', async () => {
+        await navigateToRunsPerDataPass(page, 2, 5, 4);
+        await pressElement(page, '#row56-ITS-text .select-multi-flag');
+        await pressElement(page, '#row56-FT0-text .select-multi-flag');
+
+        await pressElement(page, '#actions-dropdown-button .popover-trigger', true);
+        await waitForNavigation(page, () => pressElement(page, '#set-qc-flags-trigger'));
+
+        await page.waitForSelector('button#submit-with-verification[disabled]');
+        await pressElement(page, '#flag-type-panel .popover-trigger');
+        await pressElement(page, '#flag-type-dropdown-option-2', true);
+        await page.waitForSelector('button#submit-with-verification[disabled]', { hidden: true });
+
+        await waitForNavigation(page, () => pressElement(page, 'button#submit-with-verification'));
+        expectUrlParams(page, {
+            page: 'runs-per-data-pass',
+            dataPassId: '5',
+        });
+
+        await waitForTableLength(page, 4);
+
+        for (const detector of ['ITS', 'FT0']) {
+            await navigateToRunsPerDataPass(page, 2, 5, 4);
+            await waitForNavigation(page, () => pressElement(page, `#row56-${detector}-text a`));
+            await expectInnerText(page, 'tr:first-child .column-verified', 'Yes');
+        }
     });
 };

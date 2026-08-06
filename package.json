@@ -1,7 +1,11 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "1.12.0",
+  "version": "1.20.0",
   "author": "ALICEO2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AliceO2Group/Bookkeeping.git"
+  },
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
     "coverage:report": "nyc report --reporter=html --reporter=json",
@@ -22,22 +26,20 @@
     "node": ">= 22.x"
   },
   "dependencies": {
-    "@aliceo2/web-ui": "2.8.5",
-    "@grpc/grpc-js": "1.13.0",
-    "@grpc/proto-loader": "0.8.0",
+    "@aliceo2/web-ui": "2.11.1",
+    "@grpc/grpc-js": "1.14.4",
+    "@grpc/proto-loader": "0.8.1",
     "cls-hooked": "4.2.2",
-    "d3": "7.8.5",
-    "deepmerge": "4.3.0",
-    "dotenv": "17.2.0",
-    "joi": "18.0.0",
-    "kafkajs": "2.2.0",
+    "d3": "7.9.0",
+    "deepmerge": "4.3.1",
+    "dotenv": "17.4.2",
+    "joi": "18.2.3",
+    "kafkajs": "2.2.4",
     "mariadb": "3.0.0",
-    "mkdirp": "3.0.1",
-    "multer": "2.0.2",
-    "node-fetch": "3.3.1",
-    "protobufjs": "7.5.0",
-    "sequelize": "6.37.0",
-    "umzug": "3.8.2"
+    "multer": "2.2.0",
+    "node-fetch": "3.3.2",
+    "sequelize": "6.37.8",
+    "umzug": "3.8.3"
   },
   "files": [
     "lib/",
@@ -45,23 +47,23 @@
     "proto/"
   ],
   "devDependencies": {
-    "@eslint/js": "^9.35.0",
-    "@stylistic/eslint-plugin-js": "^4.4.1",
-    "@types/d3": "7.4.0",
+    "@eslint/js": "9.39.1",
+    "@stylistic/eslint-plugin-js": "4.4.1",
+    "@types/d3": "7.4.3",
     "chai": "4.5.0",
     "date-and-time": "3.6.0",
-    "eslint": "^9.35.0",
-    "eslint-plugin-jsdoc": "^55.0.3",
-    "globals": "^16.4.0",
-    "js-yaml": "4.1.0",
+    "eslint": "9.37.0",
+    "eslint-plugin-jsdoc": "63.2.0",
+    "globals": "17.7.0",
     "mocha": "11.7.0",
-    "nodemon": "3.1.3",
-    "nyc": "17.1.0",
-    "puppeteer": "24.21.0",
+    "mkdirp": "3.0.1",
+    "nodemon": "3.1.14",
+    "nyc": "18.0.0",
+    "puppeteer": "25.5.0",
     "puppeteer-to-istanbul": "1.4.0",
     "sequelize-cli": "6.6.0",
-    "sinon": "21.0.0",
-    "supertest": "7.1.0"
+    "sinon": "22.1.0",
+    "supertest": "7.2.2"
   },
   "bundleDependencies": [
     "@aliceo2/web-ui",
@@ -75,7 +77,6 @@
     "mariadb",
     "multer",
     "node-fetch",
-    "protobufjs",
     "sequelize",
     "umzug"
   ]

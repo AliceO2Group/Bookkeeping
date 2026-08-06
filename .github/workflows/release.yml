@@ -1,22 +1,23 @@
 name: release
-permissions:
-  contents: write
-  packages: write
-  actions: write
 on:
   release:
     types: [created]
   workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   deploy-npm-module:
     runs-on: ubuntu-latest
     outputs:
       VERSION: ${{ steps.set-project.outputs.version }}
     steps:
-    - uses: actions/checkout@v5
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v7
+    - uses: actions/setup-node@v7
       with:
-        node-version: '22.x'
+        node-version: '24.x'
         registry-url: 'https://registry.npmjs.org'
     - name: Check released tag matches ALICE O2 naming pattern
       run: |
@@ -35,16 +36,14 @@ jobs:
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "PROJECT=$PROJECT" >> $GITHUB_ENV
     - run: npm publish
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_DEPLOY_TOKEN }}
   upload-asset:
     runs-on: ubuntu-latest
     needs: deploy-npm-module
     outputs:
       ASSET_URL: ${{ steps.upload.outputs.asset_url }}
     steps:
-    - uses: actions/checkout@v5
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v7
+    - uses: actions/setup-node@v7
       with:
         node-version: '22.x'
         registry-url: 'https://registry.npmjs.org'

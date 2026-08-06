@@ -142,6 +142,129 @@ module.exports = () => {
             expect(runs).to.lengthOf(20);
         });
 
+        it('should successfully filter with single beamMode', async () => {
+            const response = await request(server).get('/api/runs?filter[beamModes]=STABLE BEAMS');
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+            
+            expect(runs).to.lengthOf(5);
+        });
+
+        it('should successfully filter with multiple beamModes', async () => {
+            const response = await request(server).get('/api/runs?filter[beamModes]=STABLE BEAMS,NO BEAM');
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+            
+            expect(runs).to.lengthOf(6);
+        });
+
+        it('should successfully filter with single beamType', async () => {
+            const beamType = 'p-p';
+            const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamType}`);
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf.greaterThan(0);
+            expect(runs.every(({ lhcFill }) => lhcFill?.beamType === beamType)).to.be.true;
+        });
+
+        it('should successfully filter with multiple beamTypes', async () => {
+            const beamTypes = 'p-p,Pb-Pb';
+            const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamTypes}`);
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf.greaterThan(0);
+            expect(runs.every(({ lhcFill }) => beamTypes.includes(lhcFill?.beamType))).to.be.true;
+        });
+
+        it('should return 400 if beamTypes filter has the incorrect format', async () => {
+            const beamTypes = 'DOES NOT EXIST';
+            const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamTypes}`);
+
+            expect(response.status).to.equal(400);
+
+            const { errors: [error] } = response.body;
+
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal(`Beam type must look like "PROTON - PROTON", "NE10 - NE10", etc.`);
+        });
+
+        it('should successfully filter runs with pdpBeamType', async () => {
+            const pdpBeamType = 'pp';
+        const response = await request(server).get(`/api/runs?filter[pdpBeamTypes]=${pdpBeamType}`);
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf(6);
+            expect(runs.every(({ pdpBeamType: type }) => type === pdpBeamType)).to.be.true;
+        });
+
+        it('should successfully filter runs with multiple pdpBeamTypes', async () => {
+            const pdpBeamTypes = 'pp,PbPb';
+            const response = await request(server).get(`/api/runs?filter[pdpBeamTypes]=${pdpBeamTypes}`);
+
+            expect(response.status).to.equal(200);
+            const { data: runs } = response.body;
+
+            expect(runs).to.be.an('array');
+            expect(runs).to.have.lengthOf(10);
+            expect(runs.every(({ pdpBeamType: type }) => pdpBeamTypes.includes(type))).to.be.true;
+        });
+
+        it('should return 400 if pdpBeamTypes filter has the incorrect format', async () => {
+            const pdpBeamTypes = 'S'; // Too short
+            const response = await request(server).get(`/api/runs?filter[pdpBeamTypes]=${pdpBeamTypes}`);
+
+            expect(response.status).to.equal(400);
+
+            let { errors: [error] } = response.body;
+
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal(`PDP beam type must be at least 2 characters long`);
+
+            const pdpBeamTypesLong = 'This is definitely not a pdp beam type'; // Too long
+            const responseLong = await request(server).get(`/api/runs?filter[pdpBeamTypes]=${pdpBeamTypesLong}`);
+
+            expect(responseLong.status).to.equal(400);
+
+            ({ errors: [error] } = responseLong.body);
+
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal(`PDP beam type must be at most 10 characters long`);
+
+            const pdpBeamTypeWithDigits = 'pp1';
+            const responseWithDigits = await request(server).get(`/api/runs?filter[pdpBeamTypes]=${pdpBeamTypeWithDigits}`);
+
+            expect(responseWithDigits.status).to.equal(400);
+            ({ errors: [error] } = responseWithDigits.body);
+
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal(`PDP beam type must look like "pp", "pPb", "NeNe", "OO", "cosmic", "technical", etc.`);
+
+        });
+
+        it('should return 400 if beamModes filter has the incorrect format', async () => {
+            const beamModeString = '*THERE\'S NON LETTERS IN HERE';
+            const response = await request(server).get(`/api/runs?filter[beamModes]=${beamModeString}`);
+
+
+            expect(response.status).to.equal(400);
+
+            const { errors: [error] } = response.body;
+
+            expect(error.title).to.equal('Invalid Attribute');
+            expect(error.detail).to.equal(`Beam modes "${beamModeString}" must contain only uppercase letters and single spaces between words.`);
+        });
+
         it('should successfully filter on multiple specified run numbers', async () => {
             const response = await request(server).get('/api/runs?filter[runNumbers]=17,18');
 
@@ -166,7 +289,7 @@ module.exports = () => {
             expect(response.status).to.equal(400);
             const { errors: [error] } = response.body;
             expect(error.title).to.equal('Invalid Attribute');
-            expect(error.detail).to.equal(`Given range exceeds max size of ${MAX_RANGE_SIZE} runs: ${runNumberRange}`);
+            expect(error.detail).to.equal(`Given range exceeds max size of ${MAX_RANGE_SIZE} range: ${runNumberRange}`);
         });
 
         it('should return 400 if the calibration status filter is invalid', async () => {
@@ -278,6 +401,24 @@ module.exports = () => {
             const { data } = response.body;
             expect(data).to.lengthOf(7);
             expect(data.map(({ runNumber }) => runNumber)).to.have.all.members([1, 2, 55, 49, 54, 56, 105]);
+        });
+
+        it('should return 400 if GAQ notBadFraction is used with multiple dataPassIds', (done) => {
+            const url = '/api/runs?filter[dataPassIds][]=2&filter[dataPassIds][]=3&filter[gaq][notBadFraction][operator]==&filter[gaq][notBadFraction][limit]=0.5';
+            request(server)
+                .get(url)
+                .expect(400)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    const { errors } = res.body;
+                    expect(errors[0].detail).to.equal('Filtering by GAQ is enabled only when filtering with one dataPassId');
+
+                    done();
+                });
         });
 
         it('should successfully filter on simulation pass id', async () => {
@@ -423,11 +564,11 @@ module.exports = () => {
             }
         });
 
-        it('should successfully filter by detectors notBadFraction', async () => {
+        it('should successfully filter by detectorsQcNotBadFraction', async () => {
             const dataPassId = 1;
             {
                 const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}`
-                        + '&filter[detectorsQc][_1][notBadFraction][operator]=>&filter[detectorsQc][_1][notBadFraction][limit]=0.7');
+                        + '&filter[detectorsQcNotBadFraction][_1][operator]=>&filter[detectorsQcNotBadFraction][_1][limit]=0.7');
 
                 expect(response.status).to.equal(200);
                 const { data: runs } = response.body;
@@ -437,7 +578,7 @@ module.exports = () => {
             }
             {
                 const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}`
-                        + '&filter[detectorsQc][_1][notBadFraction][operator]=<&filter[detectorsQc][_1][notBadFraction][limit]=0.9&filter[detectorsQc][mcReproducibleAsNotBad]=true');
+                        + '&filter[detectorsQcNotBadFraction][_1][operator]=<&filter[detectorsQcNotBadFraction][_1][limit]=0.9&filter[detectorsQcNotBadFraction][mcReproducibleAsNotBad]=true');
 
                 expect(response.status).to.equal(200);
                 const { data: runs } = response.body;
@@ -447,8 +588,8 @@ module.exports = () => {
             }
                         {
                 const response = await request(server).get(`/api/runs?filter[dataPassIds][]=${dataPassId}`
-                        + '&filter[detectorsQc][_1][notBadFraction][operator]=<&filter[detectorsQc][_1][notBadFraction][limit]=0.7'
-                        + '&filter[detectorsQc][_16][notBadFraction][operator]=>&filter[detectorsQc][_16][notBadFraction][limit]=0.9'
+                        + '&filter[detectorsQcNotBadFraction][_1][operator]=<&filter[detectorsQcNotBadFraction][_1][limit]=0.7'
+                        + '&filter[detectorsQcNotBadFraction][_16][operator]=>&filter[detectorsQcNotBadFraction][_16][limit]=0.9'
                     );
 
                 expect(response.status).to.equal(200);
@@ -639,6 +780,37 @@ module.exports = () => {
                 expect(runs.find(({ runNumber }) => runNumber === 56).qcFlags['7'].map(({ id }) => id)).to.have.all.members([101, 100]);
                 expect(runs.find(({ runNumber }) => runNumber === 56).qcFlags['4'].map(({ id }) => id)).to.have.all.members([102]);
             }
+        });
+    });
+
+    describe('GET /api/runs/beamModes', () => {
+        it('should successfully return status 200 and list of beam modes', async () => {
+            const { body } = await request(server)
+                .get('/api/runs/beamModes')
+                .expect(200);
+
+            expect(body.data).to.be.an('array');
+            expect(body.data).to.have.lengthOf(4);
+
+            expect(body.data[0].name).to.equal('STABLE BEAMS');
+        });
+    });
+
+    describe('GET /api/runs/pdpBeamTypes', () => {
+        it('should successfully return status 200 and list of pdp beam types', async () => {
+            const { body } = await request(server)
+                .get('/api/runs/pdpBeamTypes')
+                .expect(200);
+
+            expect(body.data).to.be.an('array');
+            expect(body.data).to.have.lengthOf(5);
+            expect(body.data).to.deep.equal([
+                { beam_type: 'pp' },
+                { beam_type: 'PbPb' },
+                { beam_type: 'technical' },
+                { beam_type: 'cosmic' },
+                { beam_type: 'OO' },
+            ]);
         });
     });
 

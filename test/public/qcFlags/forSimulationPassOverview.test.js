@@ -97,11 +97,12 @@ module.exports = () => {
 
         // eslint-disable-next-line jsdoc/require-param
         const validateDate = (date) => date === '-' || !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY hh:mm:ss'));
+        const validateQcFlagDate = (date) => date === '-' || !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY, hh:mm:ss.SSS'));
         const tableDataValidators = {
             flagType: (flagType) => flagType && flagType !== '-',
             createdBy: (userName) => userName && userName !== '-',
-            from: (timestamp) => timestamp === 'Whole run coverage' || timestamp === 'From run start' || validateDate(timestamp),
-            to: (timestamp) => timestamp === 'Whole run coverage' || timestamp === 'Until run end' || validateDate(timestamp),
+            from: (timestamp) => timestamp === 'Whole run coverage' || timestamp === 'From run start' || validateQcFlagDate(timestamp),
+            to: (timestamp) => timestamp === 'Whole run coverage' || timestamp === 'Until run end' || validateQcFlagDate(timestamp),
             createdAt: validateDate,
             updatedAt: validateDate,
         };

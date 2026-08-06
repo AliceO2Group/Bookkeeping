@@ -23,11 +23,15 @@ const ErrorSuite = require('./error');
 const EosReportSuite = require('./eosReport');
 const LhcPeriodsSuite = require('./lhcPeriods');
 const DataPassesSuite = require('./dataPasses');
+const ComponentsSuite = require('./components');
 const SimulationPassesSuite = require('./simulationPasses');
 const QcFlagTypesSuite = require('./qcFlagTypes');
 const QcFlagsSuite = require('./qcFlags');
+const FilterSuite = require('./Filters');
 
 module.exports = () => {
+    describe('Components', ComponentsSuite);
+    describe('Filters', FilterSuite);
     describe('LhcPeriods', LhcPeriodsSuite);
     describe('LhcFills', LhcFillsSuite);
     describe('Logs', LogsSuite);

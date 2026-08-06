@@ -40,6 +40,7 @@ const {
     getColumnCellsInnerTexts,
     resetFilters,
     openFilteringPanel,
+    waitForButtonToBecomeActive,
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
@@ -255,10 +256,10 @@ module.exports = () => {
         it('can navigate to a run detail page', async () => {
             await navigateToRunsOverview(page);
 
-            await page.waitForSelector('tbody tr');
-            const expectedRunNumber = await page.evaluate(() => document.querySelector('tbody tr:first-of-type a').innerText);
+            const firstLink = await page.waitForSelector('tbody tr:first-of-type a');
+            const expectedRunNumber = await firstLink.evaluate((el) => el.innerText);
 
-            await waitForNavigation(page, () => page.evaluate(() => document.querySelector('tbody tr:first-of-type a').click()));
+            await waitForNavigation(page, () => firstLink.evaluate((el) => el.click()));
 
             const redirectedUrl = await page.url();
             const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
@@ -486,30 +487,21 @@ module.exports = () => {
             await pressElement(page, '.timeO2Start-filter .popover-trigger');
 
             const o2StartPopoverSelector = await getPopoverSelector(await page.$('.timeO2Start-filter .popover-trigger'));
-            const periodInputsSelectors = getPeriodInputsSelectors(o2StartPopoverSelector);
+            const { fromDateTimeSelector, toDateTimeSelector } = getPeriodInputsSelectors(o2StartPopoverSelector);
 
-            await fillInput(page, periodInputsSelectors.fromTimeSelector, '11:11', ['change']);
-            await fillInput(page, periodInputsSelectors.toTimeSelector, '14:00', ['change']);
-
-            // American style input
-            await fillInput(page, periodInputsSelectors.fromDateSelector, '2021-02-03', ['change']);
-            await fillInput(page, periodInputsSelectors.toDateSelector, '2021-02-03', ['change']);
+            await fillInput(page, fromDateTimeSelector, '2021-02-03T11:11', ['change']);
+            await fillInput(page, toDateTimeSelector, '2021-02-03T14:00', ['change']);
 
             // Wait for page to be refreshed
-            await expectAttributeValue(page, periodInputsSelectors.toTimeSelector, 'min', '11:12');
-            await expectAttributeValue(page, periodInputsSelectors.toDateSelector, 'min', '2021-02-03');
-
-            await expectAttributeValue(page, periodInputsSelectors.fromTimeSelector, 'max', '13:59');
-            await expectAttributeValue(page, periodInputsSelectors.fromDateSelector, 'max', '2021-02-03');
+            await expectAttributeValue(page, toDateTimeSelector, 'min', '2021-02-03T11:12');
+            await expectAttributeValue(page, fromDateTimeSelector, 'max', '2021-02-03T13:59');
 
             // Setting different dates, still american style input
-            await fillInput(page, periodInputsSelectors.toDateSelector, '2021-02-05', ['change']);
+            await fillInput(page, toDateTimeSelector, '2021-02-05T14:00', ['change']);
 
-            await expectAttributeValue(page, periodInputsSelectors.toTimeSelector, 'min', '');
-            await expectAttributeValue(page, periodInputsSelectors.toDateSelector, 'min', '2021-02-03');
-
-            await expectAttributeValue(page, periodInputsSelectors.fromTimeSelector, 'max', '');
-            await expectAttributeValue(page, periodInputsSelectors.fromDateSelector, 'max', '2021-02-05');
+            await expectInputValue(page, toDateTimeSelector, '2021-02-05T14:00');
+            await expectAttributeValue(page, toDateTimeSelector, 'min', '2021-02-03T11:12');
+            await expectAttributeValue(page, fromDateTimeSelector, 'max', '2021-02-05T13:59');
         });
 
         it('should successfully filter on duration', async () => {
@@ -600,7 +592,7 @@ module.exports = () => {
 
         it('Should successfully filter runs by their trigger value', async () => {
             await navigateToRunsOverview(page);
-            const filterInputSelectorPrefix = '#triggerValueCheckbox';
+            const filterInputSelectorPrefix = '#triggerValue-checkbox-';
             const offFilterSelector = `${filterInputSelectorPrefix}OFF`;
             const ltuFilterSelector = `${filterInputSelectorPrefix}LTU`;
 
@@ -670,7 +662,7 @@ module.exports = () => {
             };
 
             // First filter validation on the main page.
-            await filterOnRun('#runOverviewFilter .run-numbers-filter');
+            await filterOnRun('#runOverviewFilter .runNumbers-textFilter');
             // Validate if the filter tab value is equal to the main page value.
             await expectInputValue(page, filterPanelRunNumbersInputSelector, inputValue);
             await resetFilters(page);
@@ -697,7 +689,7 @@ module.exports = () => {
                 await expectColumnValues(page, 'runNumber', ['10']);
             };
 
-            await filterOnRun('#runOverviewFilter .run-numbers-filter');
+            await filterOnRun('#runOverviewFilter .runNumbers-textFilter');
             await expectInputValue(page, filterPanelRunNumbersInputSelector, inputValue);
             await resetFilters(page);
             await filterOnRun(filterPanelRunNumbersInputSelector);
@@ -705,7 +697,7 @@ module.exports = () => {
 
         it('should successfully filter on a list of fill numbers and inform the user about it', async () => {
             await page.evaluate(() => window.model.disableInputDebounce());
-            const filterInputSelector = '.fill-numbers-filter';
+            const filterInputSelector = '.fillNumbers-textFilter';
             expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. 7966, 7954, 7948...');
 
             await fillInput(page, filterInputSelector, '1, 3', ['change']);
@@ -713,7 +705,7 @@ module.exports = () => {
         });
 
         it('should successfully filter on a list of environment ids and inform the user about it', async () => {
-            const filterInputSelector = '.environment-ids-filter';
+            const filterInputSelector = '.environmentIds-textFilter';
             expect(await page.$eval(filterInputSelector, (input) => input.placeholder)).to.equal('e.g. Dxi029djX, TDI59So3d...');
 
             await fillInput(page, filterInputSelector, 'Dxi029djX, TDI59So3d', ['change']);
@@ -725,6 +717,14 @@ module.exports = () => {
             await pressElement(page, '#run-types-dropdown-option-2', true);
             await pressElement(page, '#run-types-dropdown-option-14', true);
             await waitForTableLength(page, 5);
+        });
+
+        it('should successfully filter on beam mode', async () => {
+            await pressElement(page, '.beamModes-filter .dropdown-trigger');
+            await pressElement(page, '#beam-mode-dropdown-option-NO\\ BEAM', true);
+            await waitForTableLength(page, 1);
+            await pressElement(page, '#beam-mode-dropdown-option-STABLE\\ BEAMS', true);
+            await waitForTableLength(page, 6);
         });
 
         it('should successfully filter on nDetectors', async () => {
@@ -775,12 +775,14 @@ module.exports = () => {
         it('should successfully filter by EOR Reason types', async () => {
             // Expect the EOR filter to exist
             await page.waitForSelector('#eorCategories');
-            const eorTitleDropdown = await page.waitForSelector('#eorTitles');
+            await page.waitForSelector('#eorTitles');
 
             // Select the EOR reason category DETECTORS
+            const oldTable = await page.waitForSelector('table').then((table) => table.evaluate((t) => t.innerHTML));
             await page.select('#eorCategories', 'DETECTORS');
-            await waitForTableLength(page, 3);
-            let detectorTitleElements = await eorTitleDropdown.$$('option');
+            await waitForTableLength(page, 3, undefined, oldTable);
+            await page.waitForSelector('#eorTitles option');
+            let detectorTitleElements = await page.$$('#eorTitles option');
             expect(detectorTitleElements).has.lengthOf(3);
 
             // The titles dropdown should have updated
@@ -819,7 +821,7 @@ module.exports = () => {
             // Reset filters. There should be a single blank option in the EOR titles dropdown
             await resetFilters(page)
             await waitForTableLength(page, 10);
-            detectorTitleElements = await eorTitleDropdown.$$('option');
+            detectorTitleElements = await page.$$('#eorTitles option');
             expect(detectorTitleElements).has.lengthOf(1);
 
             // There should be many items in the run details table
@@ -875,14 +877,16 @@ module.exports = () => {
             let exportModal = await page.$('#export-data-modal');
             expect(exportModal).to.be.null;
 
+            await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
             await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-            await page.waitForSelector('#export-data-modal');
+            await page.waitForSelector('#export-data-modal', { timeout: 5000 });
             exportModal = await page.$('#export-data-modal');
 
             expect(exportModal).to.not.be.null;
         });
 
         it('should successfully display information when export will be truncated', async () => {
+            await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
             await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
 
             const truncatedExportWarning = await page.waitForSelector('#export-data-modal #truncated-export-warning');
@@ -902,14 +906,15 @@ module.exports = () => {
         });
 
         it('should successfully export filtered runs', async () => {
+            await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
             const targetFileName = 'data.json';
 
             // First export
             await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true)
-            await page.waitForSelector('#export-data-modal');
+            await page.waitForSelector('#export-data-modal', { timeout: 5000 });
             await page.waitForSelector('#send:disabled');
-            await page.waitForSelector('.form-control');
-            await page.select('.form-control', 'runQuality', 'runNumber');
+            await page.waitForSelector('#export-data-modal select.form-control');
+            await page.select('#export-data-modal select.form-control', 'runQuality', 'runNumber');
             await page.waitForSelector('#send:enabled');
             const exportButtonText = await page.$eval('#send', (button) => button.innerText);
             expect(exportButtonText).to.be.eql('Export');
@@ -939,16 +944,15 @@ module.exports = () => {
             await openFilteringPanel(page);;
             await page.waitForSelector(badFilterSelector);
             await page.$eval(badFilterSelector, (element) => element.click());
-            await page.waitForSelector('.atom-spinner');
             await page.waitForSelector('tbody tr:nth-child(2)');
-            await page.waitForSelector(EXPORT_RUNS_TRIGGER_SELECTOR);
 
             ///// Download
+            await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
             await page.$eval(EXPORT_RUNS_TRIGGER_SELECTOR, (button) => button.click());
-            await page.waitForSelector('#export-data-modal');
+            await page.waitForSelector('#export-data-modal', { timeout: 5000 });
 
-            await page.waitForSelector('.form-control');
-            await page.select('.form-control', 'runQuality', 'runNumber');
+            await page.waitForSelector('#export-data-modal select.form-control', { timeout: 10000 });
+            await page.select('#export-data-modal select.form-control', 'runQuality', 'runNumber');
 
             {
                 const downloadPath = await waitForDownload(page, () => pressElement(page, '#send:enabled', true));

@@ -30,10 +30,14 @@ const {
     expectUrlParams,
     fillInput,
     expectColumnValues,
+    openFilteringPanel,
+    resetFilters,
+    waitForButtonToBecomeActive
 } = require('../defaults.js');
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const { RunDefinition } = require('../../../lib/domain/enums/RunDefinition.js');
+const { navigateToRunsPerLhcPeriod } = require('./navigationUtils.js');
 
 const { expect } = chai;
 
@@ -72,6 +76,7 @@ module.exports = () => {
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
     });
+    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
 
     it('loads the page successfully', async () => {
         const response = await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodId: 1 } });
@@ -101,26 +106,32 @@ module.exports = () => {
             inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
         };
 
-        // By default current tab is 'detectorsQualities'
-        const tableDataValidatorsWithDetectorQualities = {
-            ...tableDataValidators,
-            ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, (quality) => expect(quality).oneOf([...RUN_QUALITIES, ''])])),
+        // Detector columns now combine, in a single cell, both the detector's quality and its synchronous QC flags summary
+        const combinedDetectorCellValidator = (cellText) => {
+            const lines = cellText.split('\n').map((line) => line.trim()).filter(Boolean);
+            return lines.length <= 2 && lines.every((line) => RUN_QUALITIES.includes(line) || !isNaN(Number(line)));
         };
 
-        await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithDetectorQualities)));
-
-        await waitForNavigation(page, () => pressElement(page, '#synchronousFlags-tab'));
-
-        const tableDataValidatorsWithQualityFromSynchronousFlags = {
+        const tableDataValidatorsWithDetectorColumns = {
             ...tableDataValidators,
-            ...Object.fromEntries(DETECTORS.map((detectorName) => [
-                detectorName,
-                (notBadDataFraction) => !notBadDataFraction || !isNaN(Number(notBadDataFraction)),
-            ])),
+            ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, combinedDetectorCellValidator])),
         };
 
-        await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithQualityFromSynchronousFlags)));
-        await expectInnerText(page, '#row56-FT0', '83');
+        await waitForTableLength(page, 4);
+        await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithDetectorColumns)));
+
+        const ft0CellText = await getInnerText(await page.waitForSelector('#row56-FT0'));
+        expect(ft0CellText).to.include('83');
+    });
+
+    it('should display detector columns in RCT order (AOT/MUON after physical) for synchronous flags', async () => {
+        const headers = await page.$$eval(
+            'table thead th',
+            (ths) => ths.map((th) => th.id).filter(Boolean),
+        );
+
+        // See DetectorOrders.RCT in detectorOrders.js
+        expect(headers.indexOf('MUD')).to.be.greaterThan(headers.indexOf('ZDC'));
     });
 
     it('should successfully sort by runNumber in ascending and descending manners', async () => {
@@ -150,10 +161,16 @@ module.exports = () => {
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
         await pressElement(page, amountSelectorButtonSelector);
 
+        await fillInput(page, `${amountSelectorId} input[type=number]`, '3', ['input', 'change']);
+        await waitForTableLength(page, 3);
+        await expectInnerText(page, '.dropup button', 'Rows per page: 3 ');
+        
+        await pressElement(page, amountSelectorButtonSelector);
         await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5, true);
+        // only 4 runs in LHC Period 1
         await waitForTableLength(page, 4);
         await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
 
@@ -175,25 +192,19 @@ module.exports = () => {
         // Revert changes for next test
         await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 10;
-        });
-        await waitForTableLength(page, 4);
-    });
-
-    const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
-
-    it('should successfully export all runs per lhc Period', async () => {
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
             model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
         });
+        await waitForTableLength(page, 2);
+    });
 
+
+    it('should successfully export all runs per lhc Period', async () => {
         const targetFileName = 'data.json';
-
+        await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         // First export
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
-        await page.waitForSelector('select.form-control', { timeout: 200 });
-        await page.waitForSelector('option[value=runNumber]', { timeout: 200 });
+        await page.waitForSelector('select.form-control');
+        await page.waitForSelector('option[value=runNumber]');
         await page.select('select.form-control', 'runQuality', 'runNumber', 'definition', 'lhcPeriod');
         await expectInnerText(page, '#send:enabled', 'Export');
 
@@ -232,25 +243,62 @@ module.exports = () => {
         ]);
 
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+        await page.evaluate(() => {
+            // eslint-disable-next-line no-undef
+            model.runs.perLhcPeriodOverviewModel.reset();
+        });
     });
 
     it('can navigate to a run detail page', async () => {
         const expectedRunNumber = await getInnerText(await page.waitForSelector('tbody tr:first-of-type a'));
         await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
         expectUrlParams(page, { page: 'run-detail', runNumber: expectedRunNumber });
-        await page.goBack()
+        await page.goBack();
     });
 
     it('should successfully apply detectors notBadFraction filters', async () => {
-        await pressElement(page, '#openFilterToggle', true);
+        await navigateToRunsPerLhcPeriod(page, 1, 4);
+        await openFilteringPanel(page);
 
         await page.waitForSelector('#inelasticInteractionRateAvg-operator');
         await page.select('#inelasticInteractionRateAvg-operator', '<=');
         await fillInput(page, '#inelasticInteractionRateAvg-operand', '100000', ['change']);
         await expectColumnValues(page, 'runNumber', ['56', '54']);
 
-        await pressElement(page, '#openFilterToggle', true);
-        await pressElement(page, '#reset-filters', true);
+        await resetFilters(page);
         await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
+    });
+
+    it('should successfully export runs with QC flags as CSV', async () => {
+        await navigateToRunsPerLhcPeriod(page, 1, 4);
+
+        const targetFileName = 'data.csv';
+        await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
+        // Export
+        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
+        await page.waitForSelector('#export-data-modal');
+        await page.waitForSelector('#send:disabled');
+        await page.waitForSelector('.form-control');
+        await page.select('.form-control', 'runNumber', 'ITS');
+        await pressElement(page, '#data-export-type-CSV');
+        await page.waitForSelector('#send:enabled');
+        const exportButtonText = await page.$eval('#send', (button) => button.innerText);
+        expect(exportButtonText).to.be.eql('Export');
+
+        const downloadPath = await waitForDownload(page, () => pressElement(page, '#send', true));
+
+        // Check download
+        const downloadFilesNames = fs.readdirSync(downloadPath);
+        expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
+        const exportContent = fs.readFileSync(path.resolve(downloadPath, targetFileName)).toString();
+
+        expect(exportContent.trim()).to.be.eql([
+            'runNumber;ITS',
+            '105;""',
+            '56;"Good (from: 1565294400000 to: 1565298000000)"',
+            '54;""',
+            '49;""',
+        ].join('\r\n'));
+        fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });
 };

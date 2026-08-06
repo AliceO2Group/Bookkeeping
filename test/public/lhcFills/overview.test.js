@@ -22,6 +22,12 @@ const {
     expectUrlParams,
     expectInnerText,
     waitForTableLength,
+    expectLink,
+    openFilteringPanel,
+    expectAttributeValue,
+    fillInput,
+    getPeriodInputsSelectors,
+    getPopoverSelector,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -30,17 +36,28 @@ const { expect } = chai;
 const percentageRegex = new RegExp(/\d{1,2}.\d{2}%/);
 const durationRegex = new RegExp(/\d{2}:\d{2}:\d{2}/);
 
+const defaultViewPort = {
+    width: 700,
+    height: 763,
+    deviceScaleFactor: 1,
+};
+
+const testResizeViewPort = {
+    width: 700,
+    height: 391,
+    deviceScaleFactor: 1,
+};
+
+const bottomNavBarSelector = `div.flex-row:nth-child(2)`;
+
+
 module.exports = () => {
     let page;
     let browser;
 
     before(async () => {
         [page, browser] = await defaultBefore(page, browser);
-        await page.setViewport({
-            width: 700,
-            height: 720,
-            deviceScaleFactor: 1,
-        });
+        await page.setViewport(defaultViewPort);
         await resetDatabaseContent();
     });
 
@@ -58,6 +75,31 @@ module.exports = () => {
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
     });
+
+    // in case the 'should resize table accordingly' fails we still want to fix the viewport size to default values.
+    describe("viewport changing tests", async () => {
+        afterEach(async () => {
+            await page.setViewport(defaultViewPort);
+        });
+
+        it('should resize table accordingly', async () => {
+            await goToPage(page, 'lhc-fill-overview');
+             // turn off Stable Beams Only filter
+            await pressElement(page, '.slider.round');
+            // 6 rows non stable beam in test data
+            // document.documentElement.clientHeight = 391 should result in 3 rows.
+            await waitForTableLength(page, 6);
+            await page.setViewport(testResizeViewPort);
+            await waitForTableLength(page, 3);
+            const bottomNavBar = await page.$(bottomNavBarSelector);
+            expect(await bottomNavBar.isIntersectingViewport()).to.be.true
+
+            await page.setViewport(defaultViewPort);
+            await waitForTableLength(page, 6);
+        });
+    });
+
+    
 
     it('shows correct datatypes in respective columns', async () => {
         // Expectations of header texts being of a certain datatype
@@ -109,18 +151,37 @@ module.exports = () => {
         await goToPage(page, 'lhc-fill-overview');
 
         await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '6');
-        await expectInnerText(page, '#totalRowsCount', '6');
+        await expectInnerText(page, '#lastRowIndex', '5');
+        await expectInnerText(page, '#totalRowsCount', '5');
     });
 
     it('Should have balloon on runs column', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        await waitForTableLength(page, 6);
+        await waitForTableLength(page, 5);
 
-        await checkColumnBalloon(page, 1, 12);
+        await checkColumnBalloon(page, 1, 11);
     });
 
+    it('fill dropdown menu should be correct', async() => {
+        const popoverTrigger = '#row6-fillNumber-text > div:nth-child(1) > div:nth-child(2)';
+
+        await pressElement(page, popoverTrigger);
+        await expectInnerText(page, '#copy-6 > div:nth-child(1)', 'Copy Fill Number');
+        
+        const popoverSelector = await getPopoverSelector(await page.waitForSelector(popoverTrigger));
+
+
+        await expectLink(page, `${popoverSelector} a:nth-of-type(2)`, {
+            href: `http://localhost:4000/?page=log-create&lhcFillNumbers=6`, innerText: ' Add log to this fill'
+        })
+        // disable the popover
+        await pressElement(page, popoverTrigger)
+    })
+
     it('can set how many lhcFills are available per page', async () => {
+         // turn off Stable Beams Only filter
+        await pressElement(page, '.slider.round');
+
         // Expect the amount selector to currently be set to 10 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.$(`${amountSelectorId} button`);
@@ -150,6 +211,10 @@ module.exports = () => {
 
     it('dynamically switches between visible pages in the page selector', async () => {
         await goToPage(page, 'lhc-fill-overview');
+
+        // turn off Stable Beams Only filter
+        await pressElement(page, '.slider.round');
+
 
         // Override the amount of lhc fills visible per page manually
         await page.evaluate(() => {
@@ -190,18 +255,159 @@ module.exports = () => {
     });
 
     it('should successfully display some statistics', async () => {
+        const beamTypeExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(9)', value: 'PROTON\nPROTON' };
+        const beforeFirststRunExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(5)', value: '03:00:00\n(25.00%)' };
+        const collidingBunchesExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(10)', value: '1024' };
+        const meanRunDurationExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(6)', value: '01:40:00' };
+        const totalRunsDurationExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(7)', value: '05:00:00' };
+        const efficiencyExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(8)', value: '41.67%' };
+        const schemeNameExpect = { selector: '#row6-fillingSchemeName > div:nth-child(1) > div:nth-child(1)', value: 'Single_12b_8_1024_8_2018'};
+
         await goToPage(page, 'lhc-fill-overview');
 
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(6)', '41.67%');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(7)', '03:00:00\n(25.00%)');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(8)', '02:00:00\n(16.67%)');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(9)', '01:40:00');
-        await expectInnerText(page, 'tbody tr:nth-child(1) td:nth-child(10)', '05:00:00');
+        await expectInnerText(page, beamTypeExpect.selector, beamTypeExpect.value);
+        await expectInnerText(page, beforeFirststRunExpect.selector, beforeFirststRunExpect.value);
+        await expectInnerText(page, collidingBunchesExpect.selector, collidingBunchesExpect.value);
+        await expectInnerText(page, meanRunDurationExpect.selector, meanRunDurationExpect.value);
+        await expectInnerText(page, totalRunsDurationExpect.selector, totalRunsDurationExpect.value);
+        await expectInnerText(page, efficiencyExpect.selector, efficiencyExpect.value);
+        await expectInnerText(page, schemeNameExpect.selector, schemeNameExpect.value);
     });
 
-    it('should successfully toggle to stable beam only', async () => {
-        await waitForTableLength(page, 6);
-        await pressElement(page, '.slider.round');
+    it('should successfully display filter elements', async () => {
+        const filterSBExpect = { selector: '.stableBeams-filter .w-30', value: 'Stable Beams Only' };
+        const filterFillNRExpect = {selector: 'div.items-baseline:nth-child(1) > div:nth-child(1)', value: 'Fill #'};
+        const filterSBStartExpect = {selector: 'div.items-baseline:nth-child(2) > div:nth-child(1)', value: 'SB START'};
+        const filterSBEndExpect = {selector: 'div.items-baseline:nth-child(3) > div:nth-child(1)', value: 'SB END'};
+        const filterSBDurationExpect = {selector: 'div.items-baseline:nth-child(5) > div:nth-child(1)', value: 'SB Duration'};
+        const filterSBDurationPlaceholderExpect = {selector: '#beam-duration-filter-operand', value: 'e.g 16:14:15 (HH:MM:SS)'}
+        const filterRunDurationExpect = {selector: 'div.flex-row:nth-child(6) > div:nth-child(1)', value: 'Total runs duration'}
+        const filterRunDurationPlaceholderExpect = {selector: '#run-duration-filter-operand', value: 'e.g 16:14:15 (HH:MM:SS)'};
+        const filterSBDurationOperatorExpect = { value: true };
+        const filterBeamTypeExpect = {selector: 'div.flex-row:nth-child(7) > div:nth-child(1)', value: 'Beam Type'}
+        const filterSchemeNamePlaceholderExpect = {selector: '.fillingSchemeName-filter input', value: 'e.g. Single_12b_8_1024_8_2018'}
+        
+        await goToPage(page, 'lhc-fill-overview');
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        // Note: expectAttributeValue does not work here.
+        expect(await page.evaluate(() => document.querySelector('#beam-duration-filter-operator > option:nth-child(3)').selected)).to.equal(filterSBDurationOperatorExpect.value);
+        await expectInnerText(page, filterSBExpect.selector, filterSBExpect.value);
+        await expectInnerText(page, filterFillNRExpect.selector, filterFillNRExpect.value);
+        await expectInnerText(page, filterSBStartExpect.selector, filterSBStartExpect.value);
+        await expectInnerText(page, filterSBEndExpect.selector, filterSBEndExpect.value);
+        await expectInnerText(page, filterSBDurationExpect.selector, filterSBDurationExpect.value);
+        await expectAttributeValue(page, filterSBDurationPlaceholderExpect.selector, 'placeholder', filterSBDurationPlaceholderExpect.value);
+        await expectInnerText(page, filterRunDurationExpect.selector, filterRunDurationExpect.value);
+        await expectAttributeValue(page, filterRunDurationPlaceholderExpect.selector, 'placeholder', filterRunDurationPlaceholderExpect.value);
+        await expectInnerText(page, filterBeamTypeExpect.selector, filterBeamTypeExpect.value);
+        await expectAttributeValue(page, filterSchemeNamePlaceholderExpect.selector, 'placeholder', filterSchemeNamePlaceholderExpect.value);
+    });
+
+    it('should successfully un-apply Stable Beam filter menu', async () => {
+        const filterButtonSBOnlySelector= '#stableBeamsOnlyRadioOFF';
+        await goToPage(page, 'lhc-fill-overview');
         await waitForTableLength(page, 5);
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        await pressElement(page, filterButtonSBOnlySelector);
+        await waitForTableLength(page, 6);
+    });
+
+    it('should successfully turn off stable beam only from header', async () => {
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        await pressElement(page, '.slider.round');
+        await waitForTableLength(page, 6);
+    });
+
+    it('should successfully apply beam duration filter', async () => {
+        const filterSBDurationOperator= '#beam-duration-filter-operator';
+        const filterSBDurationOperand= '#beam-duration-filter-operand';
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        await page.select(filterSBDurationOperator, '>=');
+        await fillInput(page, filterSBDurationOperand, '00:01:40', ['change']);
+        await waitForTableLength(page, 4);
+    });
+
+    it('should successfully apply run duration filter', async () => {
+        const filterRunDurationOperator= '#run-duration-filter-operator';
+        const filterRunDurationOperand= '#run-duration-filter-operand';
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        // Open the filtering panel
+        await openFilteringPanel(page);
+        await page.select(filterRunDurationOperator, '<=');
+        await fillInput(page, filterRunDurationOperand, '00:00:00', ['change']);
+        await waitForTableLength(page, 4);
+        await page.select(filterRunDurationOperator, '>=');
+        await fillInput(page, filterRunDurationOperand, '00:00:00', ['change']);
+        await waitForTableLength(page, 5);
+    });
+
+    it('should successfully apply beam types filter', async () => {
+        const filterBeamTypeP_Pb = '#beam-types-dropdown-option-p-Pb';
+        const filterBeamTypePb_Pb = '#beam-types-dropdown-option-Pb-Pb';
+
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+
+        await openFilteringPanel(page);
+        await pressElement(page, '.beamType-filter .dropdown-trigger', true);
+        await pressElement(page, filterBeamTypeP_Pb);
+        await waitForTableLength(page, 1);
+    
+        await pressElement(page, filterBeamTypePb_Pb);
+        await waitForTableLength(page, 2);
+    });
+
+    it('should successfully apply stableBeamStart filter', async () => {
+        const popoverTrigger = '.stableBeamsStart-filter .popover-trigger';
+
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        await page.waitForSelector('.column-stableBeamsStart');
+        await openFilteringPanel(page);
+
+        const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
+        const { fromDateTimeSelector, toDateTimeSelector } = getPeriodInputsSelectors(popOverSelector);
+
+        await fillInput(page, fromDateTimeSelector, '2019-08-08T10:00', ['change']);
+        await fillInput(page, toDateTimeSelector, '2019-08-08T12:00', ['change']);
+        
+        await openFilteringPanel(page);
+        await pressElement(page, popoverTrigger);
+        await waitForTableLength(page, 1);
+    });
+
+    it('should successfully apply stableBeamEnd filter', async () => {
+        const popoverTrigger = '.stableBeamsEnd-filter .popover-trigger';
+
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+        await page.waitForSelector('.column-stableBeamsEnd');
+        await openFilteringPanel(page);
+
+        const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
+        const { fromDateTimeSelector, toDateTimeSelector } = getPeriodInputsSelectors(popOverSelector);
+
+        await fillInput(page, fromDateTimeSelector, '2022-03-22T01:00', ['change']);
+        await fillInput(page, toDateTimeSelector, '2022-03-22T23:59', ['change']);
+        await openFilteringPanel(page);
+        await pressElement(page, popoverTrigger);
+        await waitForTableLength(page, 3);
+    });
+
+    it('should successfully apply scheme name filter', async () => {
+        const filterSchemeNameInputField= '.fillingSchemeName-filter input';
+        await goToPage(page, 'lhc-fill-overview');
+        await waitForTableLength(page, 5);
+
+        await openFilteringPanel(page);
+        await fillInput(page, filterSchemeNameInputField, 'Single_12b_8_1024_8_2018', ['change']);
+        await waitForTableLength(page, 1);
     });
 };

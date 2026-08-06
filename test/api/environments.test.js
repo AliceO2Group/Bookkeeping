@@ -171,6 +171,15 @@ module.exports = () => {
             expect(withChar[1].id).to.be.equal(withoutChar[1].id);
         });
 
+        it('should successfully filter environments on status history with a partial sequence', async () => {
+            const response = await request(server).get('/api/environments?filter[statusHistory]=D-E');
+            
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(1);
+            expect(environments[0].id).to.be.equal('KGIS12DS');
+        });
+
         it('should successfully filter environments status history with limit', async () => {
             const response = await request(server).get('/api/environments?filter[statusHistory]=SE&page[limit]=1');
 
@@ -215,6 +224,53 @@ module.exports = () => {
             // Should include all environments with run numbers containing the substring 10
             expect(environments[0].id).to.be.equal('TDI59So3d');
             expect(environments[1].id).to.be.equal('Dxi029djX');
+        });
+
+        it('should successfully filter environments with query on run number range', async () => {
+            const response = await request(server).get('/api/environments?filter[runNumbers]=100-105');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(2);
+            // Should include all environments with run numbers between 100 and 105
+            expect(environments[0].id).to.be.equal('TDI59So3d');
+            expect(environments[1].id).to.be.equal('Dxi029djX');
+        });
+
+        it('should successfully filter environments when run number filter contains empty entries', async () => {
+            const response = await request(server).get('/api/environments?filter[runNumbers]=103,,');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments).to.have.lengthOf(1);
+            expect(environments[0].id).to.be.equal('TDI59So3d');
+        });
+
+        it('should return 400 for an invalid run number range, first number greater than second', async () => {
+            const response = await request(server).get('/api/environments?filter[runNumbers]=105-100');
+
+            expect(response.status).to.equal(400);
+            const { errors } = response.body;
+            const rangeError = errors.find((err) => err.source.pointer === '/data/attributes/query/filter/runNumbers');
+            expect(rangeError.detail).to.equal('Invalid range: 105-100');
+        });
+
+        it('should return 400 for an invalid run number range, negative start number', async () => {
+            const response = await request(server).get('/api/environments?filter[runNumbers]=-100-105');
+
+            expect(response.status).to.equal(400);
+            const { errors } = response.body;
+            const rangeError = errors.find((err) => err.source.pointer === '/data/attributes/query/filter/runNumbers');
+            expect(rangeError.detail).to.equal('Invalid range: -100-105');
+        });
+
+        it('should return 400 for an invalid run number range, no start number', async () => {
+            const response = await request(server).get('/api/environments?filter[runNumbers]=-105');
+
+            expect(response.status).to.equal(400);
+            const { errors } = response.body;
+            const rangeError = errors.find((err) => err.source.pointer === '/data/attributes/query/filter/runNumbers');
+            expect(rangeError.detail).to.equal('Invalid range: -105');
         });
     });
     describe('POST /api/environments', () => {

@@ -183,6 +183,58 @@ module.exports = () => {
         }
     });
 
+    it('should successfully filter on beamModes', async () => {
+        const singleBeamMode = ['STABLE BEAMS'];
+        const multipleBeamMode = ['STABLE BEAMS', 'NO BEAM'];
+        const nonExistentBeamMode = ['DOES NOT EXIST'];
+
+        getAllRunsDto.query = { filter: { beamModes: singleBeamMode } };
+        {
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto); 
+            expect(runs).to.have.lengthOf(5);
+            expect(runs.every(({ lhcBeamMode }) => singleBeamMode.includes(lhcBeamMode))).to.be.true;
+        }
+
+        getAllRunsDto.query = { filter: { beamModes: multipleBeamMode } };
+        {
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.have.lengthOf(6);
+            expect(runs.every(({ lhcBeamMode }) => multipleBeamMode.includes(lhcBeamMode))).to.be.true;
+        }
+        
+        getAllRunsDto.query = { filter: { beamModes: nonExistentBeamMode } };
+        {
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.have.lengthOf(0);
+        }
+    });
+
+    it('should successfully filter on beamTypes', async () => {
+        const singleBeamType = ['p-p'];
+        const multipleBeamTypes = ['p-p', 'Pb-Pb'];
+        const nonExistentBeamType = ['DOES-NOT-EXIST'];
+
+        getAllRunsDto.query = { filter: { beamTypes: singleBeamType }, page: { limit: 200 } };
+        {
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.have.lengthOf.greaterThan(0);
+            expect(runs.every(({ lhcFill }) => singleBeamType.includes(lhcFill?.beamType))).to.be.true;
+        }
+
+        getAllRunsDto.query = { filter: { beamTypes: multipleBeamTypes }, page: { limit: 200 } };
+        {
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.have.lengthOf.greaterThan(0);
+            expect(runs.every(({ lhcFill }) => multipleBeamTypes.includes(lhcFill?.beamType))).to.be.true;
+        }
+
+        getAllRunsDto.query = { filter: { beamTypes: nonExistentBeamType } };
+        {
+            const { runs } = await new GetAllRunsUseCase().execute(getAllRunsDto);
+            expect(runs).to.have.lengthOf(0);
+        }
+    });
+
     it('should successfully filter on run definition', async () => {
         const PHYSICS_COUNT = 7;
         const COSMICS_COUNT = 2;
@@ -805,7 +857,7 @@ module.exports = () => {
                 query: {
                     filter: {
                         dataPassIds,
-                        detectorsQc: {  '_1': { notBadFraction: { operator: '<', limit: 0.7 } } },
+                        detectorsQcNotBadFraction: {  '_1': { operator: '<', limit: 0.7 } },
                     },
                 },
             });
@@ -817,7 +869,7 @@ module.exports = () => {
                 query: {
                     filter: {
                         dataPassIds,
-                        detectorsQc: {  '_1': { notBadFraction: { operator: '<', limit: 0.8 } } },
+                        detectorsQcNotBadFraction: {  '_1': { operator: '<', limit: 0.8 } },
                     },
                 },
             });
@@ -829,7 +881,7 @@ module.exports = () => {
                 query: {
                     filter: {
                         dataPassIds,
-                        detectorsQc: {  '_1': { notBadFraction: { operator: '<', limit: 0.9 } }, mcReproducibleAsNotBad: true },
+                        detectorsQcNotBadFraction: {  '_1': { operator: '<', limit: 0.9 }, mcReproducibleAsNotBad: true },
                     },
                 },
             });
@@ -841,9 +893,10 @@ module.exports = () => {
                 query: {
                     filter: {
                         dataPassIds,
-                        detectorsQc: {
-                            '_2': { notBadFraction: { operator: '>', limit: 0.8 } },
-                            '_1': { notBadFraction: {operator: '<', limit: 0.8 } },
+                        detectorsQcNotBadFraction:
+                        {
+                            '_2': { operator: '>', limit: 0.8 },
+                            '_1': { operator: '<', limit: 0.8 },
                         },
                     },
                 },
