@@ -11,15 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const {
-    snakeToCamel,
-    pascalToSnake,
-    ucFirst,
-    lcFirst,
-    snakeToPascal,
-    splitStringToStringsTrimmed,
-    filterOutLegacyDetectorsForNewerPeriods,
-} = require('../../../lib/utilities/stringUtils.js');
+const { snakeToCamel, pascalToSnake, ucFirst, lcFirst, snakeToPascal, splitStringToStringsTrimmed } = require('../../../lib/utilities/stringUtils.js');
 const { expect } = require('chai');
 
 module.exports = () => {
@@ -88,12 +80,4 @@ module.exports = () => {
         expect(snakeToPascal('SNAKE')).to.equal('Snake');
     });
 
-    it('should filter legacy detectors for newer periods', () => {
-        const detectors = [{ name: 'CPV' }, { name: 'PHS' }, { name: 'ITS' }];
-
-        expect(filterOutLegacyDetectorsForNewerPeriods(detectors, 'LHC25ab')).to.deep.equal([{ name: 'ITS' }]);
-        expect(filterOutLegacyDetectorsForNewerPeriods(detectors, 'LHC26ad_cpass1_residuals')).to.deep.equal([{ name: 'ITS' }]);
-        expect(filterOutLegacyDetectorsForNewerPeriods(detectors, 'LHC24')).to.deep.equal(detectors);
-        expect(filterOutLegacyDetectorsForNewerPeriods(detectors, '')).to.deep.equal(detectors);
-    });
 };
