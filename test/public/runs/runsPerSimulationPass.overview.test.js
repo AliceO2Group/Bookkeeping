@@ -186,6 +186,7 @@ module.exports = () => {
     });
 
     it('notifies if table loading returned an error', async () => {
+        await page.waitForFunction(() => window.model?.runs?.perSimulationPassOverviewModel?.pagination);
         // eslint-disable-next-line no-return-assign
         await page.evaluate(() => window.model.runs.perSimulationPassOverviewModel.pagination.itemsPerPage = 200);
 

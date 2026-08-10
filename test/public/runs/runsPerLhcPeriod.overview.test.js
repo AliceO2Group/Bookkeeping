@@ -181,6 +181,7 @@ module.exports = () => {
     });
 
     it('notifies if table loading returned an error', async () => {
+        await page.waitForFunction(() => window.model?.runs?.perLhcPeriodOverviewModel?.pagination);
         // eslint-disable-next-line no-return-assign
         await page.evaluate(() => window.model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 200);
         await page.waitForSelector('.alert-danger');

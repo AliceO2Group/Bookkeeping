@@ -313,7 +313,8 @@ module.exports = () => {
 
     it('notifies if table loading returned an error', async () => {
         await navigateToRunsPerDataPass(page, 1, 3, 4);
-        // eslint-disable-next-line no-return-assign, no-undef
+        await page.waitForFunction(() => window.model?.runs?.perDataPassOverviewModel?.pagination);
+        // eslint-disable-next-line no-return-assign
         await page.evaluate(() => window.model.runs.perDataPassOverviewModel.pagination.itemsPerPage = 200);
         await page.waitForSelector('.alert-danger');
 
