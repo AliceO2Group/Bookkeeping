@@ -12,10 +12,10 @@
  */
 
 const { expect } = require('chai');
-const { filterOutLegacyDetectorsForNewerPeriods } = require('../../../../lib/public/utilities/filterOutLegacyDetectorsForNewerPeriods.js');
 
 module.exports = () => {
-    it('should filter legacy detectors for newer periods', () => {
+    it('should filter legacy detectors for newer periods', async () => {
+        const { filterOutLegacyDetectorsForNewerPeriods } = await import('../../../../lib/public/utilities/filterOutLegacyDetectorsForNewerPeriods.js');
         const detectors = [{ name: 'CPV' }, { name: 'PHS' }, { name: 'ITS' }];
 
         expect(filterOutLegacyDetectorsForNewerPeriods(detectors, 'LHC25ab')).to.deep.equal([{ name: 'ITS' }]);
