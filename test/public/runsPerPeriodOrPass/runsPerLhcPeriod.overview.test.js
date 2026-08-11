@@ -21,23 +21,25 @@ const {
     pressElement,
     goToPage,
     validateTableData,
-    fillInput,
     validateDate,
-    expectLink,
-    reloadPage,
-    waitForDownload,
-    waitForNavigation,
-    expectUrlParams,
-    testTableSortingByColumn,
     waitForTableLength,
+    waitForNavigation,
+    waitForDownload,
+    testTableSortingByColumn,
+    getInnerText,
+    expectUrlParams,
+    fillInput,
     expectColumnValues,
-    waitForButtonToBecomeActive,
+    openFilteringPanel,
+    resetFilters,
+    waitForButtonToBecomeActive
 } = require('../defaults.js');
+const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
+const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
+const { RunDefinition } = require('../../../lib/domain/enums/RunDefinition.js');
+const { navigateToRunsPerLhcPeriod } = require('./dataPassesUtilities.js');
 
 const { expect } = chai;
-const { qcFlagService } = require('../../../lib/server/services/qualityControlFlag/QcFlagService');
-const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
-const { navigateToRunsPerSimulationPass } = require('./navigationUtils.js');
 
 const DETECTORS = [
     'CPV',
@@ -74,23 +76,15 @@ module.exports = () => {
     after(async () => {
         [page, browser] = await defaultAfter(page, browser);
     });
-
     const EXPORT_RUNS_TRIGGER_SELECTOR = '#export-data-trigger';
 
     it('loads the page successfully', async () => {
-        const response = await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
+        const response = await goToPage(page, 'runs-per-lhc-period', { queryParameters: { lhcPeriodId: 1 } });
 
-        // We expect the page to return the correct status code, making sure the server is running properly
         expect(response.status()).to.equal(200);
 
-        // We expect the page to return the correct title, making sure there isn't another server running on this port
         const title = await page.title();
         expect(title).to.equal('AliceO2 Bookkeeping');
-
-        await page.waitForSelector('h2');
-        const headerBreadcrumbs = await page.$$('h2');
-        expect(await headerBreadcrumbs[0].evaluate((element) => element.innerText)).to.be.equal('Runs per MC');
-        expect(await headerBreadcrumbs[1].evaluate((element) => element.innerText)).to.be.equal('LHC23k6b');
     });
 
     it('shows correct datatypes in respective columns', async () => {
@@ -110,44 +104,33 @@ module.exports = () => {
             inelasticInteractionRateAtStart: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAtMid: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
             inelasticInteractionRateAtEnd: (value) => value === '-' || !isNaN(Number(value.replace(/,/g, ''))),
-            ...Object.fromEntries(DETECTORS.map((detectorName) => [
-                detectorName,
-                (qualityDisplay) => !qualityDisplay || /(QC)|(\d+)/.test(qualityDisplay),
-            ])),
         };
 
-        await validateTableData(page, new Map(Object.entries(tableDataValidators)));
+        // Detector columns now combine, in a single cell, both the detector's quality and its synchronous QC flags summary
+        const combinedDetectorCellValidator = (cellText) => {
+            const lines = cellText.split('\n').map((line) => line.trim()).filter(Boolean);
+            return lines.length <= 2 && lines.every((line) => RUN_QUALITIES.includes(line) || !isNaN(Number(line)));
+        };
 
-        await expectLink(page, 'tr#row56 .column-ITS a', {
-            href: 'http://localhost:4000/?page=qc-flag-creation-for-simulation-pass&runNumberDetectorsMap=56:4&simulationPassId=2',
-            innerText: 'QC',
-        });
+        const tableDataValidatorsWithDetectorColumns = {
+            ...tableDataValidators,
+            ...Object.fromEntries(DETECTORS.map((detectorName) => [detectorName, combinedDetectorCellValidator])),
+        };
 
-        const [tmpQcFlag] = await qcFlagService.create(
-            [{ flagTypeId: 2 }],
-            { runNumber: 56, simulationPassIdentifier: { id: 2 }, detectorIdentifier: { detectorId: 4 } },
-            { user: { externalUserId: 1, roles: ['admin'] } }, // Create bad flag
-        );
+        await waitForTableLength(page, 4);
+        await validateTableData(page, new Map(Object.entries(tableDataValidatorsWithDetectorColumns)));
 
-        await reloadPage(page);
-        await expectLink(page, 'tr#row56 .column-ITS a', {
-            href: 'http://localhost:4000/?page=qc-flags-for-simulation-pass&runNumber=56&dplDetectorId=4&simulationPassId=2',
-            innerText: '0',
-        });
-
-        await page.waitForSelector('tr#row56 .column-ITS a .icon');
-
-        await qcFlagService.delete(tmpQcFlag.id);
+        const ft0CellText = await getInnerText(await page.waitForSelector('#row56-FT0'));
+        expect(ft0CellText).to.include('83');
     });
 
-    it('should display detector columns in RCT order (AOT/MUON after physical)', async () => {
+    it('should display detector columns in RCT order (AOT/MUON after physical) for synchronous flags', async () => {
         const headers = await page.$$eval(
             'table thead th',
             (ths) => ths.map((th) => th.id).filter(Boolean),
         );
-        
+
         // See DetectorOrders.RCT in detectorOrders.js
-        expect(headers.indexOf('VTX')).to.be.greaterThan(headers.indexOf('ZDC'));
         expect(headers.indexOf('MUD')).to.be.greaterThan(headers.indexOf('ZDC'));
     });
 
@@ -157,8 +140,8 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '3');
-        await expectInnerText(page, '#totalRowsCount', '3');
+        await expectInnerText(page, '#lastRowIndex', '4');
+        await expectInnerText(page, '#totalRowsCount', '4');
     });
 
     it('successfully switch to raw timestamp display', async () => {
@@ -168,6 +151,9 @@ module.exports = () => {
         await pressElement(page, '#preferences-raw-timestamps', true);
         await expectInnerText(page, '#row56 td:nth-child(3)', '1565294400000');
         await expectInnerText(page, '#row56 td:nth-child(4)', '1565298000000');
+
+        // Go back to normal
+        await pressElement(page, '#preferences-raw-timestamps', true);
     });
 
     it('can set how many runs are available per page', async () => {
@@ -175,108 +161,124 @@ module.exports = () => {
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
         await pressElement(page, amountSelectorButtonSelector);
 
+        await fillInput(page, `${amountSelectorId} input[type=number]`, '3', ['input', 'change']);
+        await waitForTableLength(page, 3);
+        await expectInnerText(page, '.dropup button', 'Rows per page: 3 ');
+        
+        await pressElement(page, amountSelectorButtonSelector);
         await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
-        await pressElement(page, amountItems5);
+        await pressElement(page, amountItems5, true);
+        // only 4 runs in LHC Period 1
+        await waitForTableLength(page, 4);
+        await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
 
-        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
-        await fillInput(page, `${amountSelectorId} input[type=number]`, 1111);
+        // Expect the custom per page input to have red border and text color if wrong value typed
+        await fillInput(page, `${amountSelectorId} input[type=number]`, '1111');
         await page.waitForSelector(`${amountSelectorId} input:invalid`);
         await fillInput(page, `${amountSelectorId} input[type=number]`, '');
-        await page.waitForSelector(`${amountSelectorId} input:not(:invalid)`);
     });
 
     it('notifies if table loading returned an error', async () => {
-        const amountSelectorId = '#amountSelector';
-        await pressElement(page, `${amountSelectorId} button`);
-        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
-        // 200 exceeds the API query limit (100), but is within the UI input range (1–1000)
-        // This is set via the docker-compose test variable
-        await fillInput(page, `${amountSelectorId} input[type=number]`, '200', ['input', 'change']);
+        await page.waitForFunction(() => window.model?.runs?.perLhcPeriodOverviewModel?.pagination);
+        // eslint-disable-next-line no-return-assign
+        await page.evaluate(() => window.model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 200);
+        await page.waitForSelector('.alert-danger');
 
+        // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
         await expectInnerText(page, '.alert-danger', expectedMessage);
 
-        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
-        await waitForTableLength(page, 3);
-    });
-
-    it('can navigate to a run detail page', async () => {
-        await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
-        expectUrlParams(page, { page: 'run-detail', runNumber: 56 });
-        await waitForNavigation(page, () => page.goBack());
+        // Revert changes for next test
+        await page.evaluate(() => {
+            window.model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
+        });
+        await waitForTableLength(page, 2);
     });
 
 
-    it('should successfully apply detectors notBadFraction filters', async () => {
-        await navigateToRunsPerSimulationPass(page, 2, 1, 3);
-        await pressElement(page, '#openFilterToggle', true);
-
-        await page.waitForSelector('#detectorsQc-for-1-notBadFraction-operator');
-        await page.select('#detectorsQc-for-1-notBadFraction-operator', '<=');
-        await fillInput(page, '#detectorsQc-for-1-notBadFraction-operand', '90', ['change']);
-        await expectColumnValues(page, 'runNumber', ['106']);
-
-        await pressElement(page, '#reset-filters', true);
-        await expectColumnValues(page, 'runNumber', ['107', '106', '105']);
-    });
-
-    it('should successfully apply detectors notBadFraction filters', async () => {
-        await navigateToRunsPerSimulationPass(page, 2, 1, 3);
-        await pressElement(page, '#openFilterToggle', true);
-
-        await page.waitForSelector('#detectorsQc-for-1-notBadFraction-operator');
-        await page.select('#detectorsQc-for-1-notBadFraction-operator', '<=');
-        await fillInput(page, '#detectorsQc-for-1-notBadFraction-operand', '90', ['change']);
-        await expectColumnValues(page, 'runNumber', ['106']);
-
-        await pressElement(page, '#reset-filters', true);
-        await expectColumnValues(page, 'runNumber', ['107', '106', '105']);
-    });
-
-    it('should successfully export runs', async () => {
-        await navigateToRunsPerSimulationPass(page, 1, 2, 3);
+    it('should successfully export all runs per lhc Period', async () => {
         const targetFileName = 'data.json';
-
-        // Export
         await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
-        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
-        await page.waitForSelector('#export-data-modal');
-        await page.waitForSelector('#send:disabled');
-        await page.waitForSelector('.form-control');
-        await page.select('.form-control', 'runQuality', 'runNumber');
-        await page.waitForSelector('#send:enabled');
-        await expectInnerText(page, '#send', 'Export');
+        // First export
+        await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR, true);
+        await page.waitForSelector('select.form-control');
+        await page.waitForSelector('option[value=runNumber]');
+        await page.select('select.form-control', 'runQuality', 'runNumber', 'definition', 'lhcPeriod');
+        await expectInnerText(page, '#send:enabled', 'Export');
 
-        const downloadPath = await waitForDownload(page, () => pressElement(page, '#send'));
+        const downloadPath = await waitForDownload(page, () => pressElement(page, '#send:enabled'));
 
         // Check download
         const downloadFilesNames = fs.readdirSync(downloadPath);
         expect(downloadFilesNames.filter((name) => name == targetFileName)).to.be.lengthOf(1);
         const runs = JSON.parse(fs.readFileSync(path.resolve(downloadPath, targetFileName)));
 
-        expect(runs).to.be.lengthOf(3);
-        expect(runs).to.have.deep.all.members([
-            { runNumber: 56, runQuality: 'good' },
-            { runNumber: 54, runQuality: 'good' },
-            { runNumber: 49, runQuality: 'good' },
+        expect(runs).to.have.all.deep.members([
+            {
+                runNumber: 105,
+                lhcPeriod: 'LHC22a',
+                runQuality: RunQualities.GOOD,
+                definition: RunDefinition.PHYSICS,
+            },
+            {
+                runNumber: 49,
+                runQuality: RunQualities.GOOD,
+                definition: RunDefinition.PHYSICS,
+                lhcPeriod: 'LHC22a',
+            },
+            {
+                runNumber: 54,
+                runQuality: RunQualities.GOOD,
+                definition: RunDefinition.PHYSICS,
+                lhcPeriod: 'LHC22a',
+            },
+            {
+                runNumber: 56,
+                runQuality: RunQualities.GOOD,
+                definition: RunDefinition.PHYSICS,
+                lhcPeriod: 'LHC22a',
+            },
         ]);
+
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+        await page.evaluate(() => {
+            window.model.runs.perLhcPeriodOverviewModel.reset();
+        });
+    });
+
+    it('can navigate to a run detail page', async () => {
+        const expectedRunNumber = await getInnerText(await page.waitForSelector('tbody tr:first-of-type a'));
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a'));
+        expectUrlParams(page, { page: 'run-detail', runNumber: expectedRunNumber });
+        await page.goBack();
+    });
+
+    it('should successfully apply detectors notBadFraction filters', async () => {
+        await navigateToRunsPerLhcPeriod(page, 1, 4);
+        await openFilteringPanel(page);
+
+        await page.waitForSelector('#inelasticInteractionRateAvg-operator');
+        await page.select('#inelasticInteractionRateAvg-operator', '<=');
+        await fillInput(page, '#inelasticInteractionRateAvg-operand', '100000', ['change']);
+        await expectColumnValues(page, 'runNumber', ['56', '54']);
+
+        await resetFilters(page);
+        await expectColumnValues(page, 'runNumber', ['105', '56', '54', '49']);
     });
 
     it('should successfully export runs with QC flags as CSV', async () => {
-        await navigateToRunsPerSimulationPass(page, 2, 1, 3);
+        await navigateToRunsPerLhcPeriod(page, 1, 4);
 
         const targetFileName = 'data.csv';
-        
-        // Export
         await waitForButtonToBecomeActive(page, EXPORT_RUNS_TRIGGER_SELECTOR);
+        // Export
         await pressElement(page, EXPORT_RUNS_TRIGGER_SELECTOR);
         await page.waitForSelector('#export-data-modal');
         await page.waitForSelector('#send:disabled');
         await page.waitForSelector('.form-control');
-        await page.select('.form-control', 'runNumber', 'CPV');
+        await page.select('.form-control', 'runNumber', 'ITS');
         await pressElement(page, '#data-export-type-CSV');
         await page.waitForSelector('#send:enabled');
         const exportButtonText = await page.$eval('#send', (button) => button.innerText);
@@ -290,10 +292,11 @@ module.exports = () => {
         const exportContent = fs.readFileSync(path.resolve(downloadPath, targetFileName)).toString();
 
         expect(exportContent.trim()).to.be.eql([
-            'runNumber;CPV',
-            '107;""',
-            '106;"Bad (from: 1565272000000 to: 1565337000000) | Bad (from: 1565340600000 to: 1565359200000)"',
+            'runNumber;ITS',
             '105;""',
+            '56;"Good (from: 1565294400000 to: 1565298000000)"',
+            '54;""',
+            '49;""',
         ].join('\r\n'));
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
     });

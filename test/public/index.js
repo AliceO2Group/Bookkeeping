@@ -28,6 +28,7 @@ const SimulationPassesSuite = require('./simulationPasses');
 const QcFlagTypesSuite = require('./qcFlagTypes');
 const QcFlagsSuite = require('./qcFlags');
 const FilterSuite = require('./Filters');
+const RunsPerPeriodOrPass = require('./runsPerPeriodOrPass');
 
 module.exports = () => {
     describe('Components', ComponentsSuite);
@@ -37,6 +38,7 @@ module.exports = () => {
     describe('Logs', LogsSuite);
     describe('Envs', EnvsSuite);
     describe('Runs', RunsSuite);
+    describe('RunsPerDataPassesAndPeriods', RunsPerPeriodOrPass);
     describe('Tags', TagsSuite);
     describe('Flps', FlpsSuite);
     describe('Home', HomeSuite);

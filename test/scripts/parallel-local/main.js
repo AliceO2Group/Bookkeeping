@@ -17,6 +17,7 @@ const testSuites = [
     'logs',
     'envs',
     'runs',
+    'runsPerPeriodOrPass',
     'tags',
     'flps',
     'home',
