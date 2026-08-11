@@ -182,21 +182,23 @@ module.exports = () => {
 
         await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
         await fillInput(page, `${amountSelectorId} input[type=number]`, 1111);
-        await page.waitForSelector(amountSelectorId);
+        await page.waitForSelector(`${amountSelectorId} input:invalid`);
+        await fillInput(page, `${amountSelectorId} input[type=number]`, '');
+        await page.waitForSelector(`${amountSelectorId} input:not(:invalid)`);
     });
 
     it('notifies if table loading returned an error', async () => {
-        await page.waitForFunction(() => window.model?.runs?.perSimulationPassOverviewModel?.pagination);
-        // eslint-disable-next-line no-return-assign
-        await page.evaluate(() => window.model.runs.perSimulationPassOverviewModel.pagination.itemsPerPage = 200);
+        const amountSelectorId = '#amountSelector';
+        await pressElement(page, `${amountSelectorId} button`);
+        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
+        // 200 exceeds the API query limit (100), but is within the UI input range (1–1000)
+        // This is set via the docker-compose test variable
+        await fillInput(page, `${amountSelectorId} input[type=number]`, '200', ['input', 'change']);
 
-        // We expect there to be a fitting error message
         const expectedMessage = 'Invalid Attribute: "query.page.limit" must be less than or equal to 100';
         await expectInnerText(page, '.alert-danger', expectedMessage);
-        await page.evaluate(() => {
-            window.model.runs.perSimulationPassOverviewModel.pagination.reset();
-            window.model.runs.perSimulationPassOverviewModel.pagination.notify();
-        });
+
+        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
         await waitForTableLength(page, 3);
     });
 
