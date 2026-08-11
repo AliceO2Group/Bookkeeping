@@ -12,9 +12,9 @@
  */
 
 const application = require('../../lib/application');
-const RunsPerPeriodOverviewSuite = require('../public/runs/runsPerLhcPeriod.overview.test');
-const RunsPerDataPassOverviewPage = require('../public/runs/runsPerDataPass.overview.test');
-const RunsPerSimulationPassOverviewPage = require('../public/runs/runsPerSimulationPass.overview.test');
+const RunsPerPeriodOverviewSuite = require('../public/runsPerPeriodOrPass/runsPerLhcPeriod.overview.test');
+const RunsPerDataPassOverviewPage = require('../public/runsPerPeriodOrPass/runsPerDataPass.overview.test');
+const RunsPerSimulationPassOverviewPage = require('../public/runsPerPeriodOrPass/runsPerSimulationPass.overview.test');
 
 describe('Bookkeeping', () => {
     before(async () => {
