@@ -219,8 +219,7 @@ module.exports = () => {
             // Override the amount of runs visible per page manually
             await navigateToRunsOverview(page);
             await page.evaluate(() => {
-                // eslint-disable-next-line no-undef
-                model.runs.overviewModel.pagination.itemsPerPage = 1;
+                window.model.runs.overviewModel.pagination.itemsPerPage = 1;
             });
             await waitForTableLength(page, 1);
 
@@ -237,8 +236,9 @@ module.exports = () => {
 
         it('notifies if table loading returned an error', async () => {
             await navigateToRunsOverview(page);
-            // eslint-disable-next-line no-return-assign, no-undef
-            await page.evaluate(() => model.runs.overviewModel.pagination.itemsPerPage = 200);
+            await page.waitForFunction(() => window.model?.runs?.overviewModel?.pagination);
+            // eslint-disable-next-line no-return-assign
+            await page.evaluate(() => window.model.runs.overviewModel.pagination.itemsPerPage = 200);
             await page.waitForSelector('.alert-danger');
 
             // We expect there to be a fitting error message
@@ -247,8 +247,7 @@ module.exports = () => {
 
             // Revert changes for next test
             await page.evaluate(() => {
-                // eslint-disable-next-line no-undef
-                model.runs.overviewModel.pagination.itemsPerPage = 10;
+                window.model.runs.overviewModel.pagination.itemsPerPage = 10;
             });
             await waitForTableLength(page, 10);
         });
@@ -436,8 +435,7 @@ module.exports = () => {
             };
 
             await page.evaluate(() => {
-                // eslint-disable-next-line no-undef
-                model.runs.overviewModel.pagination.itemsPerPage = 20;
+                window.model.runs.overviewModel.pagination.itemsPerPage = 20;
             });
 
             await pressElement(page, physicsFilterSelector, true);
@@ -473,8 +471,7 @@ module.exports = () => {
             await pressElement(page, cosmicsFilterSelector, true);
 
             await page.evaluate(() => {
-                // eslint-disable-next-line no-undef
-                model.runs.overviewModel.pagination.itemsPerPage = 20;
+                window.model.runs.overviewModel.pagination.itemsPerPage = 20;
             });
 
             await checkTableSizeAndDefinition(
@@ -597,8 +594,7 @@ module.exports = () => {
             const ltuFilterSelector = `${filterInputSelectorPrefix}LTU`;
 
             await page.evaluate(() => {
-                // eslint-disable-next-line no-undef
-                model.runs.overviewModel.pagination.itemsPerPage = 10;
+                window.model.runs.overviewModel.pagination.itemsPerPage = 10;
             });
             await waitForTableLength(page, 10);
 

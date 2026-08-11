@@ -306,17 +306,16 @@ module.exports = () => {
         });
         await page.waitForSelector(`${amountSelectorId} input:invalid`);
         await page.evaluate(() => {
-            // eslint-disable-next-line no-return-assign, no-undef
-            model.runs.perDataPassOverviewModel.pagination.reset();
-            // eslint-disable-next-line no-return-assign, no-undef
-            model.runs.perDataPassOverviewModel.notify();
+            window.model.runs.perDataPassOverviewModel.pagination.reset();
+            window.model.runs.perDataPassOverviewModel.notify();
         });
     });
 
     it('notifies if table loading returned an error', async () => {
         await navigateToRunsPerDataPass(page, 1, 3, 4);
-        // eslint-disable-next-line no-return-assign, no-undef
-        await page.evaluate(() => model.runs.perDataPassOverviewModel.pagination.itemsPerPage = 200);
+        await page.waitForFunction(() => window.model?.runs?.perDataPassOverviewModel?.pagination);
+        // eslint-disable-next-line no-return-assign
+        await page.evaluate(() => window.model.runs.perDataPassOverviewModel.pagination.itemsPerPage = 200);
         await page.waitForSelector('.alert-danger');
 
         // We expect there to be a fitting error message
@@ -325,10 +324,8 @@ module.exports = () => {
 
         // Revert changes for next test
         await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.runs.perDataPassOverviewModel.pagination.reset();
-            // eslint-disable-next-line no-undef
-            model.runs.perDataPassOverviewModel.notify();
+            window.model.runs.perDataPassOverviewModel.pagination.reset();
+            window.model.runs.perDataPassOverviewModel.notify();
         });
         await waitForTableLength(page, 4);
     });

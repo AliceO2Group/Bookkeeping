@@ -79,4 +79,5 @@ module.exports = () => {
         expect(snakeToPascal('_THIS_IS_SNAKE_CASE_')).to.equal('ThisIsSnakeCase');
         expect(snakeToPascal('SNAKE')).to.equal('Snake');
     });
+
 };
