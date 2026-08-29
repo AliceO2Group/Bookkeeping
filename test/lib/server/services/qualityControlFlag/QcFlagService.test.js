@@ -21,7 +21,7 @@ const { Op } = require('sequelize');
 const { qcFlagAdapter } = require('../../../../../lib/database/adapters');
 const { runService } = require('../../../../../lib/server/services/run/RunService');
 const { gaqDetectorService } = require('../../../../../lib/server/services/gaq/GaqDetectorsService');
-const { gaqService } = require('../../../../../lib/server/services/qualityControlFlag/GaqService.js');
+const { gaqService } = require('../../../../../lib/server/services/gaq/GaqService.js');
 const { qcFlagSummaryService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagSummaryService.js');
 const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService.js');
 
@@ -2074,6 +2074,9 @@ module.exports = () => {
             expectedGaqSummary.missingVerificationsCount = 11;
             expectedGaqSummary.undefinedQualityPeriodsCount = 8;
 
+            // getSummary now reads from the summary table, so compute first
+            await gaqService.calculateAndStoreGaqSummary(dataPassId, runNumber);
+
             const { [runNumber]: runGaqSummary } = await gaqService.getSummary(dataPassId);
             expect(runGaqSummary).to.be.eql(expectedGaqSummary);
 
@@ -2103,7 +2106,13 @@ module.exports = () => {
                 relations,
             );
 
-            const gaqSummary = await gaqService.getSummary(dataPassId);
+            await gaqService.calculateAndStoreGaqSummary(dataPassId, 56);
+            await gaqService.calculateAndStoreGaqSummary(dataPassId, 54);
+
+            const allGaqSummaries = await gaqService.getSummary(dataPassId);
+            const gaqSummary = Object.fromEntries(
+                [runNumber, 56, 54].map((n) => [n, allGaqSummaries[n]]),
+            );
             expect(gaqSummary).to.be.eql({
                 [runNumber]: expectedGaqSummary,
                 56: {
