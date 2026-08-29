@@ -12,7 +12,9 @@
  */
 
 const GaqDetectorServiceSuite = require('./GaqDetectorService.test.js');
+const GaqSummarySuite = require('./GaqSummary.test.js');
 
 module.exports = () => {
     describe('GaqDetectorService', GaqDetectorServiceSuite);
+    describe('GaqSummary', GaqSummarySuite);
 };
