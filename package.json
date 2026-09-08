@@ -36,7 +36,7 @@
     "joi": "18.2.3",
     "kafkajs": "2.2.4",
     "mariadb": "3.0.0",
-    "multer": "2.2.0",
+    "multer": "2.3.0",
     "node-fetch": "3.3.2",
     "sequelize": "6.37.8",
     "umzug": "3.8.3"
