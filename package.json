@@ -35,7 +35,7 @@
     "dotenv": "17.4.2",
     "joi": "18.2.3",
     "kafkajs": "2.2.4",
-    "mariadb": "3.0.0",
+    "mariadb": "3.5.4",
     "multer": "2.2.0",
     "node-fetch": "3.3.2",
     "sequelize": "6.37.8",
