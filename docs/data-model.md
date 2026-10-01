@@ -184,7 +184,7 @@ Concerning the **Update mode** of the fields:
 | `text`             | Tag name.                                                      | `TPC`, `COSMICS`, `RC`                        |                                 | `id`           | Insert          |
 | `Mattermost`       | Mattermost channels                                            | `Food`, `Bookkeeping updates`                 |                                 | `id`           | Update          |
 | `email`            | Email groups                                                   | `food@cern.ch`, `Bookkeeping-updates@cern.ch` |                                 | `id`           | Update          |
-| `last_edited_name` | Name of the person who last edited the email/mattermost fields | `Anonymous`, `Jan Janssen`                    | When email/mattermost is edited | `id`           | Update          |
+| `last_edited_by_user_id` | Id (in `users` table) of the user who last edited the tag | `1`, `2`                                      | When the tag is edited          | `id`           | Update          |
 
 ## Environments
 
