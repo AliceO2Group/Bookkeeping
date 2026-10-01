@@ -12,6 +12,7 @@
  */
 
 const { tag: { GetTagUseCase } } = require('../../../../lib/usecases/index.js');
+const { repositories: { TagRepository }, utilities: { QueryBuilder } } = require('../../../../lib/database/index.js');
 const { dtos: { GetTagDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
 
@@ -34,5 +35,25 @@ module.exports = () => {
 
         expect(result).to.have.ownProperty('id');
         expect(result.id).to.equal(1);
+    });
+
+    it('should return the user who last edited the tag', async () => {
+        const createdTag = await TagRepository.insert({ text: `TAG-LAST-EDITED-${Date.now()}`, lastEditedByUserId: 2 });
+        const result = await new GetTagUseCase().execute({ params: { tagId: createdTag.id } });
+
+        expect(result.lastEditedByUserId).to.equal(2);
+        expect(result.lastEditedBy).to.deep.equal({ id: 2, externalId: 456, name: 'Jan Jansen' });
+
+        await TagRepository.removeAll(new QueryBuilder().where('id').is(createdTag.id));
+    });
+
+    it('should return null last editor for a tag that was never edited', async () => {
+        const createdTag = await TagRepository.insert({ text: `TAG-NEVER-EDITED-${Date.now()}` });
+        const result = await new GetTagUseCase().execute({ params: { tagId: createdTag.id } });
+
+        expect(result.lastEditedByUserId).to.be.null;
+        expect(result.lastEditedBy).to.be.null;
+
+        await TagRepository.removeAll(new QueryBuilder().where('id').is(createdTag.id));
     });
 };
