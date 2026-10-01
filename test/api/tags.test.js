@@ -591,7 +591,7 @@ module.exports = () => {
             const getResponse = await request(server).get(`/api/tags/${createdTag.id}`);
             expect(getResponse.status).to.equal(200);
             const { data } = getResponse.body;
-            expect(data.lastEditedBy).to.deep.equal({ id: 1, externalId: 1, name: 'John Doe' });
+            expect(data.lastEditedBy).to.deep.equal({ name: 'John Doe' });
             expect(data).to.not.have.property('lastEditedName');
         });
         it('should return 400 if invalid email is given', (done) => {

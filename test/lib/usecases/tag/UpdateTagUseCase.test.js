@@ -45,7 +45,7 @@ module.exports = () => {
         const result = await new UpdateTagUseCase()
             .execute(updateTagDto);
         expect(result.mattermost).to.equal('tag,tag,tag');
-        expect(result.lastEditedBy).to.deep.equal({ id: 1, externalId: 1, name: 'John Doe' });
+        expect(result.lastEditedBy).to.deep.equal({ name: 'John Doe' });
         expect(result).to.not.have.property('lastEditedName');
         expect(result.email).to.equal('cern@tag.ch,cern@othertag.ch');
         expect(result.description).to.equal('The new tag\'s description');
@@ -60,7 +60,7 @@ module.exports = () => {
         };
         const result = await new UpdateTagUseCase()
             .execute(updateTagDto);
-        expect(result.lastEditedBy).to.deep.equal({ id: 2, externalId: 456, name: 'Jan Jansen' });
+        expect(result.lastEditedBy).to.deep.equal({ name: 'Jan Jansen' });
     });
 
     it('should reject when no user is provided in the session', async () => {

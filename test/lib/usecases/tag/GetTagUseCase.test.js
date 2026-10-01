@@ -41,7 +41,7 @@ module.exports = () => {
         const createdTag = await TagRepository.insert({ text: `TAG-LAST-EDITED-${Date.now()}`, lastEditedByUserId: 2 });
         const result = await new GetTagUseCase().execute({ params: { tagId: createdTag.id } });
 
-        expect(result.lastEditedBy).to.deep.equal({ id: 2, externalId: 456, name: 'Jan Jansen' });
+        expect(result.lastEditedBy).to.deep.equal({ name: 'Jan Jansen' });
 
         await TagRepository.removeAll(new QueryBuilder().where('id').is(createdTag.id));
     });

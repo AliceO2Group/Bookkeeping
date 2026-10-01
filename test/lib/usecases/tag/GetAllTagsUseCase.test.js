@@ -37,7 +37,7 @@ module.exports = () => {
             expect(tag).to.not.have.property('lastEditedName');
             expect(tag).to.not.have.property('lastEditedByUserId');
             if (tag.lastEditedBy !== null) {
-                expect(tag.lastEditedBy).to.have.all.keys('id', 'externalId', 'name');
+                expect(tag.lastEditedBy).to.have.all.keys('name');
             }
         }
     });
