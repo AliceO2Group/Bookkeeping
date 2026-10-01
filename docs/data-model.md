@@ -101,7 +101,7 @@ Concerning the **Update mode** of the fields:
 | `description`      | Other information on the reason               | `Run stopped due to faulty detector` | AT COE                 | `description`    | Insert          |
 | `reason_type_id`   | Id of the general reason type belonging to    | '1'                                  | AT COE                 | `reason_type_id` | Insert          |
 | `run_id`           | RUN id for which the reason was added         | `500540`                             | AT COE                 | `run_id`         | Insert          |
-| `last_edited_name` | Name of the person who last edited the fields | `Anonymous`, `Jan Janssen`           | When fields are edited | `id`             | Update          |
+| `last_edited_by_user_id` | Id (in `users` table) of the user who last edited the fields | `1`, `2`         | When fields are edited | `id`             | Update          |
 | `created_at`       | When the entity is created                    |                                      | AT COE                 | `created_at`     | Insert          |
 | `updated_at`       | When entity is edited                         |                                      | When fields are edited | `updated_at`     | Update          |
 
