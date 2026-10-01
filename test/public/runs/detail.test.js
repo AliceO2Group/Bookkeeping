@@ -240,7 +240,7 @@ module.exports = () => {
             .to.equal('DETECTORS - CPV - A new EOR reason\nAnonymous');
     });
 
-    it('should display lastEditedName tooltip with "Last edited by" on formatRunEorReason', async () => {
+    it('should display the last editor tooltip with "Last edited by" on formatRunEorReason', async () => {
         const eorReasonElement = await page.$('#eor-reasons .eor-reason');
         const popoverTrigger = await eorReasonElement.$('.popover-trigger');
         expect(popoverTrigger).to.not.be.null;

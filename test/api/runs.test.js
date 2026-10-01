@@ -1145,13 +1145,13 @@ module.exports = () => {
     });
 
     describe('PUT /api/runs/:runNumber', () => {
-        it('should return 500 when run could not be found', (done) => {
+        it('should return 404 when run could not be found', (done) => {
             request(server)
                 .put('/api/runs/9999999999')
                 .send({
                     runQuality: RunQualities.BAD,
                 })
-                .expect(500)
+                .expect(404)
                 .end((err, res) => {
                     if (err) {
                         done(err);
@@ -1198,19 +1198,19 @@ module.exports = () => {
             expect(body.errors[0].detail).to.equal('"body.runQuality" must be one of [good, bad, test, none]');
         });
 
-        it('should return 500 when trying to update the run quality without justification', async () => {
+        it('should return 400 when trying to update the run quality without justification', async () => {
             const { body, status } = await request(server)
                 .put('/api/runs/1')
                 .send({ runQuality: RunQualities.BAD });
-            expect(status).to.equal(500);
+            expect(status).to.equal(400);
             expect(body.errors[0].detail).to.equal('Run quality change require a reason');
         });
 
-        it('should return 500 when trying to update the run quality with an empty justification', async () => {
+        it('should return 400 when trying to update the run quality with an empty justification', async () => {
             const { body, status } = await request(server)
                 .put('/api/runs/1')
                 .send({ runQuality: RunQualities.BAD });
-            expect(status).to.equal(500);
+            expect(status).to.equal(400);
             expect(body.errors[0].detail).to.equal('Run quality change require a reason');
         });
 
@@ -1248,13 +1248,18 @@ module.exports = () => {
             expect(body.data.runNumber).to.equal(106);
             expect(body.data.eorReasons).to.have.lengthOf(1);
             expect(body.data.eorReasons[0].description).to.equal('Some');
+            expect(body.data.eorReasons[0].lastEditedBy).to.deep.equal({ name: 'John Doe' });
+            expect(body.data.eorReasons[0]).to.not.have.property('lastEditedName');
             expect(body.data.runQuality).to.equal(RunQualities.GOOD);
+
+            const { body: { data: fetchedRun } } = await request(server).get('/api/runs/106').expect(200);
+            expect(fetchedRun.eorReasons[0].lastEditedBy).to.deep.equal({ name: 'John Doe' });
         });
 
         it('should give a proper error when a detectorId does not exists', async () => {
             const { body } = await request(server)
                 .put('/api/runs/1')
-                .expect(500)
+                .expect(404)
                 .send({
                     detectorsQualities: [
                         {
@@ -1286,30 +1291,30 @@ module.exports = () => {
             expect(body.data.detectorsQualities[0].quality).to.equal(RunDetectorQualities.GOOD);
         });
 
-        it('should return 500 when trying to update the detector\'s quality of a run that has not ended yet', async () => {
+        it('should return 400 when trying to update the detector\'s quality of a run that has not ended yet', async () => {
             const { body, status } = await request(server)
                 .put('/api/runs/105')
                 .send({
                     detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }],
                     detectorsQualitiesChangeReason: 'Justification',
                 });
-            expect(status).to.equal(500);
+            expect(status).to.equal(400);
             expect(body.errors[0].detail).to.equal('Detector quality can not be updated on a run that has not ended yet');
         });
 
-        it('should return 500 when trying to update the detector\'s quality without justification', async () => {
+        it('should return 400 when trying to update the detector\'s quality without justification', async () => {
             const { body, status } = await request(server)
                 .put('/api/runs/1')
                 .send({ detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }] });
-            expect(status).to.equal(500);
+            expect(status).to.equal(400);
             expect(body.errors[0].detail).to.equal('Detector quality change reason is required when updating detector quality');
         });
 
-        it('should return 500 when trying to update the detector\'s quality with an empty justification', async () => {
+        it('should return 400 when trying to update the detector\'s quality with an empty justification', async () => {
             const { body, status } = await request(server)
                 .put('/api/runs/1')
                 .send({ detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.GOOD }], detectorsQualitiesChangeReason: '     ' });
-            expect(status).to.equal(500);
+            expect(status).to.equal(400);
             expect(body.errors[0].detail).to.equal('Detector quality change reason is required when updating detector quality');
         });
 
@@ -1323,42 +1328,42 @@ module.exports = () => {
             expect(body.data.calibrationStatus).to.equal(RunCalibrationStatus.SUCCESS);
         });
 
-        it('should successfully return 500 when trying to set calibration status for non-calibration run', async () => {
+        it('should return 400 when trying to set calibration status for non-calibration run', async () => {
             const { body, status } = await request(server)
                 .put('/api/runs/106')
                 .send({ calibrationStatus: RunCalibrationStatus.SUCCESS });
-            expect(status).to.equal(500);
+            expect(status).to.equal(400);
             expect(body.errors[0].detail).to.equal('Calibration status is reserved to calibration runs');
         });
 
-        it('should successfully return 500 when trying to set calibration status change reason for non-failed calibration', async () => {
+        it('should return 400 when trying to set calibration status change reason for non-failed calibration', async () => {
             const { body, status } = await request(server)
                 .put('/api/runs/40')
                 .send({ calibrationStatus: RunCalibrationStatus.NO_STATUS, calibrationStatusChangeReason: 'A spurious reason' });
-            expect(status).to.equal(500);
+            expect(status).to.equal(400);
             expect(body.errors[0].detail)
                 .to.equal(`Calibration status change reason can only be specified when changing from/to ${RunCalibrationStatus.FAILED}`);
         });
 
-        it('should successfully return 500 when trying to set calibration status to FAILED without reason', async () => {
+        it('should return 400 when trying to set calibration status to FAILED without reason', async () => {
             const { body, status } = await request(server)
                 .put('/api/runs/40')
                 .send({ calibrationStatus: RunCalibrationStatus.FAILED });
-            expect(status).to.equal(500);
+            expect(status).to.equal(400);
             expect(body.errors[0].detail)
                 .to.equal(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`);
         });
 
-        it('should successfully return 500 when trying to set calibration status to FAILED with an empty', async () => {
+        it('should return 400 when trying to set calibration status to FAILED with an empty', async () => {
             const { body, status } = await request(server)
                 .put('/api/runs/40')
                 .send({ calibrationStatus: RunCalibrationStatus.FAILED, calibrationStatusChangeReason: '      ' });
-            expect(status).to.equal(500);
+            expect(status).to.equal(400);
             expect(body.errors[0].detail)
                 .to.equal(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`);
         });
 
-        it('should successfully return 500 when trying to set calibration status from FAILED without reason', async () => {
+        it('should return 400 when trying to set calibration status from FAILED without reason', async () => {
             await updateRun(
                 { runNumber: 40 },
                 { runPatch: { calibrationStatus: RunCalibrationStatus.FAILED }, metadata: { calibrationStatusChangeReason: 'A reason' } },
@@ -1366,16 +1371,16 @@ module.exports = () => {
             const { body, status } = await request(server)
                 .put('/api/runs/40')
                 .send({ calibrationStatus: RunCalibrationStatus.SUCCESS });
-            expect(status).to.equal(500);
+            expect(status).to.equal(400);
             expect(body.errors[0].detail)
                 .to.equal(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`);
         });
 
-        it('should successfully return 500 when trying to set calibration status from FAILED with an empty reason', async () => {
+        it('should return 400 when trying to set calibration status from FAILED with an empty reason', async () => {
             const { body, status } = await request(server)
                 .put('/api/runs/40')
                 .send({ calibrationStatus: RunCalibrationStatus.SUCCESS, calibrationStatusChangeReason: '    ' });
-            expect(status).to.equal(500);
+            expect(status).to.equal(400);
             expect(body.errors[0].detail)
                 .to.equal(`Calibration status change require a reason when changing from/to ${RunCalibrationStatus.FAILED}`);
         });
@@ -1423,7 +1428,7 @@ module.exports = () => {
     });
 
     describe('PATCH api/runs query:runNumber', () => {
-        it('should return 500 if the wrong id is given', (done) => {
+        it('should return 404 if the wrong id is given', (done) => {
             request(server)
                 .patch('/api/runs?runNumber=99999')
                 .send({
@@ -1435,13 +1440,13 @@ module.exports = () => {
                     aliceDipoleCurrent: 45654.1,
                     aliceDipolePolarity: 'NEGATIVE',
                 })
-                .expect(500)
+                .expect(404)
                 .end((err, res) => {
                     if (err) {
                         done(err);
                         return;
                     }
-                    expect(res.body.errors[0].title).to.equal('ServiceUnavailable');
+                    expect(res.body.errors[0].detail).to.equal('Run with this run number (99999) could not be found');
 
                     done();
                 });
