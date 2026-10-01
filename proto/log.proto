@@ -87,8 +87,8 @@ message Tag {
   string mattermost = 5;
   // Unix timestamp when this entity was last updated.
   int64 updatedAt = 6;
-  // The last person that edited the email/mattermost fields
-  string lastEditedName = 7;
+  reserved 7;
+  reserved "lastEditedName";
   // The description of the tag
   optional string description = 8;
 }

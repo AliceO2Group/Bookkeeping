@@ -33,13 +33,11 @@ module.exports = () => {
         const { tags } = await new GetAllTagsUseCase().execute();
 
         for (const tag of tags) {
-            expect(tag).to.have.property('lastEditedByUserId');
             expect(tag).to.have.property('lastEditedBy');
             expect(tag).to.not.have.property('lastEditedName');
-            if (tag.lastEditedByUserId === null) {
-                expect(tag.lastEditedBy).to.be.null;
-            } else {
-                expect(tag.lastEditedBy.id).to.equal(tag.lastEditedByUserId);
+            expect(tag).to.not.have.property('lastEditedByUserId');
+            if (tag.lastEditedBy !== null) {
+                expect(tag.lastEditedBy).to.have.all.keys('id', 'externalId', 'name');
             }
         }
     });

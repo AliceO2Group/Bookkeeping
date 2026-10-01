@@ -14,6 +14,9 @@
 const { tag: { UpdateTagUseCase } } = require('../../../../lib/usecases/index.js');
 const { dtos: { UpdateTagDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
+const assert = require('assert');
+const { BadParameterError } = require('../../../../lib/server/errors/BadParameterError.js');
+const { NotFoundError } = require('../../../../lib/server/errors/NotFoundError.js');
 
 const { expect } = chai;
 
@@ -39,33 +42,48 @@ module.exports = () => {
         };
     });
     it('should save the correct values', async () => {
-        const { result } = await new UpdateTagUseCase()
+        const result = await new UpdateTagUseCase()
             .execute(updateTagDto);
         expect(result.mattermost).to.equal('tag,tag,tag');
-        expect(result.lastEditedName).to.equal('John Doe');
+        expect(result.lastEditedBy).to.deep.equal({ id: 1, externalId: 1, name: 'John Doe' });
+        expect(result).to.not.have.property('lastEditedName');
         expect(result.email).to.equal('cern@tag.ch,cern@othertag.ch');
         expect(result.description).to.equal('The new tag\'s description');
         expect(result.archived).to.be.true;
     });
 
-    it('should return an error when values do not match', async () => {
-        const newTagDto = await UpdateTagDto.validateAsync({
-            body: {
-                mattermost: 'tag,tag,tag',
-                email: 'cern@tag.ch',
-            },
-            params: {
-                tagId: 9999,
-            },
-        });
-        newTagDto.session = {
-            personid: 1,
-            id: 1,
-            name: 'John Do',
+    it('should store the id of the user performing the update', async () => {
+        updateTagDto.session = {
+            personid: 456,
+            id: 2,
+            name: 'Jan Jansen',
         };
-        const { error } = await new UpdateTagUseCase()
-            .execute(newTagDto);
-        expect(error.status).to.equal('400');
-        expect(error.title).to.equal('this tag with this tag id: (9999) could not be found.');
+        const result = await new UpdateTagUseCase()
+            .execute(updateTagDto);
+        expect(result.lastEditedBy).to.deep.equal({ id: 2, externalId: 456, name: 'Jan Jansen' });
+    });
+
+    it('should reject when no user is provided in the session', async () => {
+        delete updateTagDto.session;
+        await assert.rejects(
+            () => new UpdateTagUseCase().execute(updateTagDto),
+            new BadParameterError('A user is required to update a tag'),
+        );
+    });
+
+    it('should reject when the session user does not exist', async () => {
+        updateTagDto.session = { id: 9999, externalId: 9999, name: 'Ghost' };
+        await assert.rejects(
+            () => new UpdateTagUseCase().execute(updateTagDto),
+            new NotFoundError('User with this id (9999) could not be found'),
+        );
+    });
+
+    it('should reject when the tag does not exist', async () => {
+        updateTagDto.params.tagId = 9999;
+        await assert.rejects(
+            () => new UpdateTagUseCase().execute(updateTagDto),
+            new NotFoundError('Tag with this id (9999) could not be found'),
+        );
     });
 };
