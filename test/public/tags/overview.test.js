@@ -23,6 +23,7 @@ const {
     waitForNavigation,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
+const { repositories: { TagRepository } } = require('../../../lib/database/index.js');
 
 const { expect } = chai;
 
@@ -71,6 +72,25 @@ module.exports = () => {
         expect(headers[2]).to.equal('Updated at');
         expect(headers[3]).to.equal('Mattermost');
         expect(headers[4]).to.equal('Email');
+    });
+
+    it('should display the name of the user who last edited the tag', async () => {
+        await page.waitForSelector('tbody tr[id^="row"]');
+        table = await page.$$('tbody tr');
+        const editedRowId = await getFirstRow(table, page);
+        const editedTagId = parseInt(editedRowId.slice('row'.length), 10);
+
+        await TagRepository.updateAll({ lastEditedByUserId: 2 }, { where: { id: editedTagId } });
+        await page.reload({ waitUntil: 'networkidle0' });
+
+        await page.waitForSelector(`#${editedRowId}-lastEditedBy`);
+        expect(await page.$eval(`#${editedRowId}-lastEditedBy`, (cell) => cell.innerText)).to.equal('Jan Jansen');
+
+        // Tags never edited display a placeholder
+        const uneditedCellText = await page.$eval('tbody tr:nth-child(2) td:nth-child(2)', (cell) => cell.innerText);
+        expect(uneditedCellText).to.equal('-');
+
+        await TagRepository.updateAll({ lastEditedByUserId: null }, { where: { id: editedTagId } });
     });
 
     it('can navigate to a tag detail page', async () => {

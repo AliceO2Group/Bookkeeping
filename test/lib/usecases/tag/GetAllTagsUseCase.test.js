@@ -28,6 +28,19 @@ module.exports = () => {
 
         expect(tags).to.be.an('array');
     });
+
+    it('should return the user who last edited each tag', async () => {
+        const { tags } = await new GetAllTagsUseCase().execute();
+
+        for (const tag of tags) {
+            expect(tag).to.have.property('lastEditedBy');
+            expect(tag).to.not.have.property('lastEditedName');
+            expect(tag).to.not.have.property('lastEditedByUserId');
+            if (tag.lastEditedBy !== null) {
+                expect(tag.lastEditedBy).to.have.all.keys('name');
+            }
+        }
+    });
     it('should return tags sorted by text', async () => {
         const { tags } = await new GetAllTagsUseCase().execute();
 

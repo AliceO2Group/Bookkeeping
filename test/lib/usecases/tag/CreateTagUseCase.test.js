@@ -15,6 +15,10 @@ const { repositories: { TagRepository } } = require('../../../../lib/database/in
 const { tag: { CreateTagUseCase } } = require('../../../../lib/usecases/index.js');
 const { dtos: { CreateTagDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
+const assert = require('assert');
+const { BadParameterError } = require('../../../../lib/server/errors/BadParameterError.js');
+const { NotFoundError } = require('../../../../lib/server/errors/NotFoundError.js');
+const { ConflictError } = require('../../../../lib/server/errors/ConflictError.js');
 
 const { expect } = chai;
 
@@ -27,6 +31,7 @@ module.exports = () => {
                 text: `TAG#${new Date().getTime()}`,
             },
         });
+        createTagDto.session = { id: 1, externalId: 1, name: 'John Doe' };
     });
 
     it('should insert a new Tag', async () => {
@@ -49,7 +54,7 @@ module.exports = () => {
         expect(result.text).to.equal(expectedTitle);
     });
 
-    it('should return null if we are trying to create the same tag again', async () => {
+    it('should reject with a ConflictError if we are trying to create the same tag again', async () => {
         const nTagsBefore = await TagRepository.count();
 
         await new CreateTagUseCase()
@@ -58,11 +63,41 @@ module.exports = () => {
         const nTagsAfter = await TagRepository.count();
         expect(nTagsAfter).to.be.greaterThan(nTagsBefore);
 
-        const result = await new CreateTagUseCase()
-            .execute(createTagDto);
-
-        expect(result).to.be.null;
+        await assert.rejects(
+            () => new CreateTagUseCase().execute(createTagDto),
+            new ConflictError('The provided entity already exists'),
+        );
         expect(await TagRepository.count()).to.equal(nTagsAfter);
+    });
+
+    it('should store the id of the user creating the tag', async () => {
+        const tag = await new CreateTagUseCase().execute(createTagDto);
+        expect(tag).to.not.have.property('lastEditedName');
+
+        const storedTag = await TagRepository.findOne({ where: { id: tag.id } });
+        expect(storedTag.lastEditedByUserId).to.equal(1);
+    });
+
+    it('should reject the creation if no user is provided', async () => {
+        delete createTagDto.session;
+        const nTagsBefore = await TagRepository.count();
+
+        await assert.rejects(
+            () => new CreateTagUseCase().execute(createTagDto),
+            new BadParameterError('A user is required to create a tag'),
+        );
+        expect(await TagRepository.count()).to.equal(nTagsBefore);
+    });
+
+    it('should reject the creation if the user does not exist', async () => {
+        createTagDto.session = { id: 9999, externalId: 9999, name: 'Ghost' };
+        const nTagsBefore = await TagRepository.count();
+
+        await assert.rejects(
+            () => new CreateTagUseCase().execute(createTagDto),
+            new NotFoundError('User with this id (9999) could not be found'),
+        );
+        expect(await TagRepository.count()).to.equal(nTagsBefore);
     });
 
     it('should successfully create a new tag with a description', async () => {
