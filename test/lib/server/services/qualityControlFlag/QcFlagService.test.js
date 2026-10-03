@@ -21,7 +21,7 @@ const { Op } = require('sequelize');
 const { qcFlagAdapter } = require('../../../../../lib/database/adapters');
 const { runService } = require('../../../../../lib/server/services/run/RunService');
 const { gaqDetectorService } = require('../../../../../lib/server/services/gaq/GaqDetectorsService');
-const { gaqService } = require('../../../../../lib/server/services/qualityControlFlag/GaqService.js');
+const { gaqService } = require('../../../../../lib/server/services/gaq/GaqService.js');
 const { qcFlagSummaryService } = require('../../../../../lib/server/services/qualityControlFlag/QcFlagSummaryService.js');
 const { dataPassService } = require('../../../../../lib/server/services/dataPasses/DataPassService.js');
 
