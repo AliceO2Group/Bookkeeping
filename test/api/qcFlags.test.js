@@ -1110,7 +1110,7 @@ module.exports = () => {
                 .delete(`/api/qcFlags/perDataPass?dataPassId=${dataPassId}&token=${BkpRoles.DPG_ASYNC_QC_ADMIN}`);
 
             expect(response.status).to.be.equal(200);
-            expect(response.body.data.deletedCount).to.equal(11); // 9 from seeders, 2 created in POST requests previously in this test
+            expect(response.body.data.deletedCount).to.equal(10); // 9 from seeders, 2 created in POST requests previously in this test, 1 already soft-deleted
         });
     });
 
