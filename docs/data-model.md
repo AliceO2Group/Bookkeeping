@@ -12,7 +12,13 @@
   - [Users](#users)
   - [Tags](#tags)
   - [Environments](#environments)
-  - [LhcFills](#lhcfills)
+    - [LhcFills](#lhcfills)
+    - [RunTypes](#runtypes)
+    - [Host](#host)
+    - [DplDetector](#dpldetector)
+    - [DplProcessType](#dplprocesstype)
+    - [DplProcess](#dplprocess)
+    - [DplProcessExecution](#dplprocessexecution)
 
 ## Introduction
 
@@ -56,7 +62,7 @@ Concerning the **Update mode** of the fields:
 | `time_trg_start`                        | Time when the Trigger subsystem was started.                                             |                                        | At SOR          | `run_number`   | Insert          |
 | `time_trg_end`                          | Time when the Trigger subsystem was stopped.                                             |                                        | At EOR          | `run_number`   | Insert          |
 | `environment_id`                        | Unique identifier of the AliECS environment.                                             | `2UE5fEfvE4J`                          | At SOR          | `run_number`   | Insert          |
-| `run_type`                              | Type of the run, each type will deploy different workflows and/or configurations.	       | `PHYSICS`, `TECHNICAL`, `PEDESTAL`     | At SOR          | `run_number`   | Insert          |
+| `run_type`                              | Type of the run, each type will deploy different workflows and/or configurations.        | `PHYSICS`, `TECHNICAL`, `PEDESTAL`     | At SOR          | `run_number`   | Insert          |
 | `run_quality`                           | Overall quality of the data from the data taking point of view.                          | `good`, `bad`, `test`                  | At EOR          | `run_number`   | Insert          |
 | `n_detectors`                           | Number of detectors in the Run.                                                          | `4`                                    | At SOR          | `run_number`   | Insert          |
 | `n_flps`                                | Number of First Level Processor (FLP) nodes in the Run.                                  | `150`                                  | At SOR          | `run_number`   | Insert          |
@@ -179,12 +185,12 @@ Concerning the **Update mode** of the fields:
 **Description:** Free text labels to add to Runs or Log Entries.    
 **DB main table**: `tags`
 
-| **Field**          | **Description**                                                | **Example**                                   | **Update time**                 | **Update Key** | **Update mode** |
-|--------------------|----------------------------------------------------------------|-----------------------------------------------|---------------------------------|----------------|-----------------|
-| `text`             | Tag name.                                                      | `TPC`, `COSMICS`, `RC`                        |                                 | `id`           | Insert          |
-| `Mattermost`       | Mattermost channels                                            | `Food`, `Bookkeeping updates`                 |                                 | `id`           | Update          |
-| `email`            | Email groups                                                   | `food@cern.ch`, `Bookkeeping-updates@cern.ch` |                                 | `id`           | Update          |
-| `last_edited_by_user_id` | Id (in `users` table) of the user who last edited the tag | `1`, `2`                                      | When the tag is edited          | `id`           | Update          |
+| **Field**                | **Description**                                                      | **Example**                                   | **Update time**                | **Update Key** | **Update mode** |
+|--------------------------|----------------------------------------------------------------------|-----------------------------------------------|--------------------------------|----------------|-----------------|
+| `text`                   | Tag name.                                                            | `TPC`, `COSMICS`, `RC`                        |                                | `id`           | Insert          |
+| `Mattermost`             | Mattermost channels                                                  | `Food`, `Bookkeeping updates`                 |                                | `id`           | Update          |
+| `email`                  | Email groups                                                         | `food@cern.ch`, `Bookkeeping-updates@cern.ch` |                                | `id`           | Update          |
+| `last_edited_by_user_id` | Id (in `users` table) of the user who created or last edited the tag | `1`, `2`                                      | When the tag is created/edited | `id`           | Update          |
 
 ## Environments
 
