@@ -72,6 +72,7 @@ module.exports = () => {
 
     it('should store the id of the user creating the tag', async () => {
         const tag = await new CreateTagUseCase().execute(createTagDto);
+        expect(tag.lastEditedBy).to.deep.equal({ name: 'John Doe' });
         expect(tag).to.not.have.property('lastEditedName');
 
         const storedTag = await TagRepository.findOne({ where: { id: tag.id } });
