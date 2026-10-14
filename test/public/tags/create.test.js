@@ -70,7 +70,7 @@ module.exports = () => {
         await pressElement(page, 'button#submit');
 
         // Because this tag already exists, we expect an error message to appear
-        await expectInnerText(page, '.alert', 'Conflict: The provided entity already exists');
+        await expectInnerText(page, '.alert', 'The request conflicts with existing data: The provided entity already exists');
     });
 
     it('Should show no fields when having no admin roles', async () => {

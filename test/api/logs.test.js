@@ -1224,7 +1224,7 @@ module.exports = () => {
             expect(response.body.data.text).to.equal('Text of yet another run');
             for (const tag of response.body.data.tags) {
                 delete tag.updatedAt;
-                delete tag.lastEditedName;
+                delete tag.lastEditedBy;
             }
             expect(response.body.data.tags).to.deep.equal([
                 {
