@@ -28,6 +28,7 @@ module.exports = () => {
             },
         });
 
+        createTagDto.session = { id: 1, externalId: 1, name: 'John Doe' };
         createdTag = await new CreateTagUseCase()
             .execute(createTagDto);
     });
