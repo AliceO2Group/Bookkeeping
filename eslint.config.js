@@ -33,7 +33,6 @@ module.exports = [
     pluginJs.configs.recommended,
     {
         plugins: {
-            jsdoc,
             '@stylistic/js': stylisticJs,
         },
         languageOptions: {
@@ -114,6 +113,8 @@ module.exports = [
             'jsdoc/no-defaults': ['off'],
             // 'jsdoc/tag-lines': ['error', 'any', { startLines: 1 }],
             'jsdoc/tag-lines': ['off'], // TODO with above 0 or 1
+            'jsdoc/reject-any-type': ['off'], // TODO
+            'jsdoc/reject-function-type': ['off'], // TODO
             '@stylistic/js/array-bracket-newline': [
                 'error',
                 {
