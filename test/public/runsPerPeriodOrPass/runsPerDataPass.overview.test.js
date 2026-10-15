@@ -212,10 +212,9 @@ module.exports = () => {
 
         // Navigate to the page to trigger the GAQ requests
         await navigateToRunsPerDataPass(page, 1, 3, 4);
-        await page.waitForSelector('table tbody tr');
 
-        // Wait for all GAQ requests to complete
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // Wait for the network to settle, so that all GAQ requests (and eventual duplicates) are caught
+        await page.waitForNetworkIdle({ idleTime: 300, timeout: 5000 });
 
         page.off('request', requestHandler);
 
@@ -285,9 +284,7 @@ module.exports = () => {
         const amountSelectorId = '#amountSelector';
         const amountSelectorButtonSelector = `${amountSelectorId} button`;
         await pressElement(page, amountSelectorButtonSelector);
-
-        const amountSelectorDropdown = await page.$(`${amountSelectorId} .dropup-menu`);
-        expect(Boolean(amountSelectorDropdown)).to.be.true;
+        await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
 
         const amountItems5 = `${amountSelectorId} .dropup-menu .menu-item:first-child`;
         await pressElement(page, amountItems5);
@@ -298,7 +295,7 @@ module.exports = () => {
         await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
 
         // Expect the custom per page input to have red border and text color if wrong value typed
-        const customPerPageInput = await page.$(`${amountSelectorId} input[type=number]`);
+        const customPerPageInput = await page.waitForSelector(`${amountSelectorId} input[type=number]`);
         await customPerPageInput.evaluate((input) => input.focus());
         await page.$eval(`${amountSelectorId} input[type=number]`, (el) => {
             el.value = '1111';
@@ -332,10 +329,9 @@ module.exports = () => {
 
     it('can navigate to a run detail page', async () => {
         await navigateToRunsPerDataPass(page, 1, 3, 4);
-        await page.waitForSelector('tbody tr');
         const expectedRunNumber = await getInnerText(await page.waitForSelector('tbody tr:first-of-type a'));
 
-        await waitForNavigation(page, async () => await pressElement(page, 'tbody tr:first-of-type a'));
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr:first-of-type a', true));
         const redirectedUrl = await page.url();
 
         const urlParameters = redirectedUrl.slice(redirectedUrl.indexOf('?') + 1).split('&');
@@ -610,7 +606,7 @@ module.exports = () => {
             const popoverSelector = await getPopoverSelector(await page.waitForSelector('#actions-dropdown-button .popover-trigger'));
 
             await expectInnerText(page, `${popoverSelector} button:nth-child(3)`, 'Unfreeze the data pass');
-            await pressElement(page, `${popoverSelector} button:nth-child(3)`);
+            await pressElement(page, `${popoverSelector} button:nth-child(3)`, true);
         });
 
         it('should successfully enable QC flag creation when data pass is un-frozen', async () => {
