@@ -21,12 +21,25 @@ const { expect } = chai;
 module.exports = () => {
     let getLogDto;
 
+    /**
+     * Ids of the tags created by a test, removed after each test even if it fails
+     * @type {number[]}
+     */
+    let createdTagsIds = [];
+
     beforeEach(async () => {
         getLogDto = await GetTagDto.validateAsync({
             params: {
                 tagId: 1,
             },
         });
+    });
+
+    afterEach(async () => {
+        if (createdTagsIds.length > 0) {
+            await TagRepository.removeAll(new QueryBuilder().where('id').oneOf(...createdTagsIds));
+            createdTagsIds = [];
+        }
     });
 
     it('should return an object that has the `id` property', async () => {
@@ -39,19 +52,17 @@ module.exports = () => {
 
     it('should return the user who last edited the tag', async () => {
         const createdTag = await TagRepository.insert({ text: `TAG-LAST-EDITED-${Date.now()}`, lastEditedByUserId: 2 });
+        createdTagsIds.push(createdTag.id);
         const result = await new GetTagUseCase().execute({ params: { tagId: createdTag.id } });
 
         expect(result.lastEditedBy).to.deep.equal({ name: 'Jan Jansen' });
-
-        await TagRepository.removeAll(new QueryBuilder().where('id').is(createdTag.id));
     });
 
     it('should return null last editor for a tag that was never edited', async () => {
         const createdTag = await TagRepository.insert({ text: `TAG-NEVER-EDITED-${Date.now()}` });
+        createdTagsIds.push(createdTag.id);
         const result = await new GetTagUseCase().execute({ params: { tagId: createdTag.id } });
 
         expect(result.lastEditedBy).to.be.null;
-
-        await TagRepository.removeAll(new QueryBuilder().where('id').is(createdTag.id));
     });
 };

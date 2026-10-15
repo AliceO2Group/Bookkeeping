@@ -142,6 +142,7 @@ module.exports = () => {
 
             expect(response.status).to.equal(201);
             expect(response.body.data.text).to.equal(expectedText);
+            expect(response.body.data.lastEditedBy).to.deep.equal({ name: 'John Doe' });
         });
 
         it('should return 409 if we are creating the same tag again', (done) => {
