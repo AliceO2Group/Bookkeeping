@@ -36,4 +36,11 @@ module.exports = () => {
             new NotFoundError('Data pass with this name (NOT_A_DATA_PASS) could not be found'),
         );
     });
+
+    it('should throw listing every missing data pass', async () => {
+        await assert.rejects(
+            () => getAllDataPassesByNameOrFail(['LHC22b_apass1', 'MISSING_1', 'MISSING_2']),
+            new NotFoundError('Data passes with these names (MISSING_1, MISSING_2) could not be found'),
+        );
+    });
 };

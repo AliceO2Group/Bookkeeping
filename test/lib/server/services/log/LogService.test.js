@@ -42,6 +42,19 @@ module.exports = () => {
         expect(logsForFill.map(({ id }) => id)).to.eql([1, 119]);
     });
 
+    it('Should successfully create a log linked to data passes', async () => {
+        const log = await logService.create(logMock, [], [], [], [], [], ['LHC22b_apass1']);
+
+        expect(log.dataPasses.map(({ name }) => name)).to.deep.equal(['LHC22b_apass1']);
+    });
+
+    it('Should throw when creating a log linked to a non-existing data pass', async () => {
+        await assert.rejects(
+            () => logService.create(logMock, [], [], [], [], [], ['NOT_A_DATA_PASS']),
+            new NotFoundError('Data pass with this name (NOT_A_DATA_PASS) could not be found'),
+        );
+    });
+
     it('Should successfully return all the logs linked to a given environment', async () => {
         const logsForFill = await logService.getAllByEnvironment('8E4aZTjY');
         expect(logsForFill).to.lengthOf(3);
