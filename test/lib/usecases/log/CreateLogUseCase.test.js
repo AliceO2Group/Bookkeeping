@@ -75,6 +75,21 @@ module.exports = () => {
         expect(result.tags.map(({ text }) => text)).to.deep.equal(expectedTagTexts);
     });
 
+    it('should insert a new Log linked to the provided data passes', async () => {
+        createLogDto.body.dataPasses = ['LHC22b_apass1', 'LHC22b_apass1', 'LHC22b_skimming'];
+        const { result } = await new CreateLogUseCase().execute(createLogDto);
+
+        expect(result.dataPasses.map(({ name }) => name).sort()).to.deep.equal(['LHC22b_apass1', 'LHC22b_skimming']);
+    });
+
+    it('should fail to create a Log linked to a non-existing data pass', async () => {
+        createLogDto.body.dataPasses = ['NOT_A_DATA_PASS'];
+        const { result, error } = await new CreateLogUseCase().execute(createLogDto);
+
+        expect(result).to.be.undefined;
+        expect(error.title).to.equal('Data pass with this name (NOT_A_DATA_PASS) could not be found');
+    });
+
     it('should successfully take the parent\'s title if none has been provided', async () => {
         const expectedTitle = 'Third entry';
         const expectedParentLogId = 3;

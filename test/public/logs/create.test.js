@@ -127,6 +127,7 @@ module.exports = () => {
         await expectInputValue(page, 'input#run-numbers', '2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22');
         await expectInputValue(page, 'input#environments', 'Dxi029djX, eZF99lH6');
         await expectInputValue(page, 'input#lhc-fills', '1, 4, 6');
+        // await expectInputValue(page, 'input#data-passes', 'LHC22b_apass1');
     });
 
     it('Should verify that form autofill all inputs with provided full parameters.', async () => {
@@ -769,5 +770,20 @@ ${aob}\
         const tags = lastLog.tags.map(({ text }) => text);
         expect(tags).to.lengthOf(2);
         expect(tags).to.have.members(['P2INFO', 'RC']);
+    });
+
+    it.skip('can create a log with linked data passes', async () => {
+        await goToPage(page, 'log-create');
+
+        await fillInput(page, '#title', 'A log with data passes');
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type('Sample Text');
+        await fillInput(page, 'input#data-passes', 'LHC22b_apass1, LHC22b_skimming');
+
+        await pressElement(page, '#send:not([disabled])');
+        await page.waitForNavigation();
+
+        const lastLog = await getLastLog();
+        expect(lastLog.dataPasses.map(({ name }) => name).sort()).to.eql(['LHC22b_apass1', 'LHC22b_skimming']);
     });
 };
