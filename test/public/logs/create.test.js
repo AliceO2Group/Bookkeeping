@@ -26,6 +26,7 @@ const {
 } = require('../defaults.js');
 const path = require('path');
 const { GetAllLogsUseCase } = require('../../../lib/usecases/log/index.js');
+const { logService } = require('../../../lib/server/services/log/LogService.js');
 const fs = require('fs');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -128,6 +129,7 @@ module.exports = () => {
         await expectInputValue(page, 'input#environments', 'Dxi029djX, eZF99lH6');
         await expectInputValue(page, 'input#lhc-fills', '1, 4, 6');
         await expectInputValue(page, 'input#data-passes', 'LHC22b_apass1');
+        await expectInputValue(page, 'input#simulation-passes', 'LHC23k6c');
     });
 
     it('Should verify that form autofill all inputs with provided full parameters.', async () => {
@@ -785,5 +787,21 @@ ${aob}\
 
         const lastLog = await getLastLog();
         expect(lastLog.dataPasses.map(({ name }) => name).sort()).to.eql(['LHC22b_apass1', 'LHC22b_skimming']);
+    });
+
+    it('can create a log with linked simulation passes', async () => {
+        await goToPage(page, 'log-create');
+
+        await fillInput(page, '#title', 'A log with simulation passes');
+        await pressElement(page, '#text ~ .CodeMirror');
+        await page.keyboard.type('Sample Text');
+        await fillInput(page, 'input#simulation-passes', 'LHC23k6c, LHC23k6b');
+
+        await pressElement(page, '#send:not([disabled])');
+        await page.waitForNavigation();
+
+        const { id } = await getLastLog();
+        const createdLog = await logService.get(id);
+        expect(createdLog.simulationPasses.map(({ name }) => name).sort()).to.eql(['LHC23k6b', 'LHC23k6c']);
     });
 };
