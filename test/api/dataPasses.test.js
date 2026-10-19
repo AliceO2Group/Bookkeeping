@@ -56,6 +56,7 @@ const LHC22b_apass1 = {
     ],
     runsCount: 3,
     simulationPassesCount: 1,
+    logsCount: 2,
 };
 
 module.exports = () => {
