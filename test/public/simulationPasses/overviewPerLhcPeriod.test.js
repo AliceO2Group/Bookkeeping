@@ -23,6 +23,7 @@ const {
     validateTableData,
     expectInnerText,
     getTableDataSlice,
+    waitForTableLength,
     waitForNavigation,
     openFilteringPanel,
     expectInputValue,
@@ -83,6 +84,7 @@ module.exports = () => {
 
     it('shows the amount of logs linked to each simulation pass', async () => {
         await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
+        await waitForTableLength(page, 2);
 
         const tableSlice = await getTableDataSlice(page, ['name', 'associatedLogs']);
         expect(tableSlice.map(({ name, associatedLogs }) => ({ name, logsCount: Number(associatedLogs.split('\n')[0]) || 0 })))
@@ -94,6 +96,7 @@ module.exports = () => {
 
     it('can navigate to the logs overview filtered by simulation pass', async () => {
         await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
+        await waitForTableLength(page, 2);
         const [{ name }] = await getTableDataSlice(page, ['name']);
 
         await waitForNavigation(page, () => pressElement(page, 'tbody tr:nth-of-type(1) td:nth-of-type(4) a'));
