@@ -128,6 +128,62 @@ module.exports = () => {
         }
     });
 
+    it('should successfully filter on data passes, requiring all of them', async () => {
+        // Other tests of the suite may have created logs linked to data passes, so only check seeded logs and the filter semantic
+        const getDataPassNames = (log) => log.dataPasses.map(({ name }) => name);
+
+        getAllLogsDto.query = { filter: { dataPasses: ['LHC22b_apass1'] } };
+        let { logs } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+        expect(logs.map(({ id }) => id)).to.include.members([1, 119]);
+        expect(logs.every((log) => getDataPassNames(log).includes('LHC22b_apass1'))).to.be.true;
+
+        getAllLogsDto.query = { filter: { dataPasses: ['LHC22b_apass1', 'LHC22b_skimming'] } };
+        ({ logs } = await new GetAllLogsUseCase().execute(getAllLogsDto));
+        expect(logs.map(({ id }) => id)).to.include(1);
+        expect(logs.map(({ id }) => id)).to.not.include(119);
+        expect(logs.every((log) => ['LHC22b_apass1', 'LHC22b_skimming'].every((name) => getDataPassNames(log).includes(name)))).to.be.true;
+        // Linked data passes are all returned, not only the filtered ones
+        expect(getDataPassNames(logs.find(({ id }) => id === 1)).sort()).to.deep.equal(['LHC22b_apass1', 'LHC22b_skimming']);
+
+        getAllLogsDto.query = { filter: { dataPasses: ['LHC22b_apass1', 'NOT_A_DATA_PASS'] } };
+        ({ logs } = await new GetAllLogsUseCase().execute(getAllLogsDto));
+        expect(logs).to.lengthOf(0);
+    });
+
+    it('should successfully filter on the LHC periods of the linked data passes', async () => {
+        const getPeriodsDataPassNames = (log) => log.dataPasses.map(({ name }) => name.split('_')[0]);
+
+        getAllLogsDto.query = { filter: { lhcPeriods: ['LHC22b'] } };
+        let { logs } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+        expect(logs.map(({ id }) => id)).to.include.members([1, 119]);
+        expect(logs.map(({ id }) => id)).to.not.include(2);
+        expect(logs.every((log) => getPeriodsDataPassNames(log).includes('LHC22b'))).to.be.true;
+
+        getAllLogsDto.query = { filter: { lhcPeriods: ['LHC22a'] } };
+        ({ logs } = await new GetAllLogsUseCase().execute(getAllLogsDto));
+        expect(logs.map(({ id }) => id)).to.deep.equal([2]);
+
+        // At least one of the periods must match
+        getAllLogsDto.query = { filter: { lhcPeriods: ['LHC22a', 'LHC22b'] } };
+        ({ logs } = await new GetAllLogsUseCase().execute(getAllLogsDto));
+        expect(logs.map(({ id }) => id)).to.include.members([1, 2, 119]);
+
+        getAllLogsDto.query = { filter: { lhcPeriods: ['NOT_A_PERIOD'] } };
+        ({ logs } = await new GetAllLogsUseCase().execute(getAllLogsDto));
+        expect(logs).to.lengthOf(0);
+    });
+
+    it('should successfully combine the data passes and LHC periods filters', async () => {
+        getAllLogsDto.query = { filter: { dataPasses: ['LHC22b_skimming'], lhcPeriods: ['LHC22b'] } };
+        let { logs } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+        expect(logs.map(({ id }) => id)).to.include(1);
+        expect(logs.map(({ id }) => id)).to.not.include(119);
+
+        getAllLogsDto.query = { filter: { dataPasses: ['LHC22b_skimming'], lhcPeriods: ['LHC22a'] } };
+        ({ logs } = await new GetAllLogsUseCase().execute(getAllLogsDto));
+        expect(logs).to.lengthOf(0);
+    });
+
     it ('should successfully filter on log environment', async () => {
         const environmentIds = ['8E4aZTjY', 'eZF99lH6'];
         getAllLogsDto.query = { filter: { environmentIds } };
