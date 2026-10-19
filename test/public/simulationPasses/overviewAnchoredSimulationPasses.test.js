@@ -61,6 +61,7 @@ module.exports = () => {
             name: (name) => periodNameRegex.test(name),
             associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
             associatedDataPasses: (display) => /(No anchorage)|(\d+)/.test(display),
+            associatedLogs: (display) => /(No logs)|(\d+)/.test(display),
             pwg: (pwg) => /PWG.+/.test(pwg),
             jiraId: (jiraId) => /[A-Z][A-Z0-9]+-[0-9]+/.test(jiraId),
             requestedEventsCount: (requestedEventsCount) => !isNaN(requestedEventsCount.replace(/,/g, '')),
