@@ -352,6 +352,14 @@ module.exports = () => {
         expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
     });
 
+    it('should successfully display the list of related simulation passes as hyperlinks to their runs page', async () => {
+        await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
+
+        await waitForNavigation(page, () => pressElement(page, '#row119-simulationPasses a'));
+        expectUrlParams(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' });
+    });
+
     it('should successfult navigate to run details via popover', async () => {
         await goToPage(page, 'log-overview');
         await waitForFirstRowToHaveId(page, 'row119');

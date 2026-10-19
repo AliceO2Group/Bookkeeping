@@ -1071,6 +1071,7 @@ module.exports = () => {
                     expect(log.lhcFills.map(({ fillNumber }) => fillNumber)).to.have.members([5, 6]);
                     expect(log.environments.map(({ id }) => id)).to.have.members(['8E4aZTjY', 'eZF99lH6']);
                     expect(log.dataPasses.map(({ name }) => name)).to.have.members(['LHC22b_apass1', 'LHC22b_skimming']);
+                    expect(log.simulationPasses.map(({ name }) => name)).to.have.members(['LHC23k6c', 'LHC23k6b']);
                     expect(log.attachments).to.be.an('array');
                     // Tags must be complete to be displayed with their color and archived state
                     expect(log.tags).to.not.be.empty;

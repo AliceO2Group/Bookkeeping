@@ -256,6 +256,17 @@ module.exports = () => {
             }
         });
 
+        it('should return the simulation passes linked to each log', async () => {
+            const response = await request(server).get('/api/logs?sort[id]=asc');
+            expect(response.status).to.equal(200);
+
+            const log1 = response.body.data.find(({ id }) => id === 1);
+            expect(log1.simulationPasses.map(({ name }) => name).sort()).to.deep.equal(['LHC23k6b', 'LHC23k6c']);
+            for (const { simulationPasses } of response.body.data) {
+                expect(simulationPasses).to.be.an('array');
+            }
+        });
+
         it('should return the data passes linked to each log', async () => {
             const response = await request(server).get('/api/logs?sort[id]=asc');
             expect(response.status).to.equal(200);
