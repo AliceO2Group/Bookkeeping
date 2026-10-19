@@ -113,8 +113,10 @@ module.exports = () => {
         expect(log.lhcFills.map(({ fillNumber }) => fillNumber)).to.have.members([5, 6]);
         expect(log.environments.map(({ id }) => id)).to.have.members(['8E4aZTjY', 'eZF99lH6']);
         expect(log.dataPasses.map(({ name }) => name)).to.have.members(['LHC22b_apass1', 'LHC22b_skimming']);
+        // Complete tags (with their color and archived state) are required to display the logs, the author is only exposed by name
         expect(log.tags).to.not.be.empty;
-        expect(log.author).to.not.be.null;
+        expect(log.tags.every(({ archived, updatedAt }) => typeof archived === 'boolean' && typeof updatedAt === 'number')).to.be.true;
+        expect(log.author.name).to.be.a('string');
     });
 
     it('Should successfully return the attachments of logs linked to a run, an LHC fill or an environment', async () => {

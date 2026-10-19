@@ -1072,6 +1072,9 @@ module.exports = () => {
                     expect(log.environments.map(({ id }) => id)).to.have.members(['8E4aZTjY', 'eZF99lH6']);
                     expect(log.dataPasses.map(({ name }) => name)).to.have.members(['LHC22b_apass1', 'LHC22b_skimming']);
                     expect(log.attachments).to.be.an('array');
+                    // Tags must be complete to be displayed with their color and archived state
+                    expect(log.tags).to.not.be.empty;
+                    expect(log.tags.every(({ archived }) => typeof archived === 'boolean')).to.be.true;
                     done();
                 });
         });
