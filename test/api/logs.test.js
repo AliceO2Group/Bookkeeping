@@ -1425,6 +1425,30 @@ module.exports = () => {
             expect(logs.find(({ id }) => id === log.id).dataPasses).to.have.lengthOf(2);
         });
 
+        it('should return 201 and link the simulation passes if a proper body with simulation pass names was sent', async () => {
+            const { body: { data: log } } = await request(server)
+                .post('/api/logs')
+                .field('title', 'Log with simulation passes')
+                .field('text', 'Text of log with simulation passes')
+                .field('simulationPasses[]', 'LHC23k6c')
+                .field('simulationPasses[]', 'LHC23k6a')
+                .expect(201);
+
+            expect(log.simulationPasses.map(({ name }) => name).sort()).to.deep.equal(['LHC23k6a', 'LHC23k6c']);
+
+            const { body: { data: fetchedLog } } = await request(server).get(`/api/logs/${log.id}`).expect(200);
+            expect(fetchedLog.simulationPasses.map(({ name }) => name).sort()).to.deep.equal(['LHC23k6a', 'LHC23k6c']);
+        });
+
+        it('should return 400 if one of the simulation passes does not exist', async () => {
+            await request(server)
+                .post('/api/logs')
+                .field('title', 'Log with unknown simulation pass')
+                .field('text', 'Text of log with unknown simulation pass')
+                .field('simulationPasses[]', 'NOT_A_SIMULATION_PASS')
+                .expect(400);
+        });
+
         it('should return 400 if one of the data passes does not exist', async () => {
             await request(server)
                 .post('/api/logs')
@@ -1460,6 +1484,11 @@ module.exports = () => {
         it('should return the data passes linked to the log', async () => {
             const { body: { data } } = await request(server).get('/api/logs/119').expect(200);
             expect(data.dataPasses).to.deep.equal([{ id: 1, name: 'LHC22b_apass1' }]);
+        });
+
+        it('should return the simulation passes linked to the log', async () => {
+            const { body: { data } } = await request(server).get('/api/logs/119').expect(200);
+            expect(data.simulationPasses).to.deep.equal([{ id: 1, name: 'LHC23k6c' }]);
         });
 
         it('should return 400 if the log id is not a number', (done) => {

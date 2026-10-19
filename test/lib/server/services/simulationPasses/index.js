@@ -12,7 +12,9 @@
  */
 
 const SimulationPassesService = require('./SimulationPassesService.test.js');
+const getAllSimulationPassesByNameOrFail = require('./getAllSimulationPassesByNameOrFail.test.js');
 
 module.exports = () => {
     describe('SimulationPassesService', SimulationPassesService);
+    describe('getAllSimulationPassesByNameOrFail', getAllSimulationPassesByNameOrFail);
 };
