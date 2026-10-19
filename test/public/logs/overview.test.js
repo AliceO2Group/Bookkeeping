@@ -344,6 +344,14 @@ module.exports = () => {
         expectUrlParams(page, { page: 'lhc-fill-details', fillNumber: 1 });
     });
 
+    it('should successfully display the list of related data passes as hyperlinks to their runs page', async () => {
+        await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
+
+        await waitForNavigation(page, () => pressElement(page, '#row119-dataPasses a'));
+        expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
+    });
+
     it('should successfult navigate to run details via popover', async () => {
         await goToPage(page, 'log-overview');
         await waitForFirstRowToHaveId(page, 'row119');

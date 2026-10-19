@@ -32,6 +32,13 @@ module.exports = () => {
         expect(logs).to.be.an('array');
     });
 
+    it('should return the data passes of each log', async () => {
+        const { logs } = await new GetAllLogsUseCase().execute();
+
+        expect(logs.every(({ dataPasses }) => Array.isArray(dataPasses))).to.be.true;
+        expect(logs.find(({ id }) => id === 119).dataPasses.map(({ name }) => name)).to.deep.equal(['LHC22b_apass1']);
+    });
+
     it('should return an array, only containing human originated logs', async () => {
         getAllLogsDto.query = { filter: { origin: 'human' } };
         const { logs } = await new GetAllLogsUseCase()
