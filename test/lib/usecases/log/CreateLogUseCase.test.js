@@ -82,6 +82,21 @@ module.exports = () => {
         expect(result.dataPasses.map(({ name }) => name).sort()).to.deep.equal(['LHC22b_apass1', 'LHC22b_skimming']);
     });
 
+    it('should insert a new Log linked to the provided simulation passes', async () => {
+        createLogDto.body.simulationPasses = ['LHC23k6c', 'LHC23k6c', 'LHC23k6b'];
+        const { result } = await new CreateLogUseCase().execute(createLogDto);
+
+        expect(result.simulationPasses.map(({ name }) => name).sort()).to.deep.equal(['LHC23k6b', 'LHC23k6c']);
+    });
+
+    it('should fail to create a Log linked to a non-existing simulation pass', async () => {
+        createLogDto.body.simulationPasses = ['NOT_A_SIMULATION_PASS'];
+        const { result, error } = await new CreateLogUseCase().execute(createLogDto);
+
+        expect(result).to.be.undefined;
+        expect(error.title).to.equal('Simulation pass with this name (NOT_A_SIMULATION_PASS) could not be found');
+    });
+
     it('should fail to create a Log linked to a non-existing data pass', async () => {
         createLogDto.body.dataPasses = ['NOT_A_DATA_PASS'];
         const { result, error } = await new CreateLogUseCase().execute(createLogDto);

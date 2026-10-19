@@ -42,6 +42,20 @@ module.exports = () => {
         expect(logsForFill.map(({ id }) => id)).to.eql([1, 119]);
     });
 
+    it('Should successfully create a log linked to simulation passes', async () => {
+        const log = await logService.create(logMock, [], [], [], [], [], [], ['LHC23k6c', 'LHC23k6a']);
+
+        expect(log.simulationPasses.map(({ name }) => name)).to.have.members(['LHC23k6c', 'LHC23k6a']);
+        expect(log.simulationPasses.every(({ id }) => typeof id === 'number')).to.be.true;
+    });
+
+    it('Should throw when creating a log linked to a non-existing simulation pass', async () => {
+        await assert.rejects(
+            () => logService.create(logMock, [], [], [], [], [], [], ['NOT_A_SIMULATION_PASS']),
+            new NotFoundError('Simulation pass with this name (NOT_A_SIMULATION_PASS) could not be found'),
+        );
+    });
+
     it('Should successfully create a log linked to data passes', async () => {
         const log = await logService.create(logMock, [], [], [], [], [], ['LHC22b_apass1']);
 
