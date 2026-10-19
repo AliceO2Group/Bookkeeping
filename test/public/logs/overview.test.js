@@ -461,6 +461,19 @@ module.exports = () => {
             await waitForEmptyTable(page);
         });
 
+        it('can filter by simulation passes', async () => {
+            await openFilteringPanel(page);
+            await fillInput(page, '.simulationPasses-textFilter', 'LHC23k6c', ['change']);
+            await waitForTableLength(page, 2);
+
+            // At least one of the simulation passes must be linked to the log entry
+            await fillInput(page, '.simulationPasses-textFilter', 'LHC23k6b, LHC23k6a', ['change']);
+            await waitForTableLength(page, 2);
+
+            await fillInput(page, '.simulationPasses-textFilter', 'NOT_A_SIMULATION_PASS', ['change']);
+            await waitForEmptyTable(page);
+        });
+
         it('can filter by LHC periods inherited from the data passes and explain it with an info tooltip', async () => {
             await openFilteringPanel(page);
 

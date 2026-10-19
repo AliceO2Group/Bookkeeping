@@ -289,6 +289,17 @@ module.exports = () => {
             expect(singleResponse.body.data.map(({ id }) => id).sort((a, b) => a - b)).to.deep.equal([1, 119]);
         });
 
+        it('should successfully filter by simulation pass names', async () => {
+            // At least one of the simulation passes must be linked to the log
+            const response = await request(server).get('/api/logs?filter[simulationPasses]=LHC23k6b,LHC23k6a');
+            expect(response.status).to.equal(200);
+            expect(response.body.data.map(({ id }) => id).sort((a, b) => a - b)).to.deep.equal([1, 2]);
+
+            const singleResponse = await request(server).get('/api/logs?filter[simulationPasses]=LHC23k6c');
+            expect(singleResponse.status).to.equal(200);
+            expect(singleResponse.body.data.map(({ id }) => id).sort((a, b) => a - b)).to.deep.equal([1, 119]);
+        });
+
         it('should successfully filter by LHC period names', async () => {
             const response = await request(server).get('/api/logs?filter[lhcPeriods]=LHC22a');
             expect(response.status).to.equal(200);
@@ -299,8 +310,8 @@ module.exports = () => {
             expect(multipleResponse.body.data.map(({ id }) => id).sort((a, b) => a - b)).to.deep.equal([1, 2, 119]);
         });
 
-        it('should return an empty list when filtering by unknown data pass or LHC period', async () => {
-            for (const [filterKey, value] of [['dataPasses', 'NOT_A_DATA_PASS'], ['lhcPeriods', 'NOT_A_PERIOD']]) {
+        it('should return an empty list when filtering by unknown data pass, simulation pass or LHC period', async () => {
+            for (const [filterKey, value] of [['dataPasses', 'NOT_A_DATA_PASS'], ['simulationPasses', 'NOT_A_SIMULATION_PASS'], ['lhcPeriods', 'NOT_A_PERIOD']]) {
                 const response = await request(server).get(`/api/logs?filter[${filterKey}]=${value}`);
                 expect(response.status).to.equal(200);
                 expect(response.body.data).to.lengthOf(0);
