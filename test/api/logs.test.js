@@ -268,9 +268,10 @@ module.exports = () => {
         });
 
         it('should successfully filter by data pass names', async () => {
-            const response = await request(server).get('/api/logs?filter[dataPasses]=LHC22b_apass1,LHC22b_skimming');
+            // At least one of the data passes must be linked to the log
+            const response = await request(server).get('/api/logs?filter[dataPasses]=LHC22b_skimming,LHC22a_apass1');
             expect(response.status).to.equal(200);
-            expect(response.body.data.map(({ id }) => id)).to.deep.equal([1]);
+            expect(response.body.data.map(({ id }) => id).sort((a, b) => a - b)).to.deep.equal([1, 2]);
 
             const singleResponse = await request(server).get('/api/logs?filter[dataPasses]=LHC22b_apass1');
             expect(singleResponse.status).to.equal(200);

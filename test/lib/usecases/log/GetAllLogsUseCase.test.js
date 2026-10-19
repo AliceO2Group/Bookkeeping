@@ -128,26 +128,32 @@ module.exports = () => {
         }
     });
 
-    it('should successfully filter on data passes, requiring all of them', async () => {
+    it('should successfully filter on data passes, requiring at least one of them', async () => {
         // Other tests of the suite may have created logs linked to data passes, so only check seeded logs and the filter semantic
         const getDataPassNames = (log) => log.dataPasses.map(({ name }) => name);
 
         getAllLogsDto.query = { filter: { dataPasses: ['LHC22b_apass1'] } };
         let { logs } = await new GetAllLogsUseCase().execute(getAllLogsDto);
         expect(logs.map(({ id }) => id)).to.include.members([1, 119]);
+        expect(logs.map(({ id }) => id)).to.not.include(2);
         expect(logs.every((log) => getDataPassNames(log).includes('LHC22b_apass1'))).to.be.true;
 
-        getAllLogsDto.query = { filter: { dataPasses: ['LHC22b_apass1', 'LHC22b_skimming'] } };
+        getAllLogsDto.query = { filter: { dataPasses: ['LHC22b_skimming', 'LHC22a_apass1'] } };
         ({ logs } = await new GetAllLogsUseCase().execute(getAllLogsDto));
-        expect(logs.map(({ id }) => id)).to.include(1);
+        expect(logs.map(({ id }) => id)).to.include.members([1, 2]);
         expect(logs.map(({ id }) => id)).to.not.include(119);
-        expect(logs.every((log) => ['LHC22b_apass1', 'LHC22b_skimming'].every((name) => getDataPassNames(log).includes(name)))).to.be.true;
+        expect(logs.every((log) => ['LHC22b_skimming', 'LHC22a_apass1'].some((name) => getDataPassNames(log).includes(name)))).to.be.true;
         // Linked data passes are all returned, not only the filtered ones
         expect(getDataPassNames(logs.find(({ id }) => id === 1)).sort()).to.deep.equal(['LHC22b_apass1', 'LHC22b_skimming']);
 
-        getAllLogsDto.query = { filter: { dataPasses: ['LHC22b_apass1', 'NOT_A_DATA_PASS'] } };
+        getAllLogsDto.query = { filter: { dataPasses: ['NOT_A_DATA_PASS'] } };
         ({ logs } = await new GetAllLogsUseCase().execute(getAllLogsDto));
         expect(logs).to.lengthOf(0);
+
+        // Unknown data passes are ignored when at least another one matches
+        getAllLogsDto.query = { filter: { dataPasses: ['LHC22a_apass1', 'NOT_A_DATA_PASS'] } };
+        ({ logs } = await new GetAllLogsUseCase().execute(getAllLogsDto));
+        expect(logs.map(({ id }) => id)).to.include(2);
     });
 
     it('should successfully filter on the LHC periods of the linked data passes', async () => {
