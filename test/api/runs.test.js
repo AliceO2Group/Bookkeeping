@@ -1066,6 +1066,12 @@ module.exports = () => {
                             runNumber: 1,
                         },
                     ]);
+                    // Relations used by the embedded logs table of the run details page must be returned too
+                    const log = res.body.data[0];
+                    expect(log.lhcFills.map(({ fillNumber }) => fillNumber)).to.have.members([5, 6]);
+                    expect(log.environments.map(({ id }) => id)).to.have.members(['8E4aZTjY', 'eZF99lH6']);
+                    expect(log.dataPasses.map(({ name }) => name)).to.have.members(['LHC22b_apass1', 'LHC22b_skimming']);
+                    expect(log.attachments).to.be.an('array');
                     done();
                 });
         });

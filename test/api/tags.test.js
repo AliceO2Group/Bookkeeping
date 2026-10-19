@@ -473,6 +473,21 @@ module.exports = () => {
                 });
         });
     });
+    describe('GET /api/tags/:tagId/logs relations', () => {
+        it('should return the relations displayed in the embedded logs table', async () => {
+            const response = await request(server).get('/api/tags/3/logs');
+            expect(response.status).to.equal(200);
+
+            // Log 1 is linked to all kind of entities, which must be returned for logs displayed in embedded tables
+            const log = response.body.data.find(({ id }) => id === 1);
+            expect(log.runs).to.deep.equal([{ id: 1, runNumber: 1 }]);
+            expect(log.lhcFills.map(({ fillNumber }) => fillNumber)).to.have.members([5, 6]);
+            expect(log.environments.map(({ id }) => id)).to.have.members(['8E4aZTjY', 'eZF99lH6']);
+            expect(log.dataPasses.map(({ name }) => name)).to.have.members(['LHC22b_apass1', 'LHC22b_skimming']);
+            expect(log.attachments).to.be.an('array');
+        });
+    });
+
     describe('GET /api/tags/name', () => {
         it('should return 200 if a valid query is given', (done) => {
             request(server)
