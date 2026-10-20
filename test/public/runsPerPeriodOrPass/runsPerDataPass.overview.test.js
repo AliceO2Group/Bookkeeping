@@ -97,6 +97,30 @@ module.exports = () => {
         expect(viewTitleElements).to.have.all.ordered.members(['Physics Runs', 'LHC22b_apass1']);
     });
 
+    it('leaves enough room around the table to display its shadow', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 1 } });
+        await page.waitForSelector('.sticky-table-wrapper table tbody tr');
+
+        // The scrollable wrappers clip what overflows them: the table shadow is visible only if there is some room around the table
+        const { shadow, spaceLeft, paddingRight, spaceBottom } = await page.evaluate(() => {
+            const table = document.querySelector('.sticky-table-wrapper table');
+            const wrapper = document.querySelector('.sticky-table-wrapper');
+            const tableBox = table.getBoundingClientRect();
+            const wrapperBox = wrapper.getBoundingClientRect();
+            return {
+                shadow: getComputedStyle(table).boxShadow,
+                spaceLeft: tableBox.left - wrapperBox.left,
+                // The table may overflow horizontally (scroll), so its right side can only be checked through the wrapper padding
+                paddingRight: parseFloat(getComputedStyle(wrapper).paddingRight),
+                spaceBottom: wrapperBox.bottom - tableBox.bottom,
+            };
+        });
+        expect(shadow).to.not.equal('none');
+        expect(spaceLeft).to.be.at.least(5);
+        expect(paddingRight).to.be.at.least(5);
+        expect(spaceBottom).to.be.at.least(5);
+    });
+
     it('shows correct datatypes in respective columns', async () => {
         const commonColumnsValidators = {
             runNumber: (number) => !isNaN(number),
