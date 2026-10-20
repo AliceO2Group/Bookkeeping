@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bookkeeping HTTP API</title>
+<link rel="shortcut icon" href="/favicon.ico">
+<style>
+/* Palette shared with the Bookkeeping GUI (@aliceo2/web-ui bootstrap.css) */
+:root {
+  --red: #d62631; --orange: #ef8239; --blue: #39a6ef; --blue-dark: #1f6fa8; --light-blue: #dbedff; --green: #4caf50;
+  --gray-darker: #757575; --gray: #d5d5d5; --gray-light: #eee; --gray-lighter: #f7f7f7;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: #000; background: #fff; }
+header { background: #000; border-bottom: 4px solid var(--red); }
+header div { max-width: 62rem; margin: 0 auto; padding: .5rem 1rem; display: flex; align-items: center; gap: 1rem; }
+header img { height: 3rem; }
+header strong { color: #fff; font-size: 1.25rem; font-weight: 600; }
+header span { color: var(--gray); font-size: .9rem; margin-left: .5rem; }
+nav { margin-left: auto; font-size: .9rem; display: flex; gap: 1rem; }
+nav a { color: var(--blue); }
+main { max-width: 62rem; margin: 0 auto; padding: 1rem 1rem 4rem; }
+a { color: var(--blue-dark); }
+h1 { display: none; }
+h2 { margin-top: 2.5rem; padding-bottom: .3rem; border-bottom: 2px solid var(--gray-light); }
+h2::before { content: ""; display: inline-block; width: .5rem; height: 1.1rem; background: var(--red); margin-right: .6rem; vertical-align: -.1rem; }
+details { margin-top: 1rem; }
+details[open] { padding-bottom: .5rem; }
+summary { cursor: pointer; list-style: none; }
+summary::-webkit-details-marker { display: none; }
+summary h3::after { content: "\25B8"; float: right; color: var(--gray-darker); }
+details[open] summary h3::after { content: "\25BE"; }
+summary:hover h3 { background: var(--light-blue); }
+h3 { margin: 0; padding: .5rem .75rem; background: var(--gray-lighter); border-left: 4px solid var(--blue); border-radius: 0 4px 4px 0; font-size: 1.1rem; }
+h3 code { background: none; padding: 0; font-size: 1em; }
+.method { display: inline-block; min-width: 4.2rem; padding: .05rem .5rem; margin-right: .4rem; border-radius: 4px; color: #fff; font: 700 .8rem monospace; text-align: center; background: var(--blue-dark); }
+.method.post { background: #2f7d32; } .method.put, .method.patch { background: #b85410; } .method.delete { background: var(--red); }
+h3:has(.post) { border-left-color: var(--green); } h3:has(.put), h3:has(.patch) { border-left-color: var(--orange); } h3:has(.delete) { border-left-color: var(--red); }
+code { font-family: monospace, monospace; font-size: .85em; padding: .15em .4em; background: var(--gray-lighter); border-radius: 3px; }
+pre { background: #1e2a33; color: #e8eef2; padding: .8rem 1rem; border-radius: 6px; overflow-x: auto; border-left: 4px solid var(--orange); }
+pre code { background: none; padding: 0; color: inherit; font-size: .85rem; }
+table { border-collapse: collapse; display: block; overflow-x: auto; margin: 1rem 0; }
+th { background: var(--gray-light); }
+th, td { border: 1px solid var(--gray); padding: .35rem .6rem; text-align: left; vertical-align: top; }
+blockquote { margin: 1rem 0; padding: .1rem 1rem; background: #ffe8c8; border-left: 4px solid var(--orange); }
+footer { max-width: 62rem; margin: 0 auto; padding: 1rem; color: var(--gray-darker); font-size: .85rem; border-top: 1px solid var(--gray-light); }
+.no-llm { margin-left: .75rem; padding: .05rem .5rem; border: 1px solid var(--red); border-radius: 999px; color: var(--red); background: #fff; font-size: .75rem; font-weight: 600; }
+</style>
+</head>
+<body>
+<header><div>
+<img src="/assets/alice.png" alt="ALICE">
+<strong>Bookkeeping<span>HTTP API</span></strong>
+<nav><a href="/api-docs/openapi.yaml">OpenAPI spec</a><a href="/api-docs/API.md">Markdown (for LLMs)</a></nav>
+</div></header>
+<main>
+<h1>Bookkeeping HTTP API</h1>
+<p>HTTP API of the ALICE Bookkeeping. <strong>Internal use only.</strong></p>
+<blockquote>
+<p>Pilot: only the <code>tags</code> resource is documented so far.</p>
+</blockquote>
+<h2>Authentication</h2>
+<p>Every request carries a JWT in the <code>token</code> <strong>query parameter</strong> (e.g. <code>GET /api/tags?token=&lt;jwt&gt;</code>).
+The token&#39;s <code>access</code> claim lists the user&#39;s roles; operations marked with a role below return <code>403</code> otherwise.</p>
+<h2>Response envelope</h2>
+<p>Successful responses are <code>{ &quot;data&quot;: ... }</code>, with <code>meta.page</code> added on paginated endpoints.
+Failed responses are <code>{ &quot;errors&quot;: [ { status, title, detail?, source? } ] }</code>.
+Note that request-validation failures are sent with <strong>HTTP 400</strong> while each error&#39;s <code>status</code> field says <code>&quot;422&quot;</code>.</p>
+<h2>Conventions</h2>
+<ul>
+<li>Filters use bracket syntax: <code>filter[partialText]=foo</code>. List-valued filters are comma separated: <code>filter[ids]=1,2,3</code>.</li>
+<li>Pagination uses <code>page[limit]</code> and <code>page[offset]</code>.</li>
+<li>Timestamps are Unix epoch <strong>milliseconds</strong>.</li>
+<li>Operations flagged <code>x-llm-exclude: true</code> change data and are <strong>not meant for LLMs or MCP tools</strong>; skip them when generating tools.</li>
+</ul>
+<h2>Instructions for LLMs and automated agents</h2>
+<ul>
+<li><strong>Always paginate</strong> when an endpoint supports <code>page[limit]</code> and <code>page[offset]</code>. Never rely on the default: when <code>page[limit]</code> is omitted the server
+may return up to 5000 items, which is far too much for a model context.</li>
+<li><strong>Request at most 100 items per call</strong> (<code>page[limit]=100</code>). This is a rule for LLMs and agents, not a server limit (the server accepts more).</li>
+<li>To read more, repeat the call increasing <code>page[offset]</code> by the limit until <code>offset</code> reaches <code>meta.page.totalCount</code>.</li>
+<li>Prefer narrowing the request with <code>filter[...]</code> parameters over reading everything and filtering afterwards.</li>
+<li>Endpoints that are not paginated (for example <code>GET /tags</code>) return everything: use their filters.</li>
+<li>Do not call operations flagged <code>x-llm-exclude: true</code>: they create, change or delete data.</li>
+</ul>
+<h2>Quick start</h2>
+<p>The examples below read the server address and the JWT from the environment:</p>
+<pre><code class="language-bash">export BOOKKEEPING_URL=http://localhost:4000
+export TOKEN=&lt;your jwt&gt;
+</code></pre>
+<p><code>curl -g</code> is needed because of the <code>[</code> <code>]</code> in filter names. Note that a token in the URL ends up in shell history and server logs.</p>
+<h2>Tags</h2>
+<p>Labels attached to logs (and runs). Each tag may notify an e-mail list and a Mattermost channel.</p>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/tags</code> - List tags</h3></summary>
+
+<p>Operation id: <code>listTags</code></p>
+<p>Returns every tag matching the filters, <strong>not paginated</strong>.
+Returns <code>204 No Content</code> (empty body) when nothing matches, so clients must not assume a JSON body.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>filter[ids]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Comma separated tag ids.</td>
+</tr>
+<tr>
+<td><code>filter[texts]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Comma separated exact tag texts. Takes precedence over <code>filter[partialText]</code>.</td>
+</tr>
+<tr>
+<td><code>filter[partialText]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Substring match on the tag text. Ignored when <code>filter[texts]</code> is given.</td>
+</tr>
+<tr>
+<td><code>filter[emails]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Comma separated e-mail addresses.</td>
+</tr>
+<tr>
+<td><code>filter[mattermosts]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Comma separated Mattermost channel names.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: Matching tags.</li>
+<li><code>204</code>: No tag matches the filters. No body.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/tags?token=$TOKEN&quot;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method post">POST</span> <code>/tags</code> - Create a tag <span class="no-llm" title="Changes data: not meant for LLM or MCP tool use (x-llm-exclude)">not for LLM use</span></h3></summary>
+
+<p>Operation id: <code>createTag</code></p>
+<p><strong>Not meant for LLM or MCP tool use</strong> (<code>x-llm-exclude</code>).</p>
+<p><strong>Required role:</strong> <code>admin</code></p>
+<p>Request body (JSON):</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>text</code></td>
+<td>string</td>
+<td>yes</td>
+<td>Words, digits, <code>-</code> and <code>+</code> only. min length 2, max length 20, pattern <code>[\w|\-+]{1,}</code></td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>string | null</td>
+<td>no</td>
+<td>max length 100</td>
+</tr>
+<tr>
+<td><code>mattermost</code></td>
+<td>string | null</td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td><code>email</code></td>
+<td>string | null</td>
+<td>no</td>
+<td>One or more e-mail addresses, comma separated.</td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td>string | null</td>
+<td>no</td>
+<td>pattern <code>^#[0-9A-Fa-f]{6}$</code></td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>201</code>: The created tag.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>403</code>: The token lacks the role required by this operation.</li>
+<li><code>409</code>: A tag with the same text already exists.</li>
+</ul>
+<pre><code class="language-bash">curl -g -X POST &quot;$BOOKKEEPING_URL/api/tags?token=$TOKEN&quot; \
+  -H &#39;content-type: application/json&#39; \
+  -d &#39;{&quot;text&quot;:&quot;FOOD&quot;,&quot;description&quot;:&quot;Food related issues&quot;,&quot;email&quot;:&quot;cake@cern.ch,test@cern.ch&quot;,&quot;mattermost&quot;:&quot;food-channel&quot;,&quot;color&quot;:&quot;#ff8800&quot;}&#39;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/tags/name</code> - Get a tag by its text</h3></summary>
+
+<p>Operation id: <code>getTagByName</code></p>
+<p>Looks a tag up by its exact text (case as stored). Use this when you know the label but not the id.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>query</td>
+<td>string</td>
+<td>yes</td>
+<td>Exact tag text. Must be URL-encoded.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The tag.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: The requested entity does not exist.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/tags/name?name=FOOD&amp;token=$TOKEN&quot;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/tags/{tagId}</code> - Get a tag by id</h3></summary>
+
+<p>Operation id: <code>getTagById</code></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>tagId</code></td>
+<td>path</td>
+<td>integer</td>
+<td>yes</td>
+<td>Tag identifier.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The tag.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: The requested entity does not exist.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/tags/1?token=$TOKEN&quot;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method put">PUT</span> <code>/tags/{tagId}</code> - Update a tag <span class="no-llm" title="Changes data: not meant for LLM or MCP tool use (x-llm-exclude)">not for LLM use</span></h3></summary>
+
+<p>Operation id: <code>updateTag</code></p>
+<p>Only <code>description</code>, <code>email</code>, <code>mattermost</code>, <code>color</code> and <code>archivedAt</code> can change;
+the tag <code>text</code> is immutable. Set <code>archivedAt</code> to a date to archive the tag and to <code>null</code> to restore it.</p>
+<p><strong>Not meant for LLM or MCP tool use</strong> (<code>x-llm-exclude</code>).</p>
+<p><strong>Required role:</strong> <code>admin</code></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>tagId</code></td>
+<td>path</td>
+<td>integer</td>
+<td>yes</td>
+<td>Tag identifier.</td>
+</tr>
+</tbody></table>
+<p>Request body (JSON):</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>description</code></td>
+<td>string | null</td>
+<td>no</td>
+<td>max length 100</td>
+</tr>
+<tr>
+<td><code>mattermost</code></td>
+<td>string | null</td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td><code>email</code></td>
+<td>string | null</td>
+<td>no</td>
+<td>One or more e-mail addresses, comma separated.</td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td>string | null</td>
+<td>no</td>
+<td>pattern <code>^#[0-9A-Fa-f]{6}$</code></td>
+</tr>
+<tr>
+<td><code>archivedAt</code></td>
+<td>string | integer | null (date-time)</td>
+<td>no</td>
+<td>Date to archive the tag, either an ISO 8601 date-time string or epoch milliseconds, null to restore it.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>201</code>: The updated tag. (Status is <code>201</code>, not <code>200</code>.)</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>403</code>: The token lacks the role required by this operation.</li>
+<li><code>404</code>: The requested entity does not exist.</li>
+</ul>
+<pre><code class="language-bash">curl -g -X PUT &quot;$BOOKKEEPING_URL/api/tags/1?token=$TOKEN&quot; \
+  -H &#39;content-type: application/json&#39; \
+  -d &#39;{&quot;description&quot;:&quot;Updated description&quot;,&quot;archivedAt&quot;:null}&#39;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method delete">DELETE</span> <code>/tags/{tagId}</code> - Delete a tag <span class="no-llm" title="Changes data: not meant for LLM or MCP tool use (x-llm-exclude)">not for LLM use</span></h3></summary>
+
+<p>Operation id: <code>deleteTag</code></p>
+<p><strong>Not meant for LLM or MCP tool use</strong> (<code>x-llm-exclude</code>).</p>
+<p><strong>Required role:</strong> <code>admin</code></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>tagId</code></td>
+<td>path</td>
+<td>integer</td>
+<td>yes</td>
+<td>Tag identifier.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The deleted tag.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>403</code>: The token lacks the role required by this operation.</li>
+<li><code>404</code>: The requested entity does not exist.</li>
+</ul>
+<pre><code class="language-bash">curl -g -X DELETE &quot;$BOOKKEEPING_URL/api/tags/1?token=$TOKEN&quot;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/tags/{tagId}/logs</code> - List logs carrying a tag</h3></summary>
+
+<p>Operation id: <code>listLogsByTag</code></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>tagId</code></td>
+<td>path</td>
+<td>integer</td>
+<td>yes</td>
+<td>Tag identifier.</td>
+</tr>
+<tr>
+<td><code>page[limit]</code></td>
+<td>query</td>
+<td>integer</td>
+<td>no</td>
+<td>Maximum number of logs to return. LLMs and agents must use 100 or less.</td>
+</tr>
+<tr>
+<td><code>page[offset]</code></td>
+<td>query</td>
+<td>integer</td>
+<td>no</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: A page of logs.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: The requested entity does not exist.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/tags/1/logs?page[limit]=100&amp;token=$TOKEN&quot;
+</code></pre>
+</details>
+
+</main>
+<footer>Generated from openapi.yaml by <code>npm run docs:api</code> · ALICE Bookkeeping · internal use only</footer>
+</body>
+</html>
