@@ -43,6 +43,8 @@ tags:
     description: Addresses of the external services Bookkeeping links to.
   - name: Detectors
     description: Detectors of the ALICE experiment.
+  - name: DPL detectors
+    description: Detectors as seen by the DPL (data processing layer) processes.
 
 paths:
   /tags:
@@ -310,6 +312,25 @@ paths:
                   - { id: 17, name: ACO, type: PHYSICAL, createdAt: 1704067200000, updatedAt: 1704067200000 }
                   - { id: 21, name: GLO, type: QC, createdAt: 1704067200000, updatedAt: 1704067200000 }
 
+  /dpl-detectors:
+    get:
+      tags: [DPL detectors]
+      operationId: listDplDetectors
+      summary: List the detectors known to the DPL processes
+      description: |
+        Returns every detector (same entities as `GET /detectors`) ordered by id, without their `type`. Not paginated.
+        `processesExecutions` is always empty here: use the `dpl-process` endpoints to read executions.
+      responses:
+        '200':
+          description: The DPL detectors.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DplDetectorListResponse' }
+              example:
+                data:
+                  - { id: 1, name: CPV, createdAt: 1704067200000, updatedAt: 1704067200000, processesExecutions: [] }
+                  - { id: 2, name: EMC, createdAt: 1704067200000, updatedAt: 1704067200000, processesExecutions: [] }
+
 components:
   securitySchemes:
     jwtQuery:
@@ -474,3 +495,22 @@ components:
         data:
           type: array
           items: { $ref: '#/components/schemas/Detector' }
+    DplDetector:
+      type: object
+      required: [id, name]
+      properties:
+        id: { type: integer }
+        name: { type: string, description: 'Detector code, e.g. `ITS`.' }
+        createdAt: { type: integer, description: Epoch milliseconds. }
+        updatedAt: { type: integer, description: Epoch milliseconds. }
+        processesExecutions:
+          type: array
+          description: Always empty on `GET /dpl-detectors`.
+          items: { type: object, additionalProperties: true }
+    DplDetectorListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/DplDetector' }
