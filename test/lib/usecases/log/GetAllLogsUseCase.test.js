@@ -39,6 +39,13 @@ module.exports = () => {
         expect(logs.find(({ id }) => id === 119).dataPasses.map(({ name }) => name)).to.deep.equal(['LHC22b_apass1']);
     });
 
+    it('should return the simulation passes of each log', async () => {
+        const { logs } = await new GetAllLogsUseCase().execute();
+
+        expect(logs.every(({ simulationPasses }) => Array.isArray(simulationPasses))).to.be.true;
+        expect(logs.find(({ id }) => id === 119).simulationPasses.map(({ name }) => name)).to.deep.equal(['LHC23k6c']);
+    });
+
     it('should return an array, only containing human originated logs', async () => {
         getAllLogsDto.query = { filter: { origin: 'human' } };
         const { logs } = await new GetAllLogsUseCase()
@@ -154,6 +161,45 @@ module.exports = () => {
         getAllLogsDto.query = { filter: { dataPasses: ['LHC22a_apass1', 'NOT_A_DATA_PASS'] } };
         ({ logs } = await new GetAllLogsUseCase().execute(getAllLogsDto));
         expect(logs.map(({ id }) => id)).to.include(2);
+    });
+
+    it('should successfully filter on simulation passes, requiring at least one of them', async () => {
+        // Other tests of the suite may have created logs linked to simulation passes, so only check seeded logs and the filter semantic
+        const getSimulationPassNames = (log) => log.simulationPasses.map(({ name }) => name);
+
+        getAllLogsDto.query = { filter: { simulationPasses: ['LHC23k6c'] } };
+        let { logs } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+        expect(logs.map(({ id }) => id)).to.include.members([1, 119]);
+        expect(logs.map(({ id }) => id)).to.not.include(2);
+        expect(logs.every((log) => getSimulationPassNames(log).includes('LHC23k6c'))).to.be.true;
+
+        getAllLogsDto.query = { filter: { simulationPasses: ['LHC23k6b', 'LHC23k6a'] } };
+        ({ logs } = await new GetAllLogsUseCase().execute(getAllLogsDto));
+        expect(logs.map(({ id }) => id)).to.include.members([1, 2]);
+        expect(logs.map(({ id }) => id)).to.not.include(119);
+        expect(logs.every((log) => ['LHC23k6b', 'LHC23k6a'].some((name) => getSimulationPassNames(log).includes(name)))).to.be.true;
+        // Linked simulation passes are all returned, not only the filtered ones
+        expect(getSimulationPassNames(logs.find(({ id }) => id === 1)).sort()).to.deep.equal(['LHC23k6b', 'LHC23k6c']);
+
+        getAllLogsDto.query = { filter: { simulationPasses: ['NOT_A_SIMULATION_PASS'] } };
+        ({ logs } = await new GetAllLogsUseCase().execute(getAllLogsDto));
+        expect(logs).to.lengthOf(0);
+
+        // Unknown simulation passes are ignored when at least another one matches
+        getAllLogsDto.query = { filter: { simulationPasses: ['LHC23k6a', 'NOT_A_SIMULATION_PASS'] } };
+        ({ logs } = await new GetAllLogsUseCase().execute(getAllLogsDto));
+        expect(logs.map(({ id }) => id)).to.include(2);
+    });
+
+    it('should successfully combine the data passes and simulation passes filters', async () => {
+        getAllLogsDto.query = { filter: { dataPasses: ['LHC22b_skimming'], simulationPasses: ['LHC23k6b'] } };
+        let { logs } = await new GetAllLogsUseCase().execute(getAllLogsDto);
+        expect(logs.map(({ id }) => id)).to.include(1);
+        expect(logs.map(({ id }) => id)).to.not.include(119);
+
+        getAllLogsDto.query = { filter: { dataPasses: ['LHC22b_skimming'], simulationPasses: ['LHC23k6a'] } };
+        ({ logs } = await new GetAllLogsUseCase().execute(getAllLogsDto));
+        expect(logs).to.lengthOf(0);
     });
 
     it('should successfully filter on the LHC periods of the linked data passes', async () => {

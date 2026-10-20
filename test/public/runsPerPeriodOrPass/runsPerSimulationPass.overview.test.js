@@ -32,6 +32,7 @@ const {
     waitForTableLength,
     expectColumnValues,
     waitForButtonToBecomeActive,
+    expectInputValue,
 } = require('../defaults.js');
 
 const { expect } = chai;
@@ -91,6 +92,30 @@ module.exports = () => {
         const headerBreadcrumbs = await page.$$('h2');
         expect(await headerBreadcrumbs[0].evaluate((element) => element.innerText)).to.be.equal('Runs per MC');
         expect(await headerBreadcrumbs[1].evaluate((element) => element.innerText)).to.be.equal('LHC23k6b');
+    });
+
+    it('leaves enough room around the table to display its shadow', async () => {
+        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
+        await page.waitForSelector('.sticky-table-wrapper table tbody tr');
+
+        // The scrollable wrappers clip what overflows them: the table shadow is visible only if there is some room around the table
+        const { shadow, spaceLeft, paddingRight, spaceBottom } = await page.evaluate(() => {
+            const table = document.querySelector('.sticky-table-wrapper table');
+            const wrapper = document.querySelector('.sticky-table-wrapper');
+            const tableBox = table.getBoundingClientRect();
+            const wrapperBox = wrapper.getBoundingClientRect();
+            return {
+                shadow: getComputedStyle(table).boxShadow,
+                spaceLeft: tableBox.left - wrapperBox.left,
+                // The table may overflow horizontally (scroll), so its right side can only be checked through the wrapper padding
+                paddingRight: parseFloat(getComputedStyle(wrapper).paddingRight),
+                spaceBottom: wrapperBox.bottom - tableBox.bottom,
+            };
+        });
+        expect(shadow).to.not.equal('none');
+        expect(spaceLeft).to.be.at.least(5);
+        expect(paddingRight).to.be.at.least(5);
+        expect(spaceBottom).to.be.at.least(5);
     });
 
     it('shows correct datatypes in respective columns', async () => {
@@ -296,5 +321,16 @@ module.exports = () => {
             '105;""',
         ].join('\r\n'));
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+    });
+
+    it('should provide a button to create a log entry linked to the simulation pass', async () => {
+        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
+
+        await waitForNavigation(page, () => pressElement(page, '#create-log'));
+        expectUrlParams(page, { page: 'log-create', simulationPassNames: 'LHC23k6b' });
+
+        await page.waitForSelector('input#simulation-passes');
+        await expectInputValue(page, 'input#simulation-passes', 'LHC23k6b');
+        await expectInputValue(page, 'input#data-passes', '');
     });
 };

@@ -22,6 +22,12 @@ const {
     expectColumnValues,
     validateTableData,
     expectInnerText,
+    getTableDataSlice,
+    waitForTableLength,
+    waitForNavigation,
+    openFilteringPanel,
+    expectInputValue,
+    expectUrlParams,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -62,6 +68,7 @@ module.exports = () => {
             name: (name) => periodNameRegex.test(name),
             associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
             associatedDataPasses: (display) => /(No anchorage)|(\d+)/.test(display),
+            associatedLogs: (display) => /(No logs)|(\d+)/.test(display),
             pwg: (pwg) => /PWG.+/.test(pwg),
             jiraId: (jiraId) => /[A-Z]+[A-Z0-9]+-\d+/.test(jiraId),
             requestedEventsCount: (requestedEventsCount) => !isNaN(requestedEventsCount.replace(/,/g, '')),
@@ -73,6 +80,30 @@ module.exports = () => {
         };
 
         await validateTableData(page, new Map(Object.entries(headerDatatypes)));
+    });
+
+    it('shows the amount of logs linked to each simulation pass', async () => {
+        await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
+        await waitForTableLength(page, 2);
+
+        const tableSlice = await getTableDataSlice(page, ['name', 'associatedLogs']);
+        expect(tableSlice.map(({ name, associatedLogs }) => ({ name, logsCount: Number(associatedLogs.split('\n')[0]) || 0 })))
+            .to.have.all.deep.members([
+                { name: 'LHC23k6b', logsCount: 1 },
+                { name: 'LHC23k6a', logsCount: 1 },
+            ]);
+    });
+
+    it('can navigate to the logs overview filtered by simulation pass', async () => {
+        await goToPage(page, 'simulation-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 1 } });
+        await waitForTableLength(page, 2);
+        const [{ name }] = await getTableDataSlice(page, ['name']);
+
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr:nth-of-type(1) td:nth-of-type(4) a'));
+        expectUrlParams(page, { page: 'log-overview' }, ['filter[simulationPasses]', 'filter%5BsimulationPasses%5D']);
+        expect(decodeURIComponent(page.url())).to.include(`filter[simulationPasses]=${name}`);
+        await openFilteringPanel(page);
+        await expectInputValue(page, '.simulationPasses-textFilter', name);
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
