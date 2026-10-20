@@ -28,7 +28,7 @@ module.exports = () => {
                 envId: 'EIDO13i3D',
             },
             body: {
-                status: 'DESTROYED',
+                status: 'DONE',
                 statusMessage: 'Completely new message',
             },
         });
@@ -42,7 +42,7 @@ module.exports = () => {
 
     it('Should be able to update the environment with correct values', async () => {
         const { result } = await new UpdateEnvironmentUseCase().execute(updateEnvironmentDto);
-        expect(result.status).to.equal('DESTROYED');
+        expect(result.status).to.equal('DONE');
     });
 
     it('Should give an error when the id of the environment can not be found', async () => {

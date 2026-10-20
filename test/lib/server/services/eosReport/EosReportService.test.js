@@ -62,7 +62,7 @@ module.exports = () => {
         for (const environment of customizedECSEosReport.typeSpecific.environments) {
             await createEnvironment(environment);
             await createEnvironmentHistoryItem({
-                status: 'DESTROYED',
+                status: 'DONE',
                 timestamp: environment.createdAt,
                 timestampNano: 0,
                 environmentId: environment.id,

@@ -86,7 +86,7 @@ module.exports = () => {
 
         await fillInput(page, '.runs-filter input', '10', ['change']);
         await fillInput(page, '.id-filter input', 'Dxi029djX, TDI59So3d', ['change']);
-        await pressElement(page, '#checkboxes-checkbox-DESTROYED');
+        await pressElement(page, '#checkboxes-checkbox-DONE');
         await fillInput(page, '.historyItems-filter input', 'C-R-D-X', ['change']);
         await fillInput(page, fromDateTimeSelector, '2019-08-09T00:00', ['change']);
         await fillInput(page, toDateTimeSelector, '2019-08-10T23:59', ['change']);
@@ -98,7 +98,7 @@ module.exports = () => {
             "filter[created][to]": "1565481540000",
             "filter[runNumbers]": "10",
             "filter[statusHistory]": "C-R-D-X",
-            "filter[currentStatus]": "DESTROYED",
+            "filter[currentStatus]": "DONE",
             "filter[ids]": "Dxi029djX, TDI59So3d"
         });
     });

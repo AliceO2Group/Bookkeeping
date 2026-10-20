@@ -64,7 +64,7 @@ module.exports = () => {
     });
 
     it('Should successfully display the current environment\'s status', async () => {
-        await expectInnerText(page, '#environment-status-badge.badge', 'DESTROYED');
+        await expectInnerText(page, '#environment-status-badge.badge', 'DONE');
     });
 
     it('Should successfully display the creation date of the environment', async () => {
@@ -74,7 +74,7 @@ module.exports = () => {
     it('Should successfully display the history of the environment', async () => {
         await page.waitForFunction(() => document.querySelectorAll('.history-item').length === 4);
         const historyStatuses = await page.$$eval('.history-item .badge', (badges) => badges.map((badge) => badge.innerText));
-        expect(historyStatuses).to.eql(['CONFIGURED', 'RUNNING', 'DEPLOYED', 'DESTROYED']);
+        expect(historyStatuses).to.eql(['CONFIGURED', 'RUNNING', 'DEPLOYED', 'DONE']);
     });
 
     it('Should successfully display the runs related to the environment', async () => {
