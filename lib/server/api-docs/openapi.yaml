@@ -5,7 +5,7 @@ info:
   description: |
     HTTP API of the ALICE Bookkeeping. **Internal use only.**
 
-    > Pilot: only the `tags` resource is documented so far.
+    > Work in progress: not every resource is documented yet. Only the sections listed below exist.
 
     ## Authentication
     Every request carries a JWT in the `token` **query parameter** (e.g. `GET /api/tags?token=<jwt>`).
@@ -37,6 +37,8 @@ security:
 tags:
   - name: Tags
     description: Labels attached to logs (and runs). Each tag may notify an e-mail list and a Mattermost channel.
+  - name: Status
+    description: Health of the Bookkeeping application and of its database.
 
 paths:
   /tags:
@@ -235,6 +237,36 @@ paths:
         '400': { $ref: '#/components/responses/ValidationError' }
         '404': { $ref: '#/components/responses/NotFound' }
 
+  /status/database:
+    get:
+      tags: [Status]
+      operationId: getDatabaseStatus
+      summary: Get the database connection status
+      description: Pings the database. `status.ok` is false when it cannot be reached.
+      responses:
+        '200':
+          description: The database host, port and status.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ServiceStatusResponse' }
+              example:
+                data: { host: database, port: 3306, status: { ok: true, configured: true } }
+
+  /status/gui:
+    get:
+      tags: [Status]
+      operationId: getGuiStatus
+      summary: Get the status of the Bookkeeping application
+      description: Returns the host, port and version of the running Bookkeeping server that answered the request.
+      responses:
+        '200':
+          description: The application host, port, version and status.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ServiceStatusResponse' }
+              example:
+                data: { host: localhost, port: 4000, version: 1.20.0, status: { ok: true, configured: true } }
+
 components:
   securitySchemes:
     jwtQuery:
@@ -350,3 +382,21 @@ components:
                 type: object
                 properties:
                   pointer: { type: string }
+    ServiceStatus:
+      type: object
+      required: [host, port, status]
+      properties:
+        host: { type: string }
+        port: { type: integer }
+        version: { type: string, description: Version of the Bookkeeping application. Only present on the application status. }
+        status:
+          type: object
+          required: [ok, configured]
+          properties:
+            ok: { type: boolean, description: False when the service cannot be reached. }
+            configured: { type: boolean }
+    ServiceStatusResponse:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: '#/components/schemas/ServiceStatus' }
