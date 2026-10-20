@@ -208,6 +208,14 @@ th.text-center, td.text-center {
 }
 
 
+/*
+ * Scrollable wrappers clip everything overflowing their box, including the table shadow:
+ * leave some room on the sides and at the bottom (not at the top to not break the sticky header) to display it
+ */
+.table-shadow-room {
+    padding: 0 6px 6px;
+}
+
 .sticky-table-wrapper {
     flex: 1 1 auto;
     overflow-y: auto;
