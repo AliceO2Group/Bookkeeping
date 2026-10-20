@@ -51,6 +51,8 @@ tags:
     description: Data used to fill end-of-shift reports.
   - name: Simulation passes
     description: Monte Carlo simulation productions.
+  - name: LHC periods statistics
+    description: LHC periods with statistics on their physics runs.
 
 paths:
   /tags:
@@ -522,6 +524,88 @@ paths:
                 errors:
                   - { status: 404, title: Not found, detail: Simulation pass with this id (99999) could not be found }
 
+  /lhcPeriodsStatistics:
+    get:
+      tags: [LHC periods statistics]
+      operationId: listLhcPeriodsStatistics
+      summary: List LHC periods with their statistics
+      description: |
+        Returns a page of LHC periods with statistics computed on their **physics runs**: number of runs, average center-of-mass energy, distinct
+        energies, PDP beam types and number of data and simulation passes. Default order is by id, descending.
+
+        List filters are repeated query parameters: `filter[ids][]=1&filter[ids][]=2`. A single value without `[]` is rejected. Unknown query
+        parameters are rejected.
+      parameters:
+        - name: filter[ids][]
+          in: query
+          description: Keep the LHC periods with one of these ids. Repeat the parameter for several values.
+          schema: { type: integer }
+        - name: filter[names][]
+          in: query
+          description: Keep the LHC periods with one of these exact names. Repeat the parameter for several values.
+          schema: { type: string, examples: [LHC22b] }
+        - name: filter[years][]
+          in: query
+          description: Keep the LHC periods of these years. The year is read from the period name (`LHC23f` is 2023). Repeat the parameter for several values.
+          schema: { type: integer, examples: [2023] }
+        - name: filter[pdpBeamTypes][]
+          in: query
+          description: Keep the LHC periods having runs of one of these PDP beam types. Repeat the parameter for several values.
+          schema: { type: string, examples: [pp] }
+        - name: sort[id]
+          in: query
+          description: Sort by id (the default is `desc`).
+          schema: { $ref: '#/components/schemas/SortOrder' }
+        - name: sort[name]
+          in: query
+          description: Sort by name.
+          schema: { $ref: '#/components/schemas/SortOrder' }
+        - name: sort[avgCenterOfMassEnergy]
+          in: query
+          description: Sort by average center-of-mass energy.
+          schema: { $ref: '#/components/schemas/SortOrder' }
+        - name: sort[year]
+          in: query
+          description: Sort by year.
+          schema: { $ref: '#/components/schemas/SortOrder' }
+        - name: sort[pdpBeamTypes]
+          in: query
+          description: Sort by PDP beam types.
+          schema: { $ref: '#/components/schemas/SortOrder' }
+        - $ref: '#/components/parameters/PageLimit'
+        - $ref: '#/components/parameters/PageOffset'
+      responses:
+        '200':
+          description: A page of LHC periods with statistics.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LhcPeriodStatisticsListResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+
+  /lhcPeriodsStatistics/{lhcPeriodId}:
+    get:
+      tags: [LHC periods statistics]
+      operationId: getLhcPeriodStatistics
+      summary: Get the statistics of an LHC period
+      parameters:
+        - name: lhcPeriodId
+          in: path
+          required: true
+          description: LHC period identifier.
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: The LHC period with its statistics.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LhcPeriodStatisticsResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404':
+          description: No LHC period has this id.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+
 components:
   securitySchemes:
     jwtQuery:
@@ -818,4 +902,37 @@ components:
         data:
           type: array
           items: { $ref: '#/components/schemas/SimulationPass' }
+        meta: { $ref: '#/components/schemas/PageMeta' }
+    LhcPeriodStatistics:
+      type: object
+      properties:
+        id: { type: integer }
+        lhcPeriod:
+          type: [object, 'null']
+          properties:
+            id: { type: integer }
+            name: { type: string, examples: [LHC22b] }
+        avgCenterOfMassEnergy: { type: [number, 'null'], description: Average over the physics runs. }
+        distinctEnergies:
+          type: array
+          description: Distinct center-of-mass energies of the physics runs.
+          items: { type: number }
+        pdpBeamTypes:
+          type: array
+          items: { type: string, examples: [pp] }
+        runsCount: { type: integer, description: Number of physics runs. }
+        dataPassesCount: { type: integer }
+        simulationPassesCount: { type: integer }
+    LhcPeriodStatisticsResponse:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: '#/components/schemas/LhcPeriodStatistics' }
+    LhcPeriodStatisticsListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/LhcPeriodStatistics' }
         meta: { $ref: '#/components/schemas/PageMeta' }
