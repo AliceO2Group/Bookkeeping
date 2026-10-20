@@ -352,6 +352,14 @@ module.exports = () => {
         expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
     });
 
+    it('should successfully display the list of related simulation passes as hyperlinks to their runs page', async () => {
+        await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
+
+        await waitForNavigation(page, () => pressElement(page, '#row119-simulationPasses a'));
+        expectUrlParams(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' });
+    });
+
     it('should successfult navigate to run details via popover', async () => {
         await goToPage(page, 'log-overview');
         await waitForFirstRowToHaveId(page, 'row119');
@@ -450,6 +458,19 @@ module.exports = () => {
             await waitForTableLength(page, 2);
 
             await fillInput(page, '.dataPasses-textFilter', 'NOT_A_DATA_PASS', ['change']);
+            await waitForEmptyTable(page);
+        });
+
+        it('can filter by simulation passes', async () => {
+            await openFilteringPanel(page);
+            await fillInput(page, '.simulationPasses-textFilter', 'LHC23k6c', ['change']);
+            await waitForTableLength(page, 2);
+
+            // At least one of the simulation passes must be linked to the log entry
+            await fillInput(page, '.simulationPasses-textFilter', 'LHC23k6b, LHC23k6a', ['change']);
+            await waitForTableLength(page, 2);
+
+            await fillInput(page, '.simulationPasses-textFilter', 'NOT_A_SIMULATION_PASS', ['change']);
             await waitForEmptyTable(page);
         });
 
