@@ -100,12 +100,13 @@ const typeOf = (schema) => {
 };
 
 /**
- * Escapes the pipes of the given text, so that they are not interpreted as column separators in a markdown table cell
+ * Escapes the pipes of the given text, so that they are not interpreted as column separators in a markdown table cell.
+ * Backslashes right before a pipe are doubled, otherwise they would escape the backslash added in front of the pipe
  *
  * @param {string} text the text to escape
  * @return {string} the escaped text
  */
-const escapeCell = (text) => text.replace(/\|/g, '\\|');
+const escapeCell = (text) => text.replace(/(\\*)\|/g, '$1$1\\|');
 
 /**
  * Returns the markdown table of the properties of the given object schema
