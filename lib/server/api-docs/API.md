@@ -287,3 +287,22 @@ Responses:
 ```bash
 curl -g "$BOOKKEEPING_URL/api/detectors?token=$TOKEN"
 ```
+
+## DPL detectors
+
+Detectors as seen by the DPL (data processing layer) processes.
+
+### `GET /dpl-detectors` - List the detectors known to the DPL processes
+
+Operation id: `listDplDetectors`
+
+Returns every detector (same entities as `GET /detectors`) ordered by id, without their `type`. Not paginated.
+`processesExecutions` is always empty here: use the `dpl-process` endpoints to read executions.
+
+Responses:
+
+- `200`: The DPL detectors.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/dpl-detectors?token=$TOKEN"
+```

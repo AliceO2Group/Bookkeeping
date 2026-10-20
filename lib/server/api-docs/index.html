@@ -488,6 +488,21 @@ A URL is <code>null</code> when the service is not configured on this deployment
 <pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/detectors?token=$TOKEN&quot;
 </code></pre>
 </details>
+<h2>DPL detectors</h2>
+<p>Detectors as seen by the DPL (data processing layer) processes.</p>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/dpl-detectors</code> - List the detectors known to the DPL processes</h3></summary>
+
+<p>Operation id: <code>listDplDetectors</code></p>
+<p>Returns every detector (same entities as <code>GET /detectors</code>) ordered by id, without their <code>type</code>. Not paginated.
+<code>processesExecutions</code> is always empty here: use the <code>dpl-process</code> endpoints to read executions.</p>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The DPL detectors.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/dpl-detectors?token=$TOKEN&quot;
+</code></pre>
+</details>
 
 </main>
 <footer>Generated from openapi.yaml by <code>npm run docs:api</code> · ALICE Bookkeeping · internal use only</footer>
