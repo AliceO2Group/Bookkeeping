@@ -36,6 +36,8 @@ const {
     setConfirmationDialogToBeAccepted,
     unsetConfirmationDialogActions,
     checkPopoverInnerText,
+    expectUrlParams,
+    expectInputValue,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const DataPassRepository = require('../../../lib/database/repositories/DataPassRepository.js');
@@ -664,5 +666,14 @@ module.exports = () => {
         await page.waitForSelector('#MUD');
     });
 
-    
+    it('should provide a button to create a log entry linked to the data pass', async () => {
+        await goToPage(page, 'runs-per-data-pass', { queryParameters: { dataPassId: 1 } });
+
+        await waitForNavigation(page, () => pressElement(page, '#create-log'));
+        expectUrlParams(page, { page: 'log-create', dataPassNames: 'LHC22b_apass1' });
+
+        await page.waitForSelector('input#data-passes');
+        await expectInputValue(page, 'input#data-passes', 'LHC22b_apass1');
+        await expectInputValue(page, 'input#simulation-passes', '');
+    });
 };
