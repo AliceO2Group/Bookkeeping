@@ -161,7 +161,7 @@ Request body (JSON):
 | `mattermost` | string \| null | no |  |
 | `email` | string \| null | no | One or more e-mail addresses, comma separated. |
 | `color` | string \| null | no | pattern `^#[0-9A-Fa-f]{6}$` |
-| `archivedAt` | string \| null (date-time) | no | Date to archive the tag, null to restore it. |
+| `archivedAt` | string \| integer \| null (date-time) | no | Date to archive the tag, either an ISO 8601 date-time string or epoch milliseconds, null to restore it. |
 
 Responses:
 

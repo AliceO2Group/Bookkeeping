@@ -332,7 +332,7 @@ components:
         mattermost: { type: [string, 'null'] }
         email: { type: [string, 'null'], description: "One or more e-mail addresses, comma separated." }
         color: { type: [string, 'null'], pattern: '^#[0-9A-Fa-f]{6}$' }
-        archivedAt: { type: [string, 'null'], format: date-time, description: "Date to archive the tag, null to restore it." }
+        archivedAt: { type: [string, integer, 'null'], format: date-time, description: "Date to archive the tag, either an ISO 8601 date-time string or epoch milliseconds, null to restore it." }
     ErrorResponse:
       type: object
       required: [errors]

@@ -153,7 +153,7 @@ const examplesOf = (method, route, operation, parameters) => {
     const url = route.replace(/{(\w+)}/g, (_, name) => sampleValue(parameters.find((parameter) => parameter.name === name)));
     const queryParameters = parameters
         .filter(({ in: location, name, required }) => location === 'query' && (required || name === 'page[limit]'));
-    const query = queryParameters.map((parameter) => `${parameter.name}=${sampleValue(parameter)}`);
+    const query = queryParameters.map((parameter) => `${parameter.name}=${encodeURIComponent(sampleValue(parameter))}`);
     // $BOOKKEEPING_URL and $TOKEN are meant to be expanded by the shell, anything coming from the spec is not
     const address = `${shellDoubleQuoteEscape(`/api${url}?${[...query, 'token='].join('&')}`)}$TOKEN`;
     const body = operation.requestBody?.content?.['application/json']?.example;

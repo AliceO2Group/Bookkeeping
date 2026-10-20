@@ -8,7 +8,7 @@
 <style>
 /* Palette shared with the Bookkeeping GUI (@aliceo2/web-ui bootstrap.css) */
 :root {
-  --red: #d62631; --orange: #ef8239; --blue: #39a6ef; --blue-dark: #2b84bf; --light-blue: #dbedff; --green: #4caf50;
+  --red: #d62631; --orange: #ef8239; --blue: #39a6ef; --blue-dark: #1f6fa8; --light-blue: #dbedff; --green: #4caf50;
   --gray-darker: #757575; --gray: #d5d5d5; --gray-light: #eee; --gray-lighter: #f7f7f7;
 }
 * { box-sizing: border-box; }
@@ -34,8 +34,8 @@ details[open] summary h3::after { content: "\25BE"; }
 summary:hover h3 { background: var(--light-blue); }
 h3 { margin: 0; padding: .5rem .75rem; background: var(--gray-lighter); border-left: 4px solid var(--blue); border-radius: 0 4px 4px 0; font-size: 1.1rem; }
 h3 code { background: none; padding: 0; font-size: 1em; }
-.method { display: inline-block; min-width: 4.2rem; padding: .05rem .5rem; margin-right: .4rem; border-radius: 4px; color: #fff; font: 700 .8rem monospace; text-align: center; background: var(--blue); }
-.method.post { background: var(--green); } .method.put, .method.patch { background: var(--orange); } .method.delete { background: var(--red); }
+.method { display: inline-block; min-width: 4.2rem; padding: .05rem .5rem; margin-right: .4rem; border-radius: 4px; color: #fff; font: 700 .8rem monospace; text-align: center; background: var(--blue-dark); }
+.method.post { background: #2f7d32; } .method.put, .method.patch { background: #b85410; } .method.delete { background: var(--red); }
 h3:has(.post) { border-left-color: var(--green); } h3:has(.put), h3:has(.patch) { border-left-color: var(--orange); } h3:has(.delete) { border-left-color: var(--red); }
 code { font-family: monospace, monospace; font-size: .85em; padding: .15em .4em; background: var(--gray-lighter); border-radius: 3px; }
 pre { background: #1e2a33; color: #e8eef2; padding: .8rem 1rem; border-radius: 6px; overflow-x: auto; border-left: 4px solid var(--orange); }
@@ -337,9 +337,9 @@ the tag <code>text</code> is immutable. Set <code>archivedAt</code> to a date to
 </tr>
 <tr>
 <td><code>archivedAt</code></td>
-<td>string | null (date-time)</td>
+<td>string | integer | null (date-time)</td>
 <td>no</td>
-<td>Date to archive the tag, null to restore it.</td>
+<td>Date to archive the tag, either an ISO 8601 date-time string or epoch milliseconds, null to restore it.</td>
 </tr>
 </tbody></table>
 <p>Responses:</p>
