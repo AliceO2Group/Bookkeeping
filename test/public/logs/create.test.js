@@ -164,6 +164,18 @@ module.exports = () => {
         await expectInputValue(page, 'input#lhc-fills', '1,2,3');
     });
 
+    it('Should verify that form autofill the data passes and simulation passes from the query parameters.', async () => {
+        await goToPage(page, 'log-create', {
+            queryParameters: { dataPassNames: 'LHC22b_apass1,LHC22b_skimming', simulationPassNames: 'LHC23k6c' },
+        });
+
+        await expectInputValue(page, 'input#data-passes', 'LHC22b_apass1,LHC22b_skimming');
+        await expectInputValue(page, 'input#simulation-passes', 'LHC23k6c');
+        await expectInputValue(page, 'input#run-numbers', '');
+        await expectInputValue(page, 'input#environments', '');
+        await expectInputValue(page, 'input#lhc-fills', '');
+    });
+
     it('Should verify that form autofill the runNumbers and environmentIds when leaving lhcFills empty.', async () => {
         await goToPage(page, 'log-create', { queryParameters: { runNumbers: '1,2,3', environmentIds: '1,2,3' } });
 
