@@ -32,6 +32,7 @@ const {
     waitForTableLength,
     expectColumnValues,
     waitForButtonToBecomeActive,
+    expectInputValue,
 } = require('../defaults.js');
 
 const { expect } = chai;
@@ -296,5 +297,16 @@ module.exports = () => {
             '105;""',
         ].join('\r\n'));
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
+    });
+
+    it('should provide a button to create a log entry linked to the simulation pass', async () => {
+        await goToPage(page, 'runs-per-simulation-pass', { queryParameters: { simulationPassId: 2 } });
+
+        await waitForNavigation(page, () => pressElement(page, '#create-log'));
+        expectUrlParams(page, { page: 'log-create', simulationPassNames: 'LHC23k6b' });
+
+        await page.waitForSelector('input#simulation-passes');
+        await expectInputValue(page, 'input#simulation-passes', 'LHC23k6b');
+        await expectInputValue(page, 'input#data-passes', '');
     });
 };
