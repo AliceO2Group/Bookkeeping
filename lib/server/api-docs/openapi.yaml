@@ -41,6 +41,8 @@ tags:
     description: Health of the Bookkeeping application and of its database.
   - name: Configuration
     description: Addresses of the external services Bookkeeping links to.
+  - name: Detectors
+    description: Detectors of the ALICE experiment.
 
 paths:
   /tags:
@@ -291,6 +293,23 @@ paths:
                   QcGuiUrl: http://localhost:8082
                   AliEcsGuiUrl: http://localhost:8080
 
+  /detectors:
+    get:
+      tags: [Detectors]
+      operationId: listDetectors
+      summary: List all detectors
+      description: Returns every detector, sorted alphabetically by name. Not paginated.
+      responses:
+        '200':
+          description: The detectors.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DetectorListResponse' }
+              example:
+                data:
+                  - { id: 17, name: ACO, type: PHYSICAL, createdAt: 1704067200000, updatedAt: 1704067200000 }
+                  - { id: 21, name: GLO, type: QC, createdAt: 1704067200000, updatedAt: 1704067200000 }
+
 components:
   securitySchemes:
     jwtQuery:
@@ -436,3 +455,22 @@ components:
             AliFlpIndexUrl: { type: [string, 'null'], description: ali-flp-index page. }
             QcGuiUrl: { type: [string, 'null'], description: Quality Control GUI. }
             AliEcsGuiUrl: { type: [string, 'null'], description: AliECS GUI. }
+    Detector:
+      type: object
+      required: [id, name, type, createdAt, updatedAt]
+      properties:
+        id: { type: integer }
+        name: { type: string, description: 'Detector code, e.g. `ITS`.' }
+        type:
+          type: string
+          enum: [PHYSICAL, QC, AOT-GLO, AOT-EVENT, MUON-GLO, VIRTUAL, OTHER]
+          description: Kind of detector. Only `PHYSICAL` and `VIRTUAL` detectors can take part in data taking.
+        createdAt: { type: integer, description: Epoch milliseconds. }
+        updatedAt: { type: integer, description: Epoch milliseconds. }
+    DetectorListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Detector' }
