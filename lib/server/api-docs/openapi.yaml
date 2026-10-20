@@ -39,6 +39,8 @@ tags:
     description: Labels attached to logs (and runs). Each tag may notify an e-mail list and a Mattermost channel.
   - name: Status
     description: Health of the Bookkeeping application and of its database.
+  - name: Configuration
+    description: Addresses of the external services Bookkeeping links to.
 
 paths:
   /tags:
@@ -267,6 +269,28 @@ paths:
               example:
                 data: { host: localhost, port: 4000, version: 1.20.0, status: { ok: true, configured: true } }
 
+  /configuration:
+    get:
+      tags: [Configuration]
+      operationId: getConfiguration
+      summary: Get the URLs of the external services
+      description: |
+        Returns the addresses of the services Bookkeeping links to (InfoLogger, AliECS GUI, QC GUI, ali-flp-index).
+        A URL is `null` when the service is not configured on this deployment.
+      responses:
+        '200':
+          description: The configured URLs.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Configuration' }
+              example:
+                data:
+                  FlpInfologgerUrl: http://localhost:8081
+                  EpnInfologgerUrl: null
+                  AliFlpIndexUrl: http://localhost:80
+                  QcGuiUrl: http://localhost:8082
+                  AliEcsGuiUrl: http://localhost:8080
+
 components:
   securitySchemes:
     jwtQuery:
@@ -400,3 +424,15 @@ components:
       required: [data]
       properties:
         data: { $ref: '#/components/schemas/ServiceStatus' }
+    Configuration:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          properties:
+            FlpInfologgerUrl: { type: [string, 'null'], description: FLP InfoLogger GUI. }
+            EpnInfologgerUrl: { type: [string, 'null'], description: EPN InfoLogger GUI. }
+            AliFlpIndexUrl: { type: [string, 'null'], description: ali-flp-index page. }
+            QcGuiUrl: { type: [string, 'null'], description: Quality Control GUI. }
+            AliEcsGuiUrl: { type: [string, 'null'], description: AliECS GUI. }
