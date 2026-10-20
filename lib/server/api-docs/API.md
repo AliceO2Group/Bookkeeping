@@ -81,7 +81,7 @@ Request body (JSON):
 
 | Field | Type | Required | Notes |
 | --- | --- | --- | --- |
-| `text` | string | yes | Words, digits, `-` and `+` only. min length 2, max length 20, pattern `[\w|\-+]{1,}` |
+| `text` | string | yes | Words, digits, `-` and `+` only. min length 2, max length 20, pattern `[\w\|\-+]{1,}` |
 | `description` | string \| null | no | max length 100 |
 | `mattermost` | string \| null | no |  |
 | `email` | string \| null | no | One or more e-mail addresses, comma separated. |

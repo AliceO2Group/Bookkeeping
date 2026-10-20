@@ -100,6 +100,14 @@ const typeOf = (schema) => {
 };
 
 /**
+ * Escapes the pipes of the given text, so that they are not interpreted as column separators in a markdown table cell
+ *
+ * @param {string} text the text to escape
+ * @return {string} the escaped text
+ */
+const escapeCell = (text) => text.replace(/\|/g, '\\|');
+
+/**
  * Returns the markdown table of the properties of the given object schema
  *
  * @param {object} schema the (possibly referenced) object schema
@@ -114,7 +122,7 @@ const propertiesTable = (schema) => {
             maxLength !== undefined && `max length ${maxLength}`,
             pattern && `pattern \`${pattern}\``,
         ].filter(Boolean).join(', ');
-        const notes = [description, constraints].filter(Boolean).join(' ').replace(/\n/g, ' ');
+        const notes = escapeCell([description, constraints].filter(Boolean).join(' ').replace(/\n/g, ' '));
         return `| \`${name}\` | ${typeOf(property)} | ${required.includes(name) ? 'yes' : 'no'} | ${notes} |`;
     });
     return ['| Field | Type | Required | Notes |', '| --- | --- | --- | --- |', ...rows].join('\n');
@@ -197,7 +205,7 @@ const renderOperation = (method, route, operation, sharedParameters) => {
             '| --- | --- | --- | --- | --- |',
             ...parameters.map((parameter) =>
                 `| \`${parameter.name}\` | ${parameter.in} | ${typeOf(parameter.schema)} | ${parameter.required ? 'yes' : 'no'} | ${
-                    (parameter.description ?? '').replace(/\n/g, ' ')} |`),
+                    escapeCell((parameter.description ?? '').replace(/\n/g, ' '))} |`),
             '',
         );
     }
