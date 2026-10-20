@@ -474,6 +474,20 @@ A URL is <code>null</code> when the service is not configured on this deployment
 <pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/configuration?token=$TOKEN&quot;
 </code></pre>
 </details>
+<h2>Detectors</h2>
+<p>Detectors of the ALICE experiment.</p>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/detectors</code> - List all detectors</h3></summary>
+
+<p>Operation id: <code>listDetectors</code></p>
+<p>Returns every detector, sorted alphabetically by name. Not paginated.</p>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The detectors.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/detectors?token=$TOKEN&quot;
+</code></pre>
+</details>
 
 </main>
 <footer>Generated from openapi.yaml by <code>npm run docs:api</code> · ALICE Bookkeeping · internal use only</footer>

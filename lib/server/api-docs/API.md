@@ -269,3 +269,21 @@ Responses:
 ```bash
 curl -g "$BOOKKEEPING_URL/api/configuration?token=$TOKEN"
 ```
+
+## Detectors
+
+Detectors of the ALICE experiment.
+
+### `GET /detectors` - List all detectors
+
+Operation id: `listDetectors`
+
+Returns every detector, sorted alphabetically by name. Not paginated.
+
+Responses:
+
+- `200`: The detectors.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/detectors?token=$TOKEN"
+```
