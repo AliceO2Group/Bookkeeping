@@ -332,8 +332,8 @@ module.exports = () => {
         expect(historyOccurrences).to.lengthOf(3);
         expect(historyOccurrences).to.eql([
             { statusHistory: 'STANDBY,ERROR', count: 1 },
-            { statusHistory: 'STANDBY,DEPLOYED,ERROR,DESTROYED', count: 1 },
-            { statusHistory: 'CONFIGURED,RUNNING,DEPLOYED,DESTROYED', count: 1 },
+            { statusHistory: 'STANDBY,DEPLOYED,ERROR,DONE', count: 1 },
+            { statusHistory: 'CONFIGURED,RUNNING,DEPLOYED,DONE', count: 1 },
         ]);
     });
 
@@ -344,7 +344,7 @@ module.exports = () => {
                 to: new Date('2019/08/09 14:40:00').getTime(),
             });
             expect(historyOccurrences).to.lengthOf(1);
-            expect(historyOccurrences).to.eql([{ statusHistory: 'DESTROYED', count: 1 }]);
+            expect(historyOccurrences).to.eql([{ statusHistory: 'DONE', count: 1 }]);
         }
         {
             const historyOccurrences = await statisticsService.getHistoryOccurrencesInEnvironments({
@@ -362,7 +362,7 @@ module.exports = () => {
                 to: new Date('2019/08/09 14:30:01').getTime(),
             });
             expect(historyOccurrences).to.lengthOf(1);
-            expect(historyOccurrences).to.eql([{ statusHistory: 'DESTROYED', count: 1 }]);
+            expect(historyOccurrences).to.eql([{ statusHistory: 'DONE', count: 1 }]);
         }
         {
             const historyOccurrences = await statisticsService.getHistoryOccurrencesInEnvironments({

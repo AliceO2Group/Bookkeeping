@@ -91,7 +91,7 @@ module.exports = () => {
                 { id: 'A-NEW-NEW-ENVIRONMENT' },
                 { status: 'DO-NOT-EXIST', timestamp: new Date(), timestampNano: 0 },
             ),
-            new BadParameterError('"status" must be one of [PENDING, STANDBY, DEPLOYED, CONFIGURED, RUNNING, ERROR, MIXED, DESTROYED, DONE]'),
+            new BadParameterError('"status" must be one of [PENDING, STANDBY, DEPLOYED, CONFIGURED, RUNNING, ERROR, MIXED, DONE]'),
         );
 
         await assert.rejects(

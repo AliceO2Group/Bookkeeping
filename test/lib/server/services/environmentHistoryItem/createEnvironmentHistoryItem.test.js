@@ -26,8 +26,8 @@ module.exports = () => {
 
     it('should successfully create an environment history item', async () => {
         const environmentId = 'EIDO13i3D';
-        const status = 'DESTROYED';
-        const statusMessage = 'Environment has been destroyed';
+        const status = 'DONE';
+        const statusMessage = 'Environment is done';
         const timestamp = new Date('2024-09-06 10:40').getTime();
         const timestampNano = 123456789;
 
