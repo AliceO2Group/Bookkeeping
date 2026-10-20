@@ -9,6 +9,7 @@
   "scripts": {
     "coverage": "nyc npm test && npm run coverage:report",
     "coverage:report": "nyc report --reporter=html --reporter=json",
+    "docs:api": "node scripts/build-api-docs.js",
     "lint": "eslint --config eslint.config.js ",
     "lint:fix": "npm run lint -- --fix",
     "sequelize": "sequelize-cli",
@@ -55,6 +56,8 @@
     "eslint": "9.37.0",
     "eslint-plugin-jsdoc": "65.3.0",
     "globals": "17.12.0",
+    "js-yaml": "4.3.2",
+    "marked": "18.0.14",
     "mkdirp": "3.0.1",
     "mocha": "12.0.2",
     "nodemon": "3.1.14",

@@ -1,0 +1,40 @@
+/* Palette shared with the Bookkeeping GUI (@aliceo2/web-ui bootstrap.css) */
+:root {
+  --red: #d62631; --orange: #ef8239; --blue: #39a6ef; --blue-dark: #2b84bf; --light-blue: #dbedff; --green: #4caf50;
+  --gray-darker: #757575; --gray: #d5d5d5; --gray-light: #eee; --gray-lighter: #f7f7f7;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: #000; background: #fff; }
+header { background: #000; border-bottom: 4px solid var(--red); }
+header div { max-width: 62rem; margin: 0 auto; padding: .5rem 1rem; display: flex; align-items: center; gap: 1rem; }
+header img { height: 3rem; }
+header strong { color: #fff; font-size: 1.25rem; font-weight: 600; }
+header span { color: var(--gray); font-size: .9rem; margin-left: .5rem; }
+nav { margin-left: auto; font-size: .9rem; display: flex; gap: 1rem; }
+nav a { color: var(--blue); }
+main { max-width: 62rem; margin: 0 auto; padding: 1rem 1rem 4rem; }
+a { color: var(--blue-dark); }
+h1 { display: none; }
+h2 { margin-top: 2.5rem; padding-bottom: .3rem; border-bottom: 2px solid var(--gray-light); }
+h2::before { content: ""; display: inline-block; width: .5rem; height: 1.1rem; background: var(--red); margin-right: .6rem; vertical-align: -.1rem; }
+details { margin-top: 1rem; }
+details[open] { padding-bottom: .5rem; }
+summary { cursor: pointer; list-style: none; }
+summary::-webkit-details-marker { display: none; }
+summary h3::after { content: "\25B8"; float: right; color: var(--gray-darker); }
+details[open] summary h3::after { content: "\25BE"; }
+summary:hover h3 { background: var(--light-blue); }
+h3 { margin: 0; padding: .5rem .75rem; background: var(--gray-lighter); border-left: 4px solid var(--blue); border-radius: 0 4px 4px 0; font-size: 1.1rem; }
+h3 code { background: none; padding: 0; font-size: 1em; }
+.method { display: inline-block; min-width: 4.2rem; padding: .05rem .5rem; margin-right: .4rem; border-radius: 4px; color: #fff; font: 700 .8rem monospace; text-align: center; background: var(--blue); }
+.method.post { background: var(--green); } .method.put, .method.patch { background: var(--orange); } .method.delete { background: var(--red); }
+h3:has(.post) { border-left-color: var(--green); } h3:has(.put), h3:has(.patch) { border-left-color: var(--orange); } h3:has(.delete) { border-left-color: var(--red); }
+code { font-family: monospace, monospace; font-size: .85em; padding: .15em .4em; background: var(--gray-lighter); border-radius: 3px; }
+pre { background: #1e2a33; color: #e8eef2; padding: .8rem 1rem; border-radius: 6px; overflow-x: auto; border-left: 4px solid var(--orange); }
+pre code { background: none; padding: 0; color: inherit; font-size: .85rem; }
+table { border-collapse: collapse; display: block; overflow-x: auto; margin: 1rem 0; }
+th { background: var(--gray-light); }
+th, td { border: 1px solid var(--gray); padding: .35rem .6rem; text-align: left; vertical-align: top; }
+blockquote { margin: 1rem 0; padding: .1rem 1rem; background: #ffe8c8; border-left: 4px solid var(--orange); }
+footer { max-width: 62rem; margin: 0 auto; padding: 1rem; color: var(--gray-darker); font-size: .85rem; border-top: 1px solid var(--gray-light); }
+.no-llm { margin-left: .75rem; padding: .05rem .5rem; border: 1px solid var(--red); border-radius: 999px; color: var(--red); background: #fff; font-size: .75rem; font-weight: 600; }
