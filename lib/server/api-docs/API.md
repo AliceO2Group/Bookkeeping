@@ -3,7 +3,7 @@
 
 HTTP API of the ALICE Bookkeeping. **Internal use only.**
 
-> Pilot: only the `tags` resource is documented so far.
+> Work in progress: not every resource is documented yet. Only the sections listed below exist.
 
 ## Authentication
 Every request carries a JWT in the `token` **query parameter** (e.g. `GET /api/tags?token=<jwt>`).
@@ -217,4 +217,36 @@ Responses:
 
 ```bash
 curl -g "$BOOKKEEPING_URL/api/tags/1/logs?page[limit]=100&token=$TOKEN"
+```
+
+## Status
+
+Health of the Bookkeeping application and of its database.
+
+### `GET /status/database` - Get the database connection status
+
+Operation id: `getDatabaseStatus`
+
+Pings the database. `status.ok` is false when it cannot be reached.
+
+Responses:
+
+- `200`: The database host, port and status.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/status/database?token=$TOKEN"
+```
+
+### `GET /status/gui` - Get the status of the Bookkeeping application
+
+Operation id: `getGuiStatus`
+
+Returns the host, port and version of the running Bookkeeping server that answered the request.
+
+Responses:
+
+- `200`: The application host, port, version and status.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/status/gui?token=$TOKEN"
 ```
