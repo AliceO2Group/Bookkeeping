@@ -177,6 +177,48 @@ module.exports = () => {
 
             await page.waitForSelector('.navbar-menu', { hidden: true });
         });
+
+        it('should give the focus back to the menu button when closing the menu with Escape', async () => {
+            await openHomeWithViewport(VIEWPORTS.tablet);
+
+            await pressElement(page, '#navbar-menu-toggle');
+            await page.waitForSelector('.navbar-menu');
+
+            // Move the focus inside of the menu
+            await page.keyboard.press('Tab');
+            expect(await page.evaluate(() => Boolean(document.activeElement.closest('.navbar-menu')))).to.be.true;
+
+            await page.keyboard.press('Escape');
+            await page.waitForSelector('.navbar-menu', { hidden: true });
+
+            expect(await page.evaluate(() => document.activeElement.id)).to.equal('navbar-menu-toggle');
+        });
+
+        it('should expose the opened state of the menu button', async () => {
+            await openHomeWithViewport(VIEWPORTS.tablet);
+
+            const getExpandedState = () => page.$eval('#navbar-menu-toggle', (element) => element.getAttribute('aria-expanded'));
+            expect(await getExpandedState()).to.equal('false');
+
+            await pressElement(page, '#navbar-menu-toggle');
+            await page.waitForSelector('.navbar-menu');
+            expect(await getExpandedState()).to.equal('true');
+
+            await page.keyboard.press('Escape');
+            await page.waitForSelector('.navbar-menu', { hidden: true });
+            expect(await getExpandedState()).to.equal('false');
+        });
+
+        it('should open the ALI FLP link of the menu in a new tab', async () => {
+            await openHomeWithViewport(VIEWPORTS.tablet);
+
+            await pressElement(page, '#navbar-menu-toggle');
+            await page.waitForSelector('.navbar-menu');
+
+            const aliFlpLinkTarget = await page.evaluate(() => [...document.querySelectorAll('.navbar-menu .menu-item')]
+                .find(({ innerText }) => innerText.trim() === 'ALI FLP')?.getAttribute('target'));
+            expect(aliFlpLinkTarget).to.equal('_blank');
+        });
     });
 
     describe('Create menu', () => {
