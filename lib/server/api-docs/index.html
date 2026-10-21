@@ -58,7 +58,7 @@ footer { max-width: 62rem; margin: 0 auto; padding: 1rem; color: var(--gray-dark
 <h1>Bookkeeping HTTP API</h1>
 <p>HTTP API of the ALICE Bookkeeping. <strong>Internal use only.</strong></p>
 <blockquote>
-<p>Pilot: only the <code>tags</code> resource is documented so far.</p>
+<p>Work in progress: not every resource is documented yet. Only the sections listed below exist.</p>
 </blockquote>
 <h2>Authentication</h2>
 <p>Every request carries a JWT in the <code>token</code> <strong>query parameter</strong> (e.g. <code>GET /api/tags?token=&lt;jwt&gt;</code>).
@@ -431,6 +431,32 @@ the tag <code>text</code> is immutable. Set <code>archivedAt</code> to a date to
 <li><code>404</code>: The requested entity does not exist.</li>
 </ul>
 <pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/tags/1/logs?page[limit]=100&amp;token=$TOKEN&quot;
+</code></pre>
+</details>
+<h2>Status</h2>
+<p>Health of the Bookkeeping application and of its database.</p>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/status/database</code> - Get the database connection status</h3></summary>
+
+<p>Operation id: <code>getDatabaseStatus</code></p>
+<p>Pings the database. <code>status.ok</code> is false when it cannot be reached.</p>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The database host, port and status.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/status/database?token=$TOKEN&quot;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/status/gui</code> - Get the status of the Bookkeeping application</h3></summary>
+
+<p>Operation id: <code>getGuiStatus</code></p>
+<p>Returns the host, port and version of the running Bookkeeping server that answered the request.</p>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The application host, port, version and status.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/status/gui?token=$TOKEN&quot;
 </code></pre>
 </details>
 
