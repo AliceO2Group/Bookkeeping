@@ -798,8 +798,45 @@ label {
  * x-large : 1920 <= x
  */
 
+/* Navbar: below 1280px the page links collapse into a menu, the create button shrinks to a '+' below 600px */
+.navbar-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: calc(100vh - 100%);
+    overflow-y: auto;
+}
+
+.navbar-dropdown .dropdown-menu.navbar-dropdown-menu-left {
+    left: 0;
+    right: auto;
+}
+
+.navbar-dropdown .menu-title {
+    color: var(--color-gray-darker);
+    font-weight: 700;
+}
+
+.navbar-menu .menu-item.selected {
+    font-weight: 700;
+    box-shadow: inset 4px 0 0 var(--color-primary-dark);
+}
+
+.navbar-links, .navbar-create-label {
+    display: none;
+}
+
+.navbar-links .btn, .navbar-create-button {
+    white-space: nowrap;
+}
+
 /* md */
 @media screen and (min-width: 600px) {
+    .navbar-create-label {
+        display: inline;
+    }
+
     .columns-3, .columns-2 {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -813,6 +850,17 @@ label {
 
     .columns-3 {
         grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* navbar: the whole bar needs about 1240px to fit on one line */
+@media screen and (min-width: 1280px) {
+    .navbar-links {
+        display: inline-flex;
+    }
+
+    .navbar-menu-toggle {
+        display: none;
     }
 }
 

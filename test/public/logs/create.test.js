@@ -250,6 +250,7 @@ module.exports = () => {
     });
 
     it('should successfully provide a tag picker with search input', async () => {
+        await pressElement(page, '#create-menu-button');
         await waitForNavigation(page, () => pressElement(page, '#create-log-button'));
 
         await page.locator('.tag-search-input').fill('P');
