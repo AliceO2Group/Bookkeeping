@@ -196,7 +196,7 @@ module.exports = () => {
     });
 
     it('should successfully display dropdown links', async () => {
-        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
+        await waitForNavigation(page, () => pressElement(page, 'a#env-overview', true));
 
         // Running env
         let envId = 'CmCvjNbg';
