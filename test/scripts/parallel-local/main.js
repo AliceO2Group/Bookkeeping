@@ -22,6 +22,7 @@ const testSuites = [
     'flps',
     'home',
     'about',
+    'header',
     'eos-report',
     'data-passes',
     'simulation-passes',
