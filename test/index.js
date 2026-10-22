@@ -11,6 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
+const ApplicationSuite = require('./lib/application.test.js');
 const DatabaseSuite = require('./lib/database');
 const PresentationSuite = require('./presentation');
 const PublicSuite = require('./lib/public');
@@ -22,19 +23,13 @@ const GrpcSuite = require('./gRPC');
 const APISuite = require('./api');
 const FrontendSuite = require('./public');
 
-const application = require('../lib/application');
+const { useApplication } = require('./utilities/useApplication.js');
 
 describe('Bookkeeping', () => {
-    before(async () => {
-        await application.run();
-        await application.connectDatabase();
-    });
-
-    after(async () => {
-        await application.stop(true);
-    });
+    useApplication();
 
     describe('Unit Suite', () => {
+        describe('Application', ApplicationSuite);
         describe('Database', DatabaseSuite);
         describe('Presentation', PresentationSuite);
         describe('Public', PublicSuite);

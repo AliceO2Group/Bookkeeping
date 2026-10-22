@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const application = require('../../lib/application');
+const { useApplication } = require('../utilities/useApplication.js');
 const DcsCreationSuite = require('../public/eosReport/dcs-creation.test.js');
 const EcsCreationSuite = require('../public/eosReport/ecs-creation.test.js');
 const QcPdpCreationSuite = require('../public/eosReport/qc-pdp-creation.test.js');
@@ -19,14 +19,7 @@ const ShiftLeaderCreationSuite = require('../public/eosReport/shift-leader-creat
 const SlimosCreationSuite = require('../public/eosReport/slimos-creation.test.js');
 
 describe('Bookkeeping', () => {
-    before(async () => {
-        await application.run();
-        await application.connectDatabase();
-    });
-
-    after(async () => {
-        await application.stop(true);
-    });
+    useApplication();
 
     describe('EosReport', () => {
         describe('DCS Creation Page', DcsCreationSuite);

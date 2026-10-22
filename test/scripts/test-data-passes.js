@@ -11,19 +11,12 @@
  * or submit itself to any jurisdiction.
  */
 
-const application = require('../../lib/application');
+const { useApplication } = require('../utilities/useApplication.js');
 const OverviewPerLhcPeriodSuite = require('../public/dataPasses/overviewPerLhcPeriod.test');
 const OverviewPerSimulationPassSuite = require('../public/dataPasses/overviewPerSimulationPass.test');
 
 describe('Bookkeeping', () => {
-    before(async () => {
-        await application.run();
-        await application.connectDatabase();
-    });
-
-    after(async () => {
-        await application.stop(true);
-    });
+    useApplication();
 
     describe('DataPasses', () => {
         describe('Overview Per LHC Period Page', OverviewPerLhcPeriodSuite);

@@ -11,19 +11,12 @@
  * or submit itself to any jurisdiction.
  */
 
-const application = require('../../lib/application');
+const { useApplication } = require('../utilities/useApplication.js');
 const OverviewSuite = require('../public/lhcFills/overview.test');
 const DetailsSuite = require('../public/lhcFills/detail.test.js');
 
 describe('Bookkeeping', () => {
-    before(async () => {
-        await application.run();
-        await application.connectDatabase();
-    });
-
-    after(async () => {
-        await application.stop(true);
-    });
+    useApplication();
 
     describe('LhcFills', () => {
         describe('Overview Page', OverviewSuite);

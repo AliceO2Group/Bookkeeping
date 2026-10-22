@@ -11,19 +11,12 @@
  * or submit itself to any jurisdiction.
  */
 
-const application = require('../../lib/application');
+const { useApplication } = require('../utilities/useApplication.js');
 const OverviewSuite = require('../public/envs/overview.test');
 const DetailsPageSuite = require('../public/envs/detailsPage.test.js');
 
 describe('Bookkeeping', () => {
-    before(async () => {
-        await application.run();
-        await application.connectDatabase();
-    });
-
-    after(async () => {
-        await application.stop(true);
-    });
+    useApplication();
 
     describe('Envs', () => {
         describe('Overview Page', OverviewSuite);
