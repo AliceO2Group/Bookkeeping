@@ -927,7 +927,7 @@ paths:
       tags: [FLPs]
       operationId: createFlp
       summary: Create an FLP role
-      description: Creates the role of an FLP in a run.
+      description: Creates the role of an FLP in a run. Responds 404 if the run does not exist.
       x-llm-exclude: true
       requestBody:
         required: true
@@ -942,6 +942,7 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/FlpResponse' }
         '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/FlpNotFound' }
 
   /flps/{flpId}:
     get:
@@ -962,7 +963,7 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/FlpResponse' }
         '400': { $ref: '#/components/responses/ValidationError' }
-        '404': { $ref: '#/components/responses/NotFound' }
+        '404': { $ref: '#/components/responses/FlpNotFound' }
 
   /flps/{flpName}/runs/{runNumber}:
     patch:
@@ -970,8 +971,8 @@ paths:
       operationId: updateFlp
       summary: Update the counters of an FLP in a run
       description: |
-        Replaces the data counters of the FLP role identified by FLP name and run number. Counters absent from the body are set to null.
-        Responds 400 if the run or the FLP in this run does not exist.
+        Updates the data counters of the FLP role identified by FLP name and run number. Counters absent from the body are left unchanged.
+        Responds 404 if there is no such FLP in this run.
       x-llm-exclude: true
       parameters:
         - name: flpName
@@ -997,6 +998,7 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/FlpResponse' }
         '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/FlpNotFound' }
 
 components:
   securitySchemes:
@@ -1082,6 +1084,15 @@ components:
           example:
             errors:
               - { status: 404, title: Not found, detail: Run with this run number (999) could not be found }
+
+    FlpNotFound:
+      description: The FLP role (or, when creating, the run) does not exist.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          example:
+            errors:
+              - { status: 404, title: Not found, detail: FLP with this id (999999999) could not be found }
 
   schemas:
     Tag:
