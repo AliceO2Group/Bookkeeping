@@ -17,6 +17,18 @@ const path = require('path');
 
 const DOCKERFILE_SRC = path.join(__dirname, '..', 'Dockerfile');
 
+// Read the docker file to extract pkg dependencies
+const dockerFileLines = fs.readFileSync(DOCKERFILE_SRC).toString().split('\n');
+
+/*
+ * Packages must be looked up in the Alpine release the image is built on (for example node:22-alpine3.20 is based on alpine:3.20),
+ * otherwise the version found may not exist in the repositories used by the build
+ */
+const [, ALPINE_VERSION] = /^FROM node:\S+-alpine(\d+\.\d+)/m.exec(dockerFileLines.join('\n')) ?? [];
+if (!ALPINE_VERSION) {
+    throw new Error('Unable to find the Alpine version of the base image in the Dockerfile');
+}
+
 const { log } = console;
 
 /**
@@ -28,7 +40,7 @@ const { log } = console;
 const getPkgVersion = (pkg) => new Promise((resolve, reject) => {
     const process = spawn(
         'docker',
-        ['run', 'alpine:3.18', 'apk', 'info', '--no-cache', pkg],
+        ['run', '--rm', `alpine:${ALPINE_VERSION}`, 'apk', 'info', '--no-cache', pkg],
     );
 
     // The version we received from docker
@@ -61,9 +73,6 @@ const getPkgVersion = (pkg) => new Promise((resolve, reject) => {
         resolve(version);
     });
 });
-
-// Read the docker file to extract pkg dependencies
-const dockerFileLines = fs.readFileSync(DOCKERFILE_SRC).toString().split('\n');
 
 let inBlockToUpdate = false;
 
