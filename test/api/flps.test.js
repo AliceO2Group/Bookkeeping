@@ -175,7 +175,8 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res.body.errors[0].title).to.equal('Flp with this id (999999999) could not be found');
+                    expect(res.body.errors[0].title).to.equal('Not found');
+                    expect(res.body.errors[0].detail).to.equal('FLP with this id (999999999) could not be found');
 
                     done();
                 });
@@ -252,10 +253,18 @@ module.exports = () => {
             expect(error.detail).to.equal('"params.runNumber" must be a number');
         });
 
-        it('should return 400 if the run does not exist', async () => {
+        it('should return 404 if the FLP of the run does not exist', async () => {
             const response = await request(server).patch('/api/flps/FLP/runs/999999999').send({ nTimeframes: 1 });
-            expect(response.status).to.equal(400);
-            expect(response.body.errors[0].title).to.contain('could not be found');
+            expect(response.status).to.equal(404);
+            expect(response.body.errors[0].detail).to.equal('FLP with this name (FLP) and run number (999999999) could not be found');
+        });
+
+        it('should only update the counters of the body', async () => {
+            const { bytesProcessed } = (await request(server).get('/api/flps/1')).body.data;
+            const response = await request(server).patch('/api/flps/FLP-TPC-1/runs/1').send({ nTimeframes: 77 });
+            expect(response.status).to.equal(201);
+            expect(response.body.data.nTimeframes).to.equal(77);
+            expect(response.body.data.bytesProcessed).to.equal(bytesProcessed);
         });
     });
 };
