@@ -379,3 +379,60 @@ Responses:
 ```bash
 curl -g "$BOOKKEEPING_URL/api/shift-data?shiftType=ECS&token=$TOKEN"
 ```
+
+## Simulation passes
+
+Monte Carlo simulation productions.
+
+### `GET /simulationPasses` - List simulation passes
+
+Operation id: `listSimulationPasses`
+
+Returns a page of simulation passes with their statistics (number of runs, data passes and logs).
+Default order is by name, descending.
+
+List filters are repeated query parameters: `filter[ids][]=1&filter[ids][]=2`. A single value without `[]` is rejected. Filters are combined
+with AND.
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `filter[ids][]` | query | integer | no | Keep the simulation passes with one of these ids. Repeat the parameter for several values. |
+| `filter[names][]` | query | string | no | Keep the simulation passes with one of these exact names. Repeat the parameter for several values. |
+| `filter[lhcPeriodIds][]` | query | integer | no | Keep the simulation passes used by data passes of one of these LHC periods. Repeat the parameter for several values. |
+| `filter[dataPassIds][]` | query | integer | no | Keep the simulation passes anchored to one of these data passes. Repeat the parameter for several values. |
+| `sort[id]` | query | string | no | Sort by id. |
+| `sort[name]` | query | string | no | Sort by name (the default is `desc`). |
+| `sort[pwg]` | query | string | no | Sort by physics working group. |
+| `sort[jiraId]` | query | string | no | Sort by Jira ticket. |
+| `sort[requestedEventsCount]` | query | string | no | Sort by number of requested events. |
+| `sort[generatedEventsCount]` | query | string | no | Sort by number of generated events. |
+| `sort[outputSize]` | query | string | no | Sort by output size. |
+| `page[limit]` | query | integer | no | Maximum number of items to return. LLMs and agents must use 100 or less. |
+| `page[offset]` | query | integer | no | Number of items to skip. |
+
+Responses:
+
+- `200`: A page of simulation passes.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/simulationPasses?page[limit]=100&token=$TOKEN"
+```
+
+### `GET /simulationPasses/{id}` - Get a simulation pass by id
+
+Operation id: `getSimulationPass`
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `id` | path | integer | yes | Simulation pass identifier. |
+
+Responses:
+
+- `200`: The simulation pass.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: No simulation pass has this id.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/simulationPasses/1?token=$TOKEN"
+```
