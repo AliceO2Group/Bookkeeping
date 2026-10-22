@@ -31,6 +31,7 @@ module.exports = () => {
                     }
 
                     expect(res.body.data).to.be.an('array');
+                    res.body.data.forEach((runType) => expect(Object.keys(runType)).to.have.members(['id', 'name']));
 
                     done();
                 });
@@ -62,6 +63,7 @@ module.exports = () => {
                     }
 
                     expect(res.body.data.id).to.equal(1);
+                    expect(Object.keys(res.body.data)).to.have.members(['id', 'name']);
 
                     done();
                 });
