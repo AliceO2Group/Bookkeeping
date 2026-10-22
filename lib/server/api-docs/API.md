@@ -602,7 +602,7 @@ Files attached to log entries.
 
 Operation id: `createAttachment`
 
-Uploads **one** file (multipart request) and stores it as an attachment, linked to a log if `log` is given. The response is the row stored in the database as it is.
+Uploads **one** file (multipart request) and stores it as an attachment, linked to a log if `log` is given.
 
 The files of a request are all written on the server, but only the first one is stored as an attachment. A request without any file is rejected with a `400`.
 Logs and their attachments are usually created together with `POST /logs`.

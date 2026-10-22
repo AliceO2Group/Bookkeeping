@@ -1091,7 +1091,7 @@ the environments of the shift and is tagged with the tags of the shift type that
 <summary><h3><span class="method post">POST</span> <code>/attachments</code> - Upload a file as an attachment <span class="no-llm" title="Changes data: not meant for LLM or MCP tool use (x-llm-exclude)">not for LLM use</span></h3></summary>
 
 <p>Operation id: <code>createAttachment</code></p>
-<p>Uploads <strong>one</strong> file (multipart request) and stores it as an attachment, linked to a log if <code>log</code> is given. The response is the row stored in the database as it is.</p>
+<p>Uploads <strong>one</strong> file (multipart request) and stores it as an attachment, linked to a log if <code>log</code> is given.</p>
 <p>The files of a request are all written on the server, but only the first one is stored as an attachment. A request without any file is rejected with a <code>400</code>.
 Logs and their attachments are usually created together with <code>POST /logs</code>.</p>
 <p><strong>Not meant for LLM or MCP tool use</strong> (<code>x-llm-exclude</code>).</p>
