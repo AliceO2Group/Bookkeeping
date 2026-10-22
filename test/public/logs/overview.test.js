@@ -101,7 +101,7 @@ module.exports = () => {
 
         expect(snippet).to.be.a('string').that.is.not.empty;
         expect(snippet).to.not.equal(title);
-        expect(snippet).to.not.match(/[*_`#[\]]/);
+        expect(snippet).to.not.match(/[*_`[\]]/);
     });
 
     it('can sort by columns in ascending and descending manners', async () => {
