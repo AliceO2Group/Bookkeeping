@@ -14,9 +14,13 @@
 const getRunTypeTest = require('./getRunType.test.js');
 const createRunTypeTest = require('./createRunType.test.js');
 const getOrCreateRunTypeTest = require('./getOrCreateRunType.test.js');
+const getAllRunTypesTest = require('./getAllRunTypes.test.js');
+const RunTypeServiceTest = require('./RunTypeService.test.js');
 
 module.exports = () => {
     describe('getRunType', getRunTypeTest);
     describe('createRunType', createRunTypeTest);
     describe('getOrCreateRunType', getOrCreateRunTypeTest);
+    describe('getAllRunTypes', getAllRunTypesTest);
+    describe('RunTypeService', RunTypeServiceTest);
 };

@@ -76,6 +76,24 @@ module.exports = () => {
                 });
         });
 
+        it('should return 404 if the run type does not exist', (done) => {
+            request(server)
+                .get('/api/runTypes/999999')
+                .expect(404)
+                .end((err, res) => {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(res.body.errors).to.eql([
+                        { status: 404, title: 'Not found', detail: 'Run type with this id (999999) could not be found' },
+                    ]);
+
+                    done();
+                });
+        });
+
         it('should return 400 if the run id is not positive', (done) => {
             request(server)
                 .get('/api/runTypes/-1')
