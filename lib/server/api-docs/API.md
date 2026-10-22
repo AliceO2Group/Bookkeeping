@@ -250,3 +250,22 @@ Responses:
 ```bash
 curl -g "$BOOKKEEPING_URL/api/status/gui?token=$TOKEN"
 ```
+
+## Configuration
+
+Addresses of the external services Bookkeeping links to.
+
+### `GET /configuration` - Get the URLs of the external services
+
+Operation id: `getConfiguration`
+
+Returns the addresses of the services Bookkeeping links to (InfoLogger, AliECS GUI, QC GUI, ali-flp-index).
+A URL is `null` when the service is not configured on this deployment.
+
+Responses:
+
+- `200`: The configured URLs.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/configuration?token=$TOKEN"
+```
