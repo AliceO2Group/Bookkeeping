@@ -11,6 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
+const ApplicationSuite = require('../lib/application.test.js');
 const DatabaseSuite = require('../lib/database');
 const PresentationSuite = require('../presentation');
 const PublicSuite = require('../lib/public');
@@ -32,6 +33,7 @@ describe('Bookkeeping', () => {
     });
 
     describe('Unit Suite', () => {
+        describe('Application', ApplicationSuite);
         describe('Database', DatabaseSuite);
         describe('Presentation', PresentationSuite);
         describe('Public', PublicSuite);
