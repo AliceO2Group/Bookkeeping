@@ -28,6 +28,7 @@ const {
     fillInput,
     getInnerText,
     getPopoverSelector,
+    expectInnerTextTo,
     waitForTimeout,
     waitForNavigation,
     waitForTableLength,
@@ -82,13 +83,32 @@ module.exports = () => {
         await expectInnerText(page, '#totalRowsCount', '119');
     });
 
-    it('Should have balloon on title, tags and runs columns', async () => {
+    it('Should have balloon on title, runs and environments, and LHC fills columns', async () => {
         await goToPage(page, 'log-overview');
         await page.waitForSelector('tbody tr:not(.loading-row)');
 
         await checkColumnBalloon(page, 1, 1);
+        await checkColumnBalloon(page, 1, 3);
         await checkColumnBalloon(page, 1, 4);
-        await checkColumnBalloon(page, 1, 5);
+    });
+
+    it('should display the tags in the last column, with a popover listing all the tags when there are too many of them', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForSelector('#row119-tags .popover-trigger');
+
+        const headers = await page.$$eval('th', (nodes) => nodes.map(({ id }) => id));
+        expect(headers[headers.length - 1]).to.equal('tags');
+
+        const chipTrigger = await page.$('#row119-tags .popover-trigger');
+        expect(await getInnerText(chipTrigger)).to.equal('TEST-TAG-36\n+5');
+
+        await chipTrigger.hover();
+        const popoverSelector = await getPopoverSelector(chipTrigger);
+        await expectInnerTextTo(
+            page,
+            popoverSelector,
+            (text) => ['TEST-TAG-36', 'TEST-TAG-37', 'TEST-TAG-38', 'TEST-TAG-39', 'TEST-TAG-40', 'TEST-TAG-41'].every((tag) => text.includes(tag)),
+        );
     });
 
     it('should display a one-line content preview below the title', async () => {

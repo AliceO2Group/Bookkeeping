@@ -216,7 +216,7 @@ module.exports = () => {
                 lhcFills: '5,6',
             },
             {
-                tags: 'TEST-TAG-36\nTEST-TAG-37\nTEST-TAG-38\nTEST-TAG-39\nTEST-TAG-40\nTEST-TAG-41',
+                tags: 'TEST-TAG-36\n+5',
                 runsAndEnvironments: 'Runs 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22\nEnv Dxi029djX,eZF99lH6',
                 lhcFills: '1,4,6',
             },
