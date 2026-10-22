@@ -91,6 +91,19 @@ module.exports = () => {
         await checkColumnBalloon(page, 1, 5);
     });
 
+    it('should display a one-line content preview below the title', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForSelector('tbody tr:not(.loading-row)');
+
+        const rowId = await page.$eval('tbody tr:first-child', (row) => row.id);
+        const title = await getInnerText(await page.waitForSelector(`#${rowId}-title-value`));
+        const snippet = await getInnerText(await page.waitForSelector(`#${rowId}-title-snippet`));
+
+        expect(snippet).to.be.a('string').that.is.not.empty;
+        expect(snippet).to.not.equal(title);
+        expect(snippet).to.not.match(/[*_`#[\]]/);
+    });
+
     it('can sort by columns in ascending and descending manners', async () => {
         // Close the filter panel
         await waitForFirstRowToHaveId(page, 'row119');
