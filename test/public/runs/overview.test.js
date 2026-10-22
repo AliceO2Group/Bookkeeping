@@ -325,8 +325,8 @@ module.exports = () => {
 
         it('should successfully display links to infologger, QC GUI and ECS', async () => {
             const { id: createdRunId, runNumber: createdRunNumber } = await runService.create({ runNumber: 1000, timeTrgStart: new Date(), environmentId: 'CmCvjNbg' });
-            await waitForNavigation(page, () => pressElement(page, 'a#home'));
-            await waitForNavigation(page, () => pressElement(page, 'a#run-overview'));
+            await waitForNavigation(page, () => pressElement(page, 'a#home', true));
+            await waitForNavigation(page, () => pressElement(page, 'a#run-overview', true));
 
             // Not running run, wait for popover to be visible
             await pressElement(page, '#row104-runNumber-text .popover-trigger');

@@ -18,6 +18,7 @@ const TagsSuite = require('./tags');
 const FlpsSuite = require('./flps');
 const HomeSuite = require('./home');
 const AboutSuite = require('./about');
+const HeaderSuite = require('./header');
 const EnvsSuite = require('./envs');
 const ErrorSuite = require('./error');
 const EosReportSuite = require('./eosReport');
@@ -43,6 +44,7 @@ module.exports = () => {
     describe('Flps', FlpsSuite);
     describe('Home', HomeSuite);
     describe('About', AboutSuite);
+    describe('Header', HeaderSuite);
     describe('EosReport', EosReportSuite);
     describe('DataPasses', DataPassesSuite);
     describe('SimulationPasses', SimulationPassesSuite);
