@@ -745,7 +745,7 @@ paths:
       x-llm-exclude: true
       summary: Upload a file as an attachment
       description: |
-        Uploads **one** file (multipart request) and stores it as an attachment, linked to a log if `log` is given. The response is the row stored in the database as it is.
+        Uploads **one** file (multipart request) and stores it as an attachment, linked to a log if `log` is given.
 
         The files of a request are all written on the server, but only the first one is stored as an attachment. A request without any file is rejected with a `400`.
         Logs and their attachments are usually created together with `POST /logs`.
@@ -790,7 +790,7 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/ErrorResponse' }
               example:
-                errors: [{ status: '404', title: 'Attachment with this id (999999999) could not be found' }]
+                errors: [{ status: 404, title: Not found, detail: Attachment with this id (999999999) could not be found }]
 
 components:
   securitySchemes:
@@ -1216,8 +1216,7 @@ components:
         attachments: { type: string, format: binary, description: The file to upload. }
     StoredAttachment:
       type: object
-      description: |
-        Row of the `attachments` table as stored. It differs from the attachments embedded in a log, which have neither `createdAt` nor `updatedAt`.
+      description: An attachment as stored on the server.
       properties:
         id: { type: integer }
         fileName: { type: string, description: Name of the file on the server (the upload time is prepended to the original name). }
@@ -1227,8 +1226,6 @@ components:
         size: { type: integer, description: Size of the file in bytes. }
         path: { type: string, description: Path of the file on the server. }
         logId: { type: [integer, 'null'] }
-        createdAt: { type: string, format: date-time }
-        updatedAt: { type: string, format: date-time }
     StoredAttachmentResponse:
       type: object
       required: [data]
