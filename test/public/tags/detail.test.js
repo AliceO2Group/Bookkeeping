@@ -45,7 +45,7 @@ module.exports = () => {
         const parsedFirstRowId = parseInt(firstRowId.slice('row'.length, firstRowId.length), 10);
 
         // We expect the entry page to have the same id as the id from the tag overview
-        await waitForNavigation(page, () => pressElement(page, `#${firstRowId} .btn-redirect`, true));
+        await waitForNavigation(page, () => pressElement(page, `#${firstRowId}-title-link`));
 
         const [, parametersExpr] = await page.url().split('?');
         const urlParameters = parametersExpr.split('&');

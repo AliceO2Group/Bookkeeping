@@ -91,6 +91,19 @@ module.exports = () => {
         await checkColumnBalloon(page, 1, 5);
     });
 
+    it('should display a one-line content preview below the title', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForSelector('tbody tr:not(.loading-row)');
+
+        const rowId = await page.$eval('tbody tr:first-child', (row) => row.id);
+        const title = await getInnerText(await page.waitForSelector(`#${rowId}-title-value`));
+        const snippet = await getInnerText(await page.waitForSelector(`#${rowId}-title-snippet`));
+
+        expect(snippet).to.be.a('string').that.is.not.empty;
+        expect(snippet).to.not.equal(title);
+        expect(snippet).to.not.match(/[*_`[\]]/);
+    });
+
     it('can sort by columns in ascending and descending manners', async () => {
         // Close the filter panel
         await waitForFirstRowToHaveId(page, 'row119');
@@ -287,11 +300,34 @@ module.exports = () => {
         });
     });
 
-    it('can navigate to a log detail page', async () => {
+    it('can navigate to a log detail page via the title link', async () => {
         await goToPage(page, 'log-overview');
 
-        await waitForNavigation(page, () => pressElement(page, 'a.btn-redirect'));
+        await waitForNavigation(page, () => pressElement(page, '#row119-title-link'));
         await expectUrlParams(page, { page: 'log-detail', id: 119 });
+    });
+
+    it('can navigate to a log detail page by clicking on its row', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForSelector('#row119-author');
+
+        await waitForNavigation(page, () => pressElement(page, '#row119-author'));
+        await expectUrlParams(page, { page: 'log-detail', id: 119 });
+    });
+
+    it('does not navigate to the log detail page when clicking on a link inside its row', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForSelector('#row119-runs a');
+
+        await waitForNavigation(page, () => pressElement(page, '#row119-runs a'));
+        await expectUrlParams(page, { page: 'run-detail' }, ['runNumber']);
+    });
+
+    it('does not display a dedicated button to navigate to the log detail page', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForSelector('#row119-title-link');
+
+        expect(await page.$('tbody a.btn-redirect')).to.be.null;
     });
 
     it.skip('does not reset pagination filters when navigating away', async () => {

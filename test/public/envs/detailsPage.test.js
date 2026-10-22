@@ -111,6 +111,16 @@ module.exports = () => {
         expect(rowIds).to.eql(['row1', 'row3', 'row4']);
     });
 
+    it('should not display the content preview in the related logs tab', async () => {
+        await goToEnvironmentDetails(page, '8E4aZTjY');
+        await pressElement(page, '#logs-tab');
+        await waitForTableLength(page, 3);
+
+        const rowId = await page.$eval('#logs-pane table tbody tr', (row) => row.id);
+        await page.waitForSelector(`#${rowId}-title`);
+        expect(await page.$(`#${rowId}-title-snippet`)).to.be.null;
+    });
+
     it('should successfully display a message when environment has no raw configuration', async () => {
         await goToEnvironmentDetails(page, '8E4aZTjY');
         await pressElement(page, '#raw-configuration-tab');

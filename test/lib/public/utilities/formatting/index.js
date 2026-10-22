@@ -13,8 +13,10 @@
 
 const formatRunDurationTest = require('./formatRunDuration.test.js');
 const formatNamedValuesTest = require('./formatNamedValue.test.js')
+const formatLogSnippetTest = require('./formatLogSnippet.test.js');
 
 module.exports = () => {
     describe('formatRunDurationTest', formatRunDurationTest);
     describe('formatNamedValuesTest', formatNamedValuesTest);
+    describe('formatLogSnippetTest', formatLogSnippetTest);
 };
