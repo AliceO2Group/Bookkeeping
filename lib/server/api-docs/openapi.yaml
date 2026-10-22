@@ -47,6 +47,8 @@ tags:
     description: Types of runs (e.g. calibration kinds).
   - name: CTP trigger counters
     description: Counters of the central trigger processor, per run and trigger class.
+  - name: Shifts
+    description: Data used to fill end-of-shift reports.
 
 paths:
   /tags:
@@ -394,6 +396,37 @@ paths:
                 errors:
                   - { status: 404, title: Not found, detail: Run with this run number (999999999) could not be found }
 
+  /shift-data:
+    get:
+      tags: [Shifts]
+      operationId: getShiftData
+      summary: Get the data of the pending shift of the calling user
+      description: |
+        Returns what a shifter needs to write their end-of-shift (EoS) report for the **pending shift**: the current shift, or the previous one
+        during the 30 minutes that follow its end. Shifts last 8 hours and are Night (23h-7h), Morning (7h-15h) and Afternoon (15h-23h) in the
+        Geneva time zone. The shift is deduced from the current time and the calling user, not from a parameter.
+
+        `typeSpecific` depends on `shiftType`: `{ environments }` for `ECS`, `{ runs }` for `QC/PDP`, `{ runs, tagsCounters }` for `SL`, and `null`
+        for `SLIMOS` and `DCS`.
+      parameters:
+        - name: shiftType
+          in: query
+          required: true
+          description: Kind of shift.
+          schema: { type: string, enum: [ECS, QC/PDP, SLIMOS, SL, DCS], examples: [ECS] }
+      responses:
+        '200':
+          description: The shift data.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ShiftDataResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404':
+          description: The calling user is not known to Bookkeeping.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+
 components:
   securitySchemes:
     jwtQuery:
@@ -596,3 +629,43 @@ components:
         data:
           type: array
           items: { $ref: '#/components/schemas/CtpTriggerCounters' }
+    Shift:
+      type: object
+      required: [start, end, period]
+      properties:
+        start: { type: integer, description: Epoch milliseconds. }
+        end: { type: integer, description: Epoch milliseconds. }
+        period: { type: string, enum: [Night, Morning, Afternoon] }
+    ShiftData:
+      type: object
+      required: [shift, issuesLogs, typeSpecific, infoFromPreviousShifter]
+      properties:
+        shift: { $ref: '#/components/schemas/Shift' }
+        issuesLogs:
+          type: array
+          description: Log entries of the shift carrying the tags of the shift type, EoS reports excluded (see the Logs resource).
+          items: { type: object, additionalProperties: true }
+        typeSpecific:
+          type: [object, 'null']
+          description: Depends on the shift type, see the operation description.
+          properties:
+            environments: { type: array, description: 'ECS shift only.', items: { type: object, additionalProperties: true } }
+            runs:
+              type: object
+              description: QC/PDP and SL shifts only. Runs of the shift grouped by run definition.
+              additionalProperties: { type: array, items: { type: object, additionalProperties: true } }
+            tagsCounters:
+              type: object
+              description: SL shift only. Number of root logs of the shift per tag text, EoS reports excluded.
+              additionalProperties: { type: integer }
+        infoFromPreviousShifter:
+          type: object
+          description: The "For next shifter" section of the EoS report of the previous shift. Exactly one of the properties is set.
+          properties:
+            value: { type: string }
+            errorMessage: { type: string, description: 'Why nothing could be retrieved (no report, several reports, empty section...).' }
+    ShiftDataResponse:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: '#/components/schemas/ShiftData' }
