@@ -113,6 +113,25 @@ module.exports = () => {
         expect(await page.$('th#author')).to.be.null;
     });
 
+    it('should display the data passes and the simulation passes in a single labelled column', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForSelector('#row119-passes-data');
+
+        expect(await getInnerText(await page.$('#row119-passes-data'))).to.match(/^Data \S+/);
+        expect(await getInnerText(await page.$('#row119-passes-simulation'))).to.match(/^Sim \S+/);
+        expect(await page.$('th#dataPasses')).to.be.null;
+        expect(await page.$('th#simulationPasses')).to.be.null;
+        expect(await page.$('th#passes')).to.not.be.null;
+    });
+
+    it('should display a placeholder in the passes column of a log without passes', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForSelector('#row119-passes-data');
+
+        const passesCells = await getColumnCellsInnerTexts(page, 'passes');
+        expect(passesCells).to.include('-');
+    });
+
     it('can sort by columns in ascending and descending manners', async () => {
         // Close the filter panel
         await waitForFirstRowToHaveId(page, 'row119');
@@ -382,7 +401,7 @@ module.exports = () => {
         await goToPage(page, 'log-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
 
-        await waitForNavigation(page, () => pressElement(page, '#row119-dataPasses a'));
+        await waitForNavigation(page, () => pressElement(page, '#row119-passes-data a'));
         expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
     });
 
@@ -390,7 +409,7 @@ module.exports = () => {
         await goToPage(page, 'log-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
 
-        await waitForNavigation(page, () => pressElement(page, '#row119-simulationPasses a'));
+        await waitForNavigation(page, () => pressElement(page, '#row119-passes-simulation a'));
         expectUrlParams(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' });
     });
 
