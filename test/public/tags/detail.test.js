@@ -12,8 +12,9 @@
  */
 
 const chai = require('chai');
-const { defaultBefore, defaultAfter, expectInnerText, pressElement, getFirstRow, goToPage, waitForNavigation } = require('../defaults.js');
+const { defaultBefore, defaultAfter, expectInnerText, expectInnerTextTo, pressElement, getFirstRow, goToPage, waitForNavigation } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
+const { repositories: { TagRepository } } = require('../../../lib/database/index.js');
 
 const { expect } = chai;
 
@@ -58,6 +59,17 @@ module.exports = () => {
         expect(emails).to.lengthOf(1);
         expect(await emails[0].evaluate((element) => element.href)).to.equal('mailto:food-group@cern.ch');
         expect(await emails[0].evaluate((element) => element.innerText)).to.equal('food-group@cern.ch');
+    });
+
+    it('should display the name of the user who last edited the tag', async () => {
+        await goToPage(page, 'tag-detail', { queryParameters: { id: 1, panel: 'logs' } });
+        await expectInnerTextTo(page, '#tag-lastEditedBy', (text) => text.trim().endsWith('-'));
+
+        await TagRepository.updateAll({ lastEditedByUserId: 1 }, { where: { id: 1 } });
+        await goToPage(page, 'tag-detail', { queryParameters: { id: 1, panel: 'logs' } });
+        await expectInnerTextTo(page, '#tag-lastEditedBy', (text) => text.trim().endsWith('John Doe'));
+
+        await TagRepository.updateAll({ lastEditedByUserId: null }, { where: { id: 1 } });
     });
 
     it('notifies if a specified tag id is invalid', async () => {

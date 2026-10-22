@@ -12,7 +12,9 @@
  */
 
 const FormattingSuite = require('./formatting/index.js');
+const FilterOutLegacyDetectorsForNewerPeriodsSuite = require('./filterOutLegacyDetectorsForNewerPeriods.test.js');
 
 module.exports = () => {
     describe('FormattingSuite', FormattingSuite);
+    describe('FilterOutLegacyDetectorsForNewerPeriods', FilterOutLegacyDetectorsForNewerPeriodsSuite);
 };

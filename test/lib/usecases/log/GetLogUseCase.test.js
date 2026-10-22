@@ -35,4 +35,16 @@ module.exports = () => {
         expect(result).to.have.ownProperty('id');
         expect(result.id).to.equal(1);
     });
+
+    it('should return the simulation passes linked to the log', async () => {
+        const result = await new GetLogUseCase().execute(getLogDto);
+
+        expect(result.simulationPasses.map(({ name }) => name).sort()).to.deep.equal(['LHC23k6b', 'LHC23k6c']);
+    });
+
+    it('should return the data passes linked to the log', async () => {
+        const result = await new GetLogUseCase().execute(getLogDto);
+
+        expect(result.dataPasses.map(({ name }) => name).sort()).to.deep.equal(['LHC22b_apass1', 'LHC22b_skimming']);
+    });
 };

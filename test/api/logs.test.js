@@ -256,6 +256,68 @@ module.exports = () => {
             }
         });
 
+        it('should return the simulation passes linked to each log', async () => {
+            const response = await request(server).get('/api/logs?sort[id]=asc');
+            expect(response.status).to.equal(200);
+
+            const log1 = response.body.data.find(({ id }) => id === 1);
+            expect(log1.simulationPasses.map(({ name }) => name).sort()).to.deep.equal(['LHC23k6b', 'LHC23k6c']);
+            for (const { simulationPasses } of response.body.data) {
+                expect(simulationPasses).to.be.an('array');
+            }
+        });
+
+        it('should return the data passes linked to each log', async () => {
+            const response = await request(server).get('/api/logs?sort[id]=asc');
+            expect(response.status).to.equal(200);
+
+            const log1 = response.body.data.find(({ id }) => id === 1);
+            expect(log1.dataPasses.map(({ name }) => name).sort()).to.deep.equal(['LHC22b_apass1', 'LHC22b_skimming']);
+            for (const { dataPasses } of response.body.data) {
+                expect(dataPasses).to.be.an('array');
+            }
+        });
+
+        it('should successfully filter by data pass names', async () => {
+            // At least one of the data passes must be linked to the log
+            const response = await request(server).get('/api/logs?filter[dataPasses]=LHC22b_skimming,LHC22a_apass1');
+            expect(response.status).to.equal(200);
+            expect(response.body.data.map(({ id }) => id).sort((a, b) => a - b)).to.deep.equal([1, 2]);
+
+            const singleResponse = await request(server).get('/api/logs?filter[dataPasses]=LHC22b_apass1');
+            expect(singleResponse.status).to.equal(200);
+            expect(singleResponse.body.data.map(({ id }) => id).sort((a, b) => a - b)).to.deep.equal([1, 119]);
+        });
+
+        it('should successfully filter by simulation pass names', async () => {
+            // At least one of the simulation passes must be linked to the log
+            const response = await request(server).get('/api/logs?filter[simulationPasses]=LHC23k6b,LHC23k6a');
+            expect(response.status).to.equal(200);
+            expect(response.body.data.map(({ id }) => id).sort((a, b) => a - b)).to.deep.equal([1, 2]);
+
+            const singleResponse = await request(server).get('/api/logs?filter[simulationPasses]=LHC23k6c');
+            expect(singleResponse.status).to.equal(200);
+            expect(singleResponse.body.data.map(({ id }) => id).sort((a, b) => a - b)).to.deep.equal([1, 119]);
+        });
+
+        it('should successfully filter by LHC period names', async () => {
+            const response = await request(server).get('/api/logs?filter[lhcPeriods]=LHC22a');
+            expect(response.status).to.equal(200);
+            expect(response.body.data.map(({ id }) => id)).to.deep.equal([2]);
+
+            const multipleResponse = await request(server).get('/api/logs?filter[lhcPeriods]=LHC22a,LHC22b');
+            expect(multipleResponse.status).to.equal(200);
+            expect(multipleResponse.body.data.map(({ id }) => id).sort((a, b) => a - b)).to.deep.equal([1, 2, 119]);
+        });
+
+        it('should return an empty list when filtering by unknown data pass, simulation pass or LHC period', async () => {
+            for (const [filterKey, value] of [['dataPasses', 'NOT_A_DATA_PASS'], ['simulationPasses', 'NOT_A_SIMULATION_PASS'], ['lhcPeriods', 'NOT_A_PERIOD']]) {
+                const response = await request(server).get(`/api/logs?filter[${filterKey}]=${value}`);
+                expect(response.status).to.equal(200);
+                expect(response.body.data).to.lengthOf(0);
+            }
+        });
+
         it('should successfully filter by EnvironmentIds', async () => {
             const response = await request(server).get('/api/logs?filter[environmentIds]=Dxi029djX,eZF99lH6');
             expect(response.status).to.equal(200);
@@ -1224,7 +1286,7 @@ module.exports = () => {
             expect(response.body.data.text).to.equal('Text of yet another run');
             for (const tag of response.body.data.tags) {
                 delete tag.updatedAt;
-                delete tag.lastEditedName;
+                delete tag.lastEditedBy;
             }
             expect(response.body.data.tags).to.deep.equal([
                 {
@@ -1367,6 +1429,57 @@ module.exports = () => {
                 });
         });
 
+        it('should return 201 and link the data passes if a proper body with data pass names was sent', async () => {
+            const { body: { data: log } } = await request(server)
+                .post('/api/logs')
+                .field('title', 'Log with data passes')
+                .field('text', 'Text of log with data passes')
+                .field('dataPasses[]', 'LHC22b_apass1')
+                .field('dataPasses[]', 'LHC22b_apass2_skimmed')
+                .expect(201);
+
+            expect(log.dataPasses.map(({ name }) => name).sort()).to.deep.equal(['LHC22b_apass1', 'LHC22b_apass2_skimmed']);
+
+            const { body: { data: fetchedLog } } = await request(server).get(`/api/logs/${log.id}`).expect(200);
+            expect(fetchedLog.dataPasses.map(({ name }) => name).sort()).to.deep.equal(['LHC22b_apass1', 'LHC22b_apass2_skimmed']);
+
+            const { body: { data: logs } } = await request(server).get('/api/logs?page[limit]=100').expect(200);
+            expect(logs.find(({ id }) => id === log.id).dataPasses).to.have.lengthOf(2);
+        });
+
+        it('should return 201 and link the simulation passes if a proper body with simulation pass names was sent', async () => {
+            const { body: { data: log } } = await request(server)
+                .post('/api/logs')
+                .field('title', 'Log with simulation passes')
+                .field('text', 'Text of log with simulation passes')
+                .field('simulationPasses[]', 'LHC23k6c')
+                .field('simulationPasses[]', 'LHC23k6a')
+                .expect(201);
+
+            expect(log.simulationPasses.map(({ name }) => name).sort()).to.deep.equal(['LHC23k6a', 'LHC23k6c']);
+
+            const { body: { data: fetchedLog } } = await request(server).get(`/api/logs/${log.id}`).expect(200);
+            expect(fetchedLog.simulationPasses.map(({ name }) => name).sort()).to.deep.equal(['LHC23k6a', 'LHC23k6c']);
+        });
+
+        it('should return 400 if one of the simulation passes does not exist', async () => {
+            await request(server)
+                .post('/api/logs')
+                .field('title', 'Log with unknown simulation pass')
+                .field('text', 'Text of log with unknown simulation pass')
+                .field('simulationPasses[]', 'NOT_A_SIMULATION_PASS')
+                .expect(400);
+        });
+
+        it('should return 400 if one of the data passes does not exist', async () => {
+            await request(server)
+                .post('/api/logs')
+                .field('title', 'Log with unknown data pass')
+                .field('text', 'Text of log with unknown data pass')
+                .field('dataPasses[]', 'NOT_A_DATA_PASS')
+                .expect(400);
+        });
+
         it('should return 400 if one of the LHC fill numbers is invalid', (done) => {
             request(server)
                 .post('/api/logs')
@@ -1390,6 +1503,16 @@ module.exports = () => {
     });
 
     describe('GET /api/logs/:logId', () => {
+        it('should return the data passes linked to the log', async () => {
+            const { body: { data } } = await request(server).get('/api/logs/119').expect(200);
+            expect(data.dataPasses).to.deep.equal([{ id: 1, name: 'LHC22b_apass1' }]);
+        });
+
+        it('should return the simulation passes linked to the log', async () => {
+            const { body: { data } } = await request(server).get('/api/logs/119').expect(200);
+            expect(data.simulationPasses).to.deep.equal([{ id: 1, name: 'LHC23k6c' }]);
+        });
+
         it('should return 400 if the log id is not a number', (done) => {
             request(server)
                 .get('/api/logs/abc')

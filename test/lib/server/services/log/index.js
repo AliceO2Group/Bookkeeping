@@ -17,7 +17,10 @@ const LogServiceTest = require('./LogService.test.js');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 
 module.exports = () => {
+    // Logs created in this suite must not shift the ids expected by the suites that run afterward
     before(resetDatabaseContent);
+    after(resetDatabaseContent);
+
     describe('getLogsByTagsInPeriodTest', getLogsByTagsInPeriodTest);
     describe('getLogsByUserInPeriodTest', getLogsByUserInPeriodTest);
     describe('LogService', LogServiceTest);

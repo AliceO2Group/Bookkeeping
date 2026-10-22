@@ -29,6 +29,7 @@ const LHC23k6c = {
     outputSize: 14013600611699,
     dataPassesCount: 2,
     runsCount: 3,
+    logsCount: 2,
 };
 
 const LHC23k6b = {
@@ -43,6 +44,7 @@ const LHC23k6b = {
     outputSize: 157000310748,
     dataPassesCount: 1,
     runsCount: 3,
+    logsCount: 1,
 };
 
 const LHC23k6a = {
@@ -57,6 +59,7 @@ const LHC23k6a = {
     outputSize: 147000310748,
     dataPassesCount: 1,
     runsCount: 1,
+    logsCount: 1,
 };
 
 module.exports = () => {

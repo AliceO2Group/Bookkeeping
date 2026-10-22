@@ -142,6 +142,7 @@ module.exports = () => {
 
             expect(response.status).to.equal(201);
             expect(response.body.data.text).to.equal(expectedText);
+            expect(response.body.data.lastEditedBy).to.deep.equal({ name: 'John Doe' });
         });
 
         it('should return 409 if we are creating the same tag again', (done) => {
@@ -312,6 +313,7 @@ module.exports = () => {
                 },
             });
 
+            createTagDto.session = { id: 1, externalId: 1, name: 'John Doe' };
             createdTag = await new CreateTagUseCase()
                 .execute(createTagDto);
         });
@@ -471,6 +473,22 @@ module.exports = () => {
                 });
         });
     });
+    describe('GET /api/tags/:tagId/logs relations', () => {
+        it('should return the relations displayed in the embedded logs table', async () => {
+            const response = await request(server).get('/api/tags/3/logs');
+            expect(response.status).to.equal(200);
+
+            // Log 1 is linked to all kind of entities, which must be returned for logs displayed in embedded tables
+            const log = response.body.data.find(({ id }) => id === 1);
+            expect(log.runs).to.deep.equal([{ id: 1, runNumber: 1 }]);
+            expect(log.lhcFills.map(({ fillNumber }) => fillNumber)).to.have.members([5, 6]);
+            expect(log.environments.map(({ id }) => id)).to.have.members(['8E4aZTjY', 'eZF99lH6']);
+            expect(log.dataPasses.map(({ name }) => name)).to.have.members(['LHC22b_apass1', 'LHC22b_skimming']);
+            expect(log.simulationPasses.map(({ name }) => name)).to.have.members(['LHC23k6c', 'LHC23k6b']);
+            expect(log.attachments).to.be.an('array');
+        });
+    });
+
     describe('GET /api/tags/name', () => {
         it('should return 200 if a valid query is given', (done) => {
             request(server)
@@ -543,6 +561,7 @@ module.exports = () => {
                     text: `TAG#${new Date().getTime()}`,
                 },
             });
+            createTagDto.session = { id: 1, externalId: 1, name: 'John Doe' };
             createdTag = await new CreateTagUseCase()
                 .execute(createTagDto);
         });
@@ -579,6 +598,18 @@ module.exports = () => {
 
                     done();
                 });
+        });
+        it('should store the user who edited the tag and return it', async () => {
+            const putResponse = await request(server)
+                .put(`/api/tags/${createdTag.id}?token=admin`)
+                .send({ email: 'groupa@cern.ch', mattermost: 'groupa' });
+            expect(putResponse.status).to.equal(201);
+
+            const getResponse = await request(server).get(`/api/tags/${createdTag.id}`);
+            expect(getResponse.status).to.equal(200);
+            const { data } = getResponse.body;
+            expect(data.lastEditedBy).to.deep.equal({ name: 'John Doe' });
+            expect(data).to.not.have.property('lastEditedName');
         });
         it('should return 400 if invalid email is given', (done) => {
             request(server)
@@ -632,6 +663,15 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should return 404 if the tag could not be found', async () => {
+            const response = await request(server)
+                .put('/api/tags/999999999?token=admin')
+                .send({ email: 'groupa@cern.ch', mattermost: 'groupa' });
+
+            expect(response.status).to.equal(404);
+            expect(response.body.errors[0].detail).to.equal('Tag with this id (999999999) could not be found');
+        });
+
         it('should successfully archive the given tag', async () => {
             const now = Date.now();
             const response = await request(server).put(`/api/tags/${createdTag.id}?token=admin`).send({ archivedAt: now });

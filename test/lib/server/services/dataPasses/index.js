@@ -12,7 +12,9 @@
  */
 
 const DataPassService = require('./DataPassService.test.js');
+const getAllDataPassesByNameOrFail = require('./getAllDataPassesByNameOrFail.test.js');
 
 module.exports = () => {
     describe('DataPassService', DataPassService);
+    describe('getAllDataPassesByNameOrFail', getAllDataPassesByNameOrFail);
 };

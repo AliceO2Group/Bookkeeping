@@ -153,6 +153,28 @@ module.exports = () => {
         expectUrlParams(page, { page: 'lhc-fill-details', fillNumber: fillNumbers[0] });
     });
 
+    it('allows navigating to an associated data pass', async () => {
+        const logId = 119;
+
+        await goToPage(page, 'log-detail', { queryParameters: { id: logId } });
+
+        await expectInnerText(page, `#log-${logId}-dataPasses`, 'Data passes:\nLHC22b_apass1');
+
+        await waitForNavigation(page, () => pressElement(page, `#log-${logId}-dataPasses a`));
+        expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
+    });
+
+    it('allows navigating to an associated simulation pass', async () => {
+        const logId = 119;
+
+        await goToPage(page, 'log-detail', { queryParameters: { id: logId } });
+
+        await expectInnerText(page, `#log-${logId}-simulationPasses`, 'Simulation passes:\nLHC23k6c');
+
+        await waitForNavigation(page, () => pressElement(page, `#log-${logId}-simulationPasses a`));
+        expectUrlParams(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' });
+    });
+
     it('should have a button to reply on a entry', async () => {
         const parentLogId = 2;
         await goToPage(page, 'log-detail', { queryParameters: { id: parentLogId } });

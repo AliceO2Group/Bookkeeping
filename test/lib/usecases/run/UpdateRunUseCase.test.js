@@ -15,6 +15,9 @@
 const { run: { UpdateRunUseCase, GetRunUseCase } } = require('../../../../lib/usecases/index.js');
 const { dtos: { UpdateRunDto, GetRunDto, UpdateRunByRunNumberDto } } = require('../../../../lib/domain/index.js');
 const chai = require('chai');
+const assert = require('assert');
+const { BadParameterError } = require('../../../../lib/server/errors/BadParameterError.js');
+const { NotFoundError } = require('../../../../lib/server/errors/NotFoundError.js');
 const { GetAllLogsUseCase } = require('../../../../lib/usecases/log/index.js');
 const { RunQualities } = require('../../../../lib/domain/enums/RunQualities.js');
 const { RunDetectorQualities } = require('../../../../lib/domain/enums/RunDetectorQualities.js');
@@ -77,9 +80,10 @@ module.exports = () => {
     describe('updates with runNumber parameter.', () => {
         it('Should give an error when the id of the environment can not be found', async () => {
             updateRunDto.params.runNumber = wrongRunNumber;
-            const { error } = await new UpdateRunUseCase().execute(updateRunDto);
-            expect(error.status).to.equal(500);
-            expect(error.detail).to.equal(`Run with this run number (${wrongRunNumber}) could not be found`);
+            await assert.rejects(
+                () => new UpdateRunUseCase().execute(updateRunDto),
+                new NotFoundError(`Run with this run number (${wrongRunNumber}) could not be found`),
+            );
         });
 
         it('should successfully retrieve run via run number, \
@@ -91,9 +95,8 @@ module.exports = () => {
 
             updateRunDto.body.runQuality = RunQualities.BAD;
             updateRunDto.body.runQualityChangeReason = 'Change reason';
-            const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
+            const result = await new UpdateRunUseCase().execute(updateRunDto);
 
-            expect(error).to.be.an('undefined');
             expect(result).to.be.an('object');
             expect(result.id).to.equal(106);
             expect(result.runQuality).to.equal(RunQualities.BAD);
@@ -109,10 +112,10 @@ module.exports = () => {
             updateRunDto.params.runNumber = 105;
             updateRunDto.body.runQuality = RunQualities.BAD;
             updateRunDto.body.runQualityChangeReason = 'Change reason';
-            const { error } = await new UpdateRunUseCase().execute(updateRunDto);
-
-            expect(error).to.be.an('object');
-            expect(error.detail).to.equal('Run quality can not be updated on a run that has not ended yet');
+            await assert.rejects(
+                () => new UpdateRunUseCase().execute(updateRunDto),
+                new BadParameterError('Run quality can not be updated on a run that has not ended yet'),
+            );
         });
 
         it('should successfully create a log when run quality change', async () => {
@@ -200,9 +203,9 @@ module.exports = () => {
                     },
                 ],
             };
-            const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
+            updateRunDto.session = { id: 2, externalId: 456, name: 'Jan Jansen' };
+            const result = await new UpdateRunUseCase().execute(updateRunDto);
 
-            expect(error).to.be.an('undefined');
             expect(result).to.be.an('object');
             expect(result.id).to.equal(1);
             expect(result.eorReasons).to.have.lengthOf(2);
@@ -210,13 +213,52 @@ module.exports = () => {
             expect(result.eorReasons[0].description).to.equal('Some Reason other than selected plus one');
             expect(result.eorReasons[1].id).to.equal(7);
             expect(result.eorReasons[1].description).to.be.null;
+
+            // Kept EoR reason keeps its original editor, the new one is attributed to the session user
+            expect(result.eorReasons[0].lastEditedBy).to.deep.equal({ name: 'Anonymous' });
+            expect(result.eorReasons[1].lastEditedBy).to.deep.equal({ name: 'Jan Jansen' });
+            expect(result.eorReasons[1]).to.not.have.property('lastEditedName');
+        });
+
+        it('should reject an update of the end of run reasons without a user', async () => {
+            updateRunDto.params.runNumber = 1;
+            updateRunDto.body = { eorReasons: [{ reasonTypeId: 1 }] };
+            const { eorReasons: eorReasonsBefore } = await new GetRunUseCase().execute({ params: { runNumber: 1 } });
+
+            await assert.rejects(
+                () => new UpdateRunUseCase().execute(updateRunDto),
+                new BadParameterError('A user is required to update the end of run reasons'),
+            );
+
+            const { eorReasons: eorReasonsAfter } = await new GetRunUseCase().execute({ params: { runNumber: 1 } });
+            expect(eorReasonsAfter).to.eql(eorReasonsBefore);
+        });
+
+        it('should reject an update of the end of run reasons if the user does not exist', async () => {
+            updateRunDto.params.runNumber = 1;
+            updateRunDto.body = { eorReasons: [{ reasonTypeId: 1 }] };
+            updateRunDto.session = { id: 9999, externalId: 9999, name: 'Ghost' };
+            const { eorReasons: eorReasonsBefore } = await new GetRunUseCase().execute({ params: { runNumber: 1 } });
+
+            await assert.rejects(
+                () => new UpdateRunUseCase().execute(updateRunDto),
+                new NotFoundError('User with this external id (9999) could not be found'),
+            );
+
+            const { eorReasons: eorReasonsAfter } = await new GetRunUseCase().execute({ params: { runNumber: 1 } });
+            expect(eorReasonsAfter).to.eql(eorReasonsBefore);
+        });
+
+        it('should allow updating other run fields without a user', async () => {
+            updateRunDto.body.tags = ['ECS'];
+            const result = await new UpdateRunUseCase().execute(updateRunDto);
+            expect(result.tags.map((tag) => tag.text)).to.be.eql(['ECS']);
         });
 
         it('Should successfully update the run tags', async () => {
             updateRunDto.body.tags = ['ECS', 'ECS Shifter'];
-            const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
+            const result = await new UpdateRunUseCase().execute(updateRunDto);
 
-            expect(error).to.be.undefined;
             expect(result.tags.map((tag) => tag.text)).to.be.eql(['ECS', 'ECS Shifter']);
         });
 
@@ -226,12 +268,10 @@ module.exports = () => {
             updateRunDto.body.tags = ['FOOD', 'DO-NOT-EXIST', 'DO-NOT-EXIST-EITHER'];
             const originalRun = await new GetRunUseCase().execute({ params: { runNumber: runNumber } });
 
-            const { result, error } = await new UpdateRunUseCase().execute(updateRunDto);
-
-            expect(result).to.be.undefined;
-            expect(error).to.be.an('object');
-            expect(error.status).to.equal(500);
-            expect(error.detail).to.equal('Tags DO-NOT-EXIST, DO-NOT-EXIST-EITHER could not be found');
+            await assert.rejects(
+                () => new UpdateRunUseCase().execute(updateRunDto),
+                { message: 'Tags DO-NOT-EXIST, DO-NOT-EXIST-EITHER could not be found' },
+            );
 
             // Expect run to have other fields unchanged
             const run = await new GetRunUseCase().execute({ params: { runNumber: runNumber } });
@@ -254,14 +294,13 @@ module.exports = () => {
                 expect(log.tags.map(({ text }) => text)).to.eql(['CPV']);
             };
 
-            const { result, error } = await new UpdateRunUseCase().execute({
+            const result = await new UpdateRunUseCase().execute({
                 params: { runNumber: 1 },
                 body: {
                     detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.BAD }],
                     detectorsQualitiesChangeReason: justification,
                 },
             });
-            expect(error).to.be.undefined;
             expect(result).to.be.an('object');
             expect(result.detectorsQualities).to.lengthOf(1);
             expect(result.detectorsQualities[0].id).to.equal(1);
@@ -280,35 +319,35 @@ module.exports = () => {
         });
 
         it('should throw an error when trying to update the quality of a non-existing detector', async () => {
-            const { result, error } = await new UpdateRunUseCase().execute({
-                params: { runNumber: 1 },
-                body: {
-                    detectorsQualities: [{ detectorId: 2, quality: RunDetectorQualities.BAD }],
-                    detectorsQualitiesChangeReason: 'Justification',
-                },
-            });
-            expect(result).to.be.undefined;
-            expect(error).to.be.an('object');
-            expect(error.detail).to.equal('This run\'s detector with runNumber: (1) and with detector Id: (2) could not be found');
+            await assert.rejects(
+                () => new UpdateRunUseCase().execute({
+                    params: { runNumber: 1 },
+                    body: {
+                        detectorsQualities: [{ detectorId: 2, quality: RunDetectorQualities.BAD }],
+                        detectorsQualitiesChangeReason: 'Justification',
+                    },
+                }),
+                new NotFoundError('This run\'s detector with runNumber: (1) and with detector Id: (2) could not be found'),
+            );
         });
 
         it('should throw an error when trying to update the quality of a run not ended yet', async () => {
-            const { result, error } = await new UpdateRunUseCase().execute({
-                params: { runNumber: 105 },
-                body: {
-                    detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.BAD }],
-                    detectorsQualitiesChangeReason: 'Justification',
-                },
-            });
-            expect(result).to.be.undefined;
-            expect(error).to.be.an('object');
-            expect(error.detail).to.equal('Detector quality can not be updated on a run that has not ended yet');
+            await assert.rejects(
+                () => new UpdateRunUseCase().execute({
+                    params: { runNumber: 105 },
+                    body: {
+                        detectorsQualities: [{ detectorId: 1, quality: RunDetectorQualities.BAD }],
+                        detectorsQualitiesChangeReason: 'Justification',
+                    },
+                }),
+                new BadParameterError('Detector quality can not be updated on a run that has not ended yet'),
+            );
         });
     });
 
     describe('updates with run number', () => {
         it('Should be able to update the run with correct values', async () => {
-            const { result } = await new UpdateRunUseCase().execute(updateRunByRunNumberDto);
+            const result = await new UpdateRunUseCase().execute(updateRunByRunNumberDto);
 
             expect(result.runNumber).to.equal(72);
             expect(result.lhcBeamEnergy).to.equal(232.156);
@@ -339,18 +378,18 @@ module.exports = () => {
 
         it('Should give an error when the id of the run can not be found', async () => {
             updateRunByRunNumberDto.query.runNumber = wrongRunNumber;
-            const { error } = await new UpdateRunUseCase()
-                .execute(updateRunByRunNumberDto);
-            expect(error.status).to.equal(500);
-            expect(error.detail).to.equal(`Run with this run number (${wrongRunNumber}) could not be found`);
+            await assert.rejects(
+                () => new UpdateRunUseCase().execute(updateRunByRunNumberDto),
+                new NotFoundError(`Run with this run number (${wrongRunNumber}) could not be found`),
+            );
         });
 
         it('Should give an error when the id of the lhcFill cannot be found', async () => {
             updateRunByRunNumberDto.body.fillNumber = wrongRunNumber;
-            const { error } = await new UpdateRunUseCase()
-                .execute(updateRunByRunNumberDto);
-            expect(error.status).to.equal(500);
-            expect(error.detail).to.equal('LhcFill with id (\'9999999999\') could not be found');
+            await assert.rejects(
+                () => new UpdateRunUseCase().execute(updateRunByRunNumberDto),
+                new Error('LhcFill with id (\'9999999999\') could not be found'),
+            );
         });
     });
 };

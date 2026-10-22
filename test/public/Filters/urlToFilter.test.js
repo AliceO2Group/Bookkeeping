@@ -61,7 +61,7 @@ module.exports = () => {
 
     it('should set filters from EnvironmentsOverview to the URL', async () => {
         const url = 'http://localhost:4000/?page=env-overview&filter[created][from]=1565301600000&filter[created][to]=1565474340000' +
-                    '&filter[runNumbers]=10&filter[statusHistory]=C-R-D-X&filter[currentStatus]=DESTROYED&filter[ids]=Dxi029djX%2C%20TDI59So3d';
+                    '&filter[runNumbers]=10&filter[statusHistory]=C-R-D-X&filter[currentStatus]=DONE&filter[ids]=Dxi029djX%2C%20TDI59So3d';
         await page.goto(url, { waitUntil: 'load' });
         await openFilteringPanel(page);
 
@@ -71,7 +71,7 @@ module.exports = () => {
 
         await expectInputValue(page, '.runs-filter input', '10');
         await expectInputValue(page, '.id-filter input', 'Dxi029djX, TDI59So3d');
-        await page.waitForSelector('#checkboxes-checkbox-DESTROYED:checked');
+        await page.waitForSelector('#checkboxes-checkbox-DONE:checked');
         await expectInputValue(page, '.historyItems-filter input', 'C-R-D-X');
         await expectInputValue(page, fromDateTimeSelector, '2019-08-08T22:00');
         await expectInputValue(page, toDateTimeSelector, '2019-08-10T21:59');

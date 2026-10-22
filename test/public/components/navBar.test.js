@@ -25,6 +25,12 @@ module.exports = () => {
 
     before(async () => {
         [page, browser] = await defaultBefore();
+        // The tabs are only displayed on big enough screens, below that they are collapsed in a menu
+        await page.setViewport({
+            width: 1920,
+            height: 1080,
+            deviceScaleFactor: 1,
+        });
     });
 
     it('NavBar Tabs should navigate to their respective pages', async () => {

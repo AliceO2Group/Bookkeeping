@@ -14,11 +14,13 @@
 const UtilitiesSuite = require('./utilities/index.js');
 const ServicesSuite = require('./services/index.js');
 const MiddlewareSuite = require('./middleware/index.js');
+const RoutersSuite = require('./routers/index.js');
 const ExternalServicesSynchronizationSuite = require('./externalServicesSynchronization/index.js');
 
 module.exports = () => {
     describe('Utilities', UtilitiesSuite);
     describe('Services', ServicesSuite);
     describe('Middlewares', MiddlewareSuite);
+    describe('Routers', RoutersSuite);
     describe('External Services Synchronization', ExternalServicesSynchronizationSuite);
 };

@@ -26,6 +26,8 @@ const {
     expectUrlParams,
     expectInnerText,
     testTableSortingByColumn,
+    openFilteringPanel,
+    expectInputValue,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -61,6 +63,7 @@ module.exports = () => {
             name: (name) => /(deleted\n)?LHC\d\d[a-z]+_([a-z]pass\d|skimming)/.test(name),
             associatedRuns: (display) => /(No runs)|(\d+)/.test(display),
             anchoredSimulationPasses: (display) => /(No MC)|(\d+)/.test(display),
+            associatedLogs: (display) => /(-)|(\d+)/.test(display),
             description: (description) => /(-)|(.+)/.test(description),
             statusHistory: (statusHistory) => /R(\n-\n[RD])*/.test(statusHistory),
             reconstructedEventsCount: (reconstructedEventsCount) => !isNaN(reconstructedEventsCount.replace(/,/g, ''))
@@ -76,26 +79,30 @@ module.exports = () => {
 
         await validateTableData(page, new Map(Object.entries(tableDataValidators)));
 
-        const tableSlice = await getTableDataSlice(page, ['name', 'associatedRuns', 'anchoredSimulationPasses']);
-        expect(tableSlice.map(({ name, associatedRuns, anchoredSimulationPasses }) => ({
+        const tableSlice = await getTableDataSlice(page, ['name', 'associatedRuns', 'anchoredSimulationPasses', 'associatedLogs']);
+        expect(tableSlice.map(({ name, associatedRuns, anchoredSimulationPasses, associatedLogs }) => ({
             name,
             runsCount: Number(associatedRuns.split('\n')[0]),
             simulationPassesCount: Number(anchoredSimulationPasses.split('\n')[0]) || 0,
+            logsCount: Number(associatedLogs.split('\n')[0]) || 0,
         }))).to.have.all.deep.members([
             {
                 name: 'LHC22b_skimming',
                 runsCount: 3,
                 simulationPassesCount: 0,
+                logsCount: 1,
             },
             {
                 name: 'LHC22b_apass2_skimmed',
                 runsCount: 4,
                 simulationPassesCount: 1,
+                logsCount: 0,
             },
             {
                 name: 'deleted\nLHC22b_apass1\nSkimmable',
                 runsCount: 3,
                 simulationPassesCount: 1,
+                logsCount: 2,
             },
         ]);
 
@@ -119,6 +126,15 @@ module.exports = () => {
             page: 'anchored-simulation-passes-overview',
             dataPassId: '5',
         });
+    });
+
+    it('can navigate to the logs overview filtered by data pass', async () => {
+        await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
+        await waitForNavigation(page, () => pressElement(page, 'tbody tr td:nth-of-type(4) a'));
+        expectUrlParams(page, { page: 'log-overview' }, ['filter[dataPasses]', 'filter%5BdataPasses%5D']);
+        expect(decodeURIComponent(page.url())).to.include('filter[dataPasses]=LHC22b_skimming');
+        await openFilteringPanel(page);
+        await expectInputValue(page, '.dataPasses-textFilter', 'LHC22b_skimming');
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {

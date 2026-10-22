@@ -37,7 +37,7 @@ const {
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const { RunDefinition } = require('../../../lib/domain/enums/RunDefinition.js');
-const { navigateToRunsPerLhcPeriod } = require('./navigationUtils.js');
+const { navigateToRunsPerLhcPeriod } = require('./dataPassesUtilities.js');
 
 const { expect } = chai;
 
@@ -181,8 +181,9 @@ module.exports = () => {
     });
 
     it('notifies if table loading returned an error', async () => {
-        // eslint-disable-next-line no-return-assign, no-undef
-        await page.evaluate(() => model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 200);
+        await page.waitForFunction(() => window.model?.runs?.perLhcPeriodOverviewModel?.pagination);
+        // eslint-disable-next-line no-return-assign
+        await page.evaluate(() => window.model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 200);
         await page.waitForSelector('.alert-danger');
 
         // We expect there to be a fitting error message
@@ -191,8 +192,7 @@ module.exports = () => {
 
         // Revert changes for next test
         await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
+            window.model.runs.perLhcPeriodOverviewModel.pagination.itemsPerPage = 2;
         });
         await waitForTableLength(page, 2);
     });
@@ -244,8 +244,7 @@ module.exports = () => {
 
         fs.unlinkSync(path.resolve(downloadPath, targetFileName));
         await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.runs.perLhcPeriodOverviewModel.reset();
+            window.model.runs.perLhcPeriodOverviewModel.reset();
         });
     });
 

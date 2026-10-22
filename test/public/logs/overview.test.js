@@ -344,6 +344,22 @@ module.exports = () => {
         expectUrlParams(page, { page: 'lhc-fill-details', fillNumber: 1 });
     });
 
+    it('should successfully display the list of related data passes as hyperlinks to their runs page', async () => {
+        await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
+
+        await waitForNavigation(page, () => pressElement(page, '#row119-dataPasses a'));
+        expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
+    });
+
+    it('should successfully display the list of related simulation passes as hyperlinks to their runs page', async () => {
+        await goToPage(page, 'log-overview');
+        await page.evaluate(() => window.model.disableInputDebounce());
+
+        await waitForNavigation(page, () => pressElement(page, '#row119-simulationPasses a'));
+        expectUrlParams(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' });
+    });
+
     it('should successfult navigate to run details via popover', async () => {
         await goToPage(page, 'log-overview');
         await waitForFirstRowToHaveId(page, 'row119');
@@ -430,6 +446,56 @@ module.exports = () => {
             await fillInput(page, toDateTimeSelector, '2020-02-02T12:00', ['change']);
 
             await waitForTableLength(page, 1);
+        });
+
+        it('can filter by data passes', async () => {
+            await openFilteringPanel(page);
+            await fillInput(page, '.dataPasses-textFilter', 'LHC22b_apass1', ['change']);
+            await waitForTableLength(page, 2);
+
+            // At least one of the data passes must be linked to the log entry
+            await fillInput(page, '.dataPasses-textFilter', 'LHC22b_skimming, LHC22a_apass1', ['change']);
+            await waitForTableLength(page, 2);
+
+            await fillInput(page, '.dataPasses-textFilter', 'NOT_A_DATA_PASS', ['change']);
+            await waitForEmptyTable(page);
+        });
+
+        it('can filter by simulation passes', async () => {
+            await openFilteringPanel(page);
+            await fillInput(page, '.simulationPasses-textFilter', 'LHC23k6c', ['change']);
+            await waitForTableLength(page, 2);
+
+            // At least one of the simulation passes must be linked to the log entry
+            await fillInput(page, '.simulationPasses-textFilter', 'LHC23k6b, LHC23k6a', ['change']);
+            await waitForTableLength(page, 2);
+
+            await fillInput(page, '.simulationPasses-textFilter', 'NOT_A_SIMULATION_PASS', ['change']);
+            await waitForEmptyTable(page);
+        });
+
+        it('can filter by LHC periods inherited from the data passes and explain it with an info tooltip', async () => {
+            await openFilteringPanel(page);
+
+            const infoTrigger = await page.waitForSelector('.lhcPeriods-filter .popover-trigger');
+            await infoTrigger.hover();
+            const popoverSelector = await getPopoverSelector(infoTrigger);
+            await page.waitForSelector(popoverSelector, { visible: true });
+            expect(await page.$eval(popoverSelector, (element) => element.innerText)).to.include('inherited from the data passes');
+            // Move the mouse away to close the tooltip
+            await page.mouse.move(0, 0);
+
+            await fillInput(page, '.lhcPeriods-textFilter', 'LHC22a', ['change']);
+            await waitForTableLength(page, 1);
+
+            await fillInput(page, '.lhcPeriods-textFilter', 'LHC22b', ['change']);
+            await waitForTableLength(page, 2);
+
+            await fillInput(page, '.lhcPeriods-textFilter', 'LHC22a, LHC22b', ['change']);
+            await waitForTableLength(page, 3);
+
+            await fillInput(page, '.lhcPeriods-textFilter', 'NOT_A_PERIOD', ['change']);
+            await waitForEmptyTable(page);
         });
 
         it('can filter by tags', async () => {

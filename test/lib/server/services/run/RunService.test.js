@@ -371,6 +371,32 @@ module.exports = () => {
         }
     });
 
+    it('should store EoR reasons without editor when no user is given (automatic EoR reasons)', async () => {
+        const run = await runService.update(
+            { runNumber: 1 },
+            { relations: { eorReasons: [{ category: 'DETECTORS', title: 'CPV', description: 'automatic' }] } },
+        );
+
+        expect(run.eorReasons).to.lengthOf(1);
+        expect(run.eorReasons[0].description).to.equal('automatic');
+        expect(run.eorReasons[0].lastEditedBy).to.be.null;
+    });
+
+    it('should store the user who created the EoR reasons', async () => {
+        const run = await runService.update(
+            { runNumber: 1 },
+            {
+                relations: {
+                    eorReasons: [{ category: 'DETECTORS', title: 'CPV', description: 'by user' }],
+                    userIdentifier: { externalUserId: 456 },
+                },
+            },
+        );
+
+        expect(run.eorReasons).to.lengthOf(1);
+        expect(run.eorReasons[0].lastEditedBy).to.deep.equal({ name: 'Jan Jansen' });
+    });
+
     it('should successfully update run with eorReasons with category and title', async () => {
         const runNumber = 1;
 

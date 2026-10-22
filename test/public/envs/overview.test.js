@@ -117,9 +117,6 @@ module.exports = () => {
                 case 'DONE':
                     await page.waitForSelector(`${cellSelector}.black`);
                     break;
-                case 'DESTROYED':
-                    await page.waitForSelector(`${cellSelector}.black`);
-                    break;
                 case 'DEPLOYED':
                     await page.waitForSelector(`${cellSelector}.gray`);
                     break;
@@ -199,7 +196,7 @@ module.exports = () => {
     });
 
     it('should successfully display dropdown links', async () => {
-        await waitForNavigation(page, () => pressElement(page, 'a#env-overview'));
+        await waitForNavigation(page, () => pressElement(page, 'a#env-overview', true));
 
         // Running env
         let envId = 'CmCvjNbg';
@@ -303,7 +300,7 @@ module.exports = () => {
         await fillInput(page, '.runs-filter input', '10', ['change']);
 
         await fillInput(page, '.id-filter input', 'Dxi029djX, TDI59So3d', ['change']);
-        await page.$eval('.status-filter #checkboxes-checkbox-DESTROYED', (element) => element.click());
+        await page.$eval('.status-filter #checkboxes-checkbox-DONE', (element) => element.click());
 
         await fillInput(page, '.historyItems-filter input', 'C-R-D-X', ['change']);
         

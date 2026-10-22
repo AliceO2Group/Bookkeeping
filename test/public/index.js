@@ -18,6 +18,7 @@ const TagsSuite = require('./tags');
 const FlpsSuite = require('./flps');
 const HomeSuite = require('./home');
 const AboutSuite = require('./about');
+const HeaderSuite = require('./header');
 const EnvsSuite = require('./envs');
 const ErrorSuite = require('./error');
 const EosReportSuite = require('./eosReport');
@@ -28,6 +29,7 @@ const SimulationPassesSuite = require('./simulationPasses');
 const QcFlagTypesSuite = require('./qcFlagTypes');
 const QcFlagsSuite = require('./qcFlags');
 const FilterSuite = require('./Filters');
+const RunsPerPeriodOrPass = require('./runsPerPeriodOrPass');
 
 module.exports = () => {
     describe('Components', ComponentsSuite);
@@ -37,10 +39,12 @@ module.exports = () => {
     describe('Logs', LogsSuite);
     describe('Envs', EnvsSuite);
     describe('Runs', RunsSuite);
+    describe('RunsPerDataPassesAndPeriods', RunsPerPeriodOrPass);
     describe('Tags', TagsSuite);
     describe('Flps', FlpsSuite);
     describe('Home', HomeSuite);
     describe('About', AboutSuite);
+    describe('Header', HeaderSuite);
     describe('EosReport', EosReportSuite);
     describe('DataPasses', DataPassesSuite);
     describe('SimulationPasses', SimulationPassesSuite);

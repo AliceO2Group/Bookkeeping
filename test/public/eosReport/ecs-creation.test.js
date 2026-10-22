@@ -65,7 +65,7 @@ module.exports = () => {
                 ...environment,
             });
             await createEnvironmentHistoryItem({
-                status: 'DESTROYED',
+                status: 'DONE',
                 timestamp: new Date(),
                 timestampNano: 0,
                 environmentId: environment.id,

@@ -1,0 +1,474 @@
+openapi: 3.1.0
+info:
+  title: Bookkeeping HTTP API
+  version: 0.1.0-pilot
+  description: |
+    HTTP API of the ALICE Bookkeeping. **Internal use only.**
+
+    > Work in progress: not every resource is documented yet. Only the sections listed below exist.
+
+    ## Authentication
+    Every request carries a JWT in the `token` **query parameter** (e.g. `GET /api/tags?token=<jwt>`).
+    The token's `access` claim lists the user's roles; operations marked with a role below return `403` otherwise.
+
+    ## Response envelope
+    Successful responses are `{ "data": ... }`, with `meta.page` added on paginated endpoints.
+    Failed responses are `{ "errors": [ { status, title, detail?, source? } ] }`.
+    Note that request-validation failures are sent with **HTTP 400** while each error's `status` field says `"422"`.
+
+    ## Conventions
+    - Filters use bracket syntax: `filter[partialText]=foo`. List-valued filters are comma separated: `filter[ids]=1,2,3`.
+    - Pagination uses `page[limit]` and `page[offset]`.
+    - Timestamps are Unix epoch **milliseconds**.
+    - Operations flagged `x-llm-exclude: true` change data and are **not meant for LLMs or MCP tools**; skip them when generating tools.
+
+    ## Instructions for LLMs and automated agents
+    - **Always paginate** when an endpoint supports `page[limit]` and `page[offset]`. Never rely on the default: when `page[limit]` is omitted the server
+      may return up to 5000 items, which is far too much for a model context.
+    - **Request at most 100 items per call** (`page[limit]=100`). This is a rule for LLMs and agents, not a server limit (the server accepts more).
+    - To read more, repeat the call increasing `page[offset]` by the limit until `offset` reaches `meta.page.totalCount`.
+    - Prefer narrowing the request with `filter[...]` parameters over reading everything and filtering afterwards.
+    - Endpoints that are not paginated (for example `GET /tags`) return everything: use their filters.
+    - Do not call operations flagged `x-llm-exclude: true`: they create, change or delete data.
+servers:
+  - url: /api
+security:
+  - jwtQuery: []
+tags:
+  - name: Tags
+    description: Labels attached to logs (and runs). Each tag may notify an e-mail list and a Mattermost channel.
+  - name: Status
+    description: Health of the Bookkeeping application and of its database.
+  - name: Configuration
+    description: Addresses of the external services Bookkeeping links to.
+  - name: Detectors
+    description: Detectors of the ALICE experiment.
+
+paths:
+  /tags:
+    get:
+      tags: [Tags]
+      operationId: listTags
+      summary: List tags
+      description: |
+        Returns every tag matching the filters, **not paginated**.
+        Returns `204 No Content` (empty body) when nothing matches, so clients must not assume a JSON body.
+      parameters:
+        - name: filter[ids]
+          in: query
+          description: Comma separated tag ids.
+          schema: { type: string, examples: ['1,2,3'] }
+        - name: filter[texts]
+          in: query
+          description: Comma separated exact tag texts. Takes precedence over `filter[partialText]`.
+          schema: { type: string, examples: ['FOOD,DRINK'] }
+        - name: filter[partialText]
+          in: query
+          description: Substring match on the tag text. Ignored when `filter[texts]` is given.
+          schema: { type: string, examples: ['-TAG-'] }
+        - name: filter[emails]
+          in: query
+          description: Comma separated e-mail addresses.
+          schema: { type: string }
+        - name: filter[mattermosts]
+          in: query
+          description: Comma separated Mattermost channel names.
+          schema: { type: string }
+      responses:
+        '200':
+          description: Matching tags.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Tag' }
+        '204': { description: "No tag matches the filters. No body." }
+        '400': { $ref: '#/components/responses/ValidationError' }
+    post:
+      tags: [Tags]
+      operationId: createTag
+      x-llm-exclude: true
+      summary: Create a tag
+      x-required-roles: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateTag' }
+            example:
+              text: FOOD
+              description: Food related issues
+              email: cake@cern.ch,test@cern.ch
+              mattermost: food-channel
+              color: '#ff8800'
+      responses:
+        '201':
+          description: The created tag.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TagResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409':
+          description: A tag with the same text already exists.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+              example:
+                errors:
+                  - status: 409
+                    title: The request conflicts with existing data
+                    detail: The provided entity already exists
+
+  /tags/name:
+    get:
+      tags: [Tags]
+      operationId: getTagByName
+      summary: Get a tag by its text
+      description: Looks a tag up by its exact text (case as stored). Use this when you know the label but not the id.
+      parameters:
+        - name: name
+          in: query
+          required: true
+          description: Exact tag text. Must be URL-encoded.
+          schema: { type: string, examples: ['FOOD'] }
+      responses:
+        '200':
+          description: The tag.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TagResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /tags/{tagId}:
+    parameters:
+      - $ref: '#/components/parameters/TagId'
+    get:
+      tags: [Tags]
+      operationId: getTagById
+      summary: Get a tag by id
+      responses:
+        '200':
+          description: The tag.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TagResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      tags: [Tags]
+      operationId: updateTag
+      x-llm-exclude: true
+      summary: Update a tag
+      description: |
+        Only `description`, `email`, `mattermost`, `color` and `archivedAt` can change;
+        the tag `text` is immutable. Set `archivedAt` to a date to archive the tag and to `null` to restore it.
+      x-required-roles: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UpdateTag' }
+            example:
+              description: Updated description
+              archivedAt: null
+      responses:
+        '201':
+          description: The updated tag. (Status is `201`, not `200`.)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TagResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [Tags]
+      operationId: deleteTag
+      x-llm-exclude: true
+      summary: Delete a tag
+      x-required-roles: [admin]
+      responses:
+        '200':
+          description: The deleted tag.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TagResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /tags/{tagId}/logs:
+    parameters:
+      - $ref: '#/components/parameters/TagId'
+    get:
+      tags: [Tags]
+      operationId: listLogsByTag
+      summary: List logs carrying a tag
+      parameters:
+        - name: page[limit]
+          in: query
+          description: Maximum number of logs to return. LLMs and agents must use 100 or less.
+          schema: { type: integer, minimum: 1, examples: [100] }
+        - name: page[offset]
+          in: query
+          schema: { type: integer, minimum: 0, default: 0 }
+      responses:
+        '200':
+          description: A page of logs.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: array
+                    description: Log entities (see the Logs resource, not yet documented).
+                    items: { type: object, additionalProperties: true }
+                  meta:
+                    type: object
+                    properties:
+                      page:
+                        type: object
+                        properties:
+                          pageCount: { type: integer }
+                          totalCount: { type: integer }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /status/database:
+    get:
+      tags: [Status]
+      operationId: getDatabaseStatus
+      summary: Get the database connection status
+      description: Pings the database. `status.ok` is false when it cannot be reached.
+      responses:
+        '200':
+          description: The database host, port and status.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ServiceStatusResponse' }
+              example:
+                data: { host: database, port: 3306, status: { ok: true, configured: true } }
+
+  /status/gui:
+    get:
+      tags: [Status]
+      operationId: getGuiStatus
+      summary: Get the status of the Bookkeeping application
+      description: Returns the host, port and version of the running Bookkeeping server that answered the request.
+      responses:
+        '200':
+          description: The application host, port, version and status.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ServiceStatusResponse' }
+              example:
+                data: { host: localhost, port: 4000, version: 1.20.0, status: { ok: true, configured: true } }
+
+  /configuration:
+    get:
+      tags: [Configuration]
+      operationId: getConfiguration
+      summary: Get the URLs of the external services
+      description: |
+        Returns the addresses of the services Bookkeeping links to (InfoLogger, AliECS GUI, QC GUI, ali-flp-index).
+        A URL is `null` when the service is not configured on this deployment.
+      responses:
+        '200':
+          description: The configured URLs.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Configuration' }
+              example:
+                data:
+                  FlpInfologgerUrl: http://localhost:8081
+                  EpnInfologgerUrl: null
+                  AliFlpIndexUrl: http://localhost:80
+                  QcGuiUrl: http://localhost:8082
+                  AliEcsGuiUrl: http://localhost:8080
+
+  /detectors:
+    get:
+      tags: [Detectors]
+      operationId: listDetectors
+      summary: List all detectors
+      description: Returns every detector, sorted alphabetically by name. Not paginated.
+      responses:
+        '200':
+          description: The detectors.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DetectorListResponse' }
+              example:
+                data:
+                  - { id: 17, name: ACO, type: PHYSICAL }
+                  - { id: 21, name: GLO, type: QC }
+
+components:
+  securitySchemes:
+    jwtQuery:
+      type: apiKey
+      in: query
+      name: token
+      description: JWT identifying the user. Its `access` claim carries the roles (e.g. `admin`, `guest`).
+
+  parameters:
+    TagId:
+      name: tagId
+      in: path
+      required: true
+      description: Tag identifier.
+      schema: { type: integer, minimum: 1 }
+
+  responses:
+    ValidationError:
+      description: |
+        The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`.
+        `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          example:
+            errors:
+              - status: '422'
+                source: { pointer: /data/attributes/params/tagId }
+                title: Invalid Attribute
+                detail: '"params.tagId" must be a number'
+    Forbidden:
+      description: The token lacks the role required by this operation.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          example:
+            errors: [{ status: '403', title: Access denied }]
+    NotFound:
+      description: The requested entity does not exist.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          example:
+            errors: [{ status: '404', title: 'Tag with this id (999999999) could not be found' }]
+
+  schemas:
+    Tag:
+      type: object
+      required: [id, text, archived, updatedAt]
+      properties:
+        id: { type: integer, minimum: 1 }
+        text: { type: string, minLength: 2, maxLength: 20, description: "Unique label. Immutable." }
+        description: { type: [string, 'null'], maxLength: 100 }
+        email:
+          type: [string, 'null']
+          description: Comma separated e-mail addresses notified when the tag is used.
+        mattermost: { type: [string, 'null'], description: "Mattermost channel notified when the tag is used." }
+        color:
+          type: [string, 'null']
+          pattern: '^#[0-9A-Fa-f]{6}$'
+          description: Hex colour, e.g. `#ff8800`.
+        archived: { type: boolean, description: "True when `archivedAt` is set." }
+        archivedAt: { type: [integer, 'null'], description: "Epoch milliseconds, null if not archived." }
+        lastEditedBy:
+          type: [object, 'null']
+          properties:
+            name: { type: string }
+        updatedAt: { type: integer, description: "Epoch milliseconds." }
+    TagResponse:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: '#/components/schemas/Tag' }
+    CreateTag:
+      type: object
+      required: [text]
+      properties:
+        text:
+          type: string
+          minLength: 2
+          maxLength: 20
+          pattern: '[\w|\-+]{1,}'
+          description: Words, digits, `-` and `+` only.
+        description: { type: [string, 'null'], maxLength: 100 }
+        mattermost: { type: [string, 'null'] }
+        email:
+          type: [string, 'null']
+          description: One or more e-mail addresses, comma separated.
+        color: { type: [string, 'null'], pattern: '^#[0-9A-Fa-f]{6}$' }
+    UpdateTag:
+      type: object
+      description: All properties optional; `text` cannot be changed.
+      properties:
+        description: { type: [string, 'null'], maxLength: 100 }
+        mattermost: { type: [string, 'null'] }
+        email: { type: [string, 'null'], description: "One or more e-mail addresses, comma separated." }
+        color: { type: [string, 'null'], pattern: '^#[0-9A-Fa-f]{6}$' }
+        archivedAt: { type: [string, integer, 'null'], format: date-time, description: "Date to archive the tag, either an ISO 8601 date-time string or epoch milliseconds, null to restore it." }
+    ErrorResponse:
+      type: object
+      required: [errors]
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            required: [status, title]
+            properties:
+              status: { type: [string, integer] }
+              title: { type: string }
+              detail: { type: string }
+              source:
+                type: object
+                properties:
+                  pointer: { type: string }
+    ServiceStatus:
+      type: object
+      required: [host, port, status]
+      properties:
+        host: { type: string }
+        port: { type: integer }
+        version: { type: string, description: Version of the Bookkeeping application. Only present on the application status. }
+        status:
+          type: object
+          required: [ok, configured]
+          properties:
+            ok: { type: boolean, description: False when the service cannot be reached. }
+            configured: { type: boolean }
+    ServiceStatusResponse:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: '#/components/schemas/ServiceStatus' }
+    Configuration:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          properties:
+            FlpInfologgerUrl: { type: [string, 'null'], description: FLP InfoLogger GUI. }
+            EpnInfologgerUrl: { type: [string, 'null'], description: EPN InfoLogger GUI. }
+            AliFlpIndexUrl: { type: [string, 'null'], description: ali-flp-index page. }
+            QcGuiUrl: { type: [string, 'null'], description: Quality Control GUI. }
+            AliEcsGuiUrl: { type: [string, 'null'], description: AliECS GUI. }
+    Detector:
+      type: object
+      required: [id, name, type]
+      properties:
+        id: { type: integer }
+        name: { type: string, description: 'Detector code, e.g. `ITS`.' }
+        type:
+          type: string
+          enum: [PHYSICAL, QC, AOT-GLO, AOT-EVENT, MUON-GLO, VIRTUAL, OTHER]
+          description: Kind of detector. Only `PHYSICAL` and `VIRTUAL` detectors can take part in data taking.
+    DetectorListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Detector' }
