@@ -25,6 +25,9 @@ module.exports = () => {
                 const response = await request(server).get('/api/ctp-trigger-counters/1');
 
                 expect(response.status).to.equal(200);
+                response.body.data.forEach((counters) => expect(Object.keys(counters)).to.have.members(
+                    ['id', 'timestamp', 'runNumber', 'className', 'lmb', 'lma', 'l0b', 'l0a', 'l1b', 'l1a'],
+                ));
                 expect(response.body.data.map(({ id, runNumber, className }) => ({ id, runNumber, className }))).to.deep.eql([
                     { id: 1, runNumber: 1, className: 'FIRST-CLASS-NAME' },
                     { id: 2, runNumber: 1, className: 'SECOND-CLASS-NAME' },

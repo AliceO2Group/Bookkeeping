@@ -19,7 +19,7 @@ const { BadParameterError } = require('../../../../../lib/server/errors/BadParam
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
 
 /**
- * Simplify a trigger counter to extract properties interesting in testing (remove createdAt and updatedAt)
+ * Simplify a trigger counter to extract properties interesting in testing
  *
  * @param {CtpTriggerCounters} counters the counters to simplify
  * @return {object} simplified trigger counters
