@@ -255,6 +255,18 @@ module.exports = () => {
                     done();
                 });
         });
+        it('should return 400 if a filter on ids contains something else than a number', async () => {
+            for (const filterName of ['ids', 'lhcPeriodIds', 'dataPassIds']) {
+                const response = await request(server).get(`/api/simulationPasses?filter[${filterName}][]=abc`);
+
+                expect(response.status, filterName).to.equal(400);
+                expect(
+                    response.body.errors.some(({ source: { pointer }, detail }) =>
+                        pointer.includes(filterName) && detail.includes('must be a number')),
+                    filterName,
+                ).to.be.true;
+            }
+        });
         it('should successfully sort on id and name', (done) => {
             request(server)
                 .get('/api/simulationPasses?sort[id]=DESC&sort[name]=ASC')
