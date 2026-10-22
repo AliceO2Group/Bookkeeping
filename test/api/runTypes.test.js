@@ -36,9 +36,9 @@ module.exports = () => {
                     done();
                 });
         });
-        it('should support pagination, offset 0 and limit 1', (done) => {
+        it('should return all the run types without pagination information', (done) => {
             request(server)
-                .get('/api/runTypes?page[offset]=0&page[limit]=1')
+                .get('/api/runTypes')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -46,9 +46,16 @@ module.exports = () => {
                         return;
                     }
 
-                    expect(res.body.data).to.have.lengthOf(1);
+                    expect(res.body.data.length).to.be.greaterThan(2);
+                    expect(res.body.meta).to.be.undefined;
                     done();
                 });
+        });
+        it('should return 400 if a pagination parameter is given', (done) => {
+            request(server)
+                .get('/api/runTypes?page[limit]=1')
+                .expect(400)
+                .end(done);
         });
     });
     describe('GET /api/runTypes/:runTypeId', () => {
