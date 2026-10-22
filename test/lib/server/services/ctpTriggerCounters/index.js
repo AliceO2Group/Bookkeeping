@@ -13,9 +13,14 @@
 
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent');
 const CtpTriggerCountersServiceTest = require('./CtpTriggerCountersService.test');
+const getAllCtpTriggerCountersTest = require('./getAllCtpTriggerCounters.test.js');
+const createOrUpdateCtpTriggerCountersTest = require('./createOrUpdateCtpTriggerCounters.test.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
+    after(resetDatabaseContent);
 
     describe('CtpTriggerCountersService', CtpTriggerCountersServiceTest);
+    describe('getAllCtpTriggerCounters', getAllCtpTriggerCountersTest);
+    describe('createOrUpdateCtpTriggerCounters', createOrUpdateCtpTriggerCountersTest);
 };
