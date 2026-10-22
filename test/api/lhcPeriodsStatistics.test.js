@@ -364,6 +364,21 @@ module.exports = () => {
                 });
         });
 
+        it('should return 400 if the LHC period id is not a positive integer', async () => {
+            for (const [lhcPeriodId, message] of [
+                ['abc', '"params.lhcPeriodId" must be a number'],
+                ['-1', '"params.lhcPeriodId" must be a positive number'],
+                ['0', '"params.lhcPeriodId" must be a positive number'],
+                ['0.5', '"params.lhcPeriodId" must be an integer'],
+            ]) {
+                const response = await request(server).get(`/api/lhcPeriodsStatistics/${lhcPeriodId}`);
+
+                expect(response.status, `id ${lhcPeriodId}`).to.equal(400);
+                const error = response.body.errors.find(({ source: { pointer } }) => pointer === '/data/attributes/params/lhcPeriodId');
+                expect(error.detail, `id ${lhcPeriodId}`).to.equal(message);
+            }
+        });
+
         it('should return 404 if lhc period could not be found', (done) => {
             request(server)
                 .get('/api/lhcPeriodsStatistics/9999')
