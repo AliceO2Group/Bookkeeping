@@ -38,6 +38,15 @@ module.exports = () => {
             }
         });
 
+        it('Should return 404 if the run does not exist', async () => {
+            const response = await request(server).get('/api/ctp-trigger-counters/999999999');
+
+            expect(response.status).to.equal(404);
+            expect(response.body.errors).to.eql([
+                { status: 404, title: 'Not found', detail: 'Run with this run number (999999999) could not be found' },
+            ]);
+        });
+
         it('Should return 400 if the run number is not a positive integer', async () => {
             for (const [runNumber, message] of [
                 ['abc', '"params.runNumber" must be a number'],

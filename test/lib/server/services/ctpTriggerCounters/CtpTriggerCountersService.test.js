@@ -16,6 +16,7 @@ const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const assert = require('assert');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
+const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
 
 /**
  * Simplify a trigger counter to extract properties interesting in testing (remove createdAt and updatedAt)
@@ -67,6 +68,13 @@ module.exports = () => {
             },
         ]);
         expect(await ctpTriggerCountersService.getPerRun(2)).to.eql([]);
+    });
+
+    it('Should throw a not found error when fetching the counters of a non-existing run', async () => {
+        await assert.rejects(
+            () => ctpTriggerCountersService.getPerRun(999),
+            new NotFoundError('Run with this run number (999) could not be found'),
+        );
     });
 
     it('Should successfully insert new counters for a given run', async () => {
