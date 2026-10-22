@@ -124,6 +124,17 @@ module.exports = () => {
         expect(await page.$('th#passes')).to.not.be.null;
     });
 
+    it('should display the runs and the environments in a single labelled column', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForSelector('#row119-runs');
+
+        expect(await getInnerText(await page.$('#row119-runs'))).to.match(/^Runs \d+/);
+        expect(await getInnerText(await page.$('#row119-environments'))).to.match(/^Env \S+/);
+        expect(await page.$('th#runs')).to.be.null;
+        expect(await page.$('th#environments')).to.be.null;
+        expect(await page.$('th#runsAndEnvironments')).to.not.be.null;
+    });
+
     it('should display a placeholder in the passes column of a log without passes', async () => {
         await goToPage(page, 'log-overview');
         await page.waitForSelector('#row119-passes-data');
@@ -417,7 +428,7 @@ module.exports = () => {
         await goToPage(page, 'log-overview');
         await waitForFirstRowToHaveId(page, 'row119');
 
-        const cellSelector = 'td#row119-runs';
+        const cellSelector = '#row119-runs';
         const popoverTriggerSelector = `${cellSelector} .popover-trigger`;
         const popoverTrigger = await page.waitForSelector(popoverTriggerSelector);
 
