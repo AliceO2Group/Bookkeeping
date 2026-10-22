@@ -898,7 +898,7 @@ module.exports = () => {
                 flagTypeId: 2,
                 runNumber: 106,
                 simulationPassId: 1,
-                dplDetectorId: 1,
+                detectorId: 1,
                 verify: true,
             };
 
