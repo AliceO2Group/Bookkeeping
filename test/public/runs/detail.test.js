@@ -367,7 +367,17 @@ module.exports = () => {
         await waitForTableLength(page, 6);
 
         // We expect the entry page to have the same id as the id from the run overview
-        await waitForNavigation(page, () => pressElement(page, '#row1 .btn-redirect'));
+        await waitForNavigation(page, () => pressElement(page, '#row1-title-link'));
+
+        expectUrlParams(page, { page: 'log-detail', id: 1 });
+    });
+
+    it('can navigate to a log detail page by clicking on its row', async () => {
+        await goToRunDetails(page, 1);
+        await pressElement(page, '#logs-tab');
+        await waitForTableLength(page, 6);
+
+        await waitForNavigation(page, () => pressElement(page, '#row1-author'));
 
         expectUrlParams(page, { page: 'log-detail', id: 1 });
     });
