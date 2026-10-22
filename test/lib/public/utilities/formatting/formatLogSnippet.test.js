@@ -32,6 +32,22 @@ module.exports = () => {
         expect(formatLogSnippet('- first\n- second\n1. third')).to.equal('first second third');
     });
 
+    it('should keep identifiers containing underscores or asterisks untouched', () => {
+        expect(formatLogSnippet('Failed pass LHC22b_apass1')).to.equal('Failed pass LHC22b_apass1');
+        expect(formatLogSnippet('Set RUN_NUMBER and OTHER_VAR_NAME')).to.equal('Set RUN_NUMBER and OTHER_VAR_NAME');
+        expect(formatLogSnippet('rate is 2 * 3 and a_b_c')).to.equal('rate is 2 * 3 and a_b_c');
+    });
+
+    it('should keep the content of inline code spans as is', () => {
+        expect(formatLogSnippet('Failed to open `TPC_raw_data.root`')).to.equal('Failed to open TPC_raw_data.root');
+        expect(formatLogSnippet('Run `o2-sim --run RUN_NUMBER` now')).to.equal('Run o2-sim --run RUN_NUMBER now');
+        expect(formatLogSnippet('`**not bold** and _not italic_`')).to.equal('**not bold** and _not italic_');
+    });
+
+    it('should still strip emphasis delimiters around words', () => {
+        expect(formatLogSnippet('__strong__ *em* ~~gone~~ _it_ and **LHC22b_apass1**')).to.equal('strong em gone it and LHC22b_apass1');
+    });
+
     it('should keep the content of code fences without the fences', () => {
         expect(formatLogSnippet('```\nls -la\n```\nDone')).to.equal('ls -la Done');
     });
