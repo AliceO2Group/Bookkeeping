@@ -104,6 +104,15 @@ module.exports = () => {
         expect(snippet).to.not.match(/[*_`[\]]/);
     });
 
+    it('should display the creation date with its author below it', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForSelector('#row119-created-date');
+
+        expect(await getInnerText(await page.$('#row119-created-date'))).to.match(/^\d{2}\/\d{2}\/\d{4}, \d{2}:\d{2}:\d{2}$/);
+        expect(await getInnerText(await page.$('#row119-created-author'))).to.match(/^by .+/);
+        expect(await page.$('th#author')).to.be.null;
+    });
+
     it('can sort by columns in ascending and descending manners', async () => {
         // Close the filter panel
         await waitForFirstRowToHaveId(page, 'row119');
@@ -117,7 +126,7 @@ module.exports = () => {
         await waitForFirstRowToHaveId(page, 'row6');
 
         // Hover something else to have title sort displayed
-        await page.hover('th#author');
+        await page.hover('th#createdAt');
         await page.waitForSelector('#title-sort');
 
         // Toggle to sort this towards reverse alphabetical order
@@ -126,16 +135,6 @@ module.exports = () => {
 
         // Toggle to clear this sorting
         await pressElement(page, 'th#title');
-        await waitForFirstRowToHaveId(page, 'row119');
-
-        // Sort by log author in ascending then descending manner
-        await pressElement(page, 'th#author');
-        await waitForFirstRowToHaveId(page, 'row3');
-
-        await pressElement(page, 'th#author');
-        await waitForFirstRowToHaveId(page, 'row1');
-
-        await pressElement(page, 'th#author');
         await waitForFirstRowToHaveId(page, 'row119');
 
         // Sort by creation date in ascending then descending manner
@@ -150,8 +149,7 @@ module.exports = () => {
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
             title: (title) => typeof title === 'string',
-            author: (authorName) => typeof authorName === 'string',
-            createdAt: (date) => !isNaN(Date.parse(date)),
+            createdAt: (dateAndAuthor) => !isNaN(Date.parse(dateAndAuthor.split('\n')[0])),
             tags: (tags) => typeof tags === 'string' && tags === tags.toUpperCase(),
             replies: (replyCount) => typeof replyCount === 'number' || replyCount === '',
         };
@@ -309,9 +307,9 @@ module.exports = () => {
 
     it('can navigate to a log detail page by clicking on its row', async () => {
         await goToPage(page, 'log-overview');
-        await page.waitForSelector('#row119-author');
+        await page.waitForSelector('#row119-createdAt');
 
-        await waitForNavigation(page, () => pressElement(page, '#row119-author'));
+        await waitForNavigation(page, () => pressElement(page, '#row119-createdAt'));
         await expectUrlParams(page, { page: 'log-detail', id: 119 });
     });
 
@@ -451,19 +449,19 @@ module.exports = () => {
 
         it('should successfully provide an easy-to-access button to filter in/out anonymous logs', async () => {
             await waitForTableTotalRowsCountToEqual(page, 119);
-            const authors = await getColumnCellsInnerTexts(page, 'author');
+            const createdCells = await getColumnCellsInnerTexts(page, 'createdAt');
 
-            expect(authors.some((author) => author === 'Anonymous')).to.be.true;
+            expect(createdCells.some((cell) => cell.endsWith('\nby Anonymous'))).to.be.true;
 
             await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
             await waitForTableTotalRowsCountToEqual(page, 117);
-            await checkColumnValuesWithRegex(page, 'author', '^Anonymous$', {
+            await checkColumnValuesWithRegex(page, 'createdAt', '\\nby Anonymous$', {
                 negation: true,
             });
 
             await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
             await waitForTableTotalRowsCountToEqual(page, 119);
-            await checkColumnValuesWithRegex(page, 'author', '^Anonymous$', {
+            await checkColumnValuesWithRegex(page, 'createdAt', '\\nby Anonymous$', {
                 valuesCheckingMode: 'some',
             });
         });
