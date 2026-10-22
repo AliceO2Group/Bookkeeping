@@ -11,19 +11,12 @@
  * or submit itself to any jurisdiction.
  */
 
-const application = require('../../lib/application');
+const { useApplication } = require('../utilities/useApplication.js');
 const QcFlagTypesOverviewSuite = require('../public/qcFlagTypes/overview.test');
 const QcFlagTypeCreationSuite = require('../public/qcFlagTypes/creation.test');
 
 describe('Bookkeeping', () => {
-    before(async () => {
-        await application.run();
-        await application.connectDatabase();
-    });
-
-    after(async () => {
-        await application.stop(true);
-    });
+    useApplication();
 
     describe('QcFlagTypes', () => {
         describe('Overview Page', QcFlagTypesOverviewSuite);

@@ -11,20 +11,13 @@
  * or submit itself to any jurisdiction.
  */
 
-const application = require('../../lib/application');
+const { useApplication } = require('../utilities/useApplication.js');
 const OverviewSuite = require('../public/flps/overview.test');
 // eslint-disable-next-line capitalized-comments
 const DetailSuite = require('../public/flps/detail.test');
 
 describe('Bookkeeping', () => {
-    before(async () => {
-        await application.run();
-        await application.connectDatabase();
-    });
-
-    after(async () => {
-        await application.stop(true);
-    });
+    useApplication();
 
     describe('Flps', () => {
         describe('Overview Page', OverviewSuite);

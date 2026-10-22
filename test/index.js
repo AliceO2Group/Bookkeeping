@@ -23,17 +23,10 @@ const GrpcSuite = require('./gRPC');
 const APISuite = require('./api');
 const FrontendSuite = require('./public');
 
-const application = require('../lib/application');
+const { useApplication } = require('./utilities/useApplication.js');
 
 describe('Bookkeeping', () => {
-    before(async () => {
-        await application.run();
-        await application.connectDatabase();
-    });
-
-    after(async () => {
-        await application.stop(true);
-    });
+    useApplication();
 
     describe('Unit Suite', () => {
         describe('Application', ApplicationSuite);

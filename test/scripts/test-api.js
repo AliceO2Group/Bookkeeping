@@ -13,17 +13,10 @@
 
 const APISuite = require('../api');
 
-const application = require('../../lib/application');
+const { useApplication } = require('../utilities/useApplication.js');
 
 describe('Bookkeeping', () => {
-    before(async () => {
-        await application.run();
-        await application.connectDatabase();
-    });
-
-    after(async () => {
-        await application.stop(true);
-    });
+    useApplication();
 
     describe('API', APISuite);
 });
