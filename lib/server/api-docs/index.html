@@ -488,6 +488,53 @@ A URL is <code>null</code> when the service is not configured on this deployment
 <pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/detectors?token=$TOKEN&quot;
 </code></pre>
 </details>
+<h2>Run types</h2>
+<p>Types of runs (e.g. calibration kinds).</p>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/runTypes</code> - List run types</h3></summary>
+
+<p>Operation id: <code>listRunTypes</code></p>
+<p>Returns the run types ordered by name, <strong>descending</strong>. Not paginated: there are few run types, and the result is capped to the maximum number of
+items of the API (5000 by default). Pagination parameters are rejected.</p>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The run types.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/runTypes?token=$TOKEN&quot;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/runTypes/{runTypeId}</code> - Get a run type by id</h3></summary>
+
+<p>Operation id: <code>getRunType</code></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>runTypeId</code></td>
+<td>path</td>
+<td>integer</td>
+<td>yes</td>
+<td>Run type identifier.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The run type.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: No run type has this id.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/runTypes/1?token=$TOKEN&quot;
+</code></pre>
+</details>
 
 </main>
 <footer>Generated from openapi.yaml by <code>npm run docs:api</code> · ALICE Bookkeeping · internal use only</footer>

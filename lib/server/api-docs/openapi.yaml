@@ -43,6 +43,8 @@ tags:
     description: Addresses of the external services Bookkeeping links to.
   - name: Detectors
     description: Detectors of the ALICE experiment.
+  - name: Run types
+    description: Types of runs (e.g. calibration kinds).
 
 paths:
   /tags:
@@ -310,6 +312,53 @@ paths:
                   - { id: 17, name: ACO, type: PHYSICAL }
                   - { id: 21, name: GLO, type: QC }
 
+  /runTypes:
+    get:
+      tags: [Run types]
+      operationId: listRunTypes
+      summary: List run types
+      description: |
+        Returns the run types ordered by name, **descending**. Not paginated: there are few run types, and the result is capped to the maximum number of
+        items of the API (5000 by default). Pagination parameters are rejected.
+      responses:
+        '200':
+          description: The run types.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RunTypeListResponse' }
+              example:
+                data:
+                  - { id: 3, name: CALIBRATION_VCASN_TUNING }
+                  - { id: 1, name: NONE }
+        '400': { $ref: '#/components/responses/ValidationError' }
+
+  /runTypes/{runTypeId}:
+    get:
+      tags: [Run types]
+      operationId: getRunType
+      summary: Get a run type by id
+      parameters:
+        - name: runTypeId
+          in: path
+          required: true
+          description: Run type identifier.
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: The run type.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RunTypeResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404':
+          description: No run type has this id.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+              example:
+                errors:
+                  - { status: 404, title: Not found, detail: Run type with this id (999999999) could not be found }
+
 components:
   securitySchemes:
     jwtQuery:
@@ -325,6 +374,7 @@ components:
       required: true
       description: Tag identifier.
       schema: { type: integer, minimum: 1 }
+
 
   responses:
     ValidationError:
@@ -472,3 +522,21 @@ components:
         data:
           type: array
           items: { $ref: '#/components/schemas/Detector' }
+    RunType:
+      type: object
+      required: [id, name]
+      properties:
+        id: { type: integer }
+        name: { type: string, description: 'Run type name, e.g. `NONE` or `CALIBRATION_THR_SCAN`.' }
+    RunTypeResponse:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: '#/components/schemas/RunType' }
+    RunTypeListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/RunType' }

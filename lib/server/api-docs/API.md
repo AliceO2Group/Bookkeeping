@@ -287,3 +287,41 @@ Responses:
 ```bash
 curl -g "$BOOKKEEPING_URL/api/detectors?token=$TOKEN"
 ```
+
+## Run types
+
+Types of runs (e.g. calibration kinds).
+
+### `GET /runTypes` - List run types
+
+Operation id: `listRunTypes`
+
+Returns the run types ordered by name, **descending**. Not paginated: there are few run types, and the result is capped to the maximum number of
+items of the API (5000 by default). Pagination parameters are rejected.
+
+Responses:
+
+- `200`: The run types.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/runTypes?token=$TOKEN"
+```
+
+### `GET /runTypes/{runTypeId}` - Get a run type by id
+
+Operation id: `getRunType`
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `runTypeId` | path | integer | yes | Run type identifier. |
+
+Responses:
+
+- `200`: The run type.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: No run type has this id.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/runTypes/1?token=$TOKEN"
+```
