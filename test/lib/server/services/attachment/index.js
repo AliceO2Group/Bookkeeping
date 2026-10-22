@@ -11,10 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const CreateAttachmentUseCase = require('./CreateAttachmentUseCase');
-const GetAttachmentUseCase = require('./GetAttachmentUseCase');
+const AttachmentServiceTest = require('./AttachmentService.test.js');
 
-module.exports = {
-    CreateAttachmentUseCase,
-    GetAttachmentUseCase,
+module.exports = () => {
+    describe('AttachmentService', AttachmentServiceTest);
 };

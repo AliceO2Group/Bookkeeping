@@ -37,6 +37,8 @@ module.exports = () => {
                 .field('log', '1')
                 .attach('attachments', path.resolve(__dirname, '..', 'assets', '1200px-CERN_logo.png'));
             expect(response.status).to.equal(201);
+            expect(response.body.data).to.have.all.keys('id', 'fileName', 'size', 'mimeType', 'originalName', 'path', 'encoding', 'logId');
+            expect(response.body.data.logId).to.equal(1);
         });
 
         it('should return 400 if no file is given', async () => {
@@ -64,7 +66,9 @@ module.exports = () => {
             const response = await request(server).get('/api/attachments/999999999');
 
             expect(response.status).to.equal(404);
-            expect(response.body.errors).to.eql([{ status: '404', title: 'Attachment with this id (999999999) could not be found' }]);
+            expect(response.body.errors).to.eql([
+                { status: 404, title: 'Not found', detail: 'Attachment with this id (999999999) could not be found' },
+            ]);
         });
 
         it('should return 400 if the attachment id is not a positive integer', async () => {
