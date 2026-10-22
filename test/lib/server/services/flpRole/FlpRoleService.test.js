@@ -104,4 +104,10 @@ module.exports = () => {
         expect(updated.nTimeframes).to.equal(12);
         expect(updated.bytesProcessed).to.equal(bytesProcessed);
     });
+
+    it('should successfully create an FLP role', async () => {
+        const created = await flpRoleService.create({ name: 'FlpTest', hostname: 'TestFlp', runNumber: 36 });
+        expect(created).to.deep.include({ name: 'FlpTest', hostname: 'TestFlp', runNumber: 36 });
+        expect((await flpRoleService.getOneOrFail({ flpRoleId: created.id })).id).to.equal(created.id);
+    });
 };
