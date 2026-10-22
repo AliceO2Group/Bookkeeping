@@ -325,3 +325,28 @@ Responses:
 ```bash
 curl -g "$BOOKKEEPING_URL/api/runTypes/1?token=$TOKEN"
 ```
+
+## CTP trigger counters
+
+Counters of the central trigger processor, per run and trigger class.
+
+### `GET /ctp-trigger-counters/{runNumber}` - List the CTP trigger counters of a run
+
+Operation id: `listCtpTriggerCountersOfRun`
+
+Returns the trigger counters of every trigger class recorded for the run. Not paginated.
+A run without counters gives `200` with an empty list. A run that does not exist gives `404`.
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `runNumber` | path | integer | yes | Run number. |
+
+Responses:
+
+- `200`: The counters, one entry per trigger class.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: No run has this run number.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/ctp-trigger-counters/106?token=$TOKEN"
+```

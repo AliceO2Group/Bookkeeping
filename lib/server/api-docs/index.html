@@ -535,6 +535,41 @@ items of the API (5000 by default). Pagination parameters are rejected.</p>
 <pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/runTypes/1?token=$TOKEN&quot;
 </code></pre>
 </details>
+<h2>CTP trigger counters</h2>
+<p>Counters of the central trigger processor, per run and trigger class.</p>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/ctp-trigger-counters/{runNumber}</code> - List the CTP trigger counters of a run</h3></summary>
+
+<p>Operation id: <code>listCtpTriggerCountersOfRun</code></p>
+<p>Returns the trigger counters of every trigger class recorded for the run. Not paginated.
+A run without counters gives <code>200</code> with an empty list. A run that does not exist gives <code>404</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>runNumber</code></td>
+<td>path</td>
+<td>integer</td>
+<td>yes</td>
+<td>Run number.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The counters, one entry per trigger class.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: No run has this run number.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/ctp-trigger-counters/106?token=$TOKEN&quot;
+</code></pre>
+</details>
 
 </main>
 <footer>Generated from openapi.yaml by <code>npm run docs:api</code> · ALICE Bookkeeping · internal use only</footer>
