@@ -459,6 +459,21 @@ the tag <code>text</code> is immutable. Set <code>archivedAt</code> to a date to
 <pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/status/gui?token=$TOKEN&quot;
 </code></pre>
 </details>
+<h2>Configuration</h2>
+<p>Addresses of the external services Bookkeeping links to.</p>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/configuration</code> - Get the URLs of the external services</h3></summary>
+
+<p>Operation id: <code>getConfiguration</code></p>
+<p>Returns the addresses of the services Bookkeeping links to (InfoLogger, AliECS GUI, QC GUI, ali-flp-index).
+A URL is <code>null</code> when the service is not configured on this deployment.</p>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The configured URLs.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/configuration?token=$TOKEN&quot;
+</code></pre>
+</details>
 
 </main>
 <footer>Generated from openapi.yaml by <code>npm run docs:api</code> · ALICE Bookkeeping · internal use only</footer>
