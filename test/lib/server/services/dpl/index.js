@@ -13,8 +13,10 @@
 
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const DplProcessServiceTest = require('./DplProcessService.test.js');
+const DplProcessQueriesTest = require('./dplProcessQueries.test.js');
 
 module.exports = () => {
     before(resetDatabaseContent);
     describe('DplProcessService', DplProcessServiceTest);
+    describe('DPL process small functions', DplProcessQueriesTest);
 };
