@@ -28,6 +28,7 @@ const RunTypeSuite = require('./runType/index.js');
 const ShiftSuite = require('./shift/index.js');
 const StatisticsSuite = require('./statistics/index.js');
 const StatusSuite = require('./status/index.js');
+const TagSuite = require('./tag/index.js');
 const LhcPeriodSuite = require('./lhcPeriod');
 const DataPassesSuite = require('./dataPasses/index.js');
 const UserSuite = require('./user/index.js');
@@ -57,6 +58,7 @@ module.exports = () => {
     describe('Shift', ShiftSuite);
     describe('Statistics', StatisticsSuite);
     describe('Status', StatusSuite);
+    describe('Tag', TagSuite);
     describe('LhcPeriod', LhcPeriodSuite);
     describe('User', UserSuite);
     describe('DataPasses', DataPassesSuite);
