@@ -492,4 +492,25 @@ module.exports = () => {
             expect(response.body.errors[0].detail).to.equal('"query.hostId" is required');
         });
     });
+
+    describe('Validation of the ids', () => {
+        it('Should return a 400 when an id is not a positive integer', async () => {
+            for (const [url, query, field, message] of [
+                ['/api/dpl-process/detectors', { runNumber: 0 }, 'runNumber', 'must be a positive number'],
+                ['/api/dpl-process/processes', { runNumber: 106, detectorId: -1 }, 'detectorId', 'must be a positive number'],
+                ['/api/dpl-process/hosts', { runNumber: 106, detectorId: 1, processId: 0.5 }, 'processId', 'must be an integer'],
+                [
+                    '/api/dpl-process/executions',
+                    { runNumber: 106, detectorId: 1, processId: 1, hostId: 0 },
+                    'hostId',
+                    'must be a positive number',
+                ],
+            ]) {
+                const response = await request(server).get(buildUrl(url, query));
+
+                expect(response.status, url).to.equal(400);
+                expect(response.body.errors.map(({ detail }) => detail), url).to.eql([`"query.${field}" ${message}`]);
+            }
+        });
+    });
 };
