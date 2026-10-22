@@ -350,3 +350,32 @@ Responses:
 ```bash
 curl -g "$BOOKKEEPING_URL/api/ctp-trigger-counters/106?token=$TOKEN"
 ```
+
+## Shifts
+
+Data used to fill end-of-shift reports.
+
+### `GET /shift-data` - Get the data of the pending shift of the calling user
+
+Operation id: `getShiftData`
+
+Returns what a shifter needs to write their end-of-shift (EoS) report for the **pending shift**: the current shift, or the previous one
+during the 30 minutes that follow its end. Shifts last 8 hours and are Night (23h-7h), Morning (7h-15h) and Afternoon (15h-23h) in the
+Geneva time zone. The shift is deduced from the current time and the calling user, not from a parameter.
+
+`typeSpecific` depends on `shiftType`: `{ environments }` for `ECS`, `{ runs }` for `QC/PDP`, `{ runs, tagsCounters }` for `SL`, and `null`
+for `SLIMOS` and `DCS`.
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `shiftType` | query | string | yes | Kind of shift. |
+
+Responses:
+
+- `200`: The shift data.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: The calling user is not known to Bookkeeping.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/shift-data?shiftType=ECS&token=$TOKEN"
+```
