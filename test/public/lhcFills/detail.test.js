@@ -207,21 +207,25 @@ module.exports = () => {
         const tableSelector = '#logs-pane table tbody tr';
         await page.waitForSelector(tableSelector);
 
-        const tableDataSlice = await getTableDataSlice(page, ['title', 'tags', 'runsAndEnvironments', 'lhcFills']);
+        const tableDataSlice = await getTableDataSlice(page, ['tags', 'runsAndEnvironments', 'lhcFills']);
         expect(tableDataSlice).to.lengthOf(2);
         expect(tableDataSlice).to.deep.eql([
             {
-                title: 'First entry',
                 tags: 'MAINTENANCE',
                 runsAndEnvironments: 'Runs 1\nEnv 8E4aZTjY,eZF99lH6',
                 lhcFills: '5,6',
             },
             {
-                title: 'Another entry, with a title so long that it will probably be displayed with a balloon on it!',
                 tags: 'TEST-TAG-36\nTEST-TAG-37\nTEST-TAG-38\nTEST-TAG-39\nTEST-TAG-40\nTEST-TAG-41',
                 runsAndEnvironments: 'Runs 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22\nEnv Dxi029djX,eZF99lH6',
                 lhcFills: '1,4,6',
             },
+        ]);
+
+        const titles = await page.$$eval('#logs-pane [id$="-title-value"]', (nodes) => nodes.map(({ innerText }) => innerText));
+        expect(titles).to.eql([
+            'First entry',
+            'Another entry, with a title so long that it will probably be displayed with a balloon on it!',
         ]);
 
         const authors = await page.$$eval('#logs-pane [id$="-created-author"]', (nodes) => nodes.map(({ innerText }) => innerText));

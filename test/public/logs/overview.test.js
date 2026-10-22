@@ -135,6 +135,23 @@ module.exports = () => {
         expect(await page.$('th#runsAndEnvironments')).to.not.be.null;
     });
 
+    it('should display the number of replies and attachments next to the title instead of in dedicated columns', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForSelector('#row119-title-link');
+
+        expect(await page.$('th#replies')).to.be.null;
+        expect(await page.$('th#attachments')).to.be.null;
+
+        const replies = await page.$$eval(
+            '[id$="-replies-count"]',
+            (nodes) => nodes.map(({ innerText, title }) => ({ innerText, title })),
+        );
+        expect(replies).to.not.be.empty;
+        for (const { innerText, title } of replies) {
+            expect(title).to.equal(`${innerText} replies`);
+        }
+    });
+
     it('should display a placeholder in the passes column of a log without passes', async () => {
         await goToPage(page, 'log-overview');
         await page.waitForSelector('#row119-passes-data');
@@ -181,7 +198,6 @@ module.exports = () => {
             title: (title) => typeof title === 'string',
             createdAt: (dateAndAuthor) => !isNaN(Date.parse(dateAndAuthor.split('\n')[0])),
             tags: (tags) => typeof tags === 'string' && tags === tags.toUpperCase(),
-            replies: (replyCount) => typeof replyCount === 'number' || replyCount === '',
         };
 
         // We find the headers matching the datatype keys
