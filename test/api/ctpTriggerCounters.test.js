@@ -37,5 +37,20 @@ module.exports = () => {
                 expect(response.body.data.map(({ id }) => id)).to.eql([]);
             }
         });
+
+        it('Should return 400 if the run number is not a positive integer', async () => {
+            for (const [runNumber, message] of [
+                ['abc', '"params.runNumber" must be a number'],
+                ['-1', '"params.runNumber" must be a positive number'],
+                ['0', '"params.runNumber" must be a positive number'],
+                ['0.5', '"params.runNumber" must be an integer'],
+            ]) {
+                const response = await request(server).get(`/api/ctp-trigger-counters/${runNumber}`);
+
+                expect(response.status, `run number ${runNumber}`).to.equal(400);
+                const error = response.body.errors.find(({ source: { pointer } }) => pointer === '/data/attributes/params/runNumber');
+                expect(error.detail, `run number ${runNumber}`).to.equal(message);
+            }
+        });
     });
 };
