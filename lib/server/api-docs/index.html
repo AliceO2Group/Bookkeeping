@@ -570,6 +570,44 @@ A run without counters gives <code>200</code> with an empty list. A run that doe
 <pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/ctp-trigger-counters/106?token=$TOKEN&quot;
 </code></pre>
 </details>
+<h2>Shifts</h2>
+<p>Data used to fill end-of-shift reports.</p>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/shift-data</code> - Get the data of the pending shift of the calling user</h3></summary>
+
+<p>Operation id: <code>getShiftData</code></p>
+<p>Returns what a shifter needs to write their end-of-shift (EoS) report for the <strong>pending shift</strong>: the current shift, or the previous one
+during the 30 minutes that follow its end. Shifts last 8 hours and are Night (23h-7h), Morning (7h-15h) and Afternoon (15h-23h) in the
+Geneva time zone. The shift is deduced from the current time and the calling user, not from a parameter.</p>
+<p><code>typeSpecific</code> depends on <code>shiftType</code>: <code>{ environments }</code> for <code>ECS</code>, <code>{ runs }</code> for <code>QC/PDP</code>, <code>{ runs, tagsCounters }</code> for <code>SL</code>, and <code>null</code>
+for <code>SLIMOS</code> and <code>DCS</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>shiftType</code></td>
+<td>query</td>
+<td>string</td>
+<td>yes</td>
+<td>Kind of shift.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The shift data.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: The calling user is not known to Bookkeeping.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/shift-data?shiftType=ECS&amp;token=$TOKEN&quot;
+</code></pre>
+</details>
 
 </main>
 <footer>Generated from openapi.yaml by <code>npm run docs:api</code> · ALICE Bookkeeping · internal use only</footer>
