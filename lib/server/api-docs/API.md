@@ -593,3 +593,56 @@ curl -g -X POST "$BOOKKEEPING_URL/api/eos-report?reportType=ECS&token=$TOKEN" \
   -H 'content-type: application/json' \
   -d '{"shifterName":"John Doe","shiftFlow":"The shift flow","infoForNextShifter":"Info for the next shifter","typeSpecific":{"environmentComments":{"ENV1":"A comment about the environment"},"runComments":{"200":"A comment about the run"}}}'
 ```
+
+## Attachments
+
+Files attached to log entries.
+
+### `POST /attachments` - Upload a file as an attachment (not for LLM use)
+
+Operation id: `createAttachment`
+
+Uploads **one** file (multipart request) and stores it as an attachment, linked to a log if `log` is given. The response is the row stored in the database as it is.
+
+The files of a request are all written on the server, but only the first one is stored as an attachment. A request without any file is rejected with a `400`.
+Logs and their attachments are usually created together with `POST /logs`.
+
+**Not meant for LLM or MCP tool use** (`x-llm-exclude`).
+
+Request body (multipart/form-data):
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `log` | integer | no | Identifier of the log to attach the file to. |
+| `attachments` | string (binary) | yes | The file to upload. |
+
+Responses:
+
+- `201`: The stored attachment.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+
+```bash
+curl -g -X POST "$BOOKKEEPING_URL/api/attachments?token=$TOKEN" \
+  -F 'log=1' \
+  -F 'attachments=@/path/to/file.png'
+```
+
+### `GET /attachments/{attachmentId}` - Download the file of an attachment
+
+Operation id: `getAttachmentFile`
+
+Returns the content of the file, with the type of the file as `Content-Type`. Use `curl -OJ` to save it with the name given by the server.
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `attachmentId` | path | integer | yes | Attachment identifier. |
+
+Responses:
+
+- `200`: The file.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: No attachment has this id.
+
+```bash
+curl -g -OJ "$BOOKKEEPING_URL/api/attachments/1?token=$TOKEN"
+```
