@@ -738,3 +738,119 @@ Responses:
 ```bash
 curl -g "$BOOKKEEPING_URL/api/dpl-process/executions?runNumber=106&detectorId=1&processId=1&hostId=1&token=$TOKEN"
 ```
+
+## FLPs
+
+Roles of FLPs in runs, with their data counters.
+
+### `GET /flps` - List the FLP roles
+
+Operation id: `listFlps`
+
+Returns the roles of FLPs (one entry per FLP and per run) with their data counters. Paginated, sorted by name descending by default.
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `page[limit]` | query | integer | no | Maximum number of items to return. LLMs and agents must use 100 or less. |
+| `page[offset]` | query | integer | no | Number of items to skip. |
+| `sort[id]` | query | string | no | Sort by identifier. |
+| `sort[name]` | query | string | no | Sort by FLP name. |
+| `sort[hostname]` | query | string | no | Sort by host name. |
+| `sort[runNumber]` | query | string | no | Sort by run number. |
+
+Responses:
+
+- `200`: A page of FLP roles.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/flps?page[limit]=100&token=$TOKEN"
+```
+
+### `POST /flps` - Create an FLP role (not for LLM use)
+
+Operation id: `createFlp`
+
+Creates the role of an FLP in a run.
+
+**Not meant for LLM or MCP tool use** (`x-llm-exclude`).
+
+Request body (JSON):
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `name` | string | yes | min length 1 |
+| `hostname` | string | yes | min length 1 |
+| `runNumber` | integer | yes |  |
+| `nTimeframes` | number | no |  |
+| `bytesProcessed` | number | no |  |
+| `bytesEquipmentReadOut` | number | no |  |
+| `bytesRecordingReadOut` | number | no |  |
+| `bytesFairMQReadOut` | number | no |  |
+| `subtype` | string | no |  |
+
+Responses:
+
+- `201`: The created FLP role.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+
+```bash
+curl -g -X POST "$BOOKKEEPING_URL/api/flps?token=$TOKEN" \
+  -H 'content-type: application/json' \
+  -d '{"name":"FLP-1","hostname":"flp001.cern.ch","runNumber":106}'
+```
+
+### `GET /flps/{flpId}` - Get an FLP role
+
+Operation id: `getFlp`
+
+Returns one FLP role, with its run.
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `flpId` | path | integer | yes | FLP role identifier. |
+
+Responses:
+
+- `200`: The FLP role.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: The requested entity does not exist.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/flps/1?token=$TOKEN"
+```
+
+### `PATCH /flps/{flpName}/runs/{runNumber}` - Update the counters of an FLP in a run (not for LLM use)
+
+Operation id: `updateFlp`
+
+Replaces the data counters of the FLP role identified by FLP name and run number. Counters absent from the body are set to null.
+Responds 400 if the run or the FLP in this run does not exist.
+
+**Not meant for LLM or MCP tool use** (`x-llm-exclude`).
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `flpName` | path | string | yes | Name of the FLP. |
+| `runNumber` | path | integer | yes | Run number. |
+
+Request body (JSON):
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `nTimeframes` | integer | no |  |
+| `bytesProcessed` | integer | no |  |
+| `bytesEquipmentReadOut` | integer | no |  |
+| `bytesRecordingReadOut` | integer | no |  |
+| `bytesFairMQReadOut` | integer | no |  |
+
+Responses:
+
+- `201`: The updated FLP role.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+
+```bash
+curl -g -X PATCH "$BOOKKEEPING_URL/api/flps/1/runs/1?token=$TOKEN" \
+  -H 'content-type: application/json' \
+  -d '{"nTimeframes":1000,"bytesProcessed":2048}'
+```

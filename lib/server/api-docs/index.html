@@ -1334,6 +1334,270 @@ run details tree of DPL processes: detector, then process (<code>/dpl-process/pr
 <pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/dpl-process/executions?runNumber=106&amp;detectorId=1&amp;processId=1&amp;hostId=1&amp;token=$TOKEN&quot;
 </code></pre>
 </details>
+<h2>FLPs</h2>
+<p>Roles of FLPs in runs, with their data counters.</p>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/flps</code> - List the FLP roles</h3></summary>
+
+<p>Operation id: <code>listFlps</code></p>
+<p>Returns the roles of FLPs (one entry per FLP and per run) with their data counters. Paginated, sorted by name descending by default.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>page[limit]</code></td>
+<td>query</td>
+<td>integer</td>
+<td>no</td>
+<td>Maximum number of items to return. LLMs and agents must use 100 or less.</td>
+</tr>
+<tr>
+<td><code>page[offset]</code></td>
+<td>query</td>
+<td>integer</td>
+<td>no</td>
+<td>Number of items to skip.</td>
+</tr>
+<tr>
+<td><code>sort[id]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Sort by identifier.</td>
+</tr>
+<tr>
+<td><code>sort[name]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Sort by FLP name.</td>
+</tr>
+<tr>
+<td><code>sort[hostname]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Sort by host name.</td>
+</tr>
+<tr>
+<td><code>sort[runNumber]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Sort by run number.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: A page of FLP roles.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/flps?page[limit]=100&amp;token=$TOKEN&quot;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method post">POST</span> <code>/flps</code> - Create an FLP role <span class="no-llm" title="Changes data: not meant for LLM or MCP tool use (x-llm-exclude)">not for LLM use</span></h3></summary>
+
+<p>Operation id: <code>createFlp</code></p>
+<p>Creates the role of an FLP in a run.</p>
+<p><strong>Not meant for LLM or MCP tool use</strong> (<code>x-llm-exclude</code>).</p>
+<p>Request body (JSON):</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>string</td>
+<td>yes</td>
+<td>min length 1</td>
+</tr>
+<tr>
+<td><code>hostname</code></td>
+<td>string</td>
+<td>yes</td>
+<td>min length 1</td>
+</tr>
+<tr>
+<td><code>runNumber</code></td>
+<td>integer</td>
+<td>yes</td>
+<td></td>
+</tr>
+<tr>
+<td><code>nTimeframes</code></td>
+<td>number</td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td><code>bytesProcessed</code></td>
+<td>number</td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td><code>bytesEquipmentReadOut</code></td>
+<td>number</td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td><code>bytesRecordingReadOut</code></td>
+<td>number</td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td><code>bytesFairMQReadOut</code></td>
+<td>number</td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td><code>subtype</code></td>
+<td>string</td>
+<td>no</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>201</code>: The created FLP role.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+</ul>
+<pre><code class="language-bash">curl -g -X POST &quot;$BOOKKEEPING_URL/api/flps?token=$TOKEN&quot; \
+  -H &#39;content-type: application/json&#39; \
+  -d &#39;{&quot;name&quot;:&quot;FLP-1&quot;,&quot;hostname&quot;:&quot;flp001.cern.ch&quot;,&quot;runNumber&quot;:106}&#39;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/flps/{flpId}</code> - Get an FLP role</h3></summary>
+
+<p>Operation id: <code>getFlp</code></p>
+<p>Returns one FLP role, with its run.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>flpId</code></td>
+<td>path</td>
+<td>integer</td>
+<td>yes</td>
+<td>FLP role identifier.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The FLP role.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: The requested entity does not exist.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/flps/1?token=$TOKEN&quot;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method patch">PATCH</span> <code>/flps/{flpName}/runs/{runNumber}</code> - Update the counters of an FLP in a run <span class="no-llm" title="Changes data: not meant for LLM or MCP tool use (x-llm-exclude)">not for LLM use</span></h3></summary>
+
+<p>Operation id: <code>updateFlp</code></p>
+<p>Replaces the data counters of the FLP role identified by FLP name and run number. Counters absent from the body are set to null.
+Responds 400 if the run or the FLP in this run does not exist.</p>
+<p><strong>Not meant for LLM or MCP tool use</strong> (<code>x-llm-exclude</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>flpName</code></td>
+<td>path</td>
+<td>string</td>
+<td>yes</td>
+<td>Name of the FLP.</td>
+</tr>
+<tr>
+<td><code>runNumber</code></td>
+<td>path</td>
+<td>integer</td>
+<td>yes</td>
+<td>Run number.</td>
+</tr>
+</tbody></table>
+<p>Request body (JSON):</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>nTimeframes</code></td>
+<td>integer</td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td><code>bytesProcessed</code></td>
+<td>integer</td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td><code>bytesEquipmentReadOut</code></td>
+<td>integer</td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td><code>bytesRecordingReadOut</code></td>
+<td>integer</td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td><code>bytesFairMQReadOut</code></td>
+<td>integer</td>
+<td>no</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>201</code>: The updated FLP role.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+</ul>
+<pre><code class="language-bash">curl -g -X PATCH &quot;$BOOKKEEPING_URL/api/flps/1/runs/1?token=$TOKEN&quot; \
+  -H &#39;content-type: application/json&#39; \
+  -d &#39;{&quot;nTimeframes&quot;:1000,&quot;bytesProcessed&quot;:2048}&#39;
+</code></pre>
+</details>
 
 </main>
 <footer>Generated from openapi.yaml by <code>npm run docs:api</code> · ALICE Bookkeeping · internal use only</footer>
