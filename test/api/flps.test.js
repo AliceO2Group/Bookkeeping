@@ -243,4 +243,19 @@ module.exports = () => {
                 });
         });
     });
+
+    describe('PATCH api/flps/:flpName/runs/:runNumber', () => {
+        it('should return 400 if the run number is not a number', async () => {
+            const response = await request(server).patch('/api/flps/FLP/runs/abc').send({});
+            expect(response.status).to.equal(400);
+            const error = response.body.errors.find(({ source }) => source.pointer === '/data/attributes/params/runNumber');
+            expect(error.detail).to.equal('"params.runNumber" must be a number');
+        });
+
+        it('should return 400 if the run does not exist', async () => {
+            const response = await request(server).patch('/api/flps/FLP/runs/999999999').send({ nTimeframes: 1 });
+            expect(response.status).to.equal(400);
+            expect(response.body.errors[0].title).to.contain('could not be found');
+        });
+    });
 };
