@@ -45,6 +45,8 @@ tags:
     description: Detectors of the ALICE experiment.
   - name: Run types
     description: Types of runs (e.g. calibration kinds).
+  - name: CTP trigger counters
+    description: Counters of the central trigger processor, per run and trigger class.
 
 paths:
   /tags:
@@ -359,6 +361,39 @@ paths:
                 errors:
                   - { status: 404, title: Not found, detail: Run type with this id (999999999) could not be found }
 
+  /ctp-trigger-counters/{runNumber}:
+    get:
+      tags: [CTP trigger counters]
+      operationId: listCtpTriggerCountersOfRun
+      summary: List the CTP trigger counters of a run
+      description: |
+        Returns the trigger counters of every trigger class recorded for the run. Not paginated.
+        A run without counters gives `200` with an empty list. A run that does not exist gives `404`.
+      parameters:
+        - name: runNumber
+          in: path
+          required: true
+          description: Run number.
+          schema: { type: integer, minimum: 1, examples: [106] }
+      responses:
+        '200':
+          description: The counters, one entry per trigger class.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CtpTriggerCountersListResponse' }
+              example:
+                data:
+                  - { id: 1, runNumber: 106, className: minbias, timestamp: 1704067200000, lmb: 10, lma: 9, l0b: 8, l0a: 7, l1b: 6, l1a: 5 }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404':
+          description: No run has this run number.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+              example:
+                errors:
+                  - { status: 404, title: Not found, detail: Run with this run number (999999999) could not be found }
+
 components:
   securitySchemes:
     jwtQuery:
@@ -540,3 +575,24 @@ components:
         data:
           type: array
           items: { $ref: '#/components/schemas/RunType' }
+    CtpTriggerCounters:
+      type: object
+      description: Counters of one CTP trigger class of a run (LM, L0 and L1 levels, before and after vetoes).
+      properties:
+        id: { type: integer }
+        runNumber: { type: integer }
+        className: { type: string, description: Name of the trigger class. }
+        timestamp: { type: integer, description: Epoch milliseconds of the measurement. }
+        lmb: { type: integer, description: LM level counter before vetoes. }
+        lma: { type: integer, description: LM level counter after vetoes. }
+        l0b: { type: integer, description: L0 level counter before vetoes. }
+        l0a: { type: integer, description: L0 level counter after vetoes. }
+        l1b: { type: integer, description: L1 level counter before vetoes. }
+        l1a: { type: integer, description: L1 level counter after vetoes. }
+    CtpTriggerCountersListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/CtpTriggerCounters' }
