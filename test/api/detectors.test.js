@@ -25,6 +25,7 @@ module.exports = () => {
 
             expect(response.status).to.equal(200);
             expect(response.body).to.be.an('object');
+            response.body.data.forEach((detector) => expect(Object.keys(detector)).to.have.members(['id', 'name', 'type']));
             expect(response.body.data.map(({ id, name }) => ({ id, name }))).to.deep.eq([
                 { id: 17, name: 'ACO' },
                 { id: 1, name: 'CPV' },
