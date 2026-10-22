@@ -83,7 +83,7 @@ module.exports = () => {
         await expectInnerText(page, '#totalRowsCount', '119');
     });
 
-    it('Should have balloon on title, runs and environments, and LHC fills columns', async () => {
+    it('Should have balloon on title, linked entities and passes columns', async () => {
         await goToPage(page, 'log-overview');
         await page.waitForSelector('tbody tr:not(.loading-row)');
 
@@ -144,15 +144,17 @@ module.exports = () => {
         expect(await page.$('th#passes')).to.not.be.null;
     });
 
-    it('should display the runs and the environments in a single labelled column', async () => {
+    it('should display the runs, the environments and the LHC fills in a single labelled column', async () => {
         await goToPage(page, 'log-overview');
         await page.waitForSelector('#row119-runs');
 
         expect(await getInnerText(await page.$('#row119-runs'))).to.match(/^Runs \d+/);
         expect(await getInnerText(await page.$('#row119-environments'))).to.match(/^Env \S+/);
+        expect(await getInnerText(await page.$('#row119-lhcFills'))).to.match(/^Fills \d+/);
         expect(await page.$('th#runs')).to.be.null;
         expect(await page.$('th#environments')).to.be.null;
-        expect(await page.$('th#runsAndEnvironments')).to.not.be.null;
+        expect(await page.$('th#lhcFills')).to.be.null;
+        expect(await page.$('th#linkedTo')).to.not.be.null;
     });
 
     it('should display the number of replies and attachments next to the title instead of in dedicated columns', async () => {

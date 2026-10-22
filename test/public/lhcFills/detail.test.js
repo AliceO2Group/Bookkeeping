@@ -207,18 +207,16 @@ module.exports = () => {
         const tableSelector = '#logs-pane table tbody tr';
         await page.waitForSelector(tableSelector);
 
-        const tableDataSlice = await getTableDataSlice(page, ['tags', 'runsAndEnvironments', 'lhcFills']);
+        const tableDataSlice = await getTableDataSlice(page, ['tags', 'linkedTo']);
         expect(tableDataSlice).to.lengthOf(2);
         expect(tableDataSlice).to.deep.eql([
             {
                 tags: 'MAINTENANCE',
-                runsAndEnvironments: 'Runs 1\nEnv 8E4aZTjY,eZF99lH6',
-                lhcFills: '5,6',
+                linkedTo: 'Runs 1\nEnv 8E4aZTjY,eZF99lH6\nFills 5,6',
             },
             {
                 tags: 'TEST-TAG-36\n+5',
-                runsAndEnvironments: 'Runs 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22\nEnv Dxi029djX,eZF99lH6',
-                lhcFills: '1,4,6',
+                linkedTo: 'Runs 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22\nEnv Dxi029djX,eZF99lH6\nFills 1,4,6',
             },
         ]);
 
