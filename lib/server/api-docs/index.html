@@ -1406,7 +1406,7 @@ run details tree of DPL processes: detector, then process (<code>/dpl-process/pr
 <summary><h3><span class="method post">POST</span> <code>/flps</code> - Create an FLP role <span class="no-llm" title="Changes data: not meant for LLM or MCP tool use (x-llm-exclude)">not for LLM use</span></h3></summary>
 
 <p>Operation id: <code>createFlp</code></p>
-<p>Creates the role of an FLP in a run.</p>
+<p>Creates the role of an FLP in a run. Responds 404 if the run does not exist.</p>
 <p><strong>Not meant for LLM or MCP tool use</strong> (<code>x-llm-exclude</code>).</p>
 <p>Request body (JSON):</p>
 <table>
@@ -1477,6 +1477,7 @@ run details tree of DPL processes: detector, then process (<code>/dpl-process/pr
 <ul>
 <li><code>201</code>: The created FLP role.</li>
 <li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: The FLP role (or, when creating, the run) does not exist.</li>
 </ul>
 <pre><code class="language-bash">curl -g -X POST &quot;$BOOKKEEPING_URL/api/flps?token=$TOKEN&quot; \
   -H &#39;content-type: application/json&#39; \
@@ -1510,7 +1511,7 @@ run details tree of DPL processes: detector, then process (<code>/dpl-process/pr
 <ul>
 <li><code>200</code>: The FLP role.</li>
 <li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
-<li><code>404</code>: The requested entity does not exist.</li>
+<li><code>404</code>: The FLP role (or, when creating, the run) does not exist.</li>
 </ul>
 <pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/flps/1?token=$TOKEN&quot;
 </code></pre>
@@ -1519,8 +1520,8 @@ run details tree of DPL processes: detector, then process (<code>/dpl-process/pr
 <summary><h3><span class="method patch">PATCH</span> <code>/flps/{flpName}/runs/{runNumber}</code> - Update the counters of an FLP in a run <span class="no-llm" title="Changes data: not meant for LLM or MCP tool use (x-llm-exclude)">not for LLM use</span></h3></summary>
 
 <p>Operation id: <code>updateFlp</code></p>
-<p>Replaces the data counters of the FLP role identified by FLP name and run number. Counters absent from the body are set to null.
-Responds 400 if the run or the FLP in this run does not exist.</p>
+<p>Updates the data counters of the FLP role identified by FLP name and run number. Counters absent from the body are left unchanged.
+Responds 404 if there is no such FLP in this run.</p>
 <p><strong>Not meant for LLM or MCP tool use</strong> (<code>x-llm-exclude</code>).</p>
 <table>
 <thead>
@@ -1592,6 +1593,7 @@ Responds 400 if the run or the FLP in this run does not exist.</p>
 <ul>
 <li><code>201</code>: The updated FLP role.</li>
 <li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: The FLP role (or, when creating, the run) does not exist.</li>
 </ul>
 <pre><code class="language-bash">curl -g -X PATCH &quot;$BOOKKEEPING_URL/api/flps/1/runs/1?token=$TOKEN&quot; \
   -H &#39;content-type: application/json&#39; \

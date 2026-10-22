@@ -771,7 +771,7 @@ curl -g "$BOOKKEEPING_URL/api/flps?page[limit]=100&token=$TOKEN"
 
 Operation id: `createFlp`
 
-Creates the role of an FLP in a run.
+Creates the role of an FLP in a run. Responds 404 if the run does not exist.
 
 **Not meant for LLM or MCP tool use** (`x-llm-exclude`).
 
@@ -793,6 +793,7 @@ Responses:
 
 - `201`: The created FLP role.
 - `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: The FLP role (or, when creating, the run) does not exist.
 
 ```bash
 curl -g -X POST "$BOOKKEEPING_URL/api/flps?token=$TOKEN" \
@@ -814,7 +815,7 @@ Responses:
 
 - `200`: The FLP role.
 - `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
-- `404`: The requested entity does not exist.
+- `404`: The FLP role (or, when creating, the run) does not exist.
 
 ```bash
 curl -g "$BOOKKEEPING_URL/api/flps/1?token=$TOKEN"
@@ -824,8 +825,8 @@ curl -g "$BOOKKEEPING_URL/api/flps/1?token=$TOKEN"
 
 Operation id: `updateFlp`
 
-Replaces the data counters of the FLP role identified by FLP name and run number. Counters absent from the body are set to null.
-Responds 400 if the run or the FLP in this run does not exist.
+Updates the data counters of the FLP role identified by FLP name and run number. Counters absent from the body are left unchanged.
+Responds 404 if there is no such FLP in this run.
 
 **Not meant for LLM or MCP tool use** (`x-llm-exclude`).
 
@@ -848,6 +849,7 @@ Responses:
 
 - `201`: The updated FLP role.
 - `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: The FLP role (or, when creating, the run) does not exist.
 
 ```bash
 curl -g -X PATCH "$BOOKKEEPING_URL/api/flps/1/runs/1?token=$TOKEN" \
