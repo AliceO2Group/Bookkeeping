@@ -963,6 +963,34 @@ label {
 }
 
 /*
+ * Columns of the environments overview: all of them but the detectors, which take the remaining width, have a fixed width fitting their
+ * content
+ */
+.w-environments-id-column {
+    width: 10rem;
+}
+
+.w-environments-status-column {
+    width: 12rem;
+}
+
+.w-environments-created-column {
+    width: 12rem;
+}
+
+.w-environments-history-column {
+    width: 18rem;
+}
+
+.w-environments-configuration-column {
+    width: 11rem;
+}
+
+.w-environments-runs-column {
+    width: 8rem;
+}
+
+/*
  * Beam types of the LHC fills overview, by what collides: only shapes and neutral shades are used, as colors are reserved to states
  */
 .beam-type {
