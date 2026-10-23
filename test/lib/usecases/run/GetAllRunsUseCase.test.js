@@ -210,8 +210,8 @@ module.exports = () => {
     });
 
     it('should successfully filter on beamTypes', async () => {
-        const singleBeamType = ['p-p'];
-        const multipleBeamTypes = ['p-p', 'Pb-Pb'];
+        const singleBeamType = ['PROTON - PROTON'];
+        const multipleBeamTypes = ['PROTON - PROTON', 'PB82 - PB82'];
         const nonExistentBeamType = ['DOES-NOT-EXIST'];
 
         getAllRunsDto.query = { filter: { beamTypes: singleBeamType }, page: { limit: 200 } };

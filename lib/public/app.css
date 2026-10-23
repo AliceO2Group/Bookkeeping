@@ -6,7 +6,7 @@ html, body {
 
 .cell-xs { max-width: 2rem; }
 .cell-s { max-width: 4rem; }
-.cell-m { max-width: 8rem; }
+.cell-m { max-width: 9rem; }
 .cell-l { max-width: 16rem; }
 .cell-xl { max-width: 32rem; }
 .cell-f { width: 40%; }
@@ -864,13 +864,21 @@ label {
     }
 }
 
-/* runs overview: labels of the timing lines have the same width so that the times are aligned, and digits have a fixed width */
-.runs-timing-label {
+/* runs and LHC fills overviews: labels of the timing lines have the same width so that the times are aligned, and digits have a fixed width */
+.timing-label {
     min-width: 2.8em;
 }
 
-.runs-timing-label + * {
+.timing-label + * {
     font-variant-numeric: tabular-nums;
+}
+
+.efficiency-label {
+    min-width: 6.5em;
+}
+
+.runs-duration-label {
+    min-width: 3em;
 }
 
 .invisible {
@@ -922,11 +930,129 @@ label {
 
 /* Legend of the run definitions: the labels have the same width and the descriptions are aligned on their left */
 .run-definition-legend-label {
-    width: 8rem;
+    width: 9rem;
     flex-shrink: 0;
 }
 
 .run-definition-legend-description {
+    text-align: left;
+}
+
+/*
+ * Columns of the LHC fills overview: the columns whose content has a known width have a fixed one, the scheme name takes a part of the screen
+ * and the runs, which have the most variable content, take all the remaining width
+ */
+.w-lhc-fills-fill-column {
+    width: 9.5rem;
+}
+
+.w-lhc-fills-stable-beams-column {
+    width: 14rem;
+}
+
+.w-lhc-fills-sb-duration-column {
+    width: 7rem;
+}
+
+.w-lhc-fills-efficiency-column {
+    width: 16rem;
+}
+
+.w-lhc-fills-runs-duration-column {
+    width: 8rem;
+}
+
+/*
+ * Beam types of the LHC fills overview, by what collides: only shapes and neutral shades are used, as colors are reserved to states
+ */
+.beam-type {
+    display: inline-block;
+    padding: 0.2em 0.45em;
+    border-radius: 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: top;
+}
+
+.beam-type-lead-lead {
+    background: color-mix(in srgb, var(--color-black) 75%, var(--color-white));
+    color: var(--color-white);
+}
+
+.beam-type-proton-proton {
+    border: 1.5px solid var(--color-black);
+}
+
+.beam-type-proton-ion {
+    border: 1px solid var(--color-gray-dark);
+}
+
+.beam-type-ion-ion {
+    border: 1px solid var(--color-gray-dark);
+    border-left: 4px solid var(--color-black);
+}
+
+.beam-type-unknown {
+    padding: 0;
+}
+
+.beam-type-legend-label {
+    width: 9rem;
+    flex-shrink: 0;
+}
+
+.beam-type-legend-description {
+    text-align: left;
+}
+
+/*
+ * Efficiency of the LHC fills overview: from the best to the worst level, solid green, soft green, yellow, orange and red. No efficiency has no style
+ */
+.efficiency {
+    display: inline-block;
+    padding: 0.1em 0.45em;
+    border-radius: 0.25rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.efficiency-great {
+    background: var(--color-success);
+    color: var(--color-white);
+}
+
+.efficiency-good {
+    background: color-mix(in srgb, var(--color-success) 25%, var(--color-white));
+    color: var(--color-success-dark);
+}
+
+.efficiency-fair {
+    background: #fbf0b8;
+    color: #6b5600;
+}
+
+.efficiency-poor {
+    background: color-mix(in srgb, var(--color-warning) 28%, var(--color-white));
+    color: var(--color-warning-darker);
+}
+
+.efficiency-bad {
+    background: color-mix(in srgb, var(--color-danger) 15%, var(--color-white));
+    color: var(--color-danger-dark);
+}
+
+.efficiency-legend-label {
+    width: 6rem;
+    flex-shrink: 0;
+}
+
+.efficiency-legend-description {
     text-align: left;
 }
 

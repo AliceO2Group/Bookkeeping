@@ -49,7 +49,7 @@ module.exports = () => {
 
     const lhcFillsSelectionFiltersChecks = {
         'hasStableBeams': [{ count: 6, selector: '.switch > input' }],
-        'beamTypes': [{ count: 1, selector: '#beam-types-checkbox-p-p' }, { count: 2, selector: '#beam-types-checkbox-p-Pb' }]
+        'beamTypes': [{ count: 1, selector: '[id="beam-types-checkbox-PROTON - PROTON"]' }, { count: 2, selector: '[id="beam-types-checkbox-PROTON - O8"]' }]
     };
 
     const checkSelectionFilters = async (selectionFilterObject, baseRowCount) => {

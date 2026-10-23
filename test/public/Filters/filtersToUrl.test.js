@@ -124,7 +124,7 @@ module.exports = () => {
         await openFilteringPanel(page);
         await fillInput(page, '#beam-duration-filter-operand', '00:01:40', ['change']);
         await fillInput(page, '#run-duration-filter-operand', '00:00:00', ['change']);
-        await pressElement(page, '#beam-types-checkbox-p-Pb');
+        await pressElement(page, '[id="beam-types-checkbox-PROTON - O8"]');
         await fillInput(page, sbStartFromDateTimeSelector, '2019-08-08T10:00', ['change']);
         await fillInput(page, sbStartToDateTimeSelector, '2019-08-08T12:00', ['change']);
         await fillInput(page, sbEndFromDateTimeSelector, '2022-03-22T01:00', ['change']);
@@ -143,7 +143,7 @@ module.exports = () => {
             "filter[stableBeamsEnd][to]": "1647993540000",
             "filter[stableBeamsStart][from]": "1565258400000",
             "filter[stableBeamsStart][to]": "1565265600000",
-            "filter[beamTypes]": "p-Pb",
+            "filter[beamTypes]": "PROTON - O8",
             "filter[schemeName]": "Single_12b_8_1024_8_2018"
         });
     });
