@@ -987,6 +987,11 @@ module.exports.openFilteringPanel = async (page) => {
  * @param {puppeteer.page} page page handler
  */
 module.exports.resetFilters = async (page) => {
+    const tableFingerprintSelector = 'table tbody';
+    const getTableFingerprint = () => page.$eval(tableFingerprintSelector, (tbody) => tbody.innerHTML).catch(() => null);
+    const wasFilterActive = await page.$eval('#reset-filters', (button) => !button.disabled).catch(() => false);
+    const oldTableFingerprint = await getTableFingerprint();
+
     await page.waitForSelector('#reset-filters', { visible: true })
         .then(() => this.pressElement(page, '#reset-filters', true))
         .catch(async () => {
@@ -995,7 +1000,20 @@ module.exports.resetFilters = async (page) => {
             await this.pressElement(page, '#openFilterToggle', true);
         });
 
+    /*
+     * The reload triggered by the reset starts asynchronously: the table displayed before the click is still there when no loading row is displayed
+     * yet. Wait for the table content to change (when some filter was active), then for the loading to be over
+     */
+    if (wasFilterActive && oldTableFingerprint) {
         await page.waitForFunction(
+            (selector, fingerprint) => document.querySelector(selector)?.innerHTML !== fingerprint,
+            { timeout: 1500 },
+            tableFingerprintSelector,
+            oldTableFingerprint,
+        ).catch(() => {});
+    }
+
+    await page.waitForFunction(
         () => document.querySelectorAll('table tbody tr.loading-row').length === 0,
         { timeout: 5000 },
     );
