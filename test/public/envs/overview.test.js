@@ -220,7 +220,9 @@ module.exports = () => {
 
         // Not running env
         envId = 'EIDO13i3D';
-        await pressElement(page, `tr[id='row${envId}'] .popover-trigger`);
+        // The popover of the previous environment is still opened: with a real mouse click, depending on the layout, the click could land on
+        // one of its links (opening an external page in a new tab, which stops the page from rendering and hangs the next tests)
+        await pressElement(page, `tr[id='row${envId}'] .popover-trigger`, true);
         popover = await getPopoverSelector(await page.waitForSelector(`tr[id='row${envId}'] .popover-trigger`));
 
         await expectLink(page, `${popover} :nth-child(1 of .external-link)`, {
