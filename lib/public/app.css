@@ -963,7 +963,7 @@ label {
 }
 
 /*
- * Columns of the environments overview: all of them but the configuration, which takes the remaining width, have a fixed width fitting their
+ * Columns of the environments overview: all of them but the detectors, which take the remaining width, have a fixed width fitting their
  * content
  */
 .w-environments-id-column {
@@ -980,6 +980,10 @@ label {
 
 .w-environments-history-column {
     width: 18rem;
+}
+
+.w-environments-configuration-column {
+    width: 11rem;
 }
 
 .w-environments-runs-column {
