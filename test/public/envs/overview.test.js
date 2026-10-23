@@ -18,6 +18,7 @@ const {
     checkColumnBalloon,
     expectLink,
     expectInnerText,
+    expectInnerTextTo,
     expectUrlParams,
     waitForNavigation,
     waitForTableLength,
@@ -100,7 +101,7 @@ module.exports = () => {
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '7');
+        await expectInnerText(page, '#lastRowIndex', '9');
         await expectInnerText(page, '#totalRowsCount', '9');
     });
 
@@ -131,20 +132,21 @@ module.exports = () => {
         await expectInnerText(page, '#rowTDI59So3d-statusSummary', 'Total 02:55:00\nRunning 01:00:00');
     });
 
-    it('Should display the configuration of the environment', async () => {
-        await expectInnerText(page, '#rowCmCvjNbg-runType', 'PHYSICS');
-        await expectInnerText(page, '#rowCmCvjNbg-beamType', 'pp');
-        await expectInnerText(page, '#rowCmCvjNbg-detectors', 'FT0, ITS');
-        await expectInnerText(page, '#rowCmCvjNbg-flps', '2');
-        await expectInnerText(page, '#rowCmCvjNbg-epns', '2');
+    it('Should display the configuration of the environment, as for the runs, and its detectors', async () => {
+        // The CTP readout host is counted in the FLPs
+        await expectInnerText(page, '#rowCmCvjNbg-nEpns', '2');
+        await expectInnerText(page, '#rowCmCvjNbg-nFlps', '3');
+        await expectInnerText(page, '#rowCmCvjNbg-dcs', 'ON');
+        await expectInnerText(page, '#rowCmCvjNbg-triggerValue', 'CTP');
+        await expectInnerTextTo(page, '#rowCmCvjNbg-detectors', (text) => text.includes('FT0, ITS') && text.startsWith('2'));
     });
 
     it('can set how many environments are available per page', async () => {
-        // Expect the amount selector to currently be set to 7 (because of the defined page height)
+        // Expect the amount selector to currently be set to 9 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.waitForSelector(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        expect(amountSelectorButtonText.trim().endsWith('7')).to.be.true;
+        expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await pressElement(page, `${amountSelectorId} button`);
