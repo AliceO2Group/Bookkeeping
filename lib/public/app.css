@@ -864,12 +864,12 @@ label {
     }
 }
 
-/* runs overview: labels of the timing lines have the same width so that the times are aligned, and digits have a fixed width */
-.runs-timing-label {
+/* runs and LHC fills overviews: labels of the timing lines have the same width so that the times are aligned, and digits have a fixed width */
+.timing-label {
     min-width: 2.8em;
 }
 
-.runs-timing-label + * {
+.timing-label + * {
     font-variant-numeric: tabular-nums;
 }
 
