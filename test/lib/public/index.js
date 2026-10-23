@@ -12,7 +12,9 @@
  */
 
 const UtilitiesSuite = require('./utilities/index.js');
+const ViewsSuite = require('./views/index.js');
 
 module.exports = () => {
     describe('utilities', UtilitiesSuite);
+    describe('views', ViewsSuite);
 };
