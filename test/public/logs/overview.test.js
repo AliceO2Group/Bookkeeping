@@ -182,6 +182,29 @@ module.exports = () => {
         expect(passesCells).to.include('-');
     });
 
+    it('should scroll horizontally on small screens while keeping the title visible', async () => {
+        await page.setViewport({ width: 375, height: 812, deviceScaleFactor: 1 });
+        try {
+            await goToPage(page, 'log-overview');
+            await page.waitForSelector('#row119-title-link');
+
+            const { scrollable, scrolled, titleOffset } = await page.$eval('.logs-table-wrapper', (wrapper) => {
+                wrapper.scrollLeft = 300;
+                return {
+                    scrollable: wrapper.scrollWidth > wrapper.clientWidth,
+                    scrolled: wrapper.scrollLeft,
+                    titleOffset: Math.round(wrapper.querySelector('th#title').getBoundingClientRect().left - wrapper.getBoundingClientRect().left),
+                };
+            });
+
+            expect(scrollable).to.be.true;
+            expect(scrolled).to.be.greaterThan(0);
+            expect(titleOffset).to.equal(0);
+        } finally {
+            await page.setViewport({ width: 1400, height: 940, deviceScaleFactor: 1 });
+        }
+    });
+
     it('can sort by columns in ascending and descending manners', async () => {
         // Close the filter panel
         await waitForFirstRowToHaveId(page, 'row119');
