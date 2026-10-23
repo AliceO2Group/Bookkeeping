@@ -13,6 +13,7 @@
 
 const { getFlpRole } = require('../../../../../lib/server/services/flp/getFlpRole.js');
 const { expect } = require('chai');
+const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
 const { flpRoleService } = require('../../../../../lib/server/services/flp/FlpRoleService.js');
 
 module.exports = () => {
@@ -68,5 +69,45 @@ module.exports = () => {
             expect(updatedFlpRole.bytesRecordingReadOut).to.equal(flpRole.bytesRecordingReadOut);
             expect(updatedFlpRole.bytesFairMQReadOut).to.equal(flpRole.bytesFairMQReadOut);
         }
+    });
+
+    it('should successfully get one FLP role with its run', async () => {
+        const flpRole = await flpRoleService.getOneOrFail({ flpRoleId: 1 });
+        expect(flpRole.id).to.equal(1);
+        expect(flpRole.run).to.not.be.null;
+    });
+
+    it('should fail to get an FLP role that does not exist', async () => {
+        let error;
+        try {
+            await flpRoleService.getOneOrFail({ flpRoleId: 999999999 });
+        } catch (e) {
+            error = e;
+        }
+        expect(error).to.be.instanceOf(NotFoundError);
+        expect(error.message).to.equal('FLP with this id (999999999) could not be found');
+    });
+
+    it('should successfully get a page of FLP roles, sorted by name descending by default', async () => {
+        const { count, rows } = await flpRoleService.getAll({ limit: 2 });
+        expect(count).to.be.greaterThan(2);
+        expect(rows).to.have.lengthOf(2);
+        expect(rows[0].name >= rows[1].name).to.be.true;
+
+        const { rows: ascendingRows } = await flpRoleService.getAll({ limit: 2, sort: { name: 'asc' } });
+        expect(ascendingRows[0].name <= ascendingRows[1].name).to.be.true;
+    });
+
+    it('should not modify the counters absent from the patch', async () => {
+        const { bytesProcessed } = await flpRoleService.getOneOrFail({ flpRoleId: 1 });
+        const updated = await flpRoleService.update({ flpRoleId: 1 }, { nTimeframes: 12 });
+        expect(updated.nTimeframes).to.equal(12);
+        expect(updated.bytesProcessed).to.equal(bytesProcessed);
+    });
+
+    it('should successfully create an FLP role', async () => {
+        const created = await flpRoleService.create({ name: 'FlpTest', hostname: 'TestFlp', runNumber: 36 });
+        expect(created).to.deep.include({ name: 'FlpTest', hostname: 'TestFlp', runNumber: 36 });
+        expect((await flpRoleService.getOneOrFail({ flpRoleId: created.id })).id).to.equal(created.id);
     });
 };
