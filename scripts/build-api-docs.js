@@ -151,6 +151,10 @@ const sampleValue = (parameter) => {
  * @return {string} the markdown
  */
 const examplesOf = (method, route, operation, parameters) => {
+    // A response that is not JSON (a file for example) is saved with the name given by the server instead of being printed in the terminal
+    const successContentTypes = Object.keys(operation.responses?.['200']?.content ?? {});
+    const isFileDownload = successContentTypes.length > 0 && !successContentTypes.includes('application/json');
+
     const url = route.replace(/{(\w+)}/g, (_, name) => sampleValue(parameters.find((parameter) => parameter.name === name)));
     const queryParameters = parameters
         .filter(({ in: location, name, required }) => location === 'query' && (required || name === 'page[limit]'));
@@ -158,10 +162,13 @@ const examplesOf = (method, route, operation, parameters) => {
     // $BOOKKEEPING_URL and $TOKEN are meant to be expanded by the shell, anything coming from the spec is not
     const address = `${shellDoubleQuoteEscape(`/api${url}?${[...query, 'token='].join('&')}`)}$TOKEN`;
     const body = operation.requestBody?.content?.['application/json']?.example;
+    // For a multipart body, the example maps each field to its value, a file being given as `@path`
+    const formFields = operation.requestBody?.content?.['multipart/form-data']?.example;
 
     const curlLines = [
-        `curl -g${method === 'get' ? '' : ` -X ${method.toUpperCase()}`} "$BOOKKEEPING_URL${address}"`,
+        `curl -g${isFileDownload ? ' -OJ' : ''}${method === 'get' ? '' : ` -X ${method.toUpperCase()}`} "$BOOKKEEPING_URL${address}"`,
         ...body === undefined ? [] : ['  -H \'content-type: application/json\'', `  -d ${shellSingleQuote(JSON.stringify(body))}`],
+        ...Object.entries(formFields ?? {}).map(([field, value]) => `  -F ${shellSingleQuote(`${field}=${value}`)}`),
     ];
 
     return [
@@ -211,9 +218,11 @@ const renderOperation = (method, route, operation, sharedParameters) => {
         );
     }
 
-    const requestSchema = operation.requestBody?.content?.['application/json']?.schema;
+    const requestContent = operation.requestBody?.content ?? {};
+    const requestSchema = requestContent['application/json']?.schema ?? requestContent['multipart/form-data']?.schema;
     if (requestSchema) {
-        out.push('Request body (JSON):', '', propertiesTable(requestSchema), '');
+        const bodyFormat = requestContent['application/json'] ? 'JSON' : 'multipart/form-data';
+        out.push(`Request body (${bodyFormat}):`, '', propertiesTable(requestSchema), '');
     }
 
     out.push(
