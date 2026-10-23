@@ -992,6 +992,68 @@ label {
     }
 }
 
+/* The filters buttons and panel, and the header of the overview pages containing them, use a smaller font, as the pagination does */
+.filters-toolbar,
+.filters-panel,
+.header-container {
+    font-size: 0.875rem;
+}
+
+.filters-panel {
+    width: var(--ui-component-large);
+}
+
+/*
+ * Filters panel on tablets and phones: the panel is displayed below the navbar on the whole width of the screen
+ * (the popover position computed in javascript is overridden) and each filter label is displayed above its input
+ */
+@media screen and (max-width: 1023px) {
+    .popover.filters-popover {
+        position: fixed !important;
+        top: 56px !important;
+        left: 8px !important;
+        right: 8px !important;
+        width: auto !important;
+        max-width: none !important;
+        max-height: 75vh;
+    }
+
+    .filters-panel {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    /* The filters button, the active filters indicator and the other buttons and quick filters wrap on several lines instead of being squeezed */
+    .header-container {
+        max-height: none;
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+
+    .header-container > .flex-row {
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+
+    .header-container .active-filters-indicator,
+    .header-container label {
+        white-space: nowrap;
+    }
+
+    .filters-panel .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+        row-gap: 4px;
+    }
+
+    .filters-panel .filter-label,
+    .filters-panel .filter-input {
+        width: 100%;
+    }
+}
+
 /* xl */
 @media screen and (min-width: 1920px) {
     .columns-3-xl {
