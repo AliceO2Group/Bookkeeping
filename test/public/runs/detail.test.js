@@ -377,7 +377,7 @@ module.exports = () => {
         await pressElement(page, '#logs-tab');
         await waitForTableLength(page, 6);
 
-        await waitForNavigation(page, () => pressElement(page, '#row1-author'));
+        await waitForNavigation(page, () => pressElement(page, '#row1-createdAt'));
 
         expectUrlParams(page, { page: 'log-detail', id: 1 });
     });

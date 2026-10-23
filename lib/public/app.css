@@ -864,6 +864,41 @@ label {
     }
 }
 
+/* logs table: the created, passes and tags columns have a content of a fixed size, so they leave more space to the title on wide screens */
+.w-logs-title-column {
+    width: 35%;
+}
+
+.w-logs-created-column {
+    width: 20%;
+}
+
+.w-logs-passes-column {
+    width: 10%;
+}
+
+.w-logs-tags-column {
+    width: 15%;
+}
+
+@media screen and (min-width: 1440px) {
+    .w-logs-title-column {
+        width: 43%;
+    }
+
+    .w-logs-created-column {
+        width: 12%;
+    }
+
+    .w-logs-passes-column {
+        width: 15%;
+    }
+
+    .w-logs-tags-column {
+        width: 10%;
+    }
+}
+
 /* xl */
 @media screen and (min-width: 1920px) {
     .columns-3-xl {

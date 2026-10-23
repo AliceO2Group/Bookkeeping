@@ -28,6 +28,7 @@ const {
     fillInput,
     getInnerText,
     getPopoverSelector,
+    expectInnerTextTo,
     waitForTimeout,
     waitForNavigation,
     waitForTableLength,
@@ -82,13 +83,32 @@ module.exports = () => {
         await expectInnerText(page, '#totalRowsCount', '119');
     });
 
-    it('Should have balloon on title, tags and runs columns', async () => {
+    it('Should have balloon on title, linked entities and passes columns', async () => {
         await goToPage(page, 'log-overview');
         await page.waitForSelector('tbody tr:not(.loading-row)');
 
         await checkColumnBalloon(page, 1, 1);
+        await checkColumnBalloon(page, 1, 3);
         await checkColumnBalloon(page, 1, 4);
-        await checkColumnBalloon(page, 1, 5);
+    });
+
+    it('should display the tags in the last column, with a popover listing all the tags when there are too many of them', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForSelector('#row119-tags .popover-trigger');
+
+        const headers = await page.$$eval('th', (nodes) => nodes.map(({ id }) => id));
+        expect(headers[headers.length - 1]).to.equal('tags');
+
+        const chipTrigger = await page.$('#row119-tags .popover-trigger');
+        expect(await getInnerText(chipTrigger)).to.equal('TEST-TAG-36\n+5');
+
+        await chipTrigger.hover();
+        const popoverSelector = await getPopoverSelector(chipTrigger);
+        await expectInnerTextTo(
+            page,
+            popoverSelector,
+            (text) => ['TEST-TAG-36', 'TEST-TAG-37', 'TEST-TAG-38', 'TEST-TAG-39', 'TEST-TAG-40', 'TEST-TAG-41'].every((tag) => text.includes(tag)),
+        );
     });
 
     it('should display a one-line content preview below the title', async () => {
@@ -104,6 +124,64 @@ module.exports = () => {
         expect(snippet).to.not.match(/[*_`[\]]/);
     });
 
+    it('should display the creation date with its author below it', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForSelector('#row119-created-date');
+
+        expect(await getInnerText(await page.$('#row119-created-date'))).to.match(/^\d{2}\/\d{2}\/\d{4}, \d{2}:\d{2}:\d{2}$/);
+        expect(await getInnerText(await page.$('#row119-created-author'))).to.match(/^by .+/);
+        expect(await page.$('th#author')).to.be.null;
+    });
+
+    it('should display the data passes and the simulation passes in a single labelled column', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForSelector('#row119-passes-data');
+
+        expect(await getInnerText(await page.$('#row119-passes-data'))).to.match(/^Data \S+/);
+        expect(await getInnerText(await page.$('#row119-passes-simulation'))).to.match(/^Sim \S+/);
+        expect(await page.$('th#dataPasses')).to.be.null;
+        expect(await page.$('th#simulationPasses')).to.be.null;
+        expect(await page.$('th#passes')).to.not.be.null;
+    });
+
+    it('should display the runs, the environments and the LHC fills in a single labelled column', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForSelector('#row119-runs');
+
+        expect(await getInnerText(await page.$('#row119-runs'))).to.match(/^Runs \d+/);
+        expect(await getInnerText(await page.$('#row119-environments'))).to.match(/^Env \S+/);
+        expect(await getInnerText(await page.$('#row119-lhcFills'))).to.match(/^Fills \d+/);
+        expect(await page.$('th#runs')).to.be.null;
+        expect(await page.$('th#environments')).to.be.null;
+        expect(await page.$('th#lhcFills')).to.be.null;
+        expect(await page.$('th#linkedTo')).to.not.be.null;
+    });
+
+    it('should display the number of replies and attachments next to the title instead of in dedicated columns', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForSelector('#row119-title-link');
+
+        expect(await page.$('th#replies')).to.be.null;
+        expect(await page.$('th#attachments')).to.be.null;
+
+        const replies = await page.$$eval(
+            '[id$="-replies-count"]',
+            (nodes) => nodes.map(({ innerText, title }) => ({ innerText, title })),
+        );
+        expect(replies).to.not.be.empty;
+        for (const { innerText, title } of replies) {
+            expect(title).to.equal(`${innerText} replies`);
+        }
+    });
+
+    it('should display a placeholder in the passes column of a log without passes', async () => {
+        await goToPage(page, 'log-overview');
+        await page.waitForSelector('#row119-passes-data');
+
+        const passesCells = await getColumnCellsInnerTexts(page, 'passes');
+        expect(passesCells).to.include('-');
+    });
+
     it('can sort by columns in ascending and descending manners', async () => {
         // Close the filter panel
         await waitForFirstRowToHaveId(page, 'row119');
@@ -117,7 +195,7 @@ module.exports = () => {
         await waitForFirstRowToHaveId(page, 'row6');
 
         // Hover something else to have title sort displayed
-        await page.hover('th#author');
+        await page.hover('th#createdAt');
         await page.waitForSelector('#title-sort');
 
         // Toggle to sort this towards reverse alphabetical order
@@ -126,16 +204,6 @@ module.exports = () => {
 
         // Toggle to clear this sorting
         await pressElement(page, 'th#title');
-        await waitForFirstRowToHaveId(page, 'row119');
-
-        // Sort by log author in ascending then descending manner
-        await pressElement(page, 'th#author');
-        await waitForFirstRowToHaveId(page, 'row3');
-
-        await pressElement(page, 'th#author');
-        await waitForFirstRowToHaveId(page, 'row1');
-
-        await pressElement(page, 'th#author');
         await waitForFirstRowToHaveId(page, 'row119');
 
         // Sort by creation date in ascending then descending manner
@@ -150,10 +218,8 @@ module.exports = () => {
         // Expectations of header texts being of a certain datatype
         const headerDatatypes = {
             title: (title) => typeof title === 'string',
-            author: (authorName) => typeof authorName === 'string',
-            createdAt: (date) => !isNaN(Date.parse(date)),
+            createdAt: (dateAndAuthor) => !isNaN(Date.parse(dateAndAuthor.split('\n')[0])),
             tags: (tags) => typeof tags === 'string' && tags === tags.toUpperCase(),
-            replies: (replyCount) => typeof replyCount === 'number' || replyCount === '',
         };
 
         // We find the headers matching the datatype keys
@@ -309,9 +375,9 @@ module.exports = () => {
 
     it('can navigate to a log detail page by clicking on its row', async () => {
         await goToPage(page, 'log-overview');
-        await page.waitForSelector('#row119-author');
+        await page.waitForSelector('#row119-createdAt');
 
-        await waitForNavigation(page, () => pressElement(page, '#row119-author'));
+        await waitForNavigation(page, () => pressElement(page, '#row119-createdAt'));
         await expectUrlParams(page, { page: 'log-detail', id: 119 });
     });
 
@@ -384,7 +450,7 @@ module.exports = () => {
         await goToPage(page, 'log-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
 
-        await waitForNavigation(page, () => pressElement(page, '#row119-dataPasses a'));
+        await waitForNavigation(page, () => pressElement(page, '#row119-passes-data a'));
         expectUrlParams(page, { page: 'runs-per-data-pass', dataPassId: '1' });
     });
 
@@ -392,7 +458,7 @@ module.exports = () => {
         await goToPage(page, 'log-overview');
         await page.evaluate(() => window.model.disableInputDebounce());
 
-        await waitForNavigation(page, () => pressElement(page, '#row119-simulationPasses a'));
+        await waitForNavigation(page, () => pressElement(page, '#row119-passes-simulation a'));
         expectUrlParams(page, { page: 'runs-per-simulation-pass', simulationPassId: '1' });
     });
 
@@ -400,7 +466,7 @@ module.exports = () => {
         await goToPage(page, 'log-overview');
         await waitForFirstRowToHaveId(page, 'row119');
 
-        const cellSelector = 'td#row119-runs';
+        const cellSelector = '#row119-runs';
         const popoverTriggerSelector = `${cellSelector} .popover-trigger`;
         const popoverTrigger = await page.waitForSelector(popoverTriggerSelector);
 
@@ -451,19 +517,19 @@ module.exports = () => {
 
         it('should successfully provide an easy-to-access button to filter in/out anonymous logs', async () => {
             await waitForTableTotalRowsCountToEqual(page, 119);
-            const authors = await getColumnCellsInnerTexts(page, 'author');
+            const createdCells = await getColumnCellsInnerTexts(page, 'createdAt');
 
-            expect(authors.some((author) => author === 'Anonymous')).to.be.true;
+            expect(createdCells.some((cell) => cell.endsWith('\nby Anonymous'))).to.be.true;
 
             await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
             await waitForTableTotalRowsCountToEqual(page, 117);
-            await checkColumnValuesWithRegex(page, 'author', '^Anonymous$', {
+            await checkColumnValuesWithRegex(page, 'createdAt', '\\nby Anonymous$', {
                 negation: true,
             });
 
             await pressElement(page, '#main-action-bar > div:nth-child(1) .switch');
             await waitForTableTotalRowsCountToEqual(page, 119);
-            await checkColumnValuesWithRegex(page, 'author', '^Anonymous$', {
+            await checkColumnValuesWithRegex(page, 'createdAt', '\\nby Anonymous$', {
                 valuesCheckingMode: 'some',
             });
         });
