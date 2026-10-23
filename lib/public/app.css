@@ -939,6 +939,30 @@ label {
 }
 
 /*
+ * Columns of the LHC fills overview: the columns whose content has a known width have a fixed one, the scheme name takes a part of the screen
+ * and the runs, which have the most variable content, take all the remaining width
+ */
+.w-lhc-fills-fill-column {
+    width: 9.5rem;
+}
+
+.w-lhc-fills-stable-beams-column {
+    width: 14rem;
+}
+
+.w-lhc-fills-sb-duration-column {
+    width: 7rem;
+}
+
+.w-lhc-fills-efficiency-column {
+    width: 16rem;
+}
+
+.w-lhc-fills-runs-duration-column {
+    width: 8rem;
+}
+
+/*
  * Beam types of the LHC fills overview, by what collides: only shapes and neutral shades are used, as colors are reserved to states
  */
 .beam-type {
