@@ -59,6 +59,8 @@ tags:
     description: End-of-shift (EoS) reports written by the shifters.
   - name: Attachments
     description: Files attached to log entries.
+  - name: DPL processes
+    description: Processes of the data processing layer (DPL) executed during the runs, by detector, process and host.
 
 paths:
   /tags:
@@ -792,6 +794,100 @@ paths:
               example:
                 errors: [{ status: 404, title: Not found, detail: Attachment with this id (999999999) could not be found }]
 
+  /dpl-process/detectors:
+    get:
+      tags: [DPL processes]
+      operationId: listDplDetectorsWithExecutedProcesses
+      summary: List the detectors having an executed process in a run
+      description: |
+        Returns the detectors that have at least one executed DPL process in the run, sorted by name. Not paginated. This is the first level of the
+        run details tree of DPL processes: detector, then process (`/dpl-process/processes`), then host (`/dpl-process/hosts`), then executions
+        (`/dpl-process/executions`).
+      parameters:
+        - $ref: '#/components/parameters/DplRunNumber'
+      responses:
+        '200':
+          description: The detectors.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DplDetectorListResponse' }
+              example:
+                data:
+                  - { id: 1, name: CPV, processesExecutions: [] }
+                  - { id: 2, name: EMC, processesExecutions: [] }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/DplNotFound' }
+
+  /dpl-process/processes:
+    get:
+      tags: [DPL processes]
+      operationId: listDplProcessesExecutedForDetector
+      summary: List the processes executed for a detector in a run
+      description: Returns the DPL processes that have been executed at least once in the run for the detector, sorted by name, with their type. Not paginated.
+      parameters:
+        - $ref: '#/components/parameters/DplRunNumber'
+        - $ref: '#/components/parameters/DplDetectorId'
+      responses:
+        '200':
+          description: The processes.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DplProcessListResponse' }
+              example:
+                data:
+                  - { id: 1, name: PROCESS-1, typeId: 1, type: { id: 1, label: QcTask }, processesExecutions: [] }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/DplNotFound' }
+
+  /dpl-process/hosts:
+    get:
+      tags: [DPL processes]
+      operationId: listHostsExecutingDplProcess
+      summary: List the hosts on which a process was executed for a detector in a run
+      description: Returns the hosts on which the DPL process has been executed at least once in the run for the detector, sorted by host name. Not paginated.
+      parameters:
+        - $ref: '#/components/parameters/DplRunNumber'
+        - $ref: '#/components/parameters/DplDetectorId'
+        - $ref: '#/components/parameters/DplProcessId'
+      responses:
+        '200':
+          description: The hosts.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/HostListResponse' }
+              example:
+                data:
+                  - { id: 1, hostname: flp001, processesExecutions: [] }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/DplNotFound' }
+
+  /dpl-process/executions:
+    get:
+      tags: [DPL processes]
+      operationId: listDplProcessExecutions
+      summary: List the executions of a process on a host for a detector in a run
+      description: Returns the executions of the DPL process on the host in the run for the detector. Not paginated.
+      parameters:
+        - $ref: '#/components/parameters/DplRunNumber'
+        - $ref: '#/components/parameters/DplDetectorId'
+        - $ref: '#/components/parameters/DplProcessId'
+        - name: hostId
+          in: query
+          required: true
+          description: Host identifier.
+          schema: { type: integer, minimum: 1, examples: [1] }
+      responses:
+        '200':
+          description: The executions.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DplProcessExecutionListResponse' }
+              example:
+                data:
+                  - { id: 1, hostId: 1, processId: 1, detectorId: 1, runNumber: 106, args: --id QcTask, detector: null, host: null, process: null, run: null }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/DplNotFound' }
+
 components:
   securitySchemes:
     jwtQuery:
@@ -819,6 +915,25 @@ components:
       in: query
       description: Number of items to skip.
       schema: { type: integer, minimum: 0, default: 0 }
+
+    DplRunNumber:
+      name: runNumber
+      in: query
+      required: true
+      description: Run number.
+      schema: { type: integer, minimum: 1, examples: [106] }
+    DplDetectorId:
+      name: detectorId
+      in: query
+      required: true
+      description: Identifier of the detector (the detectors of `GET /detectors`).
+      schema: { type: integer, minimum: 1, examples: [1] }
+    DplProcessId:
+      name: processId
+      in: query
+      required: true
+      description: Identifier of the DPL process.
+      schema: { type: integer, minimum: 1, examples: [1] }
 
   responses:
     ValidationError:
@@ -848,6 +963,15 @@ components:
           schema: { $ref: '#/components/schemas/ErrorResponse' }
           example:
             errors: [{ status: '404', title: 'Tag with this id (999999999) could not be found' }]
+
+    DplNotFound:
+      description: The run, the detector, the process or the host does not exist.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          example:
+            errors:
+              - { status: 404, title: Not found, detail: Run with this run number (999) could not be found }
 
   schemas:
     Tag:
@@ -1231,3 +1355,74 @@ components:
       required: [data]
       properties:
         data: { $ref: '#/components/schemas/StoredAttachment' }
+    DplDetector:
+      type: object
+      required: [id, name]
+      properties:
+        id: { type: integer }
+        name: { type: string, description: 'Detector code, e.g. `ITS`.' }
+        processesExecutions: { type: array, description: Always empty here., items: { type: object, additionalProperties: true } }
+    DplDetectorListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/DplDetector' }
+    DplProcessType:
+      type: object
+      required: [id, label]
+      properties:
+        id: { type: integer }
+        label: { type: string, examples: [QcTask] }
+    DplProcess:
+      type: object
+      required: [id, name]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        typeId: { type: integer }
+        type: { $ref: '#/components/schemas/DplProcessType' }
+        processesExecutions: { type: array, description: Always empty here., items: { type: object, additionalProperties: true } }
+    DplProcessListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/DplProcess' }
+    Host:
+      type: object
+      required: [id, hostname]
+      properties:
+        id: { type: integer }
+        hostname: { type: string, examples: [flp001] }
+        processesExecutions: { type: array, description: Always empty here., items: { type: object, additionalProperties: true } }
+    HostListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Host' }
+    DplProcessExecution:
+      type: object
+      required: [id, hostId, processId, detectorId, runNumber]
+      properties:
+        id: { type: integer }
+        hostId: { type: integer }
+        processId: { type: integer }
+        detectorId: { type: integer }
+        runNumber: { type: integer }
+        args: { type: [string, 'null'], description: Arguments of the process. }
+        detector: { type: 'null', description: Always null here. }
+        host: { type: 'null', description: Always null here. }
+        process: { type: 'null', description: Always null here. }
+        run: { type: 'null', description: Always null here. }
+    DplProcessExecutionListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/DplProcessExecution' }
