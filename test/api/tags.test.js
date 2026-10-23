@@ -13,8 +13,7 @@
 
 const { expect } = require('chai');
 const request = require('supertest');
-const { tag: { CreateTagUseCase } } = require('../../lib/usecases');
-const { dtos: { CreateTagDto } } = require('../../lib/domain');
+const { tagService } = require('../../lib/server/services/tag/TagService.js');
 const { beforeEach } = require('mocha');
 const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js');
 
@@ -307,15 +306,7 @@ module.exports = () => {
         let createdTag;
 
         beforeEach(async () => {
-            const createTagDto = await CreateTagDto.validateAsync({
-                body: {
-                    text: `TAG#${new Date().getTime()}`,
-                },
-            });
-
-            createTagDto.session = { id: 1, externalId: 1, name: 'John Doe' };
-            createdTag = await new CreateTagUseCase()
-                .execute(createTagDto);
+            createdTag = await tagService.create({ text: `TAG#${new Date().getTime()}` }, { userId: 1 });
         });
 
         it('should return 400 if the tag id is not a number', (done) => {
@@ -556,14 +547,7 @@ module.exports = () => {
         let createdTag;
 
         beforeEach(async () => {
-            const createTagDto = await CreateTagDto.validateAsync({
-                body: {
-                    text: `TAG#${new Date().getTime()}`,
-                },
-            });
-            createTagDto.session = { id: 1, externalId: 1, name: 'John Doe' };
-            createdTag = await new CreateTagUseCase()
-                .execute(createTagDto);
+            createdTag = await tagService.create({ text: `TAG#${new Date().getTime()}` }, { userId: 1 });
         });
 
         it('should return 201 if no text is provided', (done) => {
