@@ -873,6 +873,10 @@ label {
     width: 20%;
 }
 
+.w-logs-linked-column {
+    width: 20%;
+}
+
 .w-logs-passes-column {
     width: 10%;
 }
@@ -896,6 +900,95 @@ label {
 
     .w-logs-tags-column {
         width: 10%;
+    }
+}
+
+/*
+ * Logs table on small screens: the table keeps a minimal width, the page scrolls horizontally to display every column
+ * and the title stays visible at the left
+ */
+@media screen and (max-width: 1023px) {
+    .logs-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .logs-table {
+        min-width: 1080px;
+    }
+
+    .logs-table th:first-child,
+    .logs-table td:first-child {
+        position: sticky;
+        left: 0;
+    }
+
+    .logs-table th:first-child {
+        background: var(--color-gray-light);
+        z-index: 3;
+    }
+
+    .logs-table td:first-child {
+        background: inherit;
+        z-index: 2;
+    }
+
+    /* A shadow along the frozen title column shows that the other columns slide under it */
+    .logs-table th:first-child,
+    .logs-table td:first-child {
+        box-shadow: inset -1px 0 0 var(--color-gray), 8px 0 8px -4px rgba(0, 0, 0, 0.35);
+    }
+}
+
+/*
+ * On landscape phones and tablets the frozen title is wide, as it is the most informative column, and still leaves room to see the other
+ * columns while scrolling
+ */
+@media screen and (min-width: 600px) and (max-width: 1023px) {
+    .w-logs-title-column {
+        width: 43%;
+    }
+
+    .w-logs-created-column {
+        width: 17%;
+    }
+
+    .w-logs-linked-column {
+        width: 18%;
+    }
+
+    .w-logs-passes-column {
+        width: 9%;
+    }
+
+    .w-logs-tags-column {
+        width: 13%;
+    }
+}
+
+/* On portrait phones the frozen title must leave more room to see the scrolled columns */
+@media screen and (max-width: 599px) {
+    .logs-table {
+        min-width: 820px;
+    }
+
+    .w-logs-title-column {
+        width: 25%;
+    }
+
+    .w-logs-created-column {
+        width: 22%;
+    }
+
+    .w-logs-linked-column {
+        width: 23%;
+    }
+
+    .w-logs-passes-column {
+        width: 12%;
+    }
+
+    .w-logs-tags-column {
+        width: 18%;
     }
 }
 
