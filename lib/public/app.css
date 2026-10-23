@@ -988,7 +988,7 @@ label {
 }
 
 /*
- * Efficiency of the LHC fills overview: from the best to the worst level, a solid, a soft and a pale color. No efficiency has no style
+ * Efficiency of the LHC fills overview: from the best to the worst level, solid green, soft green, yellow, orange and red. No efficiency has no style
  */
 .efficiency {
     display: inline-block;
@@ -1006,6 +1006,16 @@ label {
 .efficiency-good {
     background: color-mix(in srgb, var(--color-success) 25%, var(--color-white));
     color: var(--color-success-dark);
+}
+
+.efficiency-fair {
+    background: #fbf0b8;
+    color: #6b5600;
+}
+
+.efficiency-poor {
+    background: color-mix(in srgb, var(--color-warning) 28%, var(--color-white));
+    color: var(--color-warning-darker);
 }
 
 .efficiency-bad {

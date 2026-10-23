@@ -38,8 +38,19 @@ module.exports = () => {
         expect(getEfficiencyLevel(0.9499)).to.equal('good');
     });
 
-    it('should have a bad level below 80%', () => {
-        expect(getEfficiencyLevel(0.7999)).to.equal('bad');
+    it('should have a fair level from 70% to 80% excluded', () => {
+        expect(getEfficiencyLevel(0.7)).to.equal('fair');
+        expect(getEfficiencyLevel(0.76)).to.equal('fair');
+        expect(getEfficiencyLevel(0.7999)).to.equal('fair');
+    });
+
+    it('should have a poor level from 50% to 70% excluded', () => {
+        expect(getEfficiencyLevel(0.5)).to.equal('poor');
+        expect(getEfficiencyLevel(0.6999)).to.equal('poor');
+    });
+
+    it('should have a bad level below 50%', () => {
+        expect(getEfficiencyLevel(0.4999)).to.equal('bad');
         expect(getEfficiencyLevel(0.4167)).to.equal('bad');
         expect(getEfficiencyLevel(0.0001)).to.equal('bad');
     });

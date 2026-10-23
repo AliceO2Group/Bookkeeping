@@ -249,7 +249,7 @@ module.exports = () => {
 
         const legendTrigger = await page.waitForSelector('thead th#efficiency .popover-trigger');
         const legend = await getPopoverContent(legendTrigger);
-        for (const level of ['Great', 'Good', 'Bad']) {
+        for (const level of ['Great', 'Good', 'Fair', 'Poor', 'Bad']) {
             expect(legend).to.include(level);
         }
     });
