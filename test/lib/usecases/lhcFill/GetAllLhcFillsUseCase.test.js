@@ -277,18 +277,18 @@ module.exports = () => {
         });
     })
 
-    it('should only contain specified beam type, {p-p}', async () => {
-        getAllLhcFillsDto.query = { filter: { beamTypes: ['p-p'] } };
+    it('should only contain specified beam type, {PROTON - PROTON}', async () => {
+        getAllLhcFillsDto.query = { filter: { beamTypes: ['PROTON - PROTON'] } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(2)
         lhcFills.forEach((lhcFill) => {
-            expect(lhcFill.beamType).to.equal('p-p')
+            expect(lhcFill.beamType).to.equal('PROTON - PROTON')
         });
     })
 
-    it('should only contain specified beam types, {p-p, PROTON-PROTON, Pb-Pb}', async () => {
-        const beamTypes = ['p-p', 'PROTON-PROTON', 'Pb-Pb']
+    it('should only contain specified beam types, {PROTON - PROTON, O8 - O8, PB82 - PB82}', async () => {
+        const beamTypes = ['PROTON - PROTON', 'O8 - O8', 'PB82 - PB82']
         
         getAllLhcFillsDto.query = { filter: { beamTypes: beamTypes } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
@@ -299,15 +299,15 @@ module.exports = () => {
         });
     })
 
-    it('should ignore unknown beam types, {p-p, Hello-world, Pb-Pb}', async () => {
-        const beamTypes = ['p-p', 'Hello-world', 'Pb-Pb']
+    it('should ignore unknown beam types, {PROTON - PROTON, Hello-world, PB82 - PB82}', async () => {
+        const beamTypes = ['PROTON - PROTON', 'Hello-world', 'PB82 - PB82']
         
         getAllLhcFillsDto.query = { filter: { beamTypes: beamTypes } };
         const { lhcFills } = await new GetAllLhcFillsUseCase().execute(getAllLhcFillsDto)
 
         expect(lhcFills).to.be.an('array').and.lengthOf(3)
         lhcFills.forEach((lhcFill) => {
-            expect(lhcFill.beamType).oneOf(['p-p', 'Pb-Pb'])
+            expect(lhcFill.beamType).oneOf(['PROTON - PROTON', 'PB82 - PB82'])
         });
     })
 

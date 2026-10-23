@@ -43,7 +43,7 @@ module.exports = () => {
         await expectInnerText(page, '#lhc-fill-stableBeamsEnd', 'Stable beams end:\n08/08/2019, 23:00:00');
         await expectInnerText(page, '#lhc-fill-stableBeamsDuration', 'Beams duration:\n12:00:00');
 
-        await expectInnerText(page, '#lhc-fill-beamType', 'Beam type:\nPROTON-PROTON');
+        await expectInnerText(page, '#lhc-fill-beamType', 'Beam type:\nO8 - O8');
         await expectInnerText(page, '#lhc-fill-fillingSchemeName', 'Scheme name:\nSingle_12b_8_1024_8_2018');
         await expectInnerText(page, '#lhc-fill-collidingBunchesCount', 'Colliding bunches:\n1,024');
         await expectInnerText(page, '#lhc-fill-deliveredLuminosity', 'Delivered lumi:\n420 nb-1');
