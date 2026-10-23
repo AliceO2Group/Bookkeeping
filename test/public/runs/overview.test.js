@@ -31,13 +31,11 @@ const {
     waitForNavigation,
     waitForTableTotalRowsCountToEqual,
     expectInputValue,
-    expectColumnValues,
     waitForEmptyTable,
     waitForDownload,
     expectLink,
     expectUrlParams,
     expectAttributeValue,
-    getColumnCellsInnerTexts,
     resetFilters,
     openFilteringPanel,
     waitForButtonToBecomeActive,
@@ -80,7 +78,25 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping');
     });
 
-    describe('General page behaviour', () => {
+    /**
+ * Expect the run numbers displayed in the overview table to be the given ones
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string[]} expectedRunNumbers the expected run numbers, in the order of the rows
+ * @return {Promise<void>} resolves once the run numbers are the expected ones
+ */
+const expectRunNumbers = async (page, expectedRunNumbers) => {
+    await page.waitForFunction(
+        (expected) => {
+            const cells = [...document.querySelectorAll('table tbody [id$="-run-number"]')];
+            return cells.length === expected.length && cells.every((cell, index) => cell.innerText === expected[index]);
+        },
+        {},
+        expectedRunNumbers,
+    );
+};
+
+describe('General page behaviour', () => {
         before(() => goToPage(page, 'run-overview'));
         beforeEach(async () => {
             await navigateToRunsOverview(page);
@@ -148,12 +164,12 @@ module.exports = () => {
         });
 
         it('successfully switch to raw timestamp display', async () => {
-            await expectInnerText(page, '#row106 td:nth-child(6)', '08/08/2019\n13:00:00');
-            await expectInnerText(page, '#row106 td:nth-child(7)', '09/08/2019\n14:00:00');
+            await expectInnerText(page, '#row106-start', '08/08/2019, 13:00:00');
+            await expectInnerText(page, '#row106-stop', '09/08/2019, 14:00:00');
             await pressElement(page, '#preferences-raw-timestamps', true);
 
-            await expectInnerText(page, '#row106 td:nth-child(6)', '1565269200000');
-            await expectInnerText(page, '#row106 td:nth-child(7)', '1565359200000');
+            await expectInnerText(page, '#row106-start', '1565269200000');
+            await expectInnerText(page, '#row106-stop', '1565359200000');
 
             // Go back to normal
             await pressElement(page, '#preferences-raw-timestamps', true);
@@ -270,19 +286,19 @@ module.exports = () => {
         it('Should have balloon on detector, tags and eor column', async () => {
             // Run 106 has detectors and tags that overflow
             await fillInput(page, filterPanelRunNumbersInputSelector, '106', ['change']);
-            await expectColumnValues(page, 'runNumber', ['106']);
+            await expectRunNumbers(page, ['106']);
 
-            await checkColumnBalloon(page, 1, 2);
-            await checkColumnBalloon(page, 1, 3);
+            await checkColumnBalloon(page, 1, 5);
+            await checkColumnBalloon(page, 1, 6);
 
             // Run 1 has eor reasons that overflow
             await fillInput(page, filterPanelRunNumbersInputSelector, '1,1', ['change']);
-            await expectColumnValues(page, 'runNumber', ['1']);
-            await checkColumnBalloon(page, 1, 16);
+            await expectRunNumbers(page, ['1']);
+            await checkColumnBalloon(page, 1, 7);
         });
 
         it('Should display balloon if the text overflows', async () => {
-            await checkColumnBalloon(page, 1, 2);
+            await checkColumnBalloon(page, 1, 5);
         });
 
         it('should successfully display duration without warning popover when run has trigger OFF', async () => {
@@ -419,7 +435,7 @@ module.exports = () => {
                 await waitForTableLength(page, size);
 
                 const definitions = await page.$$eval(
-                    '.column-definition div div div:first-child',
+                    'tbody [id$="-definition"] > div:first-child',
                     (rows) => rows.map((row) => row.innerText),
                 );
 
@@ -428,7 +444,7 @@ module.exports = () => {
                 } catch {
                     const runNumbers = await page.$$eval('tbody tr', (rows) => rows.map((row) => {
                         const rowId = row.id;
-                        return document.querySelector(`#${rowId}-runNumber-text`).innerText;
+                        return document.querySelector(`#${rowId}-run-number`).innerText;
                     }));
                     throw new Error(`Expect all run definitions ${definitions} to be one of ${authorizedRunDefinition}, for runs (${runNumbers})`);
                 }
@@ -515,7 +531,7 @@ module.exports = () => {
             await page.select(runDurationOperatorSelector, '=');
             await waitForTableLength(page, 4);
 
-            let runDurationList = await getColumnCellsInnerTexts(page, 'runDuration');
+            let runDurationList = await page.$$eval('tbody [id$="-runDuration"]', (cells) => cells.map((cell) => cell.innerText));
 
             expect(runDurationList.every((runDuration) => runDuration === '25:00:00')).to.be.true;
 
@@ -528,7 +544,7 @@ module.exports = () => {
             // Expect only unknown
             runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
                 const rowId = row.id;
-                return document.querySelector(`#${rowId}-runDuration-text`)?.innerText;
+                return document.querySelector(`#${rowId}-runDuration`)?.innerText;
             }));
 
             expect(runDurationList.every((runDuration) => runDuration === 'UNKNOWN')).to.be.true;
@@ -538,7 +554,7 @@ module.exports = () => {
             const popoverSelector = await getPopoverSelector(await page.waitForSelector('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
             await pressElement(page, `${popoverSelector} .dropdown-option:last-child`, true); // Select 30003kA/0kA
 
-            await expectColumnValues(page, 'runNumber', ['54', '53', '52']);
+            await expectRunNumbers(page, ['54', '53', '52']);
         });
 
         it('Should successfully filter runs by their run quality', async () => {
@@ -557,7 +573,7 @@ module.exports = () => {
                 for (const row of rows) {
                     expect(await row.evaluate((rowItem) => {
                         const rowId = rowItem.id;
-                        return document.querySelector(`#${rowId}-runQuality-text`).innerText;
+                        return document.querySelector(`#${rowId}-runQuality`).innerText;
                     })).to.be.oneOf(authorizedRunQualities);
                 }
             };
@@ -609,7 +625,7 @@ module.exports = () => {
                 for (const row of rows) {
                     expect(await row.evaluate((rowItem) => {
                         const rowId = rowItem.id;
-                        return document.querySelector(`#${rowId}-triggerValue-text`).innerText;
+                        return document.querySelector(`#${rowId}-triggerValue`).innerText;
                     })).to.be.oneOf(authorizedRunQualities);
                 }
             };
@@ -679,10 +695,10 @@ module.exports = () => {
             const filterOnRun = async (selector) => {
                 await expectAttributeValue(page, selector, 'placeholder', 'e.g. 534454, 534455...');
                 await fillInput(page, selector, inputValue, ['change']);
-                await expectColumnValues(page, 'runNumber', ['109', '108', '107', '106', '105', '104', '103', '102', '101', '100']);
+                await expectRunNumbers(page, ['109', '108', '107', '106', '105', '104', '103', '102', '101', '100']);
                 
                 await pressElement(page, '#pageMoveRight', true);
-                await expectColumnValues(page, 'runNumber', ['10']);
+                await expectRunNumbers(page, ['10']);
             };
 
             await filterOnRun('#runOverviewFilter .runNumbers-textFilter');
@@ -748,7 +764,7 @@ module.exports = () => {
 
             const nFlpsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
                 const rowId = row.id;
-                return document.querySelector(`#${rowId}-nFlps-text`)?.innerText;
+                return document.querySelector(`#${rowId}-nFlps`)?.innerText;
             }));
             expect(nFlpsList.every((nFlps) => parseInt(nFlps, 10) <= 10)).to.be.true;
         });
@@ -760,7 +776,7 @@ module.exports = () => {
             await fillInput(page, '#nEpns-operand', '10', ['change']);
             await waitForTableLength(page, 5);
 
-            await expectColumnValues(page, 'nEpns', ['10', '10', 'OFF', 'OFF', '10']);
+            expect(await page.$$eval('tbody [id$="-nEpns"]', (cells) => cells.map((cell) => cell.innerText))).to.eql(['10', '10', 'OFF', 'OFF', '10']);
         });
 
         it('should successfully filter on EPN on/off', async () => {
