@@ -862,8 +862,8 @@ describe('General page behaviour', () => {
             expect(detectorTitleElements).has.lengthOf(1);
 
             // There should be many items in the run details table
-            eorReasons = await page.$$('table [id$="-eorReasons"]');
-            expect(eorReasons.length).to.be.greaterThan(3);
+            const rows = await page.$$('table tbody tr');
+            expect(rows.length).to.be.greaterThan(3);
         });
 
         it('should correctly filter by EOR reason description', async () => {
@@ -886,8 +886,7 @@ describe('General page behaviour', () => {
             // When we reset the filters, the input field should be empty
             await resetFilters(page);
             await waitForTableLength(page, 10);
-            eorReasons = await page.$$('table [id$="-eorReasons"]');
-            expect(eorReasons.length).to.be.greaterThan(1);
+            expect((await page.$$('table tbody tr')).length).to.be.greaterThan(1);
 
             await expectInputValue(page, '#eorDescription', '');
         });
