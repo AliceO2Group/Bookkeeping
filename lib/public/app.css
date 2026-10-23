@@ -1070,6 +1070,9 @@ label {
     .filters-panel .filter-label,
     .filters-panel .filter-input {
         width: 100%;
+    }
+}
+
 .pagination-bar {
     font-size: 0.875rem;
 }
