@@ -974,12 +974,12 @@ label {
     width: 12rem;
 }
 
-.w-environments-timing-column {
-    width: 14rem;
+.w-environments-created-column {
+    width: 12rem;
 }
 
 .w-environments-history-column {
-    width: 20rem;
+    width: 18rem;
 }
 
 .w-environments-runs-column {
