@@ -6,7 +6,7 @@ html, body {
 
 .cell-xs { max-width: 2rem; }
 .cell-s { max-width: 4rem; }
-.cell-m { max-width: 8rem; }
+.cell-m { max-width: 9rem; }
 .cell-l { max-width: 16rem; }
 .cell-xl { max-width: 32rem; }
 .cell-f { width: 40%; }
@@ -873,6 +873,10 @@ label {
     font-variant-numeric: tabular-nums;
 }
 
+.efficiency-label {
+    min-width: 6.5em;
+}
+
 .invisible {
     visibility: hidden;
 }
@@ -922,11 +926,56 @@ label {
 
 /* Legend of the run definitions: the labels have the same width and the descriptions are aligned on their left */
 .run-definition-legend-label {
-    width: 8rem;
+    width: 9rem;
     flex-shrink: 0;
 }
 
 .run-definition-legend-description {
+    text-align: left;
+}
+
+/*
+ * Beam types of the LHC fills overview, by what collides: only shapes and neutral shades are used, as colors are reserved to states
+ */
+.beam-type {
+    display: inline-block;
+    padding: 0.2em 0.45em;
+    border-radius: 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.beam-type-lead-lead {
+    background: color-mix(in srgb, var(--color-black) 75%, var(--color-white));
+    color: var(--color-white);
+}
+
+.beam-type-proton-proton {
+    border: 1.5px solid var(--color-black);
+}
+
+.beam-type-proton-ion {
+    border: 1px solid var(--color-gray-dark);
+}
+
+.beam-type-ion-ion {
+    border: 1px solid var(--color-gray-dark);
+    border-left: 4px solid var(--color-black);
+}
+
+.beam-type-unknown {
+    padding: 0;
+}
+
+.beam-type-legend-label {
+    width: 9rem;
+    flex-shrink: 0;
+}
+
+.beam-type-legend-description {
     text-align: left;
 }
 
