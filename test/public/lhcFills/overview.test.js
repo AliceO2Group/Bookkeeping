@@ -101,48 +101,22 @@ module.exports = () => {
     
 
     it('shows correct datatypes in respective columns', async () => {
-        // Expectations of header texts being of a certain datatype
-        const headerDatatypes = {
-            fillNumber: (fill) => !isNaN(parseInt(fill, 10)),
-            // Seems to not exist anymore
-            createdAt: (date) => !isNaN(Date.parse(date)),
-            // Seems to not exist anymore
-            updatedAt: (date) => !isNaN(Date.parse(date)),
-            // Seems to not exist anymore
-            status: (date) => !isNaN(Date.parse(date)),
-            // Seems to not exist anymore
-            statusMessage: (string) => typeof string == 'string',
-            efficiency: (efficiency) => efficiency === '-' || efficiency.match(percentageRegex) !== null,
+        // Expectations of the datatype of the values displayed in the merged cells, identified by the suffix of the id of their element
+        const valuesDatatypes = {
+            'fill-number': (fill) => !isNaN(parseInt(fill, 10)),
+            efficiencyValue: (efficiency) => efficiency === '-' || efficiency.match(percentageRegex) !== null,
             timeLossAtStart: (data) => data === '-'
-                || data.match(new RegExp(`${durationRegex.source}\n\\(${percentageRegex.source}\\)`)) !== null,
-            timeLossAtEnd: (data) => data === '-'
-                || data.match(new RegExp(`${durationRegex.source}\n\\(${percentageRegex.source}\\)`)) !== null,
+                || data.match(new RegExp(`${durationRegex.source} \\(${percentageRegex.source}\\)`)) !== null,
             meanRunDuration: (duration) => duration === '-' || duration.match(durationRegex) !== null,
             runsCoverage: (duration) => duration === '-' || duration.match(durationRegex) !== null,
-            runs: (string) => typeof string == 'string',
         };
 
-        // We find the headers matching the datatype keys
-        const headers = await page.$$('th');
-        const headerIndices = {};
-        for (const [index, header] of headers.entries()) {
-            const headerContent = await page.evaluate((element) => element.id, header);
-            const matchingDatatype = Object.keys(headerDatatypes).find((key) => headerContent === key);
-            if (matchingDatatype !== undefined) {
-                headerIndices[index] = matchingDatatype;
-            }
-        }
+        // Use the third row because it is where statistics are present, once the table is loaded
+        await page.waitForSelector('tbody tr:nth-of-type(3) [id$="-fill-number"]');
 
-        // We expect every value of a header matching a datatype key to actually be of that datatype
-
-        // Use the third row because it is where statistics are present
-        const firstRowCells = await page.$$('tr:nth-of-type(3) td');
-        for (const [index, cell] of firstRowCells.entries()) {
-            if (index in headerIndices) {
-                const cellContent = await page.evaluate((element) => element.innerText, cell);
-                const expectedDatatype = headerDatatypes[headerIndices[index]](cellContent);
-                expect(expectedDatatype).to.be.true;
-            }
+        for (const [suffix, isOfExpectedDatatype] of Object.entries(valuesDatatypes)) {
+            const value = await page.$eval(`tbody tr:nth-of-type(3) [id$="-${suffix}"]`, (element) => element.innerText);
+            expect(isOfExpectedDatatype(value), `${suffix} has an unexpected value: ${value}`).to.be.true;
         }
     });
 
