@@ -21,7 +21,6 @@ const {
     pressElement,
     getFirstRow,
     goToPage,
-    checkColumnBalloon,
     fillInput,
     getPopoverContent,
     getInnerText,
@@ -43,6 +42,7 @@ const {
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const { RunDefinition } = require('../../../lib/domain/enums/RunDefinition.js');
+const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { runService } = require('../../../lib/server/services/run/RunService.js');
 const { navigateToRunsOverview } = require('./navigationUtils.js');
 const RunRepository = require('../../../lib/database/repositories/RunRepository.js');
@@ -283,22 +283,41 @@ describe('General page behaviour', () => {
             expect(urlParameters).to.contain(`runNumber=${expectedRunNumber}`);
         });
 
-        it('Should have balloon on detector, tags and eor column', async () => {
-            // Run 106 has detectors and tags that overflow
-            await fillInput(page, filterPanelRunNumbersInputSelector, '106', ['change']);
-            await expectRunNumbers(page, ['106']);
-
-            await checkColumnBalloon(page, 1, 5);
-            await checkColumnBalloon(page, 1, 6);
-
-            // Run 1 has eor reasons that overflow
+        it('Should display the eor reasons of the run', async () => {
             await fillInput(page, filterPanelRunNumbersInputSelector, '1,1', ['change']);
             await expectRunNumbers(page, ['1']);
-            await checkColumnBalloon(page, 1, 7);
+            await page.waitForSelector('#row1-eorReasons');
         });
 
-        it('Should display balloon if the text overflows', async () => {
-            await checkColumnBalloon(page, 1, 5);
+        it('Should display the first tags with a popover listing all of them when there are more', async () => {
+            // Run 106 has more tags than the displayed ones
+            await fillInput(page, filterPanelRunNumbersInputSelector, '106', ['change']);
+            await expectRunNumbers(page, ['106']);
+            await page.waitForSelector('#row106-tags .popover-trigger');
+        });
+
+        it('should display the legend of the run definitions in the header of the run column', async () => {
+            const legendTrigger = await page.waitForSelector('thead th:first-child .popover-trigger');
+            const legend = await getPopoverContent(legendTrigger);
+
+            for (const definition of Object.values(RunDefinition)) {
+                expect(legend).to.include(definition);
+            }
+        });
+
+        it('should only display the time of the stop of a run ending the same day as it started', async () => {
+            // Run 40 starts and stops the same day, run 106 stops the day after its start
+            await fillInput(page, filterPanelRunNumbersInputSelector, '40', ['change']);
+            await expectRunNumbers(page, ['40']);
+            await expectInnerText(page, '#row40-start', '08/08/2019, 13:00:00');
+            await expectInnerText(page, '#row40-stop', '13:00:00');
+
+            await fillInput(page, filterPanelRunNumbersInputSelector, '106', ['change']);
+            await expectRunNumbers(page, ['106']);
+            await expectInnerText(page, '#row106-stop', '09/08/2019, 14:00:00');
+
+            // Reset the filters for the next tests
+            await navigateToRunsOverview(page);
         });
 
         it('should successfully display duration without warning popover when run has trigger OFF', async () => {
@@ -435,7 +454,7 @@ describe('General page behaviour', () => {
                 await waitForTableLength(page, size);
 
                 const definitions = await page.$$eval(
-                    'tbody [id$="-definition"] > div:first-child',
+                    'tbody [id$="-definition"]',
                     (rows) => rows.map((row) => row.innerText),
                 );
 
@@ -477,6 +496,11 @@ describe('General page behaviour', () => {
 
             await pressElement(page, calibrationFilterSelector, true);
             await checkTableSizeAndDefinition(2, [RunDefinition.TECHNICAL, RunDefinition.CALIBRATION]);
+
+            // The calibration status is displayed below the definition of calibration runs only
+            await page.waitForSelector('#row40-definition.run-definition-calibration');
+            await expectInnerText(page, '#row40-calibration-status', RunCalibrationStatus.NO_STATUS);
+            expect(await page.$$('tbody [id$="-calibration-status"]')).to.have.lengthOf(1);
 
             await pressElement(page, commissioningFilterSelector, true);
             await checkTableSizeAndDefinition(20, [RunDefinition.COMMISSIONING]);
@@ -573,7 +597,7 @@ describe('General page behaviour', () => {
                 for (const row of rows) {
                     expect(await row.evaluate((rowItem) => {
                         const rowId = rowItem.id;
-                        return document.querySelector(`#${rowId}-runQuality`).innerText;
+                        return document.querySelector(`#${rowId}-quality`).innerText;
                     })).to.be.oneOf(authorizedRunQualities);
                 }
             };
