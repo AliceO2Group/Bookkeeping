@@ -205,6 +205,47 @@ module.exports = () => {
         }
     });
 
+    it('should display the filters panel on the whole width of small screens', async () => {
+        const getFiltersPanelLayout = () => page.$eval('.filters-popover', (popover) => {
+            const { left, right } = popover.getBoundingClientRect();
+            const filterRow = popover.querySelector('.filter-row');
+            return {
+                fitsInViewport: left >= 0 && right <= document.documentElement.clientWidth,
+                labelIsAboveInput: window.getComputedStyle(filterRow).flexDirection === 'column',
+            };
+        });
+
+        try {
+            await page.setViewport({ width: 375, height: 812, deviceScaleFactor: 1 });
+            await goToPage(page, 'log-overview');
+            await pressElement(page, '#openFilterToggle');
+            await page.waitForSelector('.filters-popover .filter-row');
+            expect(await getFiltersPanelLayout()).to.eql({ fitsInViewport: true, labelIsAboveInput: true });
+
+            await page.setViewport({ width: 800, height: 1024, deviceScaleFactor: 1 });
+            expect(await getFiltersPanelLayout()).to.eql({ fitsInViewport: true, labelIsAboveInput: false });
+        } finally {
+            await page.setViewport({ width: 1400, height: 940, deviceScaleFactor: 1 });
+        }
+    });
+
+    it('should let the header of the page wrap instead of being squeezed on small screens', async () => {
+        try {
+            await page.setViewport({ width: 375, height: 812, deviceScaleFactor: 1 });
+            await goToPage(page, 'log-overview');
+            await page.waitForSelector('#main-action-bar');
+
+            const { overflows, maxHeight, flexWrap } = await page.$eval('#main-action-bar', (header) => ({
+                overflows: header.scrollWidth > header.clientWidth,
+                maxHeight: window.getComputedStyle(header).maxHeight,
+                flexWrap: window.getComputedStyle(header).flexWrap,
+            }));
+            expect({ overflows, maxHeight, flexWrap }).to.eql({ overflows: false, maxHeight: 'none', flexWrap: 'wrap' });
+        } finally {
+            await page.setViewport({ width: 1400, height: 940, deviceScaleFactor: 1 });
+        }
+    });
+
     it('can sort by columns in ascending and descending manners', async () => {
         // Close the filter panel
         await waitForFirstRowToHaveId(page, 'row119');

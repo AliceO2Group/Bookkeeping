@@ -992,6 +992,87 @@ label {
     }
 }
 
+/*
+ * The filters buttons and panel, and the header of the overview pages containing them, use a smaller font, as the pagination does.
+ * The header is the row directly containing the filters buttons, or the header-container used by most of the overview pages
+ */
+.filters-toolbar,
+.filters-panel,
+.header-container,
+.flex-row:has(> .filters-toolbar) {
+    font-size: 0.875rem;
+}
+
+.filters-panel {
+    width: var(--ui-component-large);
+}
+
+/*
+ * Filters panel on tablets and phones: the panel is displayed below the navbar on the whole width of the screen
+ * (the popover position computed in javascript is overridden) and each filter label is displayed above its input
+ */
+@media screen and (max-width: 1023px) {
+    /*
+     * A table wider than the screen scrolls inside its own box instead of widening the whole page: otherwise the layout viewport of the
+     * phone gets wider than the screen, and the filters panel, positioned against it, is partly displayed out of the screen.
+     * Tables having their own scroll wrapper (the logs one) are left untouched
+     */
+    table.table:not(.logs-table) {
+        display: block;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    .popover.filters-popover {
+        position: fixed !important;
+        top: 56px !important;
+        left: 8px !important;
+        right: 8px !important;
+        width: auto !important;
+        max-width: none !important;
+        max-height: 75vh;
+    }
+
+    .filters-panel {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    /* The filters button, the active filters indicator and the other buttons and quick filters wrap on several lines instead of being squeezed */
+    .header-container,
+    .flex-row:has(> .filters-toolbar) {
+        max-height: none;
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+
+    .header-container .flex-row,
+    .flex-row:has(> .filters-toolbar) .flex-row {
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+
+    .header-container .active-filters-indicator,
+    .header-container label,
+    .flex-row:has(> .filters-toolbar) .active-filters-indicator,
+    .flex-row:has(> .filters-toolbar) label {
+        white-space: nowrap;
+    }
+
+    .filters-panel .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+        row-gap: 4px;
+    }
+
+    .filters-panel .filter-label,
+    .filters-panel .filter-input {
+        width: 100%;
+    }
+}
+
 /* xl */
 @media screen and (min-width: 1920px) {
     .columns-3-xl {
