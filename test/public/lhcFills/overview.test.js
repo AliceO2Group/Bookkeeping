@@ -17,7 +17,6 @@ const {
     defaultAfter,
     pressElement,
     goToPage,
-    checkColumnBalloon,
     waitForNavigation,
     expectUrlParams,
     expectInnerText,
@@ -155,15 +154,8 @@ module.exports = () => {
         await expectInnerText(page, '#totalRowsCount', '5');
     });
 
-    it('Should have balloon on runs column', async () => {
-        await goToPage(page, 'lhc-fill-overview');
-        await waitForTableLength(page, 5);
-
-        await checkColumnBalloon(page, 1, 11);
-    });
-
     it('fill dropdown menu should be correct', async() => {
-        const popoverTrigger = '#row6-fillNumber-text > div:nth-child(1) > div:nth-child(2)';
+        const popoverTrigger = '#row6-fill-number .popover-trigger';
 
         await pressElement(page, popoverTrigger);
         await expectInnerText(page, '#copy-6 > div:nth-child(1)', 'Copy Fill Number');
@@ -182,11 +174,11 @@ module.exports = () => {
          // turn off Stable Beams Only filter
         await pressElement(page, '.slider.round');
 
-        // Expect the amount selector to currently be set to 10 (because of the defined page height)
+        // Expect the amount selector to currently be set to 9 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.$(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        expect(amountSelectorButtonText.trim().endsWith('10')).to.be.true;
+        expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await pressElement(page, `${amountSelectorId} button`);
@@ -248,7 +240,7 @@ module.exports = () => {
 
     it('should successfully display ONGOING information', async () => {
         await goToPage(page, 'lhc-fill-overview');
-        const stableBeamsDurationText = await page.waitForSelector('#row5-stableBeamsDuration-text div');
+        const stableBeamsDurationText = await page.waitForSelector('#row5-stableBeamsDuration .badge');
 
         expect(await stableBeamsDurationText.evaluate((element) => element.classList.contains('bg-success'))).to.be.true;
         expect(await stableBeamsDurationText.evaluate((element) => element.innerText)).to.equal('ONGOING');
@@ -261,23 +253,28 @@ module.exports = () => {
     });
 
     it('should successfully display some statistics', async () => {
-        const beamTypeExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(9)', value: 'PROTON\nPROTON' };
-        const beforeFirststRunExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(5)', value: '03:00:00\n(25.00%)' };
-        const collidingBunchesExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(10)', value: '1024' };
-        const meanRunDurationExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(6)', value: '01:40:00' };
-        const totalRunsDurationExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(7)', value: '05:00:00' };
-        const efficiencyExpect = { selector: 'tbody tr:nth-child(1) td:nth-child(8)', value: '41.67%' };
-        const schemeNameExpect = { selector: '#row6-fillingSchemeName > div:nth-child(1) > div:nth-child(1)', value: 'Single_12b_8_1024_8_2018'};
-
         await goToPage(page, 'lhc-fill-overview');
 
-        await expectInnerText(page, beamTypeExpect.selector, beamTypeExpect.value);
-        await expectInnerText(page, beforeFirststRunExpect.selector, beforeFirststRunExpect.value);
-        await expectInnerText(page, collidingBunchesExpect.selector, collidingBunchesExpect.value);
-        await expectInnerText(page, meanRunDurationExpect.selector, meanRunDurationExpect.value);
-        await expectInnerText(page, totalRunsDurationExpect.selector, totalRunsDurationExpect.value);
-        await expectInnerText(page, efficiencyExpect.selector, efficiencyExpect.value);
-        await expectInnerText(page, schemeNameExpect.selector, schemeNameExpect.value);
+        await expectInnerText(page, '#row6-beamType', 'O8 - O8');
+        await expectInnerText(page, '#row6-timeLossAtStart', '03:00:00 (25.00%)');
+        await expectInnerText(page, '#row6-collidingBunches', '1024');
+        await expectInnerText(page, '#row6-meanRunDuration', '01:40:00');
+        await expectInnerText(page, '#row6-runsCoverage', '05:00:00');
+        await expectInnerText(page, '#row6-efficiencyValue', '41.67%');
+        await expectInnerText(page, '#row6-schemeName', 'Single_12b_8_1024_8_2018');
+    });
+
+    it('should successfully display the start, the end and the duration of the stable beams', async () => {
+        await goToPage(page, 'lhc-fill-overview');
+
+        // Fill 6 ends the same day it started: only the time of its end is displayed, aligned with the time of its start
+        await expectInnerText(page, '#row6-stableBeamsStart', '08/08/2019, 11:00:00');
+        await expectInnerText(page, '#row6-stableBeamsEnd', '23:00:00');
+        await expectInnerText(page, '#row6-stableBeamsDuration', '12:00:00');
+
+        // Fill 3 ends the day after its start: the date of its end is displayed
+        await expectInnerText(page, '#row3-stableBeamsStart', '21/03/2022, 13:00:00');
+        await expectInnerText(page, '#row3-stableBeamsEnd', '22/03/2022, 15:00:00');
     });
 
     it('should successfully display filter elements', async () => {
@@ -355,8 +352,8 @@ module.exports = () => {
     });
 
     it('should successfully apply beam types filter', async () => {
-        const filterBeamTypeP_Pb = '#beam-types-dropdown-option-p-Pb';
-        const filterBeamTypePb_Pb = '#beam-types-dropdown-option-Pb-Pb';
+        const filterBeamTypeP_Pb = '[id="beam-types-dropdown-option-PROTON - O8"]';
+        const filterBeamTypePb_Pb = '[id="beam-types-dropdown-option-PB82 - PB82"]';
 
         await goToPage(page, 'lhc-fill-overview');
         await waitForTableLength(page, 5);
@@ -375,7 +372,7 @@ module.exports = () => {
 
         await goToPage(page, 'lhc-fill-overview');
         await waitForTableLength(page, 5);
-        await page.waitForSelector('.column-stableBeamsStart');
+        await page.waitForSelector('#row6-stableBeamsStart');
         await openFilteringPanel(page);
 
         const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
@@ -394,7 +391,7 @@ module.exports = () => {
 
         await goToPage(page, 'lhc-fill-overview');
         await waitForTableLength(page, 5);
-        await page.waitForSelector('.column-stableBeamsEnd');
+        await page.waitForSelector('#row6-stableBeamsEnd');
         await openFilteringPanel(page);
 
         const popOverSelector = await getPopoverSelector(await page.$(popoverTrigger));
