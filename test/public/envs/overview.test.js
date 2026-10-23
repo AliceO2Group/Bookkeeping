@@ -17,11 +17,9 @@ const {
     pressElement,
     checkColumnBalloon,
     expectLink,
-    validateTableData,
     expectInnerText,
     expectUrlParams,
     waitForNavigation,
-    getInnerText,
     waitForTableLength,
     getPopoverSelector,
     goToPage,
@@ -68,84 +66,85 @@ module.exports = () => {
 
         const statusNames = new Set(Object.keys(StatusAcronym));
 
-        // eslint-disable-next-line jsdoc/require-param
-        const checkDate = (date) => !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY hh:mm:ss'));
-        const tableDataValidators = {
-            id: (id) => /[A-Za-z0-9]+/.test(id),
-            runs: (runs) => runs === '-' || runs.split(',').every((run) => !isNaN(run)),
-            updatedAt: checkDate,
-            status: (currentStatus) => statusNames.has(currentStatus),
-            historyItems: (history) => history.split('-').every((statusAcronym) => STATUS_ACRONYMS.includes(statusAcronym)),
-        };
-        await validateTableData(page, new Map(Object.entries(tableDataValidators)));
+        const checkDate = (date) => !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY, HH:mm:ss'));
+        const durationRegex = /^\d{2,}:\d{2}:\d{2}$/;
+
+        await page.waitForSelector('tbody tr:nth-of-type(1) [id$="-statusChain"]');
+        const rows = await page.$$eval('tbody tr', (trs) => trs.map((tr) => {
+            const text = (suffix) => tr.querySelector(`[id$="-${suffix}"]`)?.innerText;
+            return {
+                id: text('id'),
+                currentStatus: text('currentStatus'),
+                createdAt: text('createdAt'),
+                statusChain: tr.querySelector('[id$="-statusChain"]')?.textContent,
+                total: tr.querySelector('[id$="-statusSummary"] span:nth-child(1) span')?.innerText,
+                running: tr.querySelector('[id$="-statusSummary"] span:nth-child(2) span')?.innerText,
+                runs: text('runs'),
+            };
+        }));
+
+        expect(rows).to.have.length.greaterThan(0);
+        for (const row of rows) {
+            expect(row.id, `id of ${JSON.stringify(row)}`).to.match(/^[A-Za-z0-9]+$/);
+            expect(statusNames.has(row.currentStatus), `status of ${row.id}`).to.be.true;
+            expect(checkDate(row.createdAt), `creation date of ${row.id}: ${row.createdAt}`).to.be.true;
+            expect(
+                row.statusChain.split('\u203A').every((statusAcronym) => STATUS_ACRONYMS.includes(statusAcronym)),
+                `status history of ${row.id}: ${row.statusChain}`,
+            ).to.be.true;
+            expect(row.total, `total time of ${row.id}`).to.match(durationRegex);
+            expect(row.running, `running time of ${row.id}`).to.match(durationRegex);
+            expect(row.runs === '-' || row.runs.split(',').every((run) => !isNaN(run)), `runs of ${row.id}: ${row.runs}`).to.be.true;
+        }
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
         await expectInnerText(page, '#firstRowIndex', '1');
-        await expectInnerText(page, '#lastRowIndex', '9');
+        await expectInnerText(page, '#lastRowIndex', '7');
         await expectInnerText(page, '#totalRowsCount', '9');
     });
 
     it('Should have balloon on runs column', async () => {
-        await checkColumnBalloon(page, 1, 2);
-        await checkColumnBalloon(page, 1, 6);
+        await checkColumnBalloon(page, 1, 5);
     });
 
     it('Should have correct status color in the overview page', async () => {
-        /**
-         * Check that a given cell of the given column displays the correct color depending on the status
-         *
-         * @param {number} rowIndex the index of the row to look for status color
-         * @param {number} columnIndex the index of the column to look for status color
-         * @returns {Promise<Chai.Assertion>} void promise
-         */
-        const checkEnvironmentStatusColor = async (rowIndex, columnIndex) => {
-            const cellSelector = `tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`;
-            const cell = await page.waitForSelector(cellSelector);
-            const cellContent = await getInnerText(cell);
-
-            switch (cellContent) {
-                case 'RUNNING':
-                    await page.waitForSelector(`${cellSelector}.success`);
-                    break;
-                case 'ERROR':
-                    await page.waitForSelector(`${cellSelector}.danger`);
-                    break;
-                case 'CONFIGURED':
-                    await page.waitForSelector(`${cellSelector}.primary`);
-                    break;
-                case 'DONE':
-                    await page.waitForSelector(`${cellSelector}.black`);
-                    break;
-                case 'DEPLOYED':
-                    await page.waitForSelector(`${cellSelector}.gray`);
-                    break;
-                case 'PENDING':
-                    await page.waitForSelector(`${cellSelector}.gray`);
-                    break;
-                case 'STANDBY':
-                    await page.waitForSelector(`${cellSelector}.gray`);
-                    break;
-                case 'UNKNOWN':
-                    await page.waitForSelector(`${cellSelector}.gray-dark`);
-                    break;
-            }
-
+        const expectedColors = {
+            CmCvjNbg: ['RUNNING', 'success'],
+            EIDO13i3D: ['ERROR', 'danger'],
+            TDI59So3d: ['DONE', 'black'],
         };
 
-        await checkEnvironmentStatusColor(1, 4);
-        await checkEnvironmentStatusColor(2, 4);
-        await checkEnvironmentStatusColor(3, 4);
-        await checkEnvironmentStatusColor(6, 4);
-        await checkEnvironmentStatusColor(9, 4);
+        for (const [environmentId, [status, colorClass]] of Object.entries(expectedColors)) {
+            await expectInnerText(page, `#row${environmentId}-currentStatus`, status);
+            await page.waitForSelector(`#row${environmentId}-currentStatus span.${colorClass}`);
+        }
+    });
+
+    it('Should display the message of the current status below it', async () => {
+        await expectInnerText(page, '#rowEIDO13i3D-statusMessage', 'This one is really broken');
+    });
+
+    it('Should display the total and running times of the status history, and its statuses on one line', async () => {
+        // TDI59So3d: configured, running during one hour, deployed then done
+        await expectInnerText(page, '#rowTDI59So3d-statusChain', 'C\n\u203A\nR\n\u203A\nD\n\u203A\nX');
+        await expectInnerText(page, '#rowTDI59So3d-statusSummary', 'Total 02:55:00\nRunning 01:00:00');
+    });
+
+    it('Should display the configuration of the environment', async () => {
+        await expectInnerText(page, '#rowCmCvjNbg-runType', 'PHYSICS');
+        await expectInnerText(page, '#rowCmCvjNbg-beamType', 'pp');
+        await expectInnerText(page, '#rowCmCvjNbg-detectors', 'FT0, ITS');
+        await expectInnerText(page, '#rowCmCvjNbg-flps', '2');
+        await expectInnerText(page, '#rowCmCvjNbg-epns', '2');
     });
 
     it('can set how many environments are available per page', async () => {
-        // Expect the amount selector to currently be set to 9 (because of the defined page height)
+        // Expect the amount selector to currently be set to 7 (because of the defined page height)
         const amountSelectorId = '#amountSelector';
         const amountSelectorButton = await page.waitForSelector(`${amountSelectorId} button`);
         const amountSelectorButtonText = await page.evaluate((element) => element.innerText, amountSelectorButton);
-        expect(amountSelectorButtonText.trim().endsWith('9')).to.be.true;
+        expect(amountSelectorButtonText.trim().endsWith('7')).to.be.true;
 
         // Expect the dropdown options to be visible when it is selected
         await pressElement(page, `${amountSelectorId} button`);
