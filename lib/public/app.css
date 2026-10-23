@@ -877,6 +877,10 @@ label {
     min-width: 6.5em;
 }
 
+.runs-duration-label {
+    min-width: 3em;
+}
+
 .invisible {
     visibility: hidden;
 }
@@ -946,6 +950,10 @@ label {
     line-height: 1;
     letter-spacing: 0.02em;
     white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: top;
 }
 
 .beam-type-lead-lead {
@@ -976,6 +984,41 @@ label {
 }
 
 .beam-type-legend-description {
+    text-align: left;
+}
+
+/*
+ * Efficiency of the LHC fills overview: from the best to the worst level, a solid, a soft and a pale color. No efficiency has no style
+ */
+.efficiency {
+    display: inline-block;
+    padding: 0.1em 0.45em;
+    border-radius: 0.25rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.efficiency-great {
+    background: var(--color-success);
+    color: var(--color-white);
+}
+
+.efficiency-good {
+    background: color-mix(in srgb, var(--color-success) 25%, var(--color-white));
+    color: var(--color-success-dark);
+}
+
+.efficiency-bad {
+    background: color-mix(in srgb, var(--color-danger) 15%, var(--color-white));
+    color: var(--color-danger-dark);
+}
+
+.efficiency-legend-label {
+    width: 6rem;
+    flex-shrink: 0;
+}
+
+.efficiency-legend-description {
     text-align: left;
 }
 

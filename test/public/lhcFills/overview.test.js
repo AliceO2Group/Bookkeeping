@@ -27,6 +27,7 @@ const {
     fillInput,
     getPeriodInputsSelectors,
     getPopoverSelector,
+    getPopoverContent,
 } = require('../defaults.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 
@@ -236,6 +237,21 @@ module.exports = () => {
         await expectInnerText(page, '#row6-runsCoverage', '05:00:00');
         await expectInnerText(page, '#row6-efficiencyValue', '41.67%');
         await expectInnerText(page, '#row6-schemeName', 'Single_12b_8_1024_8_2018');
+    });
+
+    it('should display the efficiency with a style depending on its level, and the legend of the levels', async () => {
+        await goToPage(page, 'lhc-fill-overview');
+
+        // Fill 6 has an efficiency of 41.67%, which is bad. The fills without efficiency (0.00%) have no style
+        await page.waitForSelector('#row6-efficiencyValue .efficiency-bad');
+        await page.waitForSelector('#row3-efficiencyValue');
+        expect(await page.$('#row3-efficiencyValue .efficiency')).to.be.null;
+
+        const legendTrigger = await page.waitForSelector('thead th#efficiency .popover-trigger');
+        const legend = await getPopoverContent(legendTrigger);
+        for (const level of ['Great', 'Good', 'Bad']) {
+            expect(legend).to.include(level);
+        }
     });
 
     it('should successfully display the start, the end and the duration of the stable beams', async () => {
