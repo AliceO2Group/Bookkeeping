@@ -518,7 +518,7 @@ module.exports = () => {
 
     it('should successfully expose a button to create a new log related to the displayed environment', async () => {
         await waitForNavigation(page, () => pressElement(page, '#run-overview'));
-        await waitForNavigation(page, () => pressElement(page, '#row106-runNumber-text > div > a'));
+        await waitForNavigation(page, () => pressElement(page, '#row106-run-number a'));
 
         await waitForNavigation(page, () => pressElement(page, '#create-log'));
         expectUrlParams(page, { page: 'log-create', runNumbers: '106', lhcFillNumbers: '1' });
@@ -529,7 +529,7 @@ module.exports = () => {
 
     it('should not display the LHC Data when beam is not stable', async () => {
         await waitForNavigation(page, () => pressElement(page, '#run-overview'));
-        await waitForNavigation(page, () => pressElement(page, '#row107-runNumber-text > div > a'));
+        await waitForNavigation(page, () => pressElement(page, '#row107-run-number a'));
 
         await expectInnerText(page, '#non-stable-beam-message', 'No LHC Fill information, beam mode was: UNSTABLE BEAMS');
     });
