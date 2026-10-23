@@ -135,7 +135,7 @@ module.exports = () => {
 
     it('can set how many flps are available per page', async () => {
         // Expect the amount selector to currently be set to Infinite (after the previous test)
-        await expectInnerText(page, `${amountSelectorSelector} button`, 'Rows per page: Infinite ');
+        await expectInnerText(page, `${amountSelectorSelector} button`, 'Rows: Infinite ');
 
         await pressElement(page, `${amountSelectorSelector} button`);
         await page.waitForSelector(`${amountSelectorSelector} .dropup-menu`);

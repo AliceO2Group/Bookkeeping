@@ -163,7 +163,7 @@ module.exports = () => {
 
         await fillInput(page, `${amountSelectorId} input[type=number]`, '3', ['input', 'change']);
         await waitForTableLength(page, 3);
-        await expectInnerText(page, '.dropup button', 'Rows per page: 3 ');
+        await expectInnerText(page, '.dropup button', 'Rows: 3 ');
         
         await pressElement(page, amountSelectorButtonSelector);
         await page.waitForSelector(`${amountSelectorId} .dropup-menu`);
@@ -172,7 +172,7 @@ module.exports = () => {
         await pressElement(page, amountItems5, true);
         // only 4 runs in LHC Period 1
         await waitForTableLength(page, 4);
-        await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
+        await expectInnerText(page, '.dropup button', 'Rows: 5 ');
 
         // Expect the custom per page input to have red border and text color if wrong value typed
         await fillInput(page, `${amountSelectorId} input[type=number]`, '1111');
