@@ -864,6 +864,87 @@ label {
     }
 }
 
+/* runs overview: labels of the timing lines have the same width so that the times are aligned, and digits have a fixed width */
+.runs-timing-label {
+    min-width: 2.8em;
+}
+
+.runs-timing-label + * {
+    font-variant-numeric: tabular-nums;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+/*
+ * Run definitions of the runs overview: only shapes, weights and neutral shades are used, as colors are reserved to states
+ */
+.run-definition {
+    display: inline-block;
+    padding: 0.2em 0.45em;
+    border-radius: 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.run-definition-physics {
+    background: color-mix(in srgb, var(--color-black) 75%, var(--color-white));
+    color: var(--color-white);
+}
+
+.run-definition-cosmics {
+    border: 1.5px solid var(--color-black);
+}
+
+.run-definition-technical {
+    background: var(--color-gray);
+}
+
+.run-definition-synthetic {
+    border: 1px dashed var(--color-gray-darker);
+    font-weight: 400;
+}
+
+.run-definition-calibration {
+    border: 1px solid var(--color-gray-dark);
+    border-left: 4px solid var(--color-black);
+}
+
+.run-definition-commissioning {
+    padding: 0;
+    text-decoration: underline dotted;
+    text-underline-offset: 3px;
+}
+
+/* Legend of the run definitions: the labels have the same width and the descriptions are aligned on their left */
+.run-definition-legend-label {
+    width: 8rem;
+    flex-shrink: 0;
+}
+
+.run-definition-legend-description {
+    text-align: left;
+}
+
+/* Bold text */
+.bold {
+    font-weight: 700;
+}
+
+/* Compact calibration status badge of the runs overview */
+.runs-calibration-status {
+    font-size: 0.625rem;
+}
+
+/* Lets a flex item shrink below its content width, so its content can be truncated with an ellipsis */
+.min-w-0 {
+    min-width: 0;
+}
+
 /* logs table: the created, passes and tags columns have a content of a fixed size, so they leave more space to the title on wide screens */
 .w-logs-title-column {
     width: 35%;
