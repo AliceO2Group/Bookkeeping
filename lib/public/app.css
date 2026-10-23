@@ -1073,6 +1073,54 @@ label {
     }
 }
 
+.pagination-bar {
+    font-size: 0.875rem;
+}
+
+/*
+ * Pagination on phones: everything stays on one line, the buttons to jump to the first and last pages and the page numbers far from
+ * the current one are removed, the other buttons are compacted to fit and the rows count is shortened to "first-last/total"
+ */
+.pagination-count-short {
+    display: none;
+}
+
+@media screen and (max-width: 767px) {
+    .pagination-count-long {
+        display: none;
+    }
+
+    .pagination-count-short {
+        display: inline;
+    }
+
+    .pagination-bar > .pagination-count {
+        gap: 0;
+    }
+
+    .pagination-bar > .pagination-amount {
+        width: auto;
+        white-space: nowrap;
+    }
+
+    .pagination-bar #pageMoveFirst,
+    .pagination-bar #pageMoveLast,
+    .pagination-bar #pageSelector .btn-tab:not(.near-page) {
+        display: none;
+    }
+
+    .pagination-bar #pageSelector .btn {
+        margin: 0 1px;
+        padding-left: 0.4rem;
+        padding-right: 0.4rem;
+    }
+
+    .pagination-bar > .pagination-amount .btn {
+        padding-left: 0.6em;
+        padding-right: 0.6em;
+    }
+}
+
 /* xl */
 @media screen and (min-width: 1920px) {
     .columns-3-xl {

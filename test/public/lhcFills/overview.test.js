@@ -210,29 +210,35 @@ module.exports = () => {
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
-        await goToPage(page, 'lhc-fill-overview');
+        // The page selector of phones (screens narrower than 768px) only displays the three page buttons nearest to the current one
+        const viewport = page.viewport();
+        await page.setViewport({ ...viewport, width: 800 });
+        try {
+            await goToPage(page, 'lhc-fill-overview');
 
-        // turn off Stable Beams Only filter
-        await pressElement(page, '.slider.round');
+            // turn off Stable Beams Only filter
+            await pressElement(page, '.slider.round');
 
 
-        // Override the amount of lhc fills visible per page manually
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.lhcFills.overviewModel.pagination.itemsPerPage = 1;
-        });
-        await waitForTableLength(page, 1);
+            // Override the amount of lhc fills visible per page manually
+            await page.evaluate(() => {
+                // eslint-disable-next-line no-undef
+                model.lhcFills.overviewModel.pagination.itemsPerPage = 1;
+            });
+            await waitForTableLength(page, 1);
 
-        // Expect the page five button to now be visible, but no more than that
-        const pageFiveButton = await page.$('#page5');
-        expect(pageFiveButton).to.be.not.null;
-        const pageSixButton = await page.$('#page6');
-        expect(pageSixButton).to.be.null;
+            // Expect the page five button to now be visible, but no more than that
+            const pageFiveButton = await page.$('#page5');
+            expect(pageFiveButton).to.be.not.null;
+            const pageSixButton = await page.$('#page6');
+            expect(pageSixButton).to.be.null;
 
-        // Expect the page one button to have fallen away when clicking on page five button
-        await pressElement(page, '#page5');
-        await page.waitForSelector('#page1', { hidden: true });
-    });
+            // Expect the page one button to have fallen away when clicking on page five button
+            await pressElement(page, '#page5');
+            await page.waitForSelector('#page1', { hidden: true });
+        } finally {
+            await page.setViewport(viewport);
+        }    });
 
     it('should successfully navigate to the LHC fill details page', async () => {
         await goToPage(page, 'lhc-fill-overview');

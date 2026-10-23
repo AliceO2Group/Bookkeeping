@@ -135,7 +135,7 @@ module.exports = () => {
 
     it('can set how many flps are available per page', async () => {
         // Expect the amount selector to currently be set to Infinite (after the previous test)
-        await expectInnerText(page, `${amountSelectorSelector} button`, 'Rows per page: Infinite ');
+        await expectInnerText(page, `${amountSelectorSelector} button`, 'Rows: Infinite ');
 
         await pressElement(page, `${amountSelectorSelector} button`);
         await page.waitForSelector(`${amountSelectorSelector} .dropup-menu`);
@@ -146,20 +146,26 @@ module.exports = () => {
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
-        await pressElement(page, amountSelectorButtonSelector);
-        await fillInput(page, `${amountSelectorSelector} input`, '1', ['input', 'change']);
-        await waitForTableLength(page, 1);
+        // The page selector of phones (screens narrower than 768px) only displays the three page buttons nearest to the current one
+        const viewport = page.viewport();
+        await page.setViewport({ ...viewport, width: 800 });
+        try {
+            await pressElement(page, amountSelectorButtonSelector);
+            await fillInput(page, `${amountSelectorSelector} input`, '1', ['input', 'change']);
+            await waitForTableLength(page, 1);
 
-        // Expect the page five button to now be visible, but no more than that
-        const pageFiveButton = await page.$('#page5');
-        expect(Boolean(pageFiveButton)).to.be.true;
-        const pageSixButton = await page.$('#page6');
-        expect(Boolean(pageSixButton)).to.be.false;
+            // Expect the page five button to now be visible, but no more than that
+            const pageFiveButton = await page.$('#page5');
+            expect(Boolean(pageFiveButton)).to.be.true;
+            const pageSixButton = await page.$('#page6');
+            expect(Boolean(pageSixButton)).to.be.false;
 
-        // Expect the page one button to have fallen away when clicking on page five button
-        await pressElement(page, '#page5');
-        await page.waitForSelector('#page1', { hidden: true });
-    });
+            // Expect the page one button to have fallen away when clicking on page five button
+            await pressElement(page, '#page5');
+            await page.waitForSelector('#page1', { hidden: true });
+        } finally {
+            await page.setViewport(viewport);
+        }    });
 
     it('notifies if table loading returned an error', async () => {
         await pressElement(page, amountSelectorButtonSelector);

@@ -166,28 +166,34 @@ module.exports = () => {
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
-        // Override the amount of runs visible per page manually
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.envs.overviewModel.pagination.itemsPerPage = 1;
-        });
-        await waitForTableLength(page, 1);
+        // The page selector of phones (screens narrower than 768px) only displays the three page buttons nearest to the current one
+        const viewport = page.viewport();
+        await page.setViewport({ ...viewport, width: 800 });
+        try {
+            // Override the amount of runs visible per page manually
+            await page.evaluate(() => {
+                // eslint-disable-next-line no-undef
+                model.envs.overviewModel.pagination.itemsPerPage = 1;
+            });
+            await waitForTableLength(page, 1);
 
-        // Expect the page five button to now be visible, but no more than that
-        await page.waitForSelector('#page5');
-        await page.waitForSelector('#page6', { hidden: true });
+            // Expect the page five button to now be visible, but no more than that
+            await page.waitForSelector('#page5');
+            await page.waitForSelector('#page6', { hidden: true });
 
-        // Expect the page one button to have fallen away when clicking on page five button
-        await pressElement(page, '#page5');
-        await page.waitForSelector('#page1', { hidden: true });
+            // Expect the page one button to have fallen away when clicking on page five button
+            await pressElement(page, '#page5');
+            await page.waitForSelector('#page1', { hidden: true });
 
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.envs.overviewModel.pagination.reset();
-            // eslint-disable-next-line no-undef
-            model.envs.overviewModel.pagination.notify();
-        });
-    });
+            await page.evaluate(() => {
+                // eslint-disable-next-line no-undef
+                model.envs.overviewModel.pagination.reset();
+                // eslint-disable-next-line no-undef
+                model.envs.overviewModel.pagination.notify();
+            });
+        } finally {
+            await page.setViewport(viewport);
+        }    });
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
         await waitForNavigation(page, () => pressElement(page, 'a#env-overview', true));

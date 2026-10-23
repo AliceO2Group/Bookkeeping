@@ -246,6 +246,43 @@ module.exports = () => {
         }
     });
 
+    it('should adapt the pagination to small screens', async () => {
+        const getPaginationLayout = () => page.$eval('.pagination-bar', (bar) => {
+            const isDisplayed = (selector) => Boolean(bar.querySelector(selector).offsetParent);
+            const tops = ['.pagination-amount', '#pageSelector', '.pagination-count'].map((selector) =>
+                Math.round(bar.querySelector(selector).getBoundingClientRect().top));
+            return {
+                overflows: bar.scrollWidth > bar.clientWidth,
+                onOneLine: new Set(tops).size === 1,
+                firstAndLastButtonsDisplayed: isDisplayed('#pageMoveFirst') && isDisplayed('#pageMoveLast'),
+                displayedPageButtonsCount: [...bar.querySelectorAll('#pageSelector .btn-tab')].filter(({ offsetParent }) => offsetParent).length,
+                rowsCount: bar.querySelector('.pagination-count').innerText.replace(/\s+/g, ''),
+            };
+        });
+
+        try {
+            await page.setViewport({ width: 375, height: 812, deviceScaleFactor: 1 });
+            await goToPage(page, 'log-overview');
+            await page.waitForSelector('.pagination-bar #pageSelector');
+            const phoneLayout = await getPaginationLayout();
+            expect(phoneLayout).to.include({
+                overflows: false,
+                onOneLine: true,
+                firstAndLastButtonsDisplayed: false,
+                displayedPageButtonsCount: 3,
+            });
+            expect(phoneLayout.rowsCount).to.match(/^\d+-\d+\/\d+$/);
+
+            await page.setViewport({ width: 800, height: 1024, deviceScaleFactor: 1 });
+            const tabletLayout = await getPaginationLayout();
+            expect(tabletLayout).to.include({ overflows: false, onOneLine: true, firstAndLastButtonsDisplayed: true });
+            expect(tabletLayout.displayedPageButtonsCount).to.be.greaterThan(3);
+            expect(tabletLayout.rowsCount).to.match(/^Rows\d+-\d+of\d+$/);
+        } finally {
+            await page.setViewport({ width: 1400, height: 940, deviceScaleFactor: 1 });
+        }
+    });
+
     it('can sort by columns in ascending and descending manners', async () => {
         // Close the filter panel
         await waitForFirstRowToHaveId(page, 'row119');

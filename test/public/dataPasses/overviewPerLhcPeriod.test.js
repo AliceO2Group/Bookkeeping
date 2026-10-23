@@ -149,7 +149,7 @@ module.exports = () => {
         await goToPage(page, 'data-passes-per-lhc-period-overview', { queryParameters: { lhcPeriodId: 2 } });
 
         // Expect the amount selector to currently be set to 9 (because of the defined page height)
-        await expectInnerText(page, '.dropup button', 'Rows per page: 9 ');
+        await expectInnerText(page, '.dropup button', 'Rows: 9 ');
 
         // Expect the dropdown options to be visible when it is selected
         await pressElement(page, '.dropup button');

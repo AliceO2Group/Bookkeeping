@@ -202,7 +202,7 @@ module.exports = () => {
             await pressElement(page, amountItems5);
 
             // Expect the amount selector to currently be set to 5 when the first option (5) is selected
-            await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
+            await expectInnerText(page, '.dropup button', 'Rows: 5 ');
             await waitForTableLength(page, 5);
 
             // Expect the custom per page input to have red border and text color if wrong value typed
