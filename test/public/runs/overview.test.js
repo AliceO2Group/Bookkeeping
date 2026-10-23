@@ -159,7 +159,7 @@ describe('General page behaviour', () => {
             await navigateToRunsOverview(page);
 
             await expectInnerText(page, '#firstRowIndex', '1');
-            await expectInnerText(page, '#lastRowIndex', '8');
+            await expectInnerText(page, '#lastRowIndex', '6');
             await expectInnerText(page, '#totalRowsCount', '109');
         });
 
@@ -409,8 +409,9 @@ describe('General page behaviour', () => {
             await pressElement(page, '#detector-filter-dropdown-option-FT0', true);
             await waitForTableLength(page, 4);
 
+            // 8 runs match, but only the first page, of 6 rows, is displayed
             await pressElement(page, '#detector-filter-combination-operator-radio-button-or', true);
-            await waitForTableLength(page, 8);
+            await waitForTableLength(page, 6);
 
             await pressElement(page, '#detector-filter-combination-operator-radio-button-none', true);
             await waitForTableLength(page, 2);
@@ -830,7 +831,7 @@ describe('General page behaviour', () => {
             * The correct number of runs should be displayed in the table.
             * Furthermore, each of the displayed EOR reasons should contain 'DETECTORS'
             */
-            let eorReasons = await page.$$('table td[id$="eorReasons"]');
+            let eorReasons = await page.$$('table [id$="-eorReasons"]');
             expect(eorReasons).has.lengthOf(3);
 
             let eorReasonTexts = await Promise.all(eorReasons.map(async (element) => (await element.getProperty('innerText')).jsonValue()));
@@ -846,7 +847,7 @@ describe('General page behaviour', () => {
             * The correct number of runs should be displayed in the table.
             * Furthermore, each of the displayed EOR reasons should contain 'DETECTORS - CPV'
             */
-            eorReasons = await page.$$('table td[id$="eorReasons"]');
+            eorReasons = await page.$$('table [id$="-eorReasons"]');
             expect(eorReasons).has.lengthOf(2);
 
             eorReasonTexts = await Promise.all(eorReasons.map(async (element) => (await element.getProperty('innerText')).jsonValue()));
@@ -861,7 +862,7 @@ describe('General page behaviour', () => {
             expect(detectorTitleElements).has.lengthOf(1);
 
             // There should be many items in the run details table
-            eorReasons = await page.$$('table td[id$="eorReasons"]');
+            eorReasons = await page.$$('table [id$="-eorReasons"]');
             expect(eorReasons.length).to.be.greaterThan(3);
         });
 
@@ -871,7 +872,7 @@ describe('General page behaviour', () => {
             await fillInput(page, '#eorDescription', descriptionInput, ['change']);
             await waitForTableLength(page, 2);
 
-            let eorReasons = await page.$$('table td[id$="eorReasons"]');
+            let eorReasons = await page.$$('table [id$="-eorReasons"]');
             expect(eorReasons).has.lengthOf(2);
             const eorReasonText = await (await eorReasons[0].getProperty('innerText')).jsonValue();
             expect(eorReasonText.toLowerCase()).to.include(descriptionInput);
@@ -879,13 +880,13 @@ describe('General page behaviour', () => {
             // Assuming this result had the category DETECTORS, when we select a different category it should disappear.
             await page.select('#eorCategories', 'OTHER');
             await waitForEmptyTable(page);
-            eorReasons = await page.$$('table td[id$="eorReasons"]');
+            eorReasons = await page.$$('table [id$="-eorReasons"]');
             expect(eorReasons).has.lengthOf(0);
 
             // When we reset the filters, the input field should be empty
             await resetFilters(page);
             await waitForTableLength(page, 10);
-            eorReasons = await page.$$('table td[id$="eorReasons"]');
+            eorReasons = await page.$$('table [id$="-eorReasons"]');
             expect(eorReasons.length).to.be.greaterThan(1);
 
             await expectInputValue(page, '#eorDescription', '');
