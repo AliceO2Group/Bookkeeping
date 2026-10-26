@@ -24,7 +24,7 @@ module.exports = () => {
         createLhcFillDto = await CreateLhcFillDto.validateAsync({
             body: {
                 fillNumber: 123123123,
-                beamType: 'Pb-Pb',
+                beamType: 'PB82 - PB82',
                 fillingSchemeName: 'schemename',
             },
         });
@@ -49,7 +49,7 @@ module.exports = () => {
             .execute(createLhcFillDto);
 
         expect(result.fillNumber).to.equal(123123);
-        expect(result.beamType).to.equal('Pb-Pb');
+        expect(result.beamType).to.equal('PB82 - PB82');
         expect(result.fillingSchemeName).to.equal('schemename');
     });
     it('should not be able to create with the same id', async () => {
