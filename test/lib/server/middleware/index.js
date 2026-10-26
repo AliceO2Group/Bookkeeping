@@ -12,7 +12,9 @@
  */
 
 const RbacMiddlewareTest = require('./rbac.middleware.test.js');
+const AccessLogMiddlewareTest = require('./accessLog.middleware.test.js');
 
 module.exports = () => {
     describe('RBAC', RbacMiddlewareTest);
+    describe('Access log', AccessLogMiddlewareTest);
 };

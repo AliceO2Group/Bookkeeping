@@ -35,3 +35,20 @@ Because the services might have inter-dependencies that can lead to cyclic depen
 ### Error management
 
 Currently, `usecases` returns `HTTP` oriented objects when an exception occurs, with `HTTP` error code and message. This is not viable anymore because those errors makes no sense in `gRPC`. To solve these issues, if an error occur in the service layer, an instance of a specific instance must be thrown and it must be converted to API-specific error in controllers or at an even higher level (for example `AuthenticatedOnly` error will be converted to error code `16` in `gRPC` and `401` in `HTTP`).
+
+### HTTP API access log
+
+Every request handled by the `HTTP` API (`/api`, not the static files) is logged by `accessLogMiddleware` once its response has been sent. The entry is a single-line `JSON`, logged by the `API` logger **to the local log only** (it is not forwarded to InfoLogger), so that it can be parsed and aggregated in OpenSearch:
+
+```json
+{"type":"api_request","method":"GET","route":"/api/runs","status":200,"durationMs":42,"userId":7,"bytes":18234,"query":{"filter":{"runNumbers":"1,2"},"page":{"limit":"50"}}}
+```
+
+- `route`: the route pattern (for example `/api/runs/:runNumber`) and not the raw url, so that requests can be grouped per endpoint. When no route matched, it is the requested path
+- `durationMs`: time between the reception of the request by the middleware and the end of the response
+- `userId`: the id of the user, `null` if the request is not authenticated
+- `bytes`: the `content-length` of the response, `null` if not provided
+- `query`: the parsed query string (filters, pagination, sorting...), omitted when empty. The body is never logged
+- `aborted`: `true` only if the connection was closed before the response was completely sent
+
+Nothing is logged in test mode.
