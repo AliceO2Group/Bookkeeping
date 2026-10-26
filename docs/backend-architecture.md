@@ -36,19 +36,24 @@ Because the services might have inter-dependencies that can lead to cyclic depen
 
 Currently, `usecases` returns `HTTP` oriented objects when an exception occurs, with `HTTP` error code and message. This is not viable anymore because those errors makes no sense in `gRPC`. To solve these issues, if an error occur in the service layer, an instance of a specific instance must be thrown and it must be converted to API-specific error in controllers or at an even higher level (for example `AuthenticatedOnly` error will be converted to error code `16` in `gRPC` and `401` in `HTTP`).
 
-### HTTP API access log
+### API access log
 
-Every request handled by the `HTTP` API (`/api`, not the static files) is logged by `accessLogMiddleware` once its response has been sent. The entry is a single-line `JSON`, logged by the `API` logger **to the local log only** (it is not forwarded to InfoLogger), so that it can be parsed and aggregated in OpenSearch:
+Every request handled by the `HTTP` API (`/api`, not the static files) and every `gRPC` call is logged once handled, by `ApiRequestLogger` (`HTTP`: `accessLogMiddleware`, `gRPC`: `bindGRPCController`). The entry is a single-line `JSON`, logged by the `API` logger **to the local log only** (it is not forwarded to InfoLogger). `HTTP` and `gRPC` entries share the same structure, so that they can be stored and aggregated together in OpenSearch:
 
 ```json
-{"type":"api_request","method":"GET","route":"/api/runs","status":200,"durationMs":42,"userId":7,"bytes":18234,"query":{"filter":{"runNumbers":"1,2"},"page":{"limit":"50"}}}
+{"type":"api_request","protocol":"http","method":"GET","route":"/api/runs","status":200,"durationMs":42,"userId":7,"bytes":18234,"params":"{\"filter\":{\"runNumbers\":\"1,2\"},\"page\":{\"limit\":\"50\"}}"}
+{"type":"api_request","protocol":"grpc","method":null,"route":"/o2.bookkeeping.RunService/Get","status":0,"durationMs":12,"userId":null,"bytes":null,"params":"{\"runNumber\":12}"}
 ```
 
-- `route`: the route pattern (for example `/api/runs/:runNumber`) and not the raw url, so that requests can be grouped per endpoint. When no route matched, it is the requested path
-- `durationMs`: time between the reception of the request by the middleware and the end of the response
-- `userId`: the id of the user, `null` if the request is not authenticated
-- `bytes`: the `content-length` of the response, `null` if not provided
-- `query`: the parsed query string (filters, pagination, sorting...), omitted when empty. The `token` parameter is removed and the body is never logged
-- `aborted`: `true` only if the connection was closed before the response was completely sent
+- `type`: always `api_request`
+- `protocol`: `http` or `grpc`
+- `method`: the `HTTP` method, `null` for `gRPC`
+- `route`: for `HTTP` the route pattern (for example `/api/runs/:runNumber`) and not the raw url, so that requests can be grouped per endpoint (when no route matched, it is the requested path). For `gRPC` the method path
+- `status`: the `HTTP` status or the `gRPC` status code (`0` for success), which are not comparable: filter on `protocol` first
+- `durationMs`: time between the reception of the request by the middleware (`HTTP`) or the call (`gRPC`) and the end of the response, so it includes the authentication
+- `userId`: the id of the user, `null` if not authenticated
+- `bytes`: the `content-length` of the `HTTP` response, `null` if not provided and for `gRPC`
+- `params`: the `HTTP` query string (the `token` parameter is removed and the body is never logged) or the `gRPC` request message, as a `JSON` **string** (not an object, because the structure varies from one endpoint to another and the types are not the same between protocols, which would lead to conflicts in OpenSearch mappings). It is omitted when empty and truncated (with a trailing `…`) when it exceeds 1000 characters
+- `aborted`: `true` only if the connection was closed before the response was completely sent (`HTTP` only)
 
 Nothing is logged in test mode.
