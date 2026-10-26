@@ -11,10 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const GetGuiStatusUseCase = require('./GetGuiStatusUseCase');
-const GetDatabaseStatusUseCase = require('./GetDatabaseStatusUseCase');
+const TagServiceSuite = require('./TagService.test.js');
 
-module.exports = {
-    GetGuiStatusUseCase,
-    GetDatabaseStatusUseCase,
+module.exports = () => {
+    describe('TagService', TagServiceSuite);
 };

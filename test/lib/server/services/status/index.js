@@ -11,10 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const GetDatabaseStatusUseCase = require('./GetDatabaseStatusUseCase.test.js');
-const GetGuiStatusUseCase = require('./GetGuiStatusUseCase.test.js');
+const StatusServiceSuite = require('./StatusService.test.js');
 
 module.exports = () => {
-    describe('GetDatabaseStatusUseCase', GetDatabaseStatusUseCase);
-    describe('GetDatabaseStatusUseCase', GetGuiStatusUseCase);
+    describe('StatusService', StatusServiceSuite);
 };
