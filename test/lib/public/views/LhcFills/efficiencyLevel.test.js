@@ -14,10 +14,17 @@
 const { expect } = require('chai');
 
 let getEfficiencyLevel;
+let EFFICIENCY_SCALE;
 
 module.exports = () => {
     before(async () => {
-        ({ getEfficiencyLevel } = await import('../../../../../lib/public/views/LhcFills/format/efficiencyLevel.js'));
+        ({ getEfficiencyLevel, EFFICIENCY_SCALE } = await import('../../../../../lib/public/views/LhcFills/format/efficiencyLevel.js'));
+    });
+
+    it('should have a scale sorted from the best level to the worst one, ending at 0', () => {
+        const minimums = EFFICIENCY_SCALE.map(({ minimum }) => minimum);
+        expect(minimums).to.deep.equal([...minimums].sort((a, b) => b - a));
+        expect(minimums[minimums.length - 1]).to.equal(0);
     });
 
     it('should have no level for a missing or null efficiency', () => {
