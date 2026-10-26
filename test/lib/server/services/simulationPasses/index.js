@@ -13,8 +13,14 @@
 
 const SimulationPassesService = require('./SimulationPassesService.test.js');
 const getAllSimulationPassesByNameOrFail = require('./getAllSimulationPassesByNameOrFail.test.js');
+const getAllSimulationPasses = require('./getAllSimulationPasses.test.js');
+const getSimulationPassIdsByLhcPeriods = require('./getSimulationPassIdsByLhcPeriods.test.js');
+const getSimulationPassIdsByDataPasses = require('./getSimulationPassIdsByDataPasses.test.js');
 
 module.exports = () => {
     describe('SimulationPassesService', SimulationPassesService);
     describe('getAllSimulationPassesByNameOrFail', getAllSimulationPassesByNameOrFail);
+    describe('getAllSimulationPasses', getAllSimulationPasses);
+    describe('getSimulationPassIdsByLhcPeriods', getSimulationPassIdsByLhcPeriods);
+    describe('getSimulationPassIdsByDataPasses', getSimulationPassIdsByDataPasses);
 };

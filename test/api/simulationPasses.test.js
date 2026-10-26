@@ -81,6 +81,21 @@ module.exports = () => {
                 });
         });
 
+        it('should return 400 if the simulation pass id is not a positive integer', async () => {
+            for (const [id, message] of [
+                ['abc', '"params.id" must be a number'],
+                ['-1', '"params.id" must be a positive number'],
+                ['0', '"params.id" must be a positive number'],
+                ['0.5', '"params.id" must be an integer'],
+            ]) {
+                const response = await request(server).get(`/api/simulationPasses/${id}`);
+
+                expect(response.status, `id ${id}`).to.equal(400);
+                const error = response.body.errors.find(({ source: { pointer } }) => pointer === '/data/attributes/params/id');
+                expect(error.detail, `id ${id}`).to.equal(message);
+            }
+        });
+
         it('should send error that simulation pass with given id cannot be found', (done) => {
             request(server)
                 .get('/api/simulationPasses/99999')
@@ -239,6 +254,18 @@ module.exports = () => {
                     expect(simulationPasses).to.have.deep.members([LHC23k6c]);
                     done();
                 });
+        });
+        it('should return 400 if a filter on ids contains something else than a number', async () => {
+            for (const filterName of ['ids', 'lhcPeriodIds', 'dataPassIds']) {
+                const response = await request(server).get(`/api/simulationPasses?filter[${filterName}][]=abc`);
+
+                expect(response.status, filterName).to.equal(400);
+                expect(
+                    response.body.errors.some(({ source: { pointer }, detail }) =>
+                        pointer.includes(filterName) && detail.includes('must be a number')),
+                    filterName,
+                ).to.be.true;
+            }
         });
         it('should successfully sort on id and name', (done) => {
             request(server)

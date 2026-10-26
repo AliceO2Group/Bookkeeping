@@ -17,11 +17,10 @@ const {
     pressElement,
     checkColumnBalloon,
     expectLink,
-    validateTableData,
     expectInnerText,
+    expectInnerTextTo,
     expectUrlParams,
     waitForNavigation,
-    getInnerText,
     waitForTableLength,
     getPopoverSelector,
     goToPage,
@@ -68,16 +67,36 @@ module.exports = () => {
 
         const statusNames = new Set(Object.keys(StatusAcronym));
 
-        // eslint-disable-next-line jsdoc/require-param
-        const checkDate = (date) => !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY hh:mm:ss'));
-        const tableDataValidators = {
-            id: (id) => /[A-Za-z0-9]+/.test(id),
-            runs: (runs) => runs === '-' || runs.split(',').every((run) => !isNaN(run)),
-            updatedAt: checkDate,
-            status: (currentStatus) => statusNames.has(currentStatus),
-            historyItems: (history) => history.split('-').every((statusAcronym) => STATUS_ACRONYMS.includes(statusAcronym)),
-        };
-        await validateTableData(page, new Map(Object.entries(tableDataValidators)));
+        const checkDate = (date) => !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY, HH:mm:ss'));
+        const durationRegex = /^\d{2,}:\d{2}:\d{2}$/;
+
+        await page.waitForSelector('tbody tr:nth-of-type(1) [id$="-statusChain"]');
+        const rows = await page.$$eval('tbody tr', (trs) => trs.map((tr) => {
+            const text = (suffix) => tr.querySelector(`[id$="-${suffix}"]`)?.innerText;
+            return {
+                id: text('id'),
+                currentStatus: text('currentStatus'),
+                createdAt: text('createdAt'),
+                statusChain: tr.querySelector('[id$="-statusChain"]')?.textContent,
+                total: tr.querySelector('[id$="-statusSummary"] span:nth-child(1) span')?.innerText,
+                running: tr.querySelector('[id$="-statusSummary"] span:nth-child(2) span')?.innerText,
+                runs: text('runs'),
+            };
+        }));
+
+        expect(rows).to.have.length.greaterThan(0);
+        for (const row of rows) {
+            expect(row.id, `id of ${JSON.stringify(row)}`).to.match(/^[A-Za-z0-9]+$/);
+            expect(statusNames.has(row.currentStatus), `status of ${row.id}`).to.be.true;
+            expect(checkDate(row.createdAt), `creation date of ${row.id}: ${row.createdAt}`).to.be.true;
+            expect(
+                row.statusChain.split('\u203A').every((statusAcronym) => STATUS_ACRONYMS.includes(statusAcronym)),
+                `status history of ${row.id}: ${row.statusChain}`,
+            ).to.be.true;
+            expect(row.total, `total time of ${row.id}`).to.match(durationRegex);
+            expect(row.running, `running time of ${row.id}`).to.match(durationRegex);
+            expect(row.runs === '-' || row.runs.split(',').every((run) => !isNaN(run)), `runs of ${row.id}: ${row.runs}`).to.be.true;
+        }
     });
 
     it('Should display the correct items counter at the bottom of the page', async () => {
@@ -87,57 +106,39 @@ module.exports = () => {
     });
 
     it('Should have balloon on runs column', async () => {
-        await checkColumnBalloon(page, 1, 2);
-        await checkColumnBalloon(page, 1, 6);
+        await checkColumnBalloon(page, 1, 5);
     });
 
     it('Should have correct status color in the overview page', async () => {
-        /**
-         * Check that a given cell of the given column displays the correct color depending on the status
-         *
-         * @param {number} rowIndex the index of the row to look for status color
-         * @param {number} columnIndex the index of the column to look for status color
-         * @returns {Promise<Chai.Assertion>} void promise
-         */
-        const checkEnvironmentStatusColor = async (rowIndex, columnIndex) => {
-            const cellSelector = `tbody tr:nth-of-type(${rowIndex}) td:nth-of-type(${columnIndex})`;
-            const cell = await page.waitForSelector(cellSelector);
-            const cellContent = await getInnerText(cell);
-
-            switch (cellContent) {
-                case 'RUNNING':
-                    await page.waitForSelector(`${cellSelector}.success`);
-                    break;
-                case 'ERROR':
-                    await page.waitForSelector(`${cellSelector}.danger`);
-                    break;
-                case 'CONFIGURED':
-                    await page.waitForSelector(`${cellSelector}.primary`);
-                    break;
-                case 'DONE':
-                    await page.waitForSelector(`${cellSelector}.black`);
-                    break;
-                case 'DEPLOYED':
-                    await page.waitForSelector(`${cellSelector}.gray`);
-                    break;
-                case 'PENDING':
-                    await page.waitForSelector(`${cellSelector}.gray`);
-                    break;
-                case 'STANDBY':
-                    await page.waitForSelector(`${cellSelector}.gray`);
-                    break;
-                case 'UNKNOWN':
-                    await page.waitForSelector(`${cellSelector}.gray-dark`);
-                    break;
-            }
-
+        const expectedColors = {
+            CmCvjNbg: ['RUNNING', 'success'],
+            EIDO13i3D: ['ERROR', 'danger'],
+            TDI59So3d: ['DONE', 'black'],
         };
 
-        await checkEnvironmentStatusColor(1, 4);
-        await checkEnvironmentStatusColor(2, 4);
-        await checkEnvironmentStatusColor(3, 4);
-        await checkEnvironmentStatusColor(6, 4);
-        await checkEnvironmentStatusColor(9, 4);
+        for (const [environmentId, [status, colorClass]] of Object.entries(expectedColors)) {
+            await expectInnerText(page, `#row${environmentId}-currentStatus`, status);
+            await page.waitForSelector(`#row${environmentId}-currentStatus span.${colorClass}`);
+        }
+    });
+
+    it('Should display the message of the current status below it', async () => {
+        await expectInnerText(page, '#rowEIDO13i3D-statusMessage', 'This one is really broken');
+    });
+
+    it('Should display the total and running times of the status history, and its statuses on one line', async () => {
+        // TDI59So3d: configured, running during one hour, deployed then done
+        await expectInnerText(page, '#rowTDI59So3d-statusChain', 'C\n\u203A\nR\n\u203A\nD\n\u203A\nX');
+        await expectInnerText(page, '#rowTDI59So3d-statusSummary', 'Total 02:55:00\nRunning 01:00:00');
+    });
+
+    it('Should display the configuration of the environment, as for the runs, and its detectors', async () => {
+        // The CTP readout host is counted in the FLPs
+        await expectInnerText(page, '#rowCmCvjNbg-nEpns', '2');
+        await expectInnerText(page, '#rowCmCvjNbg-nFlps', '3');
+        await expectInnerText(page, '#rowCmCvjNbg-dcs', 'ON');
+        await expectInnerText(page, '#rowCmCvjNbg-triggerValue', 'CTP');
+        await expectInnerTextTo(page, '#rowCmCvjNbg-detectors', (text) => text.includes('FT0, ITS') && text.startsWith('2'));
     });
 
     it('can set how many environments are available per page', async () => {
@@ -166,28 +167,34 @@ module.exports = () => {
     });
 
     it('dynamically switches between visible pages in the page selector', async () => {
-        // Override the amount of runs visible per page manually
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.envs.overviewModel.pagination.itemsPerPage = 1;
-        });
-        await waitForTableLength(page, 1);
+        // The page selector of phones (screens narrower than 768px) only displays the three page buttons nearest to the current one
+        const viewport = page.viewport();
+        await page.setViewport({ ...viewport, width: 800 });
+        try {
+            // Override the amount of runs visible per page manually
+            await page.evaluate(() => {
+                // eslint-disable-next-line no-undef
+                model.envs.overviewModel.pagination.itemsPerPage = 1;
+            });
+            await waitForTableLength(page, 1);
 
-        // Expect the page five button to now be visible, but no more than that
-        await page.waitForSelector('#page5');
-        await page.waitForSelector('#page6', { hidden: true });
+            // Expect the page five button to now be visible, but no more than that
+            await page.waitForSelector('#page5');
+            await page.waitForSelector('#page6', { hidden: true });
 
-        // Expect the page one button to have fallen away when clicking on page five button
-        await pressElement(page, '#page5');
-        await page.waitForSelector('#page1', { hidden: true });
+            // Expect the page one button to have fallen away when clicking on page five button
+            await pressElement(page, '#page5');
+            await page.waitForSelector('#page1', { hidden: true });
 
-        await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            model.envs.overviewModel.pagination.reset();
-            // eslint-disable-next-line no-undef
-            model.envs.overviewModel.pagination.notify();
-        });
-    });
+            await page.evaluate(() => {
+                // eslint-disable-next-line no-undef
+                model.envs.overviewModel.pagination.reset();
+                // eslint-disable-next-line no-undef
+                model.envs.overviewModel.pagination.notify();
+            });
+        } finally {
+            await page.setViewport(viewport);
+        }    });
 
     it('should successfully display the list of related runs as hyperlinks to their details page', async () => {
         await waitForNavigation(page, () => pressElement(page, 'a#env-overview', true));
@@ -220,7 +227,9 @@ module.exports = () => {
 
         // Not running env
         envId = 'EIDO13i3D';
-        await pressElement(page, `tr[id='row${envId}'] .popover-trigger`);
+        // The popover of the previous environment is still opened: with a real mouse click, depending on the layout, the click could land on
+        // one of its links (opening an external page in a new tab, which stops the page from rendering and hangs the next tests)
+        await pressElement(page, `tr[id='row${envId}'] .popover-trigger`, true);
         popover = await getPopoverSelector(await page.waitForSelector(`tr[id='row${envId}'] .popover-trigger`));
 
         await expectLink(page, `${popover} :nth-child(1 of .external-link)`, {

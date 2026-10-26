@@ -6,7 +6,7 @@ html, body {
 
 .cell-xs { max-width: 2rem; }
 .cell-s { max-width: 4rem; }
-.cell-m { max-width: 8rem; }
+.cell-m { max-width: 9rem; }
 .cell-l { max-width: 16rem; }
 .cell-xl { max-width: 32rem; }
 .cell-f { width: 40%; }
@@ -861,6 +861,498 @@ label {
 
     .navbar-menu-toggle {
         display: none;
+    }
+}
+
+/* runs and LHC fills overviews: labels of the timing lines have the same width so that the times are aligned, and digits have a fixed width */
+.timing-label {
+    min-width: 2.8em;
+}
+
+.timing-label + * {
+    font-variant-numeric: tabular-nums;
+}
+
+.efficiency-label {
+    min-width: 6.5em;
+}
+
+.runs-duration-label {
+    min-width: 3em;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+/*
+ * Run definitions of the runs overview: only shapes, weights and neutral shades are used, as colors are reserved to states
+ */
+.run-definition {
+    display: inline-block;
+    padding: 0.2em 0.45em;
+    border-radius: 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.run-definition-physics {
+    background: color-mix(in srgb, var(--color-black) 75%, var(--color-white));
+    color: var(--color-white);
+}
+
+.run-definition-cosmics {
+    border: 1.5px solid var(--color-black);
+}
+
+.run-definition-technical {
+    background: var(--color-gray);
+}
+
+.run-definition-synthetic {
+    border: 1px dashed var(--color-gray-darker);
+    font-weight: 400;
+}
+
+.run-definition-calibration {
+    border: 1px solid var(--color-gray-dark);
+    border-left: 4px solid var(--color-black);
+}
+
+.run-definition-commissioning {
+    padding: 0;
+    text-decoration: underline dotted;
+    text-underline-offset: 3px;
+}
+
+/* Legend of the run definitions: the labels have the same width and the descriptions are aligned on their left */
+.run-definition-legend-label {
+    width: 9rem;
+    flex-shrink: 0;
+}
+
+.run-definition-legend-description {
+    text-align: left;
+}
+
+/*
+ * Columns of the LHC fills overview: the columns whose content has a known width have a fixed one, the scheme name takes a part of the screen
+ * and the runs, which have the most variable content, take all the remaining width
+ */
+.w-lhc-fills-fill-column {
+    width: 9.5rem;
+}
+
+.w-lhc-fills-stable-beams-column {
+    width: 14rem;
+}
+
+.w-lhc-fills-sb-duration-column {
+    width: 7rem;
+}
+
+.w-lhc-fills-efficiency-column {
+    width: 16rem;
+}
+
+.w-lhc-fills-runs-duration-column {
+    width: 8rem;
+}
+
+/*
+ * Columns of the environments overview: all of them but the detectors, which take the remaining width, have a fixed width fitting their
+ * content
+ */
+.w-environments-id-column {
+    width: 10rem;
+}
+
+.w-environments-status-column {
+    width: 12rem;
+}
+
+.w-environments-created-column {
+    width: 12rem;
+}
+
+.w-environments-history-column {
+    width: 18rem;
+}
+
+.w-environments-configuration-column {
+    width: 11rem;
+}
+
+.w-environments-runs-column {
+    width: 8rem;
+}
+
+/*
+ * Beam types of the LHC fills overview, by what collides: only shapes and neutral shades are used, as colors are reserved to states
+ */
+.beam-type {
+    display: inline-block;
+    padding: 0.2em 0.45em;
+    border-radius: 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: top;
+}
+
+.beam-type-lead-lead {
+    background: color-mix(in srgb, var(--color-black) 75%, var(--color-white));
+    color: var(--color-white);
+}
+
+.beam-type-proton-proton {
+    border: 1.5px solid var(--color-black);
+}
+
+.beam-type-proton-ion {
+    border: 1px solid var(--color-gray-dark);
+}
+
+.beam-type-ion-ion {
+    border: 1px solid var(--color-gray-dark);
+    border-left: 4px solid var(--color-black);
+}
+
+.beam-type-unknown {
+    padding: 0;
+}
+
+.beam-type-legend-label {
+    width: 9rem;
+    flex-shrink: 0;
+}
+
+.beam-type-legend-description {
+    text-align: left;
+}
+
+/*
+ * Efficiency of the LHC fills overview: from the best to the worst level, solid green, soft green, yellow, orange and red. No efficiency has no style
+ */
+.efficiency {
+    display: inline-block;
+    padding: 0.1em 0.45em;
+    border-radius: 0.25rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.efficiency-great {
+    background: var(--color-success);
+    color: var(--color-white);
+}
+
+.efficiency-good {
+    background: color-mix(in srgb, var(--color-success) 25%, var(--color-white));
+    color: var(--color-success-dark);
+}
+
+.efficiency-fair {
+    background: #fbf0b8;
+    color: #6b5600;
+}
+
+.efficiency-poor {
+    background: color-mix(in srgb, var(--color-warning) 28%, var(--color-white));
+    color: var(--color-warning-darker);
+}
+
+.efficiency-bad {
+    background: color-mix(in srgb, var(--color-danger) 15%, var(--color-white));
+    color: var(--color-danger-dark);
+}
+
+.efficiency-legend-label {
+    width: 6rem;
+    flex-shrink: 0;
+}
+
+.efficiency-legend-description {
+    text-align: left;
+}
+
+/* Bold text */
+.bold {
+    font-weight: 700;
+}
+
+/* Compact calibration status badge of the runs overview */
+.runs-calibration-status {
+    font-size: 0.625rem;
+}
+
+/* Lets a flex item shrink below its content width, so its content can be truncated with an ellipsis */
+.min-w-0 {
+    min-width: 0;
+}
+
+/* logs table: the created, passes and tags columns have a content of a fixed size, so they leave more space to the title on wide screens */
+.w-logs-title-column {
+    width: 35%;
+}
+
+.w-logs-created-column {
+    width: 20%;
+}
+
+.w-logs-linked-column {
+    width: 20%;
+}
+
+.w-logs-passes-column {
+    width: 10%;
+}
+
+.w-logs-tags-column {
+    width: 15%;
+}
+
+@media screen and (min-width: 1440px) {
+    .w-logs-title-column {
+        width: 43%;
+    }
+
+    .w-logs-created-column {
+        width: 12%;
+    }
+
+    .w-logs-passes-column {
+        width: 15%;
+    }
+
+    .w-logs-tags-column {
+        width: 10%;
+    }
+}
+
+/*
+ * Logs table on small screens: the table keeps a minimal width, the page scrolls horizontally to display every column
+ * and the title stays visible at the left
+ */
+@media screen and (max-width: 1023px) {
+    .logs-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .logs-table {
+        min-width: 1080px;
+    }
+
+    .logs-table th:first-child,
+    .logs-table td:first-child {
+        position: sticky;
+        left: 0;
+    }
+
+    .logs-table th:first-child {
+        background: var(--color-gray-light);
+        z-index: 3;
+    }
+
+    .logs-table td:first-child {
+        background: inherit;
+        z-index: 2;
+    }
+
+    /* A shadow along the frozen title column shows that the other columns slide under it */
+    .logs-table th:first-child,
+    .logs-table td:first-child {
+        box-shadow: inset -1px 0 0 var(--color-gray), 8px 0 8px -4px rgba(0, 0, 0, 0.35);
+    }
+}
+
+/*
+ * On landscape phones and tablets the frozen title is wide, as it is the most informative column, and still leaves room to see the other
+ * columns while scrolling
+ */
+@media screen and (min-width: 600px) and (max-width: 1023px) {
+    .w-logs-title-column {
+        width: 43%;
+    }
+
+    .w-logs-created-column {
+        width: 17%;
+    }
+
+    .w-logs-linked-column {
+        width: 18%;
+    }
+
+    .w-logs-passes-column {
+        width: 9%;
+    }
+
+    .w-logs-tags-column {
+        width: 13%;
+    }
+}
+
+/* On portrait phones the frozen title must leave more room to see the scrolled columns */
+@media screen and (max-width: 599px) {
+    .logs-table {
+        min-width: 820px;
+    }
+
+    .w-logs-title-column {
+        width: 25%;
+    }
+
+    .w-logs-created-column {
+        width: 22%;
+    }
+
+    .w-logs-linked-column {
+        width: 23%;
+    }
+
+    .w-logs-passes-column {
+        width: 12%;
+    }
+
+    .w-logs-tags-column {
+        width: 18%;
+    }
+}
+
+/*
+ * The filters buttons and panel, and the header of the overview pages containing them, use a smaller font, as the pagination does.
+ * The header is the row directly containing the filters buttons, or the header-container used by most of the overview pages
+ */
+.filters-toolbar,
+.filters-panel,
+.header-container,
+.flex-row:has(> .filters-toolbar) {
+    font-size: 0.875rem;
+}
+
+.filters-panel {
+    width: var(--ui-component-large);
+}
+
+/*
+ * Filters panel on tablets and phones: the panel is displayed below the navbar on the whole width of the screen
+ * (the popover position computed in javascript is overridden) and each filter label is displayed above its input
+ */
+@media screen and (max-width: 1023px) {
+    /*
+     * A table wider than the screen scrolls inside its own box instead of widening the whole page: otherwise the layout viewport of the
+     * phone gets wider than the screen, and the filters panel, positioned against it, is partly displayed out of the screen.
+     * Tables having their own scroll wrapper (the logs one) are left untouched
+     */
+    table.table:not(.logs-table) {
+        display: block;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    .popover.filters-popover {
+        position: fixed !important;
+        top: 56px !important;
+        left: 8px !important;
+        right: 8px !important;
+        width: auto !important;
+        max-width: none !important;
+        max-height: 75vh;
+    }
+
+    .filters-panel {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    /* The filters button, the active filters indicator and the other buttons and quick filters wrap on several lines instead of being squeezed */
+    .header-container,
+    .flex-row:has(> .filters-toolbar) {
+        max-height: none;
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+
+    .header-container .flex-row,
+    .flex-row:has(> .filters-toolbar) .flex-row {
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+
+    .header-container .active-filters-indicator,
+    .header-container label,
+    .flex-row:has(> .filters-toolbar) .active-filters-indicator,
+    .flex-row:has(> .filters-toolbar) label {
+        white-space: nowrap;
+    }
+
+    .filters-panel .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+        row-gap: 4px;
+    }
+
+    .filters-panel .filter-label,
+    .filters-panel .filter-input {
+        width: 100%;
+    }
+}
+
+.pagination-bar {
+    font-size: 0.875rem;
+}
+
+/*
+ * Pagination on phones: everything stays on one line, the buttons to jump to the first and last pages and the page numbers far from
+ * the current one are removed, the other buttons are compacted to fit and the rows count is shortened to "first-last/total"
+ */
+.pagination-count-short {
+    display: none;
+}
+
+@media screen and (max-width: 767px) {
+    .pagination-count-long {
+        display: none;
+    }
+
+    .pagination-count-short {
+        display: inline;
+    }
+
+    .pagination-bar > .pagination-count {
+        gap: 0;
+    }
+
+    .pagination-bar > .pagination-amount {
+        width: auto;
+        white-space: nowrap;
+    }
+
+    .pagination-bar #pageMoveFirst,
+    .pagination-bar #pageMoveLast,
+    .pagination-bar #pageSelector .btn-tab:not(.near-page) {
+        display: none;
+    }
+
+    .pagination-bar #pageSelector .btn {
+        margin: 0 1px;
+        padding-left: 0.4rem;
+        padding-right: 0.4rem;
+    }
+
+    .pagination-bar > .pagination-amount .btn {
+        padding-left: 0.6em;
+        padding-right: 0.6em;
     }
 }
 

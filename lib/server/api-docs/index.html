@@ -535,6 +535,230 @@ items of the API (5000 by default). Pagination parameters are rejected.</p>
 <pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/runTypes/1?token=$TOKEN&quot;
 </code></pre>
 </details>
+<h2>CTP trigger counters</h2>
+<p>Counters of the central trigger processor, per run and trigger class.</p>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/ctp-trigger-counters/{runNumber}</code> - List the CTP trigger counters of a run</h3></summary>
+
+<p>Operation id: <code>listCtpTriggerCountersOfRun</code></p>
+<p>Returns the trigger counters of every trigger class recorded for the run. Not paginated.
+A run without counters gives <code>200</code> with an empty list. A run that does not exist gives <code>404</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>runNumber</code></td>
+<td>path</td>
+<td>integer</td>
+<td>yes</td>
+<td>Run number.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The counters, one entry per trigger class.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: No run has this run number.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/ctp-trigger-counters/106?token=$TOKEN&quot;
+</code></pre>
+</details>
+<h2>Shifts</h2>
+<p>Data used to fill end-of-shift reports.</p>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/shift-data</code> - Get the data of the pending shift of the calling user</h3></summary>
+
+<p>Operation id: <code>getShiftData</code></p>
+<p>Returns what a shifter needs to write their end-of-shift (EoS) report for the <strong>pending shift</strong>: the current shift, or the previous one
+during the 30 minutes that follow its end. Shifts last 8 hours and are Night (23h-7h), Morning (7h-15h) and Afternoon (15h-23h) in the
+Geneva time zone. The shift is deduced from the current time and the calling user, not from a parameter.</p>
+<p><code>typeSpecific</code> depends on <code>shiftType</code>: <code>{ environments }</code> for <code>ECS</code>, <code>{ runs }</code> for <code>QC/PDP</code>, <code>{ runs, tagsCounters }</code> for <code>SL</code>, and <code>null</code>
+for <code>SLIMOS</code> and <code>DCS</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>shiftType</code></td>
+<td>query</td>
+<td>string</td>
+<td>yes</td>
+<td>Kind of shift.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The shift data.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: The calling user is not known to Bookkeeping.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/shift-data?shiftType=ECS&amp;token=$TOKEN&quot;
+</code></pre>
+</details>
+<h2>Simulation passes</h2>
+<p>Monte Carlo simulation productions.</p>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/simulationPasses</code> - List simulation passes</h3></summary>
+
+<p>Operation id: <code>listSimulationPasses</code></p>
+<p>Returns a page of simulation passes with their statistics (number of runs, data passes and logs).
+Default order is by name, descending.</p>
+<p>List filters are repeated query parameters: <code>filter[ids][]=1&amp;filter[ids][]=2</code>. A single value without <code>[]</code> is rejected. Filters are combined
+with AND.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>filter[ids][]</code></td>
+<td>query</td>
+<td>integer</td>
+<td>no</td>
+<td>Keep the simulation passes with one of these ids. Repeat the parameter for several values.</td>
+</tr>
+<tr>
+<td><code>filter[names][]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Keep the simulation passes with one of these exact names. Repeat the parameter for several values.</td>
+</tr>
+<tr>
+<td><code>filter[lhcPeriodIds][]</code></td>
+<td>query</td>
+<td>integer</td>
+<td>no</td>
+<td>Keep the simulation passes used by data passes of one of these LHC periods. Repeat the parameter for several values.</td>
+</tr>
+<tr>
+<td><code>filter[dataPassIds][]</code></td>
+<td>query</td>
+<td>integer</td>
+<td>no</td>
+<td>Keep the simulation passes anchored to one of these data passes. Repeat the parameter for several values.</td>
+</tr>
+<tr>
+<td><code>sort[id]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Sort by id.</td>
+</tr>
+<tr>
+<td><code>sort[name]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Sort by name (the default is <code>desc</code>).</td>
+</tr>
+<tr>
+<td><code>sort[pwg]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Sort by physics working group.</td>
+</tr>
+<tr>
+<td><code>sort[jiraId]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Sort by Jira ticket.</td>
+</tr>
+<tr>
+<td><code>sort[requestedEventsCount]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Sort by number of requested events.</td>
+</tr>
+<tr>
+<td><code>sort[generatedEventsCount]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Sort by number of generated events.</td>
+</tr>
+<tr>
+<td><code>sort[outputSize]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Sort by output size.</td>
+</tr>
+<tr>
+<td><code>page[limit]</code></td>
+<td>query</td>
+<td>integer</td>
+<td>no</td>
+<td>Maximum number of items to return. LLMs and agents must use 100 or less.</td>
+</tr>
+<tr>
+<td><code>page[offset]</code></td>
+<td>query</td>
+<td>integer</td>
+<td>no</td>
+<td>Number of items to skip.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: A page of simulation passes.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/simulationPasses?page[limit]=100&amp;token=$TOKEN&quot;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/simulationPasses/{id}</code> - Get a simulation pass by id</h3></summary>
+
+<p>Operation id: <code>getSimulationPass</code></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>id</code></td>
+<td>path</td>
+<td>integer</td>
+<td>yes</td>
+<td>Simulation pass identifier.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The simulation pass.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: No simulation pass has this id.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/simulationPasses/1?token=$TOKEN&quot;
+</code></pre>
+</details>
 
 </main>
 <footer>Generated from openapi.yaml by <code>npm run docs:api</code> · ALICE Bookkeeping · internal use only</footer>

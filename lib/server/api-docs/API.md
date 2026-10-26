@@ -325,3 +325,114 @@ Responses:
 ```bash
 curl -g "$BOOKKEEPING_URL/api/runTypes/1?token=$TOKEN"
 ```
+
+## CTP trigger counters
+
+Counters of the central trigger processor, per run and trigger class.
+
+### `GET /ctp-trigger-counters/{runNumber}` - List the CTP trigger counters of a run
+
+Operation id: `listCtpTriggerCountersOfRun`
+
+Returns the trigger counters of every trigger class recorded for the run. Not paginated.
+A run without counters gives `200` with an empty list. A run that does not exist gives `404`.
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `runNumber` | path | integer | yes | Run number. |
+
+Responses:
+
+- `200`: The counters, one entry per trigger class.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: No run has this run number.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/ctp-trigger-counters/106?token=$TOKEN"
+```
+
+## Shifts
+
+Data used to fill end-of-shift reports.
+
+### `GET /shift-data` - Get the data of the pending shift of the calling user
+
+Operation id: `getShiftData`
+
+Returns what a shifter needs to write their end-of-shift (EoS) report for the **pending shift**: the current shift, or the previous one
+during the 30 minutes that follow its end. Shifts last 8 hours and are Night (23h-7h), Morning (7h-15h) and Afternoon (15h-23h) in the
+Geneva time zone. The shift is deduced from the current time and the calling user, not from a parameter.
+
+`typeSpecific` depends on `shiftType`: `{ environments }` for `ECS`, `{ runs }` for `QC/PDP`, `{ runs, tagsCounters }` for `SL`, and `null`
+for `SLIMOS` and `DCS`.
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `shiftType` | query | string | yes | Kind of shift. |
+
+Responses:
+
+- `200`: The shift data.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: The calling user is not known to Bookkeeping.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/shift-data?shiftType=ECS&token=$TOKEN"
+```
+
+## Simulation passes
+
+Monte Carlo simulation productions.
+
+### `GET /simulationPasses` - List simulation passes
+
+Operation id: `listSimulationPasses`
+
+Returns a page of simulation passes with their statistics (number of runs, data passes and logs).
+Default order is by name, descending.
+
+List filters are repeated query parameters: `filter[ids][]=1&filter[ids][]=2`. A single value without `[]` is rejected. Filters are combined
+with AND.
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `filter[ids][]` | query | integer | no | Keep the simulation passes with one of these ids. Repeat the parameter for several values. |
+| `filter[names][]` | query | string | no | Keep the simulation passes with one of these exact names. Repeat the parameter for several values. |
+| `filter[lhcPeriodIds][]` | query | integer | no | Keep the simulation passes used by data passes of one of these LHC periods. Repeat the parameter for several values. |
+| `filter[dataPassIds][]` | query | integer | no | Keep the simulation passes anchored to one of these data passes. Repeat the parameter for several values. |
+| `sort[id]` | query | string | no | Sort by id. |
+| `sort[name]` | query | string | no | Sort by name (the default is `desc`). |
+| `sort[pwg]` | query | string | no | Sort by physics working group. |
+| `sort[jiraId]` | query | string | no | Sort by Jira ticket. |
+| `sort[requestedEventsCount]` | query | string | no | Sort by number of requested events. |
+| `sort[generatedEventsCount]` | query | string | no | Sort by number of generated events. |
+| `sort[outputSize]` | query | string | no | Sort by output size. |
+| `page[limit]` | query | integer | no | Maximum number of items to return. LLMs and agents must use 100 or less. |
+| `page[offset]` | query | integer | no | Number of items to skip. |
+
+Responses:
+
+- `200`: A page of simulation passes.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/simulationPasses?page[limit]=100&token=$TOKEN"
+```
+
+### `GET /simulationPasses/{id}` - Get a simulation pass by id
+
+Operation id: `getSimulationPass`
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `id` | path | integer | yes | Simulation pass identifier. |
+
+Responses:
+
+- `200`: The simulation pass.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: No simulation pass has this id.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/simulationPasses/1?token=$TOKEN"
+```

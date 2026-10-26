@@ -367,7 +367,17 @@ module.exports = () => {
         await waitForTableLength(page, 6);
 
         // We expect the entry page to have the same id as the id from the run overview
-        await waitForNavigation(page, () => pressElement(page, '#row1 .btn-redirect'));
+        await waitForNavigation(page, () => pressElement(page, '#row1-title-link'));
+
+        expectUrlParams(page, { page: 'log-detail', id: 1 });
+    });
+
+    it('can navigate to a log detail page by clicking on its row', async () => {
+        await goToRunDetails(page, 1);
+        await pressElement(page, '#logs-tab');
+        await waitForTableLength(page, 6);
+
+        await waitForNavigation(page, () => pressElement(page, '#row1-createdAt'));
 
         expectUrlParams(page, { page: 'log-detail', id: 1 });
     });
@@ -508,7 +518,7 @@ module.exports = () => {
 
     it('should successfully expose a button to create a new log related to the displayed environment', async () => {
         await waitForNavigation(page, () => pressElement(page, '#run-overview'));
-        await waitForNavigation(page, () => pressElement(page, '#row106-runNumber-text > div > a'));
+        await waitForNavigation(page, () => pressElement(page, '#row106-run-number a'));
 
         await waitForNavigation(page, () => pressElement(page, '#create-log'));
         expectUrlParams(page, { page: 'log-create', runNumbers: '106', lhcFillNumbers: '1' });
@@ -519,7 +529,7 @@ module.exports = () => {
 
     it('should not display the LHC Data when beam is not stable', async () => {
         await waitForNavigation(page, () => pressElement(page, '#run-overview'));
-        await waitForNavigation(page, () => pressElement(page, '#row107-runNumber-text > div > a'));
+        await waitForNavigation(page, () => pressElement(page, '#row107-run-number a'));
 
         await expectInnerText(page, '#non-stable-beam-message', 'No LHC Fill information, beam mode was: UNSTABLE BEAMS');
     });

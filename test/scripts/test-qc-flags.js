@@ -11,7 +11,7 @@
  * or submit itself to any jurisdiction.
  */
 
-const application = require('../../lib/application');
+const { useApplication } = require('../utilities/useApplication.js');
 const SynchronousOverviewSuite = require('../public/qcFlags/synchronousOverview.test');
 const ForDataPassOverviewSuite = require('../public/qcFlags/forDataPassOverview.test');
 const ForSimulationPassOverviewSuite = require('../public/qcFlags/forSimulationPassOverview.test');
@@ -22,14 +22,7 @@ const DetailsForSimulationPassPageSuite = require('../public/qcFlags/detailsForS
 const GaqOverviewPageSuite = require('../public/qcFlags/gaqOverview.test');
 
 describe('Bookkeeping', () => {
-    before(async () => {
-        await application.run();
-        await application.connectDatabase();
-    });
-
-    after(async () => {
-        await application.stop(true);
-    });
+    useApplication();
 
     describe('QcFlags', () => {
         describe('Details For Data Pass Page', DetailsForDataPassPageSuite);

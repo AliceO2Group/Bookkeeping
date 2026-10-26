@@ -45,6 +45,12 @@ tags:
     description: Detectors of the ALICE experiment.
   - name: Run types
     description: Types of runs (e.g. calibration kinds).
+  - name: CTP trigger counters
+    description: Counters of the central trigger processor, per run and trigger class.
+  - name: Shifts
+    description: Data used to fill end-of-shift reports.
+  - name: Simulation passes
+    description: Monte Carlo simulation productions.
 
 paths:
   /tags:
@@ -359,6 +365,163 @@ paths:
                 errors:
                   - { status: 404, title: Not found, detail: Run type with this id (999999999) could not be found }
 
+  /ctp-trigger-counters/{runNumber}:
+    get:
+      tags: [CTP trigger counters]
+      operationId: listCtpTriggerCountersOfRun
+      summary: List the CTP trigger counters of a run
+      description: |
+        Returns the trigger counters of every trigger class recorded for the run. Not paginated.
+        A run without counters gives `200` with an empty list. A run that does not exist gives `404`.
+      parameters:
+        - name: runNumber
+          in: path
+          required: true
+          description: Run number.
+          schema: { type: integer, minimum: 1, examples: [106] }
+      responses:
+        '200':
+          description: The counters, one entry per trigger class.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CtpTriggerCountersListResponse' }
+              example:
+                data:
+                  - { id: 1, runNumber: 106, className: minbias, timestamp: 1704067200000, lmb: 10, lma: 9, l0b: 8, l0a: 7, l1b: 6, l1a: 5 }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404':
+          description: No run has this run number.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+              example:
+                errors:
+                  - { status: 404, title: Not found, detail: Run with this run number (999999999) could not be found }
+
+  /shift-data:
+    get:
+      tags: [Shifts]
+      operationId: getShiftData
+      summary: Get the data of the pending shift of the calling user
+      description: |
+        Returns what a shifter needs to write their end-of-shift (EoS) report for the **pending shift**: the current shift, or the previous one
+        during the 30 minutes that follow its end. Shifts last 8 hours and are Night (23h-7h), Morning (7h-15h) and Afternoon (15h-23h) in the
+        Geneva time zone. The shift is deduced from the current time and the calling user, not from a parameter.
+
+        `typeSpecific` depends on `shiftType`: `{ environments }` for `ECS`, `{ runs }` for `QC/PDP`, `{ runs, tagsCounters }` for `SL`, and `null`
+        for `SLIMOS` and `DCS`.
+      parameters:
+        - name: shiftType
+          in: query
+          required: true
+          description: Kind of shift.
+          schema: { type: string, enum: [ECS, QC/PDP, SLIMOS, SL, DCS], examples: [ECS] }
+      responses:
+        '200':
+          description: The shift data.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ShiftDataResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404':
+          description: The calling user is not known to Bookkeeping.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+  /simulationPasses:
+    get:
+      tags: [Simulation passes]
+      operationId: listSimulationPasses
+      summary: List simulation passes
+      description: |
+        Returns a page of simulation passes with their statistics (number of runs, data passes and logs).
+        Default order is by name, descending.
+
+        List filters are repeated query parameters: `filter[ids][]=1&filter[ids][]=2`. A single value without `[]` is rejected. Filters are combined
+        with AND.
+      parameters:
+        - name: filter[ids][]
+          in: query
+          description: Keep the simulation passes with one of these ids. Repeat the parameter for several values.
+          schema: { type: integer }
+        - name: filter[names][]
+          in: query
+          description: Keep the simulation passes with one of these exact names. Repeat the parameter for several values.
+          schema: { type: string, examples: [LHC23k6b] }
+        - name: filter[lhcPeriodIds][]
+          in: query
+          description: Keep the simulation passes used by data passes of one of these LHC periods. Repeat the parameter for several values.
+          schema: { type: integer }
+        - name: filter[dataPassIds][]
+          in: query
+          description: Keep the simulation passes anchored to one of these data passes. Repeat the parameter for several values.
+          schema: { type: integer }
+        - name: sort[id]
+          in: query
+          description: Sort by id.
+          schema: { $ref: '#/components/schemas/SortOrder' }
+        - name: sort[name]
+          in: query
+          description: Sort by name (the default is `desc`).
+          schema: { $ref: '#/components/schemas/SortOrder' }
+        - name: sort[pwg]
+          in: query
+          description: Sort by physics working group.
+          schema: { $ref: '#/components/schemas/SortOrder' }
+        - name: sort[jiraId]
+          in: query
+          description: Sort by Jira ticket.
+          schema: { $ref: '#/components/schemas/SortOrder' }
+        - name: sort[requestedEventsCount]
+          in: query
+          description: Sort by number of requested events.
+          schema: { $ref: '#/components/schemas/SortOrder' }
+        - name: sort[generatedEventsCount]
+          in: query
+          description: Sort by number of generated events.
+          schema: { $ref: '#/components/schemas/SortOrder' }
+        - name: sort[outputSize]
+          in: query
+          description: Sort by output size.
+          schema: { $ref: '#/components/schemas/SortOrder' }
+        - $ref: '#/components/parameters/PageLimit'
+        - $ref: '#/components/parameters/PageOffset'
+      responses:
+        '200':
+          description: A page of simulation passes.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SimulationPassListResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+
+  /simulationPasses/{id}:
+    get:
+      tags: [Simulation passes]
+      operationId: getSimulationPass
+      summary: Get a simulation pass by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Simulation pass identifier.
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: The simulation pass.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SimulationPassResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404':
+          description: No simulation pass has this id.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+              example:
+                errors:
+                  - { status: 404, title: Not found, detail: Simulation pass with this id (99999) could not be found }
+
 components:
   securitySchemes:
     jwtQuery:
@@ -375,6 +538,17 @@ components:
       description: Tag identifier.
       schema: { type: integer, minimum: 1 }
 
+
+    PageLimit:
+      name: page[limit]
+      in: query
+      description: Maximum number of items to return. LLMs and agents must use 100 or less.
+      schema: { type: integer, minimum: 1, examples: [100] }
+    PageOffset:
+      name: page[offset]
+      in: query
+      description: Number of items to skip.
+      schema: { type: integer, minimum: 0, default: 0 }
 
   responses:
     ValidationError:
@@ -540,3 +714,108 @@ components:
         data:
           type: array
           items: { $ref: '#/components/schemas/RunType' }
+    CtpTriggerCounters:
+      type: object
+      description: Counters of one CTP trigger class of a run (LM, L0 and L1 levels, before and after vetoes).
+      properties:
+        id: { type: integer }
+        runNumber: { type: integer }
+        className: { type: string, description: Name of the trigger class. }
+        timestamp: { type: integer, description: Epoch milliseconds of the measurement. }
+        lmb: { type: integer, description: LM level counter before vetoes. }
+        lma: { type: integer, description: LM level counter after vetoes. }
+        l0b: { type: integer, description: L0 level counter before vetoes. }
+        l0a: { type: integer, description: L0 level counter after vetoes. }
+        l1b: { type: integer, description: L1 level counter before vetoes. }
+        l1a: { type: integer, description: L1 level counter after vetoes. }
+    CtpTriggerCountersListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/CtpTriggerCounters' }
+    Shift:
+      type: object
+      required: [start, end, period]
+      properties:
+        start: { type: integer, description: Epoch milliseconds. }
+        end: { type: integer, description: Epoch milliseconds. }
+        period: { type: string, enum: [Night, Morning, Afternoon] }
+    ShiftData:
+      type: object
+      required: [shift, issuesLogs, typeSpecific, infoFromPreviousShifter]
+      properties:
+        shift: { $ref: '#/components/schemas/Shift' }
+        issuesLogs:
+          type: array
+          description: Log entries of the shift carrying the tags of the shift type, EoS reports excluded (see the Logs resource).
+          items: { type: object, additionalProperties: true }
+        typeSpecific:
+          type: [object, 'null']
+          description: Depends on the shift type, see the operation description.
+          properties:
+            environments: { type: array, description: 'ECS shift only.', items: { type: object, additionalProperties: true } }
+            runs:
+              type: object
+              description: QC/PDP and SL shifts only. Runs of the shift grouped by run definition.
+              additionalProperties: { type: array, items: { type: object, additionalProperties: true } }
+            tagsCounters:
+              type: object
+              description: SL shift only. Number of root logs of the shift per tag text, EoS reports excluded.
+              additionalProperties: { type: integer }
+        infoFromPreviousShifter:
+          type: object
+          description: The "For next shifter" section of the EoS report of the previous shift. Exactly one of the properties is set.
+          properties:
+            value: { type: string }
+            errorMessage: { type: string, description: 'Why nothing could be retrieved (no report, several reports, empty section...).' }
+    ShiftDataResponse:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: '#/components/schemas/ShiftData' }
+    PageMeta:
+      type: object
+      description: Pagination information of a list response.
+      properties:
+        page:
+          type: object
+          properties:
+            pageCount: { type: integer, description: 'Number of pages for the requested `page[limit]`.' }
+            totalCount: { type: integer, description: 'Number of items matching the request, all pages included.' }
+    SortOrder:
+      type: string
+      enum: [asc, desc, ASC, DESC]
+    SimulationPass:
+      type: object
+      required: [id, name]
+      properties:
+        id: { type: integer }
+        name: { type: string, examples: [LHC23k6b] }
+        jiraId: { type: [string, 'null'], description: Jira ticket of the simulation request., examples: [SIMTICKET-2] }
+        description: { type: [string, 'null'] }
+        pwg: { type: [string, 'null'], description: Physics working group., examples: [PWGX1] }
+        requestedEventsCount: { type: [integer, 'null'] }
+        generatedEventsCount: { type: [integer, 'null'] }
+        outputSize: { type: [integer, 'null'], description: Size of the output in bytes. }
+        runsCount: { type: integer, description: Number of runs of the simulation pass. }
+        dataPassesCount: { type: integer, description: Number of data passes anchored to the simulation pass. }
+        logsCount: { type: integer, description: Number of logs linked to the simulation pass. }
+        pdpBeamTypes:
+          type: array
+          description: PDP beam types of the runs.
+          items: { type: string, examples: [PbPb] }
+    SimulationPassResponse:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: '#/components/schemas/SimulationPass' }
+    SimulationPassListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/SimulationPass' }
+        meta: { $ref: '#/components/schemas/PageMeta' }

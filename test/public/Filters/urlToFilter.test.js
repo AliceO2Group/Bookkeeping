@@ -80,7 +80,7 @@ module.exports = () => {
     it('should set filters from LhcFillsOverview to the URL', async () => {
         const url = 'http://localhost:4000/?page=lhc-fill-overview&filter[beamDuration][operator]=%3D&filter[beamDuration][limit]=00%3A01%3A40&' + 
                     'filter[runDuration][operator]=%3D&filter[runDuration][limit]=00%3A00%3A00&filter[hasStableBeams]=true&filter[stableBeamsStart][from]=1565251200000&' + 
-                    'filter[stableBeamsStart][to]=1565258400000&filter[stableBeamsEnd][from]=1647907200000&filter[stableBeamsEnd][to]=1647989940000&filter[beamTypes]=p-Pb&filter[schemeName]=Single_12b_8_1024_8_2018';
+                    'filter[stableBeamsStart][to]=1565258400000&filter[stableBeamsEnd][from]=1647907200000&filter[stableBeamsEnd][to]=1647989940000&filter[beamTypes]=PROTON%20-%20O8&filter[schemeName]=Single_12b_8_1024_8_2018';
         
         await page.goto(url, { waitUntil: 'load' });
 
@@ -109,7 +109,7 @@ module.exports = () => {
         await expectInputValue(page, sbEndFromDateTimeSelector, '2022-03-22T00:00');
         await expectInputValue(page, sbEndToDateTimeSelector, '2022-03-22T22:59');
         await expectInputValue(page, filterSchemeNameInputField, 'Single_12b_8_1024_8_2018');
-        await page.waitForSelector('#beam-types-checkbox-p-Pb:checked');
+        await page.waitForSelector('[id="beam-types-checkbox-PROTON - O8"]:checked');
     });
 
     it('should set filters from runsOverview to the URL', async () => {

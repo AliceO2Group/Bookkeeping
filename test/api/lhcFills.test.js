@@ -694,7 +694,7 @@ module.exports = () => {
 
         it('should return 200 and an LHCFill array for beam types filter, correct', (done) => {
             request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamTypes]=Pb-Pb')
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamTypes]=PB82%20-%20PB82')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -711,7 +711,7 @@ module.exports = () => {
 
         it('should return 200 and an LHCFill array for beam types filter, multiple correct', (done) => {
             request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamTypes]=Pb-Pb,p-p,p-Pb')
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamTypes]=PB82%20-%20PB82,PROTON%20-%20PROTON,PROTON%20-%20O8')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -729,7 +729,7 @@ module.exports = () => {
         // API accepts filters that do not exist, this is because it does not affect the results
         it('should return 200 for beam types filter, one wrong', (done) => {
             request(server)
-                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamTypes]=Pb-Pb,Hello-World,p-p,p-Pb')
+                .get('/api/lhcFills?page[offset]=0&page[limit]=15&filter[beamTypes]=PB82%20-%20PB82,Hello-World,PROTON%20-%20PROTON,PROTON%20-%20O8')
                 .expect(200)
                 .end((err, res) => {
                     if (err) {
@@ -787,10 +787,11 @@ module.exports = () => {
                     }
 
                     expect(res.body.data).to.deep.equal([
-                        { beam_type: 'p-p' },
-                        { beam_type: 'p-Pb' },
-                        { beam_type: 'Pb-Pb' },
-                        { beam_type: 'PROTON-PROTON' },
+                        { beam_type: 'NE10 - NE10' },
+                        { beam_type: 'O8 - O8' },
+                        { beam_type: 'PB82 - PB82' },
+                        { beam_type: 'PROTON - O8' },
+                        { beam_type: 'PROTON - PROTON' },
                     ]);
 
                     done();
@@ -804,14 +805,14 @@ module.exports = () => {
                 .post('/api/lhcFills')
                 .send({
                     fillNumber: 544455,
-                    beamType: 'Pb-Pb',
+                    beamType: 'PB82 - PB82',
                     fillingSchemeName: 'schemename',
                 });
 
             expect(response.status).to.equal(201);
 
             const { data } = response.body;
-            expect(data.beamType).to.equal('Pb-Pb');
+            expect(data.beamType).to.equal('PB82 - PB82');
             expect(data.fillingSchemeName).to.equal('schemename');
         });
         it('should return 409 if the fillNumber is duplicate', (done) => {
@@ -913,7 +914,7 @@ module.exports = () => {
             expect(data.stableBeamsStart).to.equal(1647961200000);
             expect(data.stableBeamsEnd).to.equal(1647961200000);
             expect(data.stableBeamsDuration).to.equal(600);
-            expect(data.beamType).to.equal('p-p');
+            expect(data.beamType).to.equal('PROTON - PROTON');
             expect(data.fillingSchemeName).to.equal('schemename');
             expect(data.fillNumber).to.equal(1);
             expect(data.runs.map(({ lhcPeriod }) => lhcPeriod)).to.eql([undefined, 'LHC22a', 'LHC22b', 'LHC22b', 'LHC22b']);

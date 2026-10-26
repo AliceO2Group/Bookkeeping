@@ -21,7 +21,6 @@ const {
     pressElement,
     getFirstRow,
     goToPage,
-    checkColumnBalloon,
     fillInput,
     getPopoverContent,
     getInnerText,
@@ -31,13 +30,11 @@ const {
     waitForNavigation,
     waitForTableTotalRowsCountToEqual,
     expectInputValue,
-    expectColumnValues,
     waitForEmptyTable,
     waitForDownload,
     expectLink,
     expectUrlParams,
     expectAttributeValue,
-    getColumnCellsInnerTexts,
     resetFilters,
     openFilteringPanel,
     waitForButtonToBecomeActive,
@@ -45,6 +42,7 @@ const {
 const { RUN_QUALITIES, RunQualities } = require('../../../lib/domain/enums/RunQualities.js');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
 const { RunDefinition } = require('../../../lib/domain/enums/RunDefinition.js');
+const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { runService } = require('../../../lib/server/services/run/RunService.js');
 const { navigateToRunsOverview } = require('./navigationUtils.js');
 const RunRepository = require('../../../lib/database/repositories/RunRepository.js');
@@ -80,7 +78,25 @@ module.exports = () => {
         expect(title).to.equal('AliceO2 Bookkeeping');
     });
 
-    describe('General page behaviour', () => {
+    /**
+ * Expect the run numbers displayed in the overview table to be the given ones
+ *
+ * @param {puppeteer.Page} page the puppeteer page
+ * @param {string[]} expectedRunNumbers the expected run numbers, in the order of the rows
+ * @return {Promise<void>} resolves once the run numbers are the expected ones
+ */
+const expectRunNumbers = async (page, expectedRunNumbers) => {
+    await page.waitForFunction(
+        (expected) => {
+            const cells = [...document.querySelectorAll('table tbody [id$="-run-number"]')];
+            return cells.length === expected.length && cells.every((cell, index) => cell.innerText === expected[index]);
+        },
+        {},
+        expectedRunNumbers,
+    );
+};
+
+describe('General page behaviour', () => {
         before(() => goToPage(page, 'run-overview'));
         beforeEach(async () => {
             await navigateToRunsOverview(page);
@@ -143,17 +159,17 @@ module.exports = () => {
             await navigateToRunsOverview(page);
 
             await expectInnerText(page, '#firstRowIndex', '1');
-            await expectInnerText(page, '#lastRowIndex', '8');
+            await expectInnerText(page, '#lastRowIndex', '6');
             await expectInnerText(page, '#totalRowsCount', '109');
         });
 
         it('successfully switch to raw timestamp display', async () => {
-            await expectInnerText(page, '#row106 td:nth-child(6)', '08/08/2019\n13:00:00');
-            await expectInnerText(page, '#row106 td:nth-child(7)', '09/08/2019\n14:00:00');
+            await expectInnerText(page, '#row106-start', '08/08/2019, 13:00:00');
+            await expectInnerText(page, '#row106-stop', '09/08/2019, 14:00:00');
             await pressElement(page, '#preferences-raw-timestamps', true);
 
-            await expectInnerText(page, '#row106 td:nth-child(6)', '1565269200000');
-            await expectInnerText(page, '#row106 td:nth-child(7)', '1565359200000');
+            await expectInnerText(page, '#row106-start', '1565269200000');
+            await expectInnerText(page, '#row106-stop', '1565359200000');
 
             // Go back to normal
             await pressElement(page, '#preferences-raw-timestamps', true);
@@ -202,7 +218,7 @@ module.exports = () => {
             await pressElement(page, amountItems5);
 
             // Expect the amount selector to currently be set to 5 when the first option (5) is selected
-            await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
+            await expectInnerText(page, '.dropup button', 'Rows: 5 ');
             await waitForTableLength(page, 5);
 
             // Expect the custom per page input to have red border and text color if wrong value typed
@@ -267,22 +283,41 @@ module.exports = () => {
             expect(urlParameters).to.contain(`runNumber=${expectedRunNumber}`);
         });
 
-        it('Should have balloon on detector, tags and eor column', async () => {
-            // Run 106 has detectors and tags that overflow
-            await fillInput(page, filterPanelRunNumbersInputSelector, '106', ['change']);
-            await expectColumnValues(page, 'runNumber', ['106']);
-
-            await checkColumnBalloon(page, 1, 2);
-            await checkColumnBalloon(page, 1, 3);
-
-            // Run 1 has eor reasons that overflow
+        it('Should display the eor reasons of the run', async () => {
             await fillInput(page, filterPanelRunNumbersInputSelector, '1,1', ['change']);
-            await expectColumnValues(page, 'runNumber', ['1']);
-            await checkColumnBalloon(page, 1, 16);
+            await expectRunNumbers(page, ['1']);
+            await page.waitForSelector('#row1-eorReasons');
         });
 
-        it('Should display balloon if the text overflows', async () => {
-            await checkColumnBalloon(page, 1, 2);
+        it('Should display the first tags with a popover listing all of them when there are more', async () => {
+            // Run 106 has more tags than the displayed ones
+            await fillInput(page, filterPanelRunNumbersInputSelector, '106', ['change']);
+            await expectRunNumbers(page, ['106']);
+            await page.waitForSelector('#row106-tags .popover-trigger');
+        });
+
+        it('should display the legend of the run definitions in the header of the run column', async () => {
+            const legendTrigger = await page.waitForSelector('thead th:first-child .popover-trigger');
+            const legend = await getPopoverContent(legendTrigger);
+
+            for (const definition of Object.values(RunDefinition)) {
+                expect(legend).to.include(definition);
+            }
+        });
+
+        it('should only display the time of the stop of a run ending the same day as it started', async () => {
+            // Run 40 starts and stops the same day, run 106 stops the day after its start
+            await fillInput(page, filterPanelRunNumbersInputSelector, '40', ['change']);
+            await expectRunNumbers(page, ['40']);
+            await expectInnerText(page, '#row40-start', '08/08/2019, 13:00:00');
+            await expectInnerText(page, '#row40-stop', '13:00:00');
+
+            await fillInput(page, filterPanelRunNumbersInputSelector, '106', ['change']);
+            await expectRunNumbers(page, ['106']);
+            await expectInnerText(page, '#row106-stop', '09/08/2019, 14:00:00');
+
+            // Reset the filters for the next tests
+            await navigateToRunsOverview(page);
         });
 
         it('should successfully display duration without warning popover when run has trigger OFF', async () => {
@@ -374,8 +409,9 @@ module.exports = () => {
             await pressElement(page, '#detector-filter-dropdown-option-FT0', true);
             await waitForTableLength(page, 4);
 
+            // 8 runs match, but only the first page, of 6 rows, is displayed
             await pressElement(page, '#detector-filter-combination-operator-radio-button-or', true);
-            await waitForTableLength(page, 8);
+            await waitForTableLength(page, 6);
 
             await pressElement(page, '#detector-filter-combination-operator-radio-button-none', true);
             await waitForTableLength(page, 2);
@@ -419,7 +455,7 @@ module.exports = () => {
                 await waitForTableLength(page, size);
 
                 const definitions = await page.$$eval(
-                    '.column-definition div div div:first-child',
+                    'tbody [id$="-definition"]',
                     (rows) => rows.map((row) => row.innerText),
                 );
 
@@ -428,7 +464,7 @@ module.exports = () => {
                 } catch {
                     const runNumbers = await page.$$eval('tbody tr', (rows) => rows.map((row) => {
                         const rowId = row.id;
-                        return document.querySelector(`#${rowId}-runNumber-text`).innerText;
+                        return document.querySelector(`#${rowId}-run-number`).innerText;
                     }));
                     throw new Error(`Expect all run definitions ${definitions} to be one of ${authorizedRunDefinition}, for runs (${runNumbers})`);
                 }
@@ -461,6 +497,11 @@ module.exports = () => {
 
             await pressElement(page, calibrationFilterSelector, true);
             await checkTableSizeAndDefinition(2, [RunDefinition.TECHNICAL, RunDefinition.CALIBRATION]);
+
+            // The calibration status is displayed below the definition of calibration runs only
+            await page.waitForSelector('#row40-definition.run-definition-calibration');
+            await expectInnerText(page, '#row40-calibration-status', RunCalibrationStatus.NO_STATUS);
+            expect(await page.$$('tbody [id$="-calibration-status"]')).to.have.lengthOf(1);
 
             await pressElement(page, commissioningFilterSelector, true);
             await checkTableSizeAndDefinition(20, [RunDefinition.COMMISSIONING]);
@@ -515,7 +556,7 @@ module.exports = () => {
             await page.select(runDurationOperatorSelector, '=');
             await waitForTableLength(page, 4);
 
-            let runDurationList = await getColumnCellsInnerTexts(page, 'runDuration');
+            let runDurationList = await page.$$eval('tbody [id$="-runDuration"]', (cells) => cells.map((cell) => cell.innerText));
 
             expect(runDurationList.every((runDuration) => runDuration === '25:00:00')).to.be.true;
 
@@ -528,7 +569,7 @@ module.exports = () => {
             // Expect only unknown
             runDurationList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
                 const rowId = row.id;
-                return document.querySelector(`#${rowId}-runDuration-text`)?.innerText;
+                return document.querySelector(`#${rowId}-runDuration`)?.innerText;
             }));
 
             expect(runDurationList.every((runDuration) => runDuration === 'UNKNOWN')).to.be.true;
@@ -538,7 +579,7 @@ module.exports = () => {
             const popoverSelector = await getPopoverSelector(await page.waitForSelector('.aliceL3AndDipoleCurrent-filter .popover-trigger'));
             await pressElement(page, `${popoverSelector} .dropdown-option:last-child`, true); // Select 30003kA/0kA
 
-            await expectColumnValues(page, 'runNumber', ['54', '53', '52']);
+            await expectRunNumbers(page, ['54', '53', '52']);
         });
 
         it('Should successfully filter runs by their run quality', async () => {
@@ -557,7 +598,7 @@ module.exports = () => {
                 for (const row of rows) {
                     expect(await row.evaluate((rowItem) => {
                         const rowId = rowItem.id;
-                        return document.querySelector(`#${rowId}-runQuality-text`).innerText;
+                        return document.querySelector(`#${rowId}-quality`).innerText;
                     })).to.be.oneOf(authorizedRunQualities);
                 }
             };
@@ -609,7 +650,7 @@ module.exports = () => {
                 for (const row of rows) {
                     expect(await row.evaluate((rowItem) => {
                         const rowId = rowItem.id;
-                        return document.querySelector(`#${rowId}-triggerValue-text`).innerText;
+                        return document.querySelector(`#${rowId}-triggerValue`).innerText;
                     })).to.be.oneOf(authorizedRunQualities);
                 }
             };
@@ -679,10 +720,10 @@ module.exports = () => {
             const filterOnRun = async (selector) => {
                 await expectAttributeValue(page, selector, 'placeholder', 'e.g. 534454, 534455...');
                 await fillInput(page, selector, inputValue, ['change']);
-                await expectColumnValues(page, 'runNumber', ['109', '108', '107', '106', '105', '104', '103', '102', '101', '100']);
+                await expectRunNumbers(page, ['109', '108', '107', '106', '105', '104', '103', '102', '101', '100']);
                 
                 await pressElement(page, '#pageMoveRight', true);
-                await expectColumnValues(page, 'runNumber', ['10']);
+                await expectRunNumbers(page, ['10']);
             };
 
             await filterOnRun('#runOverviewFilter .runNumbers-textFilter');
@@ -748,7 +789,7 @@ module.exports = () => {
 
             const nFlpsList = await page.evaluate(() => Array.from(document.querySelectorAll('tbody tr')).map((row) => {
                 const rowId = row.id;
-                return document.querySelector(`#${rowId}-nFlps-text`)?.innerText;
+                return document.querySelector(`#${rowId}-nFlps`)?.innerText;
             }));
             expect(nFlpsList.every((nFlps) => parseInt(nFlps, 10) <= 10)).to.be.true;
         });
@@ -760,7 +801,7 @@ module.exports = () => {
             await fillInput(page, '#nEpns-operand', '10', ['change']);
             await waitForTableLength(page, 5);
 
-            await expectColumnValues(page, 'nEpns', ['10', '10', 'OFF', 'OFF', '10']);
+            expect(await page.$$eval('tbody [id$="-nEpns"]', (cells) => cells.map((cell) => cell.innerText))).to.eql(['10', '10', 'OFF', 'OFF', '10']);
         });
 
         it('should successfully filter on EPN on/off', async () => {
@@ -790,7 +831,7 @@ module.exports = () => {
             * The correct number of runs should be displayed in the table.
             * Furthermore, each of the displayed EOR reasons should contain 'DETECTORS'
             */
-            let eorReasons = await page.$$('table td[id$="eorReasons"]');
+            let eorReasons = await page.$$('table [id$="-eorReasons"]');
             expect(eorReasons).has.lengthOf(3);
 
             let eorReasonTexts = await Promise.all(eorReasons.map(async (element) => (await element.getProperty('innerText')).jsonValue()));
@@ -806,7 +847,7 @@ module.exports = () => {
             * The correct number of runs should be displayed in the table.
             * Furthermore, each of the displayed EOR reasons should contain 'DETECTORS - CPV'
             */
-            eorReasons = await page.$$('table td[id$="eorReasons"]');
+            eorReasons = await page.$$('table [id$="-eorReasons"]');
             expect(eorReasons).has.lengthOf(2);
 
             eorReasonTexts = await Promise.all(eorReasons.map(async (element) => (await element.getProperty('innerText')).jsonValue()));
@@ -821,8 +862,8 @@ module.exports = () => {
             expect(detectorTitleElements).has.lengthOf(1);
 
             // There should be many items in the run details table
-            eorReasons = await page.$$('table td[id$="eorReasons"]');
-            expect(eorReasons.length).to.be.greaterThan(3);
+            const rows = await page.$$('table tbody tr');
+            expect(rows.length).to.be.greaterThan(3);
         });
 
         it('should correctly filter by EOR reason description', async () => {
@@ -831,7 +872,7 @@ module.exports = () => {
             await fillInput(page, '#eorDescription', descriptionInput, ['change']);
             await waitForTableLength(page, 2);
 
-            let eorReasons = await page.$$('table td[id$="eorReasons"]');
+            let eorReasons = await page.$$('table [id$="-eorReasons"]');
             expect(eorReasons).has.lengthOf(2);
             const eorReasonText = await (await eorReasons[0].getProperty('innerText')).jsonValue();
             expect(eorReasonText.toLowerCase()).to.include(descriptionInput);
@@ -839,14 +880,13 @@ module.exports = () => {
             // Assuming this result had the category DETECTORS, when we select a different category it should disappear.
             await page.select('#eorCategories', 'OTHER');
             await waitForEmptyTable(page);
-            eorReasons = await page.$$('table td[id$="eorReasons"]');
+            eorReasons = await page.$$('table [id$="-eorReasons"]');
             expect(eorReasons).has.lengthOf(0);
 
             // When we reset the filters, the input field should be empty
             await resetFilters(page);
             await waitForTableLength(page, 10);
-            eorReasons = await page.$$('table td[id$="eorReasons"]');
-            expect(eorReasons.length).to.be.greaterThan(1);
+            expect((await page.$$('table tbody tr')).length).to.be.greaterThan(1);
 
             await expectInputValue(page, '#eorDescription', '');
         });

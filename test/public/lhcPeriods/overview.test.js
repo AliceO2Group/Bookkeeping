@@ -86,7 +86,7 @@ module.exports = () => {
         await goToPage(page, 'lhc-period-overview');
 
         // Expect the amount selector to currently be set to 11 (because of the defined page height)
-        await expectInnerText(page, '.dropup button', 'Rows per page: 11 ');
+        await expectInnerText(page, '.dropup button', 'Rows: 11 ');
 
         // Expect the dropdown options to be visible when it is selected
         await pressElement(page, '.dropup button');
@@ -96,7 +96,7 @@ module.exports = () => {
 
         // Expect the amount selector to currently be set to 5 when the first option (5) is selected
         await pressElement(page, '.dropup .menu-item');
-        await expectInnerText(page, '.dropup button', 'Rows per page: 5 ');
+        await expectInnerText(page, '.dropup button', 'Rows: 5 ');
         await waitForTableLength(page, 3);
 
         // Expect the custom per page input to have red border and text color if wrong value typed

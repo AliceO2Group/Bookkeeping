@@ -1,11 +1,25 @@
+/**
+ *  @license
+ *  Copyright CERN and copyright holders of ALICE O2. This software is
+ *  distributed under the terms of the GNU General Public License v3 (GPL
+ *  Version 3), copied verbatim in the file "COPYING".
+ *
+ *  See http://alice-o2.web.cern.ch/license for full licensing information.
+ *
+ *  In applying this license CERN does not waive the privileges and immunities
+ *  granted to it by virtue of its status as an Intergovernmental Organization
+ *  or submit itself to any jurisdiction.
+ */
+
 const { ctpTriggerCountersService } = require('../../../../../lib/server/services/ctpTriggerCounters/CtpTriggerCountersService');
 const { expect } = require('chai');
 const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const assert = require('assert');
 const { BadParameterError } = require('../../../../../lib/server/errors/BadParameterError.js');
+const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
 
 /**
- * Simplify a trigger counter to extract properties interesting in testing (remove createdAt and updatedAt)
+ * Simplify a trigger counter to extract properties interesting in testing
  *
  * @param {CtpTriggerCounters} counters the counters to simplify
  * @return {object} simplified trigger counters
@@ -54,6 +68,13 @@ module.exports = () => {
             },
         ]);
         expect(await ctpTriggerCountersService.getPerRun(2)).to.eql([]);
+    });
+
+    it('Should throw a not found error when fetching the counters of a non-existing run', async () => {
+        await assert.rejects(
+            () => ctpTriggerCountersService.getPerRun(999),
+            new NotFoundError('Run with this run number (999) could not be found'),
+        );
     });
 
     it('Should successfully insert new counters for a given run', async () => {

@@ -161,8 +161,8 @@ module.exports = () => {
         });
 
         it('should successfully filter with single beamType', async () => {
-            const beamType = 'p-p';
-            const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamType}`);
+            const beamType = 'PROTON - PROTON';
+            const response = await request(server).get(`/api/runs?filter[beamTypes]=${encodeURIComponent(beamType)}`);
 
             expect(response.status).to.equal(200);
             const { data: runs } = response.body;
@@ -173,8 +173,8 @@ module.exports = () => {
         });
 
         it('should successfully filter with multiple beamTypes', async () => {
-            const beamTypes = 'p-p,Pb-Pb';
-            const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamTypes}`);
+            const beamTypes = 'PROTON - PROTON,PB82 - PB82';
+            const response = await request(server).get(`/api/runs?filter[beamTypes]=${encodeURIComponent(beamTypes)}`);
 
             expect(response.status).to.equal(200);
             const { data: runs } = response.body;
@@ -186,7 +186,7 @@ module.exports = () => {
 
         it('should return 400 if beamTypes filter has the incorrect format', async () => {
             const beamTypes = 'DOES NOT EXIST';
-            const response = await request(server).get(`/api/runs?filter[beamTypes]=${beamTypes}`);
+            const response = await request(server).get(`/api/runs?filter[beamTypes]=${encodeURIComponent(beamTypes)}`);
 
             expect(response.status).to.equal(400);
 
