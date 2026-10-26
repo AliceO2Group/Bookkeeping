@@ -28,6 +28,7 @@ const { createRun } = require('../../../lib/server/services/run/createRun.js');
 const EorReasonRepository = require('../../../lib/database/repositories/EorReasonRepository.js');
 const { ShiftTypes } = require('../../../lib/domain/enums/ShiftTypes.js');
 const { customizedQcPdpEosReport } = require('../../mocks/mock-qc-pdp-eos-report.js');
+const { shiftService } = require('../../../lib/server/services/shift/ShiftService.js');
 const { updateRunDetector } = require('../../../lib/server/services/runDetector/updateRunDetector.js');
 
 module.exports = () => {
@@ -55,13 +56,16 @@ module.exports = () => {
     });
 
     it('Should successfully create a QC/PDP EoS report when submitting the form and redirect to the corresponding log', async () => {
+        // The pending shift depends on the time of the day, so the runs must be created inside of it
+        const pendingShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+
         for (const runs of Object.values(customizedQcPdpEosReport.typeSpecific.runs)) {
             for (const run of runs) {
                 const runId = await createRun(
                     {
                         ...run,
-                        timeTrgStart: new Date(),
-                        timeTrgEnd: new Date(),
+                        timeTrgStart: new Date(pendingShift.start + 1000),
+                        timeTrgEnd: new Date(pendingShift.start + 1000),
                     },
                     { detectors: run.detectors },
                 );
