@@ -169,7 +169,14 @@ module.exports = () => {
         it('should log successful calls with the user, the method and the request', async () => {
             const { adapter, logger } = getAdapter({ TestEnums: () => ({}), TestBigInts: () => ({ ui: 1n, i: 2n }), TestRepeated: () => ({}) });
 
-            await adapter.TestBigInts({ identity: { id: 9 }, request: { ui: Long.fromString('12', true), i: Long.fromString('-5') } }, sinon.fake());
+            await adapter.TestBigInts(
+                {
+                    identity: { id: 9 },
+                    metadata: { get: (name) => name === 'user-agent' ? ['grpc-c++/1.60.0 grpc-c/37.0.0'] : [] },
+                    request: { ui: Long.fromString('12', true), i: Long.fromString('-5') },
+                },
+                sinon.fake(),
+            );
 
             expect(logger.infoMessage.calledOnce).to.be.true;
             const { durationMs, ...entry } = JSON.parse(logger.infoMessage.firstCall.args[0]);
@@ -182,6 +189,8 @@ module.exports = () => {
                 status: 0,
                 userId: 9,
                 bytes: null,
+                client: 'grpc-cxx',
+                device: null,
                 params: '{"ui":"12","i":"-5"}',
             });
         });
