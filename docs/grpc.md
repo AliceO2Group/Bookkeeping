@@ -46,6 +46,11 @@ The system will then automate the extraction of the request object, convert enum
 handling), pass it to the implementation function and return the result to the gRPC client (converting enums the other
 way around). The implementation may or may not be asynchronous by returning a Promise.
 
+## Calls logging
+
+Each call is logged once handled (with its status, duration, user and request), using the same structure as the `HTTP` requests. See
+[the API access log](backend-architecture.md#api-access-log).
+
 ## Enums handling
 
 Because gRPC enums must have unique values across all the proto files, the gRPC convention to prefix enum values by the
