@@ -58,6 +58,13 @@ module.exports = () => {
         expect(formatLogSnippet('Other\nRun 1 failed', 'Run 1 failed')).to.equal('Other Run 1 failed');
     });
 
+    it('should not take a long time to process a huge content', () => {
+        const start = Date.now();
+        const snippet = formatLogSnippet(' __a b'.repeat(100000));
+        expect(Date.now() - start).to.be.lessThan(500);
+        expect(snippet.length).to.be.lessThanOrEqual(120);
+    });
+
     it('should truncate on a word boundary with an ellipsis', () => {
         const snippet = formatLogSnippet('word '.repeat(50), '', 20);
         expect(snippet).to.equal('word word word…');
