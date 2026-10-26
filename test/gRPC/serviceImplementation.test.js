@@ -20,6 +20,9 @@ const { extractAbsoluteMessageDefinitions } = require('../../lib/server/gRPC/ser
 const sinon = require('sinon');
 const { bindGRPCController } = require('../../lib/server/gRPC/bindGRPCController.js');
 const { Long } = require('@grpc/proto-loader');
+const { ApiRequestLogger } = require('../../lib/server/utilities/ApiRequestLogger.js');
+const { ConflictError } = require('../../lib/server/errors/ConflictError.js');
+const { AuthenticatedOnly } = require('../../lib/server/errors/AuthenticatedOnly.js');
 
 const PROTO_DIR = `${__dirname}/proto`;
 
@@ -153,5 +156,90 @@ module.exports = () => {
             code: 2,
             message: 'Controller for /test.Service/TestEnums returned an invalid response',
         })).to.be.true;
+    });
+
+    describe('Calls logging', () => {
+        const getAdapter = (controller, preProcessors = []) => {
+            const logger = { infoMessage: sinon.fake() };
+            const apiRequestLogger = new ApiRequestLogger({ logger, silent: false });
+            const adapter = bindGRPCController(proto.Service.service, controller, preProcessors, absoluteMessagesDefinitions, apiRequestLogger);
+            return { adapter, logger };
+        };
+
+        it('should log successful calls with the user, the method and the request', async () => {
+            const { adapter, logger } = getAdapter({ TestEnums: () => ({}), TestBigInts: () => ({ ui: 1n, i: 2n }), TestRepeated: () => ({}) });
+
+            await adapter.TestBigInts({ identity: { id: 9 }, request: { ui: Long.fromString('12', true), i: Long.fromString('-5') } }, sinon.fake());
+
+            expect(logger.infoMessage.calledOnce).to.be.true;
+            const { durationMs, ...entry } = JSON.parse(logger.infoMessage.firstCall.args[0]);
+            expect(durationMs).to.be.a('number').and.to.be.at.least(0);
+            expect(entry).to.eql({
+                type: 'api_request',
+                protocol: 'grpc',
+                method: null,
+                route: '/test.Service/TestBigInts',
+                status: 0,
+                userId: 9,
+                bytes: null,
+                params: '{"ui":"12","i":"-5"}',
+            });
+        });
+
+        it('should log the request as received by the controller even if the controller mutates it', async () => {
+            const { adapter, logger } = getAdapter({
+                TestEnums: () => ({}),
+                TestBigInts: (request) => {
+                    // Controllers consume the fields of the request they handle
+                    delete request.ui;
+                    request.i = 0n;
+                    request.added = true;
+                    return { ui: 1n, i: 2n };
+                },
+                TestRepeated: () => ({}),
+            });
+
+            await adapter.TestBigInts({ request: { ui: Long.fromString('12', true), i: Long.fromString('-5') } }, sinon.fake());
+
+            expect(JSON.parse(logger.infoMessage.firstCall.args[0]).params).to.equal('{"ui":"12","i":"-5"}');
+        });
+
+        it('should log the untouched request when a pre-processor fails before the controller is reached', async () => {
+            const controller = sinon.fake();
+            const { adapter, logger } = getAdapter(
+                { TestEnums: controller, TestBigInts: controller, TestRepeated: controller },
+                [() => {
+                    throw new AuthenticatedOnly('not authenticated');
+                }],
+            );
+
+            await adapter.TestBigInts({ request: { ui: 'raw' } }, sinon.fake());
+
+            expect(controller.called).to.be.false;
+            expect(JSON.parse(logger.infoMessage.firstCall.args[0])).to.include({ status: 16, params: '{"ui":"raw"}' });
+        });
+
+        it('should log the gRPC status of failing calls, including failed pre-processors', async () => {
+            const throwingController = {
+                TestEnums: () => {
+                    throw new ConflictError('conflict');
+                },
+                TestBigInts: () => null,
+                TestRepeated: () => ({}),
+            };
+            const { adapter, logger } = getAdapter(throwingController, [() => {
+                throw new AuthenticatedOnly('not authenticated');
+            }]);
+            await adapter.TestEnums({ request: {} }, sinon.fake());
+            expect(JSON.parse(logger.infoMessage.lastCall.args[0])).to.include({ status: 16, userId: null });
+
+            const { adapter: adapterWithoutPreProcessor, logger: otherLogger } = getAdapter(throwingController);
+            await adapterWithoutPreProcessor.TestEnums({ request: {} }, sinon.fake());
+            expect(JSON.parse(otherLogger.infoMessage.lastCall.args[0])).to.include({ status: 6 });
+
+            await adapterWithoutPreProcessor.TestBigInts({ request: {} }, sinon.fake());
+            expect(JSON.parse(otherLogger.infoMessage.lastCall.args[0])).to.include({ status: 2 });
+            expect(otherLogger.infoMessage.callCount).to.equal(2);
+        });
     });
 };

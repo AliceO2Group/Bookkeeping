@@ -38,7 +38,7 @@ const handle = (request, responseFields = {}, configuration = {}) => {
 };
 
 module.exports = () => {
-    it('should log a single line JSON entry with route pattern, status, duration, user, size and query once the response is sent', () => {
+    it('should log a single line JSON entry with route pattern, status, duration, user, size and params once the response is sent', () => {
         const query = { filter: { runNumbers: '1,2' }, page: { limit: '10' } };
         const { logger, next, response } = handle(
             { method: 'GET', baseUrl: '/api', originalUrl: '/api/runs/12?a=1', route: { path: '/runs/:runNumber' }, session: { id: 7 }, query },
@@ -59,22 +59,23 @@ module.exports = () => {
         expect(durationMs).to.be.a('number').and.to.be.at.least(0);
         expect(entry).to.eql({
             type: 'api_request',
+            protocol: 'http',
             method: 'GET',
             route: '/api/runs/:runNumber',
             status: 201,
             userId: 7,
             bytes: 123,
-            query,
+            params: JSON.stringify(query),
         });
     });
 
-    it('should log null user and size, no query, and the path when the request is anonymous and no route matched', () => {
+    it('should log null user and size, no params, and the path when the request is anonymous and no route matched', () => {
         const { logger, response } = handle({ method: 'GET', baseUrl: '/api', originalUrl: '/api/unknown?x=1', query: {} });
         response.emit('finish');
 
         const entry = JSON.parse(logger.infoMessage.firstCall.args[0]);
         expect(entry).to.include({ route: '/api/unknown', userId: null, bytes: null });
-        expect(entry).to.not.have.property('query');
+        expect(entry).to.not.have.property('params');
         expect(entry).to.not.have.property('aborted');
     });
 
@@ -90,7 +91,7 @@ module.exports = () => {
 
         const [message] = logger.infoMessage.firstCall.args;
         expect(message).to.not.include('secret');
-        expect(JSON.parse(message).query).to.eql({ page: { limit: '5' } });
+        expect(JSON.parse(message).params).to.equal(JSON.stringify({ page: { limit: '5' } }));
     });
 
     it('should not log a query containing only the token parameter', () => {
@@ -103,7 +104,7 @@ module.exports = () => {
         });
         response.emit('finish');
 
-        expect(JSON.parse(logger.infoMessage.firstCall.args[0])).to.not.have.property('query');
+        expect(JSON.parse(logger.infoMessage.firstCall.args[0])).to.not.have.property('params');
     });
 
     it('should flag as aborted a request whose connection is closed before the response is sent', () => {
