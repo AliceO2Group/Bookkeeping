@@ -186,6 +186,39 @@ module.exports = () => {
             });
         });
 
+        it('should log the request as received by the controller even if the controller mutates it', async () => {
+            const { adapter, logger } = getAdapter({
+                TestEnums: () => ({}),
+                TestBigInts: (request) => {
+                    // Controllers consume the fields of the request they handle
+                    delete request.ui;
+                    request.i = 0n;
+                    request.added = true;
+                    return { ui: 1n, i: 2n };
+                },
+                TestRepeated: () => ({}),
+            });
+
+            await adapter.TestBigInts({ request: { ui: Long.fromString('12', true), i: Long.fromString('-5') } }, sinon.fake());
+
+            expect(JSON.parse(logger.infoMessage.firstCall.args[0]).params).to.equal('{"ui":"12","i":"-5"}');
+        });
+
+        it('should log the untouched request when a pre-processor fails before the controller is reached', async () => {
+            const controller = sinon.fake();
+            const { adapter, logger } = getAdapter(
+                { TestEnums: controller, TestBigInts: controller, TestRepeated: controller },
+                [() => {
+                    throw new AuthenticatedOnly('not authenticated');
+                }],
+            );
+
+            await adapter.TestBigInts({ request: { ui: 'raw' } }, sinon.fake());
+
+            expect(controller.called).to.be.false;
+            expect(JSON.parse(logger.infoMessage.firstCall.args[0])).to.include({ status: 16, params: '{"ui":"raw"}' });
+        });
+
         it('should log the gRPC status of failing calls, including failed pre-processors', async () => {
             const throwingController = {
                 TestEnums: () => {
