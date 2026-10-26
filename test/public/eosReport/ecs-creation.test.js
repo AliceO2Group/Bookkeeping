@@ -34,6 +34,7 @@ const EorReasonRepository = require('../../../lib/database/repositories/EorReaso
 const { ShiftTypes } = require('../../../lib/domain/enums/ShiftTypes.js');
 const { eosReportService } = require('../../../lib/server/services/eosReport/EosReportService.js');
 const { SHIFT_DURATION } = require('../../../lib/server/services/shift/getShiftFromTimestamp.js');
+const { shiftService } = require('../../../lib/server/services/shift/ShiftService.js');
 
 module.exports = () => {
     let page;
@@ -60,13 +61,16 @@ module.exports = () => {
     });
 
     it('Should successfully create an ECS EoS report when submitting the form and redirect to the corresponding log', async () => {
+        // The pending shift depends on the time of the day, so all the fixtures are derived from it
+        const pendingShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+
         for (const environment of customizedECSEosReport.typeSpecific.environments) {
             await createEnvironment({
                 ...environment,
             });
             await createEnvironmentHistoryItem({
                 status: 'DONE',
-                timestamp: new Date(),
+                timestamp: new Date(pendingShift.start + 1000),
                 timestampNano: 0,
                 environmentId: environment.id,
             });
@@ -92,7 +96,7 @@ module.exports = () => {
         }
 
         // Create the expected previous EoS report
-        const past = new Date(Date.now() - SHIFT_DURATION);
+        const past = new Date(pendingShift.start - SHIFT_DURATION + 1000);
         const info = 'Important information for the next tester';
         const request = {
             ...emptyECSEosReportRequest,

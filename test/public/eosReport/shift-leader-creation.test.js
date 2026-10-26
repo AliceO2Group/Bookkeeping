@@ -55,13 +55,16 @@ module.exports = () => {
     });
 
     it('Should successfully create a Shift Leader EoS report when submitting the form and redirect to the corresponding log', async () => {
+        // The pending shift depends on the time of the day, so the runs must be created inside of it
+        const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
+
         for (const runs of Object.values(customizedQcPdpEosReport.typeSpecific.runs)) {
             for (const run of runs) {
                 await createRun(
                     {
                         ...run,
-                        timeTrgStart: new Date(),
-                        timeTrgEnd: new Date(),
+                        timeTrgStart: new Date(currentShift.start + 1000),
+                        timeTrgEnd: new Date(currentShift.start + 1000),
                     },
                     { detectors: run.detectors },
                 );
@@ -77,7 +80,6 @@ module.exports = () => {
 
         await reloadPage(page);
 
-        const currentShift = await shiftService.getUserPendingShiftOrFail({ userId: 1 });
         const magnetStart = formatShiftDate(currentShift.start, { time: true });
 
         const { formatTimestampForDateTimeInput } = await import('../../../lib/public/utilities/formatting/dateTimeInputFormatters.mjs');
