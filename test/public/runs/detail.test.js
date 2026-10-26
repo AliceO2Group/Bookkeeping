@@ -31,7 +31,7 @@ const {
 const { RunCalibrationStatus } = require('../../../lib/domain/enums/RunCalibrationStatus.js');
 const { runService } = require('../../../lib/server/services/run/RunService');
 const { resetDatabaseContent } = require('../../utilities/resetDatabaseContent.js');
-const { tag: { UpdateTagUseCase } } = require('../../../lib/usecases/index.js');
+const { tagService } = require('../../../lib/server/services/tag/TagService.js');
 
 const { expect } = chai;
 
@@ -605,21 +605,7 @@ module.exports = () => {
 
         expect(badges[0]).to.equal(expectedBgColorBefore);
 
-        const updateTagDto = {
-            body: {
-                color: '#FF0000', //Red
-            },
-            params: {
-                tagId: 1,
-            },
-            session: {
-                personid: 1,
-                id: 1,
-                name: 'John Doe',
-            },
-        };
-        await new UpdateTagUseCase()
-            .execute(updateTagDto);
+        await tagService.update(1, { color: '#FF0000' /* Red */ }, { userId: 1 });
 
         await goToRunDetails(page, 106);
         badges = await getRunTagsBadges();
