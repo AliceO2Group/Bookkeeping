@@ -48,7 +48,7 @@ Every request handled by the `HTTP` API (`/api`, not the static files) is logged
 - `durationMs`: time between the reception of the request by the middleware and the end of the response
 - `userId`: the id of the user, `null` if the request is not authenticated
 - `bytes`: the `content-length` of the response, `null` if not provided
-- `query`: the parsed query string (filters, pagination, sorting...), omitted when empty. The body is never logged
+- `query`: the parsed query string (filters, pagination, sorting...), omitted when empty. The `token` parameter is removed and the body is never logged
 - `aborted`: `true` only if the connection was closed before the response was completely sent
 
 Nothing is logged in test mode.

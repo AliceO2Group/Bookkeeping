@@ -78,6 +78,34 @@ module.exports = () => {
         expect(entry).to.not.have.property('aborted');
     });
 
+    it('should never log the token query parameter', () => {
+        const { logger, response } = handle({
+            method: 'GET',
+            baseUrl: '/api',
+            originalUrl: '/api/runs?token=secret&page[limit]=5',
+            route: { path: '/runs' },
+            query: { token: 'secret', page: { limit: '5' } },
+        });
+        response.emit('finish');
+
+        const [message] = logger.infoMessage.firstCall.args;
+        expect(message).to.not.include('secret');
+        expect(JSON.parse(message).query).to.eql({ page: { limit: '5' } });
+    });
+
+    it('should not log a query containing only the token parameter', () => {
+        const { logger, response } = handle({
+            method: 'GET',
+            baseUrl: '/api',
+            originalUrl: '/api/runs?token=secret',
+            route: { path: '/runs' },
+            query: { token: 'secret' },
+        });
+        response.emit('finish');
+
+        expect(JSON.parse(logger.infoMessage.firstCall.args[0])).to.not.have.property('query');
+    });
+
     it('should flag as aborted a request whose connection is closed before the response is sent', () => {
         const { logger, response } = handle({ method: 'GET', baseUrl: '/api', originalUrl: '/api/runs', route: { path: '/runs' } }, { writableFinished: false });
         response.emit('close');
