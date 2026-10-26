@@ -41,7 +41,15 @@ module.exports = () => {
     it('should log a single line JSON entry with route pattern, status, duration, user, size and params once the response is sent', () => {
         const query = { filter: { runNumbers: '1,2' }, page: { limit: '10' } };
         const { logger, next, response } = handle(
-            { method: 'GET', baseUrl: '/api', originalUrl: '/api/runs/12?a=1', route: { path: '/runs/:runNumber' }, session: { id: 7 }, query },
+            {
+                method: 'GET',
+                baseUrl: '/api',
+                originalUrl: '/api/runs/12?a=1',
+                route: { path: '/runs/:runNumber' },
+                session: { id: 7 },
+                query,
+                headers: { 'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Safari/604.1' },
+            },
             { headers: { 'content-length': '123' }, statusCode: 201 },
         );
 
@@ -65,8 +73,32 @@ module.exports = () => {
             status: 201,
             userId: 7,
             bytes: 123,
+            client: 'browser',
+            device: 'phone',
             params: JSON.stringify(query),
         });
+    });
+
+    it('should identify the client from the user agent and the mobile hint', () => {
+        const { logger, response } = handle({
+            method: 'GET',
+            baseUrl: '/api',
+            originalUrl: '/api/runs',
+            route: { path: '/runs' },
+            headers: { 'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) Chrome/120.0 Safari/537.36', 'sec-ch-ua-mobile': '?1' },
+        });
+        response.emit('finish');
+        expect(JSON.parse(logger.infoMessage.firstCall.args[0])).to.include({ client: 'browser', device: 'phone' });
+
+        const { logger: curlLogger, response: curlResponse } = handle({
+            method: 'GET',
+            baseUrl: '/api',
+            originalUrl: '/api/runs',
+            route: { path: '/runs' },
+            headers: { 'user-agent': 'curl/8.4.0' },
+        });
+        curlResponse.emit('finish');
+        expect(JSON.parse(curlLogger.infoMessage.firstCall.args[0])).to.include({ client: 'curl', device: null });
     });
 
     it('should log null user and size, no params, and the path when the request is anonymous and no route matched', () => {
@@ -74,7 +106,7 @@ module.exports = () => {
         response.emit('finish');
 
         const entry = JSON.parse(logger.infoMessage.firstCall.args[0]);
-        expect(entry).to.include({ route: '/api/unknown', userId: null, bytes: null });
+        expect(entry).to.include({ route: '/api/unknown', userId: null, bytes: null, client: 'unknown', device: null });
         expect(entry).to.not.have.property('params');
         expect(entry).to.not.have.property('aborted');
     });

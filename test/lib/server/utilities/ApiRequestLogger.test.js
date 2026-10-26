@@ -22,7 +22,7 @@ module.exports = () => {
         const logger = { infoMessage: sinon.fake() };
         const apiRequestLogger = new ApiRequestLogger({ logger, silent: false });
 
-        apiRequestLogger.log({ ...request, userId: 4, params: { runNumber: 12 } });
+        apiRequestLogger.log({ ...request, userId: 4, userAgent: 'grpc-node-js/1.9.0', params: { runNumber: 12 } });
         apiRequestLogger.log({ protocol: 'http', method: 'GET', route: '/api/runs', status: 200, durationMs: 5, bytes: 10 });
 
         expect(logger.infoMessage.callCount).to.equal(2);
@@ -40,6 +40,8 @@ module.exports = () => {
             durationMs: 3,
             userId: 4,
             bytes: null,
+            client: 'grpc-node',
+            device: null,
             params: '{"runNumber":12}',
         });
         expect(Object.keys(httpEntry)).to.eql(Object.keys(grpcEntry).filter((key) => key !== 'params'));

@@ -41,8 +41,8 @@ Currently, `usecases` returns `HTTP` oriented objects when an exception occurs, 
 Every request handled by the `HTTP` API (`/api`, not the static files) and every `gRPC` call is logged once handled, by `ApiRequestLogger` (`HTTP`: `accessLogMiddleware`, `gRPC`: `bindGRPCController`). The entry is a single-line `JSON`, logged by the `API` logger **to the local log only** (it is not forwarded to InfoLogger). `HTTP` and `gRPC` entries share the same structure, so that they can be stored and aggregated together in OpenSearch:
 
 ```json
-{"type":"api_request","protocol":"http","method":"GET","route":"/api/runs","status":200,"durationMs":42,"userId":7,"bytes":18234,"params":"{\"filter\":{\"runNumbers\":\"1,2\"},\"page\":{\"limit\":\"50\"}}"}
-{"type":"api_request","protocol":"grpc","method":null,"route":"/o2.bookkeeping.RunService/Get","status":0,"durationMs":12,"userId":null,"bytes":null,"params":"{\"runNumber\":12}"}
+{"type":"api_request","protocol":"http","method":"GET","route":"/api/runs","status":200,"durationMs":42,"userId":7,"bytes":18234,"client":"browser","device":"desktop","params":"{\"filter\":{\"runNumbers\":\"1,2\"},\"page\":{\"limit\":\"50\"}}"}
+{"type":"api_request","protocol":"grpc","method":null,"route":"/o2.bookkeeping.RunService/Get","status":0,"durationMs":12,"userId":null,"bytes":null,"client":"grpc-node","device":null,"params":"{\"runNumber\":12}"}
 ```
 
 - `type`: always `api_request`
@@ -53,7 +53,9 @@ Every request handled by the `HTTP` API (`/api`, not the static files) and every
 - `durationMs`: time between the reception of the request by the middleware (`HTTP`) or the call (`gRPC`) and the end of the response, so it includes the authentication
 - `userId`: the id of the user, `null` if not authenticated
 - `bytes`: the `content-length` of the `HTTP` response, `null` if not provided and for `gRPC`
-- `params`: the `HTTP` query string (the `token` parameter is removed and the body is never logged) or the `gRPC` request message, as a `JSON` **string** (not an object, because the structure varies from one endpoint to another and the types are not the same between protocols, which would lead to conflicts in OpenSearch mappings). It is omitted when empty and truncated (with a trailing `…`) when it exceeds 1000 characters
+- `client`: the kind of client, identified from the `User-Agent` it declares (`browser`, `curl`, `wget`, `python`, `node`, `go`, `java`, `postman`, `grpc-node`, `grpc-cxx`, `grpc-python`, `grpc-go`, `grpc-java`, `grpc-other` or `unknown`). It is self-reported, so it is meant for statistics only and must never be used for security purposes. The proxy in front of the application (for example nginx) must forward the `User-Agent` header, which is the default behavior
+- `device`: for browsers only (`null` otherwise), `phone`, `tablet` or `desktop`, deduced from the `User-Agent` and, for chromium based browsers, the `Sec-CH-UA-Mobile` header. An iPad requesting the desktop version of websites (default since iPadOS 13) can not be told apart from a Mac
+- `params`: the `HTTP` query string (the `token` parameter is removed and the body is never logged) or the `gRPC` request message, as a `JSON` **string** (not an object, because the structure varies from one endpoint to another and the types are not the same between protocols, which would lead to conflicts in OpenSearch mappings). It is omitted when empty and truncated (with a trailing `…`) when it exceeds 500 characters
 - `aborted`: `true` only if the connection was closed before the response was completely sent (`HTTP` only)
 
 Nothing is logged in test mode.
