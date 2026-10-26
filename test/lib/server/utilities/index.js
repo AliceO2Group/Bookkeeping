@@ -15,10 +15,12 @@ const appendPathTest = require('./appendPath.test.js');
 const isAnEmptyShellTest = require('./isAnEmptyShell.test.js');
 const bigIntConverter = require('./bigIntConverter.test.js');
 const apiRequestLoggerTest = require('./ApiRequestLogger.test.js');
+const identifyClientTest = require('./identifyClient.test.js');
 
 module.exports = () => {
     describe('ApiRequestLogger', apiRequestLoggerTest);
     describe('appendPath', appendPathTest);
     describe('bigIntConverter', bigIntConverter);
+    describe('identifyClient', identifyClientTest);
     describe('isAnEmptyShell', isAnEmptyShellTest);
 };
