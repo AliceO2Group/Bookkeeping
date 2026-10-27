@@ -61,6 +61,8 @@ tags:
     description: Files attached to log entries.
   - name: DPL processes
     description: Processes of the data processing layer (DPL) executed during the runs, by detector, process and host.
+  - name: FLPs
+    description: Roles of FLPs in runs, with their data counters.
 
 paths:
   /tags:
@@ -888,6 +890,116 @@ paths:
         '400': { $ref: '#/components/responses/ValidationError' }
         '404': { $ref: '#/components/responses/DplNotFound' }
 
+  /flps:
+    get:
+      tags: [FLPs]
+      operationId: listFlps
+      summary: List the FLP roles
+      description: |
+        Returns the roles of FLPs (one entry per FLP and per run) with their data counters. Paginated, sorted by name descending by default.
+      parameters:
+        - $ref: '#/components/parameters/PageLimit'
+        - $ref: '#/components/parameters/PageOffset'
+        - name: sort[id]
+          in: query
+          description: Sort by identifier.
+          schema: { $ref: '#/components/schemas/SortOrder' }
+        - name: sort[name]
+          in: query
+          description: Sort by FLP name.
+          schema: { $ref: '#/components/schemas/SortOrder' }
+        - name: sort[hostname]
+          in: query
+          description: Sort by host name.
+          schema: { $ref: '#/components/schemas/SortOrder' }
+        - name: sort[runNumber]
+          in: query
+          description: Sort by run number.
+          schema: { $ref: '#/components/schemas/SortOrder' }
+      responses:
+        '200':
+          description: A page of FLP roles.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlpListResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+    post:
+      tags: [FLPs]
+      operationId: createFlp
+      summary: Create an FLP role
+      description: Creates the role of an FLP in a run. Responds 404 if the run does not exist.
+      x-llm-exclude: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateFlp' }
+            example: { name: FLP-1, hostname: flp001.cern.ch, runNumber: 106 }
+      responses:
+        '201':
+          description: The created FLP role.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlpResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/FlpNotFound' }
+
+  /flps/{flpId}:
+    get:
+      tags: [FLPs]
+      operationId: getFlp
+      summary: Get an FLP role
+      description: Returns one FLP role, with its run.
+      parameters:
+        - name: flpId
+          in: path
+          required: true
+          description: FLP role identifier.
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: The FLP role.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlpResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/FlpNotFound' }
+
+  /flps/{flpName}/runs/{runNumber}:
+    patch:
+      tags: [FLPs]
+      operationId: updateFlp
+      summary: Update the counters of an FLP in a run
+      description: |
+        Updates the data counters of the FLP role identified by FLP name and run number. Counters absent from the body are left unchanged.
+        Responds 404 if there is no such FLP in this run.
+      x-llm-exclude: true
+      parameters:
+        - name: flpName
+          in: path
+          required: true
+          description: Name of the FLP.
+          schema: { type: string }
+        - name: runNumber
+          in: path
+          required: true
+          description: Run number.
+          schema: { type: integer, minimum: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UpdateFlp' }
+            example: { nTimeframes: 1000, bytesProcessed: 2048 }
+      responses:
+        '201':
+          description: The updated FLP role.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FlpResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/FlpNotFound' }
+
 components:
   securitySchemes:
     jwtQuery:
@@ -972,6 +1084,15 @@ components:
           example:
             errors:
               - { status: 404, title: Not found, detail: Run with this run number (999) could not be found }
+
+    FlpNotFound:
+      description: The FLP role (or, when creating, the run) does not exist.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+          example:
+            errors:
+              - { status: 404, title: Not found, detail: FLP with this id (999999999) could not be found }
 
   schemas:
     Tag:
@@ -1426,3 +1547,55 @@ components:
         data:
           type: array
           items: { $ref: '#/components/schemas/DplProcessExecution' }
+    Flp:
+      type: object
+      required: [id, runNumber, name, hostname]
+      properties:
+        id: { type: integer }
+        runNumber: { type: integer }
+        name: { type: [string, 'null'], examples: [FLP-1] }
+        hostname: { type: [string, 'null'], examples: [flp001.cern.ch] }
+        nTimeframes: { type: [integer, 'null'] }
+        rootFlpId: { type: [integer, 'null'], description: Identifier of the root FLP role; its own id when it has none. }
+        bytesProcessed: { type: [integer, 'null'] }
+        bytesEquipmentReadOut: { type: [integer, 'null'] }
+        bytesRecordingReadOut: { type: [integer, 'null'] }
+        bytesFairMQReadOut: { type: [integer, 'null'] }
+        run: { type: [object, 'null'], additionalProperties: true, description: 'Minified run, only when fetching one FLP role.' }
+    FlpResponse:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: '#/components/schemas/Flp' }
+    FlpListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Flp' }
+        meta:
+          type: object
+          properties:
+            page: { $ref: '#/components/schemas/PageMeta' }
+    CreateFlp:
+      type: object
+      required: [name, hostname, runNumber]
+      properties:
+        name: { type: string, minLength: 1 }
+        hostname: { type: string, minLength: 1 }
+        runNumber: { type: integer, minimum: 1 }
+        nTimeframes: { type: number }
+        bytesProcessed: { type: number }
+        bytesEquipmentReadOut: { type: number }
+        bytesRecordingReadOut: { type: number }
+        bytesFairMQReadOut: { type: number }
+        subtype: { type: string }
+    UpdateFlp:
+      type: object
+      properties:
+        nTimeframes: { type: integer, minimum: 0 }
+        bytesProcessed: { type: integer, minimum: 0 }
+        bytesEquipmentReadOut: { type: integer, minimum: 0 }
+        bytesRecordingReadOut: { type: integer, minimum: 0 }
+        bytesFairMQReadOut: { type: integer, minimum: 0 }
