@@ -1,6 +1,6 @@
 {
   "name": "@aliceo2/bookkeeping",
-  "version": "1.21.0",
+  "version": "1.22.0",
   "author": "ALICEO2",
   "repository": {
     "type": "git",
@@ -37,7 +37,7 @@
     "joi": "18.3.0",
     "kafkajs": "2.2.4",
     "mariadb": "3.0.0",
-    "multer": "2.4.0",
+    "multer": "2.5.0",
     "node-fetch": "3.3.2",
     "sequelize": "6.37.8",
     "umzug": "3.8.3"
