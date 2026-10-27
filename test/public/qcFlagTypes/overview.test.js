@@ -63,8 +63,8 @@ module.exports = () => {
             name: (name) => name !== '-',
             method: (method) => method !== '-',
             bad: (isBad) => isBad === 'Yes' || isBad === 'No',
-            createdAt: (date) => !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY, hh:mm:ss')),
-            updatedAt: (date) => date === '-' | !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY, hh:mm:ss')),
+            createdAt: (date) => !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY, HH:mm:ss')),
+            updatedAt: (date) => date === '-' | !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY, HH:mm:ss')),
             createdBy: (userName) => userName !== '-',
         };
 

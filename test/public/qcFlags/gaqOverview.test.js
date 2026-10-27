@@ -64,7 +64,7 @@ module.exports = () => {
 
     it('shows correct datatypes in respective columns', async () => {
         // eslint-disable-next-line require-jsdoc
-        const validateQcFlagDate = (date) => date === '-' || !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY, hh:mm:ss.SSS'));
+        const validateQcFlagDate = (date) => date === '-' || !isNaN(dateAndTime.parse(date, 'DD/MM/YYYY, HH:mm:ss.SSS'));
         const tableDataValidators = {
             generalQuality: (generalQuality) => ['good', 'bad', 'MC.R', ''].includes(generalQuality),
             from: (timestamp) => timestamp === 'Whole run coverage' || validateQcFlagDate(timestamp),
