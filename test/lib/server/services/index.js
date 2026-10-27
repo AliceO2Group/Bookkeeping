@@ -24,6 +24,7 @@ const FlpRoleSuite = require('./flpRole');
 const LhcFillSuite = require('./lhcFill');
 const LogSuite = require('./log');
 const RunSuite = require('./run/index.js');
+const AttachmentSuite = require('./attachment/index.js');
 const RunTypeSuite = require('./runType/index.js');
 const ShiftSuite = require('./shift/index.js');
 const StatisticsSuite = require('./statistics/index.js');
@@ -53,6 +54,7 @@ module.exports = () => {
     describe('GaqDetector', GaqDetectorSuite);
     describe('LHC fill suite', LhcFillSuite);
     describe('Logs', LogSuite);
+    describe('Attachment', AttachmentSuite);
     describe('RunType', RunTypeSuite);
     describe('Run', RunSuite);
     describe('Shift', ShiftSuite);

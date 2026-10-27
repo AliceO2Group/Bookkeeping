@@ -57,6 +57,8 @@ tags:
     description: Detectors whose QC flags contribute to the global aggregated quality (GAQ) of a run in a data pass.
   - name: End of shift reports
     description: End-of-shift (EoS) reports written by the shifters.
+  - name: Attachments
+    description: Files attached to log entries.
 
 paths:
   /tags:
@@ -736,6 +738,60 @@ paths:
                 errors:
                   - { status: 404, title: Not found, detail: User with this external id (1) could not be found }
 
+  /attachments:
+    post:
+      tags: [Attachments]
+      operationId: createAttachment
+      x-llm-exclude: true
+      summary: Upload a file as an attachment
+      description: |
+        Uploads **one** file (multipart request) and stores it as an attachment, linked to a log if `log` is given.
+
+        The files of a request are all written on the server, but only the first one is stored as an attachment. A request without any file is rejected with a `400`.
+        Logs and their attachments are usually created together with `POST /logs`.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema: { $ref: '#/components/schemas/CreateAttachment' }
+            example:
+              log: 1
+              attachments: '@/path/to/file.png'
+      responses:
+        '201':
+          description: The stored attachment.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/StoredAttachmentResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+
+  /attachments/{attachmentId}:
+    get:
+      tags: [Attachments]
+      operationId: getAttachmentFile
+      summary: Download the file of an attachment
+      description: Returns the content of the file, with the type of the file as `Content-Type`. Use `curl -OJ` to save it with the name given by the server.
+      parameters:
+        - name: attachmentId
+          in: path
+          required: true
+          description: Attachment identifier.
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: The file.
+          content:
+            application/octet-stream:
+              schema: { type: string, format: binary }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404':
+          description: No attachment has this id.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+              example:
+                errors: [{ status: 404, title: Not found, detail: Attachment with this id (999999999) could not be found }]
+
 components:
   securitySchemes:
     jwtQuery:
@@ -1152,3 +1208,26 @@ components:
             id: { type: integer }
             title: { type: string, description: 'Title of the report, e.g. `End of shift report - ECS - 17/03/2023 Morning`.' }
           additionalProperties: true
+    CreateAttachment:
+      type: object
+      required: [attachments]
+      properties:
+        log: { type: integer, minimum: 1, description: Identifier of the log to attach the file to. }
+        attachments: { type: string, format: binary, description: The file to upload. }
+    StoredAttachment:
+      type: object
+      description: An attachment as stored on the server.
+      properties:
+        id: { type: integer }
+        fileName: { type: string, description: Name of the file on the server (the upload time is prepended to the original name). }
+        originalName: { type: string }
+        mimeType: { type: string, examples: [image/png] }
+        encoding: { type: string, examples: [7bit] }
+        size: { type: integer, description: Size of the file in bytes. }
+        path: { type: string, description: Path of the file on the server. }
+        logId: { type: [integer, 'null'] }
+    StoredAttachmentResponse:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: '#/components/schemas/StoredAttachment' }
