@@ -952,10 +952,10 @@ module.exports.expectLink = async (element, selector, { href, innerText }) => {
 /**
  * Validate date string against given format
  * @param {string} date date (time) string
- * @param {string} [format = 'DD/MM/YYYY hh:mm:ss'] format to validate against
+ * @param {string} [format = 'DD/MM/YYYY HH:mm:ss'] format to validate against
  * @return {boolean} true if format is correct, false otherwise
  */
-module.exports.validateDate = (date, format = 'DD/MM/YYYY hh:mm:ss') => !isNaN(dateAndTime.parse(date, format));
+module.exports.validateDate = (date, format = 'DD/MM/YYYY HH:mm:ss') => !isNaN(dateAndTime.parse(date, format));
 
 /**
  * Return the selector for all the inputs composing a period inputs
