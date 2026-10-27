@@ -22,12 +22,14 @@ const {
     expectUrlParams,
     waitForNavigation,
     waitForTableLength,
+    waitForEmptyTable,
     getPopoverSelector,
     goToPage,
     openFilteringPanel,
     fillInput,
     getPeriodInputsSelectors,
     expectAttributeValue,
+    expectInputValue,
     resetFilters,
 } = require('../defaults.js');
 const dateAndTime = require('date-and-time');
@@ -301,6 +303,10 @@ module.exports = () => {
         await expectAttributeValue(page, '.id-filter input', 'placeholder', 'e.g. CmCvjNbg, TDI59So3d...');
         await expectAttributeValue(page, '.runs-filter input', 'placeholder', 'e.g. 553203, 553221, ...');
         await expectAttributeValue(page, '.historyItems-filter input', 'placeholder', 'e.g. D-R-X');
+        await expectAttributeValue(page, '#rawConfiguration-key', 'placeholder', 'e.g. hosts');
+        await expectAttributeValue(page, '#rawConfiguration-value', 'placeholder', 'Search anywhere in the configuration');
+        // The raw configuration column is only displayed when filtering on a key
+        expect(await page.$('#rowTDI59So3d-rawConfiguration')).to.be.null;
 
         // range of runNumbers
         await fillInput(page, '.runs-filter input', '103-104', ['change']);
@@ -318,9 +324,45 @@ module.exports = () => {
         await fillInput(page, fromDateTimeSelector, '2019-08-09T00:00', ['change']);
         await fillInput(page, toDateTimeSelector, '2019-08-10T23:59', ['change']);
 
+        // Typing a key switches the value placeholder from the free-text search, without applying the filter
+        await fillInput(page, '#rawConfiguration-key', 'hosts', ['input']);
+        await page.waitForSelector('#rawConfiguration-value[placeholder="e.g. some-host"]');
+
+        await fillInput(page, '#rawConfiguration-key', 'hosts', ['change']);
+        await expectInnerText(page, '#rowTDI59So3d-rawConfiguration', '["fake-flp3"]');
+
+        // Go through an empty result first, otherwise the expected single row is already displayed before the filter applies
+        await fillInput(page, '#rawConfiguration-value', 'fake-flp1', ['change']);
+        await waitForEmptyTable(page, 5000);
+        await fillInput(page, '#rawConfiguration-value', 'fake-flp3', ['change']);
         await waitForTableLength(page, 1);
         expect(await page.$$eval('tbody tr', (rows) => rows.map((row) => row.id))).to.eql(['rowTDI59So3d']);
 
         await resetFilters(page);
+    });
+
+    it('should keep the raw configuration value and search it anywhere when the key is cleared', async () => {
+        await goToPage(page, 'env-overview');
+        await openFilteringPanel(page);
+
+        // No host contains ITS, but the detectors of CmCvjNbg do
+        await fillInput(page, '#rawConfiguration-key', 'hosts', ['change']);
+        await fillInput(page, '#rawConfiguration-value', 'ITS', ['change']);
+        await waitForEmptyTable(page, 5000);
+
+        await fillInput(page, '#rawConfiguration-key', '', ['change']);
+        await page.waitForSelector('tbody tr#rowCmCvjNbg');
+        await expectInputValue(page, '#rawConfiguration-value', 'ITS');
+        expect(await page.$('#rowCmCvjNbg-rawConfiguration')).to.be.null;
+    });
+
+    it('should search a raw configuration value without key from the URL anywhere in the configuration', async () => {
+        await goToPage(page, 'env-overview', { queryParameters: { filter: { rawConfiguration: { value: 'fake-flp3' } } } });
+        await openFilteringPanel(page);
+
+        await expectInputValue(page, '#rawConfiguration-key', '');
+        await expectInputValue(page, '#rawConfiguration-value', 'fake-flp3');
+        await page.waitForSelector('tbody tr#rowTDI59So3d');
+        await waitForTableLength(page, 1);
     });
 };
