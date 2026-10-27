@@ -646,3 +646,95 @@ Responses:
 ```bash
 curl -g -OJ "$BOOKKEEPING_URL/api/attachments/1?token=$TOKEN"
 ```
+
+## DPL processes
+
+Processes of the data processing layer (DPL) executed during the runs, by detector, process and host.
+
+### `GET /dpl-process/detectors` - List the detectors having an executed process in a run
+
+Operation id: `listDplDetectorsWithExecutedProcesses`
+
+Returns the detectors that have at least one executed DPL process in the run, sorted by name. Not paginated. This is the first level of the
+run details tree of DPL processes: detector, then process (`/dpl-process/processes`), then host (`/dpl-process/hosts`), then executions
+(`/dpl-process/executions`).
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `runNumber` | query | integer | yes | Run number. |
+
+Responses:
+
+- `200`: The detectors.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: The run, the detector, the process or the host does not exist.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/dpl-process/detectors?runNumber=106&token=$TOKEN"
+```
+
+### `GET /dpl-process/processes` - List the processes executed for a detector in a run
+
+Operation id: `listDplProcessesExecutedForDetector`
+
+Returns the DPL processes that have been executed at least once in the run for the detector, sorted by name, with their type. Not paginated.
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `runNumber` | query | integer | yes | Run number. |
+| `detectorId` | query | integer | yes | Identifier of the detector (the detectors of `GET /detectors`). |
+
+Responses:
+
+- `200`: The processes.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: The run, the detector, the process or the host does not exist.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/dpl-process/processes?runNumber=106&detectorId=1&token=$TOKEN"
+```
+
+### `GET /dpl-process/hosts` - List the hosts on which a process was executed for a detector in a run
+
+Operation id: `listHostsExecutingDplProcess`
+
+Returns the hosts on which the DPL process has been executed at least once in the run for the detector, sorted by host name. Not paginated.
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `runNumber` | query | integer | yes | Run number. |
+| `detectorId` | query | integer | yes | Identifier of the detector (the detectors of `GET /detectors`). |
+| `processId` | query | integer | yes | Identifier of the DPL process. |
+
+Responses:
+
+- `200`: The hosts.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: The run, the detector, the process or the host does not exist.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/dpl-process/hosts?runNumber=106&detectorId=1&processId=1&token=$TOKEN"
+```
+
+### `GET /dpl-process/executions` - List the executions of a process on a host for a detector in a run
+
+Operation id: `listDplProcessExecutions`
+
+Returns the executions of the DPL process on the host in the run for the detector. Not paginated.
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `runNumber` | query | integer | yes | Run number. |
+| `detectorId` | query | integer | yes | Identifier of the detector (the detectors of `GET /detectors`). |
+| `processId` | query | integer | yes | Identifier of the DPL process. |
+| `hostId` | query | integer | yes | Host identifier. |
+
+Responses:
+
+- `200`: The executions.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: The run, the detector, the process or the host does not exist.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/dpl-process/executions?runNumber=106&detectorId=1&processId=1&hostId=1&token=$TOKEN"
+```

@@ -1160,6 +1160,180 @@ Logs and their attachments are usually created together with <code>POST /logs</c
 <pre><code class="language-bash">curl -g -OJ &quot;$BOOKKEEPING_URL/api/attachments/1?token=$TOKEN&quot;
 </code></pre>
 </details>
+<h2>DPL processes</h2>
+<p>Processes of the data processing layer (DPL) executed during the runs, by detector, process and host.</p>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/dpl-process/detectors</code> - List the detectors having an executed process in a run</h3></summary>
+
+<p>Operation id: <code>listDplDetectorsWithExecutedProcesses</code></p>
+<p>Returns the detectors that have at least one executed DPL process in the run, sorted by name. Not paginated. This is the first level of the
+run details tree of DPL processes: detector, then process (<code>/dpl-process/processes</code>), then host (<code>/dpl-process/hosts</code>), then executions
+(<code>/dpl-process/executions</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>runNumber</code></td>
+<td>query</td>
+<td>integer</td>
+<td>yes</td>
+<td>Run number.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The detectors.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: The run, the detector, the process or the host does not exist.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/dpl-process/detectors?runNumber=106&amp;token=$TOKEN&quot;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/dpl-process/processes</code> - List the processes executed for a detector in a run</h3></summary>
+
+<p>Operation id: <code>listDplProcessesExecutedForDetector</code></p>
+<p>Returns the DPL processes that have been executed at least once in the run for the detector, sorted by name, with their type. Not paginated.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>runNumber</code></td>
+<td>query</td>
+<td>integer</td>
+<td>yes</td>
+<td>Run number.</td>
+</tr>
+<tr>
+<td><code>detectorId</code></td>
+<td>query</td>
+<td>integer</td>
+<td>yes</td>
+<td>Identifier of the detector (the detectors of <code>GET /detectors</code>).</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The processes.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: The run, the detector, the process or the host does not exist.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/dpl-process/processes?runNumber=106&amp;detectorId=1&amp;token=$TOKEN&quot;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/dpl-process/hosts</code> - List the hosts on which a process was executed for a detector in a run</h3></summary>
+
+<p>Operation id: <code>listHostsExecutingDplProcess</code></p>
+<p>Returns the hosts on which the DPL process has been executed at least once in the run for the detector, sorted by host name. Not paginated.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>runNumber</code></td>
+<td>query</td>
+<td>integer</td>
+<td>yes</td>
+<td>Run number.</td>
+</tr>
+<tr>
+<td><code>detectorId</code></td>
+<td>query</td>
+<td>integer</td>
+<td>yes</td>
+<td>Identifier of the detector (the detectors of <code>GET /detectors</code>).</td>
+</tr>
+<tr>
+<td><code>processId</code></td>
+<td>query</td>
+<td>integer</td>
+<td>yes</td>
+<td>Identifier of the DPL process.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The hosts.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: The run, the detector, the process or the host does not exist.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/dpl-process/hosts?runNumber=106&amp;detectorId=1&amp;processId=1&amp;token=$TOKEN&quot;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/dpl-process/executions</code> - List the executions of a process on a host for a detector in a run</h3></summary>
+
+<p>Operation id: <code>listDplProcessExecutions</code></p>
+<p>Returns the executions of the DPL process on the host in the run for the detector. Not paginated.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>runNumber</code></td>
+<td>query</td>
+<td>integer</td>
+<td>yes</td>
+<td>Run number.</td>
+</tr>
+<tr>
+<td><code>detectorId</code></td>
+<td>query</td>
+<td>integer</td>
+<td>yes</td>
+<td>Identifier of the detector (the detectors of <code>GET /detectors</code>).</td>
+</tr>
+<tr>
+<td><code>processId</code></td>
+<td>query</td>
+<td>integer</td>
+<td>yes</td>
+<td>Identifier of the DPL process.</td>
+</tr>
+<tr>
+<td><code>hostId</code></td>
+<td>query</td>
+<td>integer</td>
+<td>yes</td>
+<td>Host identifier.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The executions.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: The run, the detector, the process or the host does not exist.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/dpl-process/executions?runNumber=106&amp;detectorId=1&amp;processId=1&amp;hostId=1&amp;token=$TOKEN&quot;
+</code></pre>
+</details>
 
 </main>
 <footer>Generated from openapi.yaml by <code>npm run docs:api</code> · ALICE Bookkeeping · internal use only</footer>
