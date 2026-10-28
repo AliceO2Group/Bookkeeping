@@ -436,3 +436,41 @@ Responses:
 ```bash
 curl -g "$BOOKKEEPING_URL/api/simulationPasses/1?token=$TOKEN"
 ```
+
+## Templates
+
+Presentation templates, each an ordered list of content modules, read by the ALICE Insights generation service.
+
+### `GET /templates` - List presentation templates
+
+Operation id: `listTemplates`
+
+Returns the presentation templates ordered by title, without their modules. Not paginated: there are few templates. Pagination parameters
+are rejected.
+
+Responses:
+
+- `200`: The templates.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/templates?token=$TOKEN"
+```
+
+### `GET /templates/{templateId}` - Get a presentation template by id, with its modules
+
+Operation id: `getTemplate`
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `templateId` | path | integer | yes | Template identifier. |
+
+Responses:
+
+- `200`: The template, with its modules in presentation order.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: No template has this id.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/templates/1?token=$TOKEN"
+```
