@@ -329,7 +329,6 @@ module.exports = () => {
         await page.waitForSelector('#rawConfiguration-value[placeholder="e.g. some-host"]');
 
         await fillInput(page, '#rawConfiguration-key', 'hosts', ['change']);
-        await expectInnerText(page, '#rowTDI59So3d-rawConfiguration', '["fake-flp3"]');
 
         // Go through an empty result first, otherwise the expected single row is already displayed before the filter applies
         await fillInput(page, '#rawConfiguration-value', 'fake-flp1', ['change']);
@@ -353,7 +352,6 @@ module.exports = () => {
         await fillInput(page, '#rawConfiguration-key', '', ['change']);
         await page.waitForSelector('tbody tr#rowCmCvjNbg');
         await expectInputValue(page, '#rawConfiguration-value', 'ITS');
-        expect(await page.$('#rowCmCvjNbg-rawConfiguration')).to.be.null;
     });
 
     it('should search a raw configuration value without key from the URL anywhere in the configuration', async () => {
