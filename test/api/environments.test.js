@@ -272,6 +272,84 @@ module.exports = () => {
             const rangeError = errors.find((err) => err.source.pointer === '/data/attributes/query/filter/runNumbers');
             expect(rangeError.detail).to.equal('Invalid range: -105');
         });
+
+        it('should successfully filter environments by a key in the raw configuration', async () => {
+            const response = await request(server).get('/api/environments?filter[rawConfiguration][key]=hosts');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(2);
+            expect(environments.map(({ id }) => id)).to.include.members(['CmCvjNbg', 'TDI59So3d']);
+        });
+
+        it('should return 400 if length of rawConfiguration key exceeds 256 characters', async () => {
+            const longKey = 'a'.repeat(257);
+            const response = await request(server).get(`/api/environments?filter[rawConfiguration][key]=${longKey}`);
+
+            expect(response.status).to.equal(400);
+        });
+
+        it('should return 400 if length of rawConfiguration value exceeds 1000 characters', async () => {
+            const longValue = 'a'.repeat(1001);
+            const response = await request(server)
+                .get(`/api/environments?filter[rawConfiguration][key]=hosts&filter[rawConfiguration][value]=${longValue}`);
+
+            expect(response.status).to.equal(400);
+        });
+
+        it('should return the same results when filtering raw configuration value with escaped and plain quotes', async () => {
+            // Search with plain quotes: ["fake-flp3"]
+            const plainResponse = await request(server)
+                .get(`/api/environments?filter[rawConfiguration][key]=hosts&filter[rawConfiguration][value]=${encodeURIComponent('["fake-flp3"]')}`);
+
+            // Search with escaped quotes: [\"fake-flp3\"]
+            const escapedResponse = await request(server)
+                .get(`/api/environments?filter[rawConfiguration][key]=hosts&filter[rawConfiguration][value]=${encodeURIComponent('[\\"fake-flp3\\"]')}`);
+
+            expect(plainResponse.status).to.equal(200);
+            expect(escapedResponse.status).to.equal(200);
+
+            const plainEnvs = plainResponse.body.data;
+            const escapedEnvs = escapedResponse.body.data;
+
+            expect(plainEnvs.length).to.be.equal(1);
+            expect(plainEnvs[0].id).to.equal('TDI59So3d');
+
+            expect(escapedEnvs.length).to.be.equal(1);
+            expect(escapedEnvs[0].id).to.equal('TDI59So3d');
+        });
+
+        it('should filter raw configuration value with array brackets and quotes', async () => {
+            const response = await request(server)
+                .get('/api/environments?filter[rawConfiguration][key]=hosts&filter[rawConfiguration][value]=["fake-flp1", "fake-flp2"]');
+
+            expect(response.status).to.equal(200);
+            const environments = response.body.data;
+            expect(environments.length).to.be.equal(1);
+            expect(environments[0].id).to.equal('CmCvjNbg');
+        });
+
+        it('should search a raw configuration value without key anywhere in the configuration', async () => {
+            const response = await request(server).get('/api/environments?filter[rawConfiguration][value]=fake-flp3');
+
+            expect(response.status).to.equal(200);
+            expect(response.body.data.map(({ id }) => id)).to.have.members(['TDI59So3d']);
+        });
+
+        it('should find a raw configuration fragment copied from the environment details page', async () => {
+            // The details page displays values JSON-serialized, e.g. "[\"fake-flp1\", \"fake-flp2\"]"
+            const response = await request(server)
+                .get(`/api/environments?filter[rawConfiguration][value]=${encodeURIComponent('\\"fake-flp1\\", \\"fake-flp2')}`);
+
+            expect(response.status).to.equal(200);
+            expect(response.body.data.map(({ id }) => id)).to.have.members(['CmCvjNbg']);
+        });
+
+        it('should return 400 if the raw configuration filter has an empty key and no value', async () => {
+            const response = await request(server).get('/api/environments?filter[rawConfiguration][key]=');
+
+            expect(response.status).to.equal(400);
+        });
     });
     describe('POST /api/environments', () => {
         it('should return 201 if valid data is provided', async () => {
