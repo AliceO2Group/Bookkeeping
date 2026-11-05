@@ -303,10 +303,8 @@ module.exports = () => {
         await expectAttributeValue(page, '.id-filter input', 'placeholder', 'e.g. CmCvjNbg, TDI59So3d...');
         await expectAttributeValue(page, '.runs-filter input', 'placeholder', 'e.g. 553203, 553221, ...');
         await expectAttributeValue(page, '.historyItems-filter input', 'placeholder', 'e.g. D-R-X');
-        await expectAttributeValue(page, '#rawConfiguration-key', 'placeholder', 'e.g. hosts');
+        await expectInnerText(page, '.rawConfiguration-filter .dropdown-trigger', 'Any key');
         await expectAttributeValue(page, '#rawConfiguration-value', 'placeholder', 'Search anywhere in the configuration');
-        // The raw configuration column is only displayed when filtering on a key
-        expect(await page.$('#rowTDI59So3d-rawConfiguration')).to.be.null;
 
         // range of runNumbers
         await fillInput(page, '.runs-filter input', '103-104', ['change']);
@@ -324,11 +322,12 @@ module.exports = () => {
         await fillInput(page, fromDateTimeSelector, '2019-08-09T00:00', ['change']);
         await fillInput(page, toDateTimeSelector, '2019-08-10T23:59', ['change']);
 
-        // Typing a key switches the value placeholder from the free-text search, without applying the filter
-        await fillInput(page, '#rawConfiguration-key', 'hosts', ['input']);
-        await page.waitForSelector('#rawConfiguration-value[placeholder="e.g. some-host"]');
-
-        await fillInput(page, '#rawConfiguration-key', 'hosts', ['change']);
+        // The keys are searchable, and selecting one changes the value placeholder to make more sense
+        await pressElement(page, '.rawConfiguration-filter .dropdown-trigger');
+        await fillInput(page, '#rawConfiguration-key-dropdown-search-input', 'HOST');
+        await page.waitForSelector('#rawConfiguration-key-dropdown-option-run_type', { hidden: true });
+        await pressElement(page, '#rawConfiguration-key-dropdown-option-hosts', true);
+        await page.waitForSelector('#rawConfiguration-value[placeholder="e.g. host.123@flp.ch"]');
 
         // Go through an empty result first, otherwise the expected single row is already displayed before the filter applies
         await fillInput(page, '#rawConfiguration-value', 'fake-flp1', ['change']);
@@ -345,22 +344,33 @@ module.exports = () => {
         await openFilteringPanel(page);
 
         // No host contains ITS, but the detectors of CmCvjNbg do
-        await fillInput(page, '#rawConfiguration-key', 'hosts', ['change']);
+        await pressElement(page, '.rawConfiguration-filter .dropdown-trigger');
+        await pressElement(page, '#rawConfiguration-key-dropdown-option-hosts', true);
         await fillInput(page, '#rawConfiguration-value', 'ITS', ['change']);
         await waitForEmptyTable(page, 5000);
 
-        await fillInput(page, '#rawConfiguration-key', '', ['change']);
+        // Deselecting the key so should search the value anywhere
+        await page.waitForSelector('#rawConfiguration-key-dropdown-option-hosts:checked');
+        await pressElement(page, '#rawConfiguration-key-dropdown-option-hosts', true);
         await page.waitForSelector('tbody tr#rowCmCvjNbg');
-        await expectInputValue(page, '#rawConfiguration-value', 'ITS');
     });
 
     it('should search a raw configuration value without key from the URL anywhere in the configuration', async () => {
         await goToPage(page, 'env-overview', { queryParameters: { filter: { rawConfiguration: { value: 'fake-flp3' } } } });
         await openFilteringPanel(page);
 
-        await expectInputValue(page, '#rawConfiguration-key', '');
+        await expectInnerText(page, '.rawConfiguration-filter .dropdown-trigger', 'Any key');
         await expectInputValue(page, '#rawConfiguration-value', 'fake-flp3');
         await page.waitForSelector('tbody tr#rowTDI59So3d');
         await waitForTableLength(page, 1);
+    });
+
+    it('should select a raw configuration key from the URL once the keys are loaded', async () => {
+        await goToPage(page, 'env-overview', { queryParameters: { filter: { rawConfiguration: { key: 'hosts', value: 'fake-flp' } } } });
+        await openFilteringPanel(page);
+
+        await expectInnerText(page, '.rawConfiguration-filter .dropdown-trigger', 'hosts');
+        await page.waitForSelector('tbody tr#rowTDI59So3d');
+        await page.waitForSelector('tbody tr#rowCmCvjNbg');
     });
 };
