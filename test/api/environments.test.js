@@ -351,6 +351,17 @@ module.exports = () => {
             expect(response.status).to.equal(400);
         });
     });
+    describe('GET /api/environments/configurationKeys', () => {
+        it('should successfully return a 200 response containing the distinct keys of the environments\' raw configurations', async () => {
+            const response = await request(server).get('/api/environments/configurationKeys');
+            expect(response.status).to.equal(200);
+
+            const { data } = response.body;
+            expect(data).to.include.members(['ccdb_enabled', 'dcs_enabled', 'detectors', 'hosts', 'run_type']);
+            expect(data).to.eql([...new Set(data)]);
+        });
+    });
+
     describe('POST /api/environments', () => {
         it('should return 201 if valid data is provided', async () => {
             const response = await request(server).post('/api/environments').send({
