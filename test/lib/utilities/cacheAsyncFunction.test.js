@@ -73,6 +73,38 @@ module.exports = () => {
         expect(fake.callCount).to.equal(2);
     });
 
+    it('should not cache a rejecting function when cacheRejections is false', async () => {
+        const fake = sinon.fake();
+        let shouldReject = true;
+
+        const sometimesRejects = async (value) => {
+            fake();
+            if (shouldReject) {
+                throw new Error(value);
+            }
+            return value;
+        };
+        const cachedSometimesRejects = cacheAsyncFunction(sometimesRejects, { cacheRejections: false });
+
+        await assert.rejects(
+            () => cachedSometimesRejects(0),
+            new Error(0),
+        );
+        await assert.rejects(
+            () => cachedSometimesRejects(0),
+            new Error(0),
+        );
+
+        expect(fake.callCount).to.equal(2);
+
+        shouldReject = false;
+
+        expect(await cachedSometimesRejects(0)).to.equal(0);
+        expect(await cachedSometimesRejects(0)).to.equal(0);
+
+        expect(fake.callCount).to.equal(3);
+    });
+
     it('should successfully delete function call when cache overflows', async () => {
         const fake = sinon.fake();
         // eslint-disable-next-line jsdoc/require-param
