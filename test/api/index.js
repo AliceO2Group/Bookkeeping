@@ -21,6 +21,7 @@ const FlpSuite = require('./flps.test.js');
 const StatusSuite = require('./status.test.js');
 const LogsSuite = require('./logs.test.js');
 const LhcFillSuite = require('./lhcFills.test.js');
+const PresentationsSuite = require('./presentations.test.js');
 const RunsSuite = require('./runs.test.js');
 const RunTypesSuite = require('./runTypes.test.js');
 const ShiftSuite = require('./shift.test.js');
@@ -47,6 +48,7 @@ module.exports = () => {
     describe('GaqDetectors API', GaqDetectorsSuite);
     describe('LhcFills API', LhcFillSuite);
     describe('Logs API', LogsSuite);
+    describe('Presentations API', PresentationsSuite);
     describe('Runs API', RunsSuite);
     describe('RunsWithRunId API', RunsWithRunId);
     describe('RunTypes API', RunTypesSuite);

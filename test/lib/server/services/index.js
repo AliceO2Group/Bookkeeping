@@ -23,6 +23,7 @@ const EosReportSuite = require('./eosReport/index.js');
 const FlpRoleSuite = require('./flpRole');
 const LhcFillSuite = require('./lhcFill');
 const LogSuite = require('./log');
+const PresentationGenerationSuite = require('./presentation/generatePresentation.test.js');
 const RunSuite = require('./run/index.js');
 const RunTypeSuite = require('./runType/index.js');
 const ShiftSuite = require('./shift/index.js');
@@ -54,6 +55,7 @@ module.exports = () => {
     describe('GaqDetector', GaqDetectorSuite);
     describe('LHC fill suite', LhcFillSuite);
     describe('Logs', LogSuite);
+    describe('Presentation generation', PresentationGenerationSuite);
     describe('RunType', RunTypeSuite);
     describe('Run', RunSuite);
     describe('Shift', ShiftSuite);
