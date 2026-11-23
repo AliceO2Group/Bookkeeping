@@ -864,6 +864,13 @@ label {
     }
 }
 
+/* Tighten the tabs so the full navbar fits on laptop-width screens. */
+@media screen and (min-width: 1280px) and (max-width: 1439px) {
+    .navbar-links .btn {
+        padding-inline: 0.625rem;
+    }
+}
+
 /* runs and LHC fills overviews: labels of the timing lines have the same width so that the times are aligned, and digits have a fixed width */
 .timing-label {
     min-width: 2.8em;
