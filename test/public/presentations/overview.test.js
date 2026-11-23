@@ -93,6 +93,14 @@ module.exports = () => {
         await page.waitForSelector(`${GENERATE_BUTTON}:disabled`);
     });
 
+    it('keeps the create button fully visible with the Presentations tab on a laptop', async () => {
+        await goToPage(page, 'presentations');
+        await page.waitForSelector('#presentations.selected');
+        await page.waitForFunction(() => Array.from(document.querySelectorAll('.navbar-links a')).some(({ textContent }) => textContent === 'ALI FLP'));
+        const isWithinViewport = await page.$eval('#create-menu-button', (button) => button.getBoundingClientRect().right <= window.innerWidth);
+        expect(isWithinViewport).to.be.true;
+    });
+
     it('shows a spinner until the selected template and period are available as a download', async () => {
         await preparePresentation();
         const request = await startGeneration();
