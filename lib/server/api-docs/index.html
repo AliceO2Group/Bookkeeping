@@ -64,7 +64,7 @@ footer { max-width: 62rem; margin: 0 auto; padding: 1rem; color: var(--gray-dark
 <p>Every request carries a JWT in the <code>token</code> <strong>query parameter</strong> (e.g. <code>GET /api/tags?token=&lt;jwt&gt;</code>).
 The token&#39;s <code>access</code> claim lists the user&#39;s roles; operations marked with a role below return <code>403</code> otherwise.</p>
 <h2>Response envelope</h2>
-<p>Successful responses are <code>{ &quot;data&quot;: ... }</code>, with <code>meta.page</code> added on paginated endpoints.
+<p>Successful JSON responses are <code>{ &quot;data&quot;: ... }</code>, with <code>meta.page</code> added on paginated endpoints. The generation endpoint returns a PDF attachment.
 Failed responses are <code>{ &quot;errors&quot;: [ { status, title, detail?, source? } ] }</code>.
 Note that request-validation failures are sent with <strong>HTTP 400</strong> while each error&#39;s <code>status</code> field says <code>&quot;422&quot;</code>.</p>
 <h2>Conventions</h2>
@@ -804,6 +804,63 @@ are rejected.</p>
 <li><code>404</code>: No template has this id.</li>
 </ul>
 <pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/templates/1?token=$TOKEN&quot;
+</code></pre>
+</details>
+<h2>Presentations</h2>
+<p>On-demand PDF generation for signed-in Bookkeeping users.</p>
+<details>
+<summary><h3><span class="method post">POST</span> <code>/presentations</code> - Generate a presentation PDF</h3></summary>
+
+<p>Operation id: <code>generatePresentation</code></p>
+<p>Generates a PDF from a template and reporting period. Bookkeeping uses the authenticated user&#39;s name as the author and forwards
+their token to ALICE Insights. The reporting period includes its start and excludes its end.</p>
+<p>Request body (JSON):</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>templateId</code></td>
+<td>integer</td>
+<td>yes</td>
+<td>The ID returned by GET /templates.</td>
+</tr>
+<tr>
+<td><code>from</code></td>
+<td>integer</td>
+<td>yes</td>
+<td>Inclusive start in Unix milliseconds.</td>
+</tr>
+<tr>
+<td><code>to</code></td>
+<td>integer</td>
+<td>yes</td>
+<td>Exclusive end in Unix milliseconds. Must be greater than from.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: PDF attachment. The Content-Disposition header contains the filename.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>401</code>: A valid Bookkeeping user session is required.</li>
+<li><code>422</code>: ALICE Insights rejected the template or period.</li>
+<li><code>502</code>: The generation service could not return a PDF.</li>
+<li><code>503</code>: Generation is unavailable or busy. A busy response can include Retry-After in seconds.</li>
+<li><code>504</code>: The generation service took too long to return a PDF.</li>
+</ul>
+<p><strong>PowerShell 7+</strong></p>
+<pre><code class="language-powershell">Invoke-WebRequest -Uri &quot;$env:BOOKKEEPING_URL/api/presentations?token=$env:TOKEN&quot; -Method POST -ContentType &#39;application/json&#39; -Body &#39;{&quot;templateId&quot;:1,&quot;from&quot;:1794783600000,&quot;to&quot;:1795388400000}&#39; -OutFile presentation.pdf
+</code></pre>
+<p><strong>Linux/Bash</strong></p>
+<pre><code class="language-bash">curl -g --fail -X POST &quot;$BOOKKEEPING_URL/api/presentations?token=$TOKEN&quot; \
+  -H &#39;content-type: application/json&#39; \
+  -d &#39;{&quot;templateId&quot;:1,&quot;from&quot;:1794783600000,&quot;to&quot;:1795388400000}&#39; \
+  --output presentation.pdf
 </code></pre>
 </details>
 
