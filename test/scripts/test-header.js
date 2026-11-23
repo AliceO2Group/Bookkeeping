@@ -13,9 +13,11 @@
 
 const { useApplication } = require('../utilities/useApplication.js');
 const HeaderSuite = require('../public/header');
+const PresentationsSuite = require('../public/presentations/overview.test.js');
 
 describe('Bookkeeping', () => {
     useApplication();
 
     describe('Header', HeaderSuite);
+    describe('Presentations page', PresentationsSuite);
 });
