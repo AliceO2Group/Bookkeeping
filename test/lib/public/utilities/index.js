@@ -11,10 +11,12 @@
  *  or submit itself to any jurisdiction.
  */
 
+const DateUtilsSuite = require('./dateUtils.test.js');
 const FormattingSuite = require('./formatting/index.js');
 const FilterOutLegacyDetectorsForNewerPeriodsSuite = require('./filterOutLegacyDetectorsForNewerPeriods.test.js');
 
 module.exports = () => {
+    describe('DateUtils', DateUtilsSuite);
     describe('FormattingSuite', FormattingSuite);
     describe('FilterOutLegacyDetectorsForNewerPeriods', FilterOutLegacyDetectorsForNewerPeriodsSuite);
 };

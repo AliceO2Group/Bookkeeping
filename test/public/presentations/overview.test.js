@@ -145,4 +145,27 @@ module.exports = () => {
         await page.waitForSelector(DOWNLOAD_LINK, { hidden: true });
         await page.waitForSelector(`${GENERATE_BUTTON}:enabled`);
     });
+
+    it('keeps the period when the week of the period picker is emptied', async () => {
+        await preparePresentation();
+        const first = await startGeneration();
+        const period = JSON.parse(await first.fetchPostData());
+        await first.respond({ status: 503, contentType: 'application/json', body: JSON.stringify({ errors: [] }) });
+        await page.waitForSelector(`${GENERATE_BUTTON}:enabled`);
+
+        const popoverSelector = await getPopoverSelector(await page.$(PERIOD_TRIGGER));
+        const weekInput = `${popoverSelector} input[type="number"]`;
+        await pressElement(page, PERIOD_TRIGGER);
+        await page.waitForSelector(weekInput, { visible: true });
+        await page.$eval(weekInput, (input) => {
+            input.value = '';
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        await pressElement(page, PERIOD_TRIGGER);
+
+        const second = await startGeneration();
+        expect(JSON.parse(await second.fetchPostData())).to.deep.equal(period);
+        await second.respond({ status: 503, contentType: 'application/json', body: JSON.stringify({ errors: [] }) });
+        await page.waitForSelector(`${GENERATE_BUTTON}:enabled`);
+    });
 };
