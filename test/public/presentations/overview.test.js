@@ -27,6 +27,9 @@ const {
 
 const FROM = '2026-11-16T00:00';
 const TO = '2026-11-23T00:00';
+// Geneva is one hour ahead of UTC in November
+const GENEVA_OFFSET = '+01:00';
+const WEEK = 7 * 24 * 60 * 60 * 1000;
 const PERIOD_TRIGGER = '#presentation-period .popover-trigger';
 const GENERATE_BUTTON = '#generate-presentation';
 const GENERATION_STATUS = '#presentation-generation-status';
@@ -44,7 +47,8 @@ module.exports = () => {
         await resetDatabaseContent();
         [page, browser] = await defaultBefore();
         await page.setViewport({ width: 1280, height: 800 });
-        await page.emulateTimezone('UTC');
+        // The period is in Geneva time whatever the time zone of the browser, so the browser gets another one
+        await page.emulateTimezone('America/New_York');
         await page.setRequestInterception(true);
         page.on('request', (request) => {
             if (!isGenerationRequest(request)) {
@@ -57,7 +61,7 @@ module.exports = () => {
         await defaultAfter(page, browser);
     });
 
-    const preparePresentation = async () => {
+    const preparePresentation = async (from = FROM, to = TO) => {
         await goToPage(page, 'presentations');
         await page.waitForSelector('#presentation-template option[value="1"]');
         await page.select('#presentation-template', '1');
@@ -70,7 +74,7 @@ module.exports = () => {
             fromInput.dispatchEvent(new Event('change', { bubbles: true }));
             toInput.value = to;
             toInput.dispatchEvent(new Event('change', { bubbles: true }));
-        }, FROM, TO);
+        }, from, to);
         await pressElement(page, PERIOD_TRIGGER);
         await page.waitForSelector(`${GENERATE_BUTTON}:enabled`);
     };
@@ -109,8 +113,8 @@ module.exports = () => {
         await page.waitForSelector(`${GENERATE_BUTTON}:disabled`);
         expect(JSON.parse(await request.fetchPostData())).to.eql({
             templateId: 1,
-            from: Date.parse(`${FROM}Z`),
-            to: Date.parse(`${TO}Z`),
+            from: Date.parse(`${FROM}${GENEVA_OFFSET}`),
+            to: Date.parse(`${TO}${GENEVA_OFFSET}`),
         });
 
         await request.respond({
@@ -128,6 +132,58 @@ module.exports = () => {
         } finally {
             await unlink(file);
         }
+    });
+
+    it('says that the period is in Geneva time', async () => {
+        await goToPage(page, 'presentations');
+        await expectInnerText(page, '#presentation-period-time-zone', '(Geneva time)');
+    });
+
+    it('requests a predefined week from Monday to Monday in Geneva time', async () => {
+        await goToPage(page, 'presentations');
+        await page.waitForSelector('#presentation-template option[value="1"]');
+        await page.select('#presentation-template', '1');
+        const popoverSelector = await getPopoverSelector(await page.$(PERIOD_TRIGGER));
+        const weekInput = `${popoverSelector} input[type="number"]`;
+        await pressElement(page, PERIOD_TRIGGER);
+        await page.waitForSelector(weekInput, { visible: true });
+        // Week 47 is in November in every year, when the clocks do not change
+        await page.$eval(weekInput, (input) => {
+            input.value = '47';
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        await pressElement(page, PERIOD_TRIGGER);
+        await page.waitForSelector(`${GENERATE_BUTTON}:enabled`);
+
+        const request = await startGeneration();
+        const { from, to } = JSON.parse(await request.fetchPostData());
+        const genevaClock = new Intl.DateTimeFormat('en-GB', {
+            timeZone: 'Europe/Zurich',
+            weekday: 'long',
+            hour: '2-digit',
+            minute: '2-digit',
+            hourCycle: 'h23',
+        });
+        expect(genevaClock.format(new Date(from))).to.equal('Monday 00:00');
+        expect(to - from).to.equal(WEEK);
+        await request.respond({ status: 503, contentType: 'application/json', body: JSON.stringify({ errors: [] }) });
+        await page.waitForSelector(`${GENERATE_BUTTON}:enabled`);
+    });
+
+    it('discards a finished presentation when another template is chosen', async () => {
+        await preparePresentation();
+        const request = await startGeneration();
+        await request.respond({
+            status: 200,
+            contentType: 'application/pdf',
+            headers: { 'Content-Disposition': `attachment; filename="${FILENAME}"` },
+            body: PDF,
+        });
+        await page.waitForSelector(DOWNLOAD_LINK);
+
+        await page.select('#presentation-template', '2');
+        await page.waitForSelector(DOWNLOAD_LINK, { hidden: true });
+        await page.waitForSelector(`${GENERATE_BUTTON}:enabled`);
     });
 
     it('shows the reason generation failed and lets the user retry', async () => {
@@ -167,5 +223,60 @@ module.exports = () => {
         expect(JSON.parse(await second.fetchPostData())).to.deep.equal(period);
         await second.respond({ status: 503, contentType: 'application/json', body: JSON.stringify({ errors: [] }) });
         await page.waitForSelector(`${GENERATE_BUTTON}:enabled`);
+    });
+    for (const [direction, zone, from, to, expected] of [
+        ['forward', 'Pacific/Auckland', '2026-03-29T01:30', '2026-03-30T00:00', { from: Date.UTC(2026, 2, 29, 0, 30), to: Date.UTC(2026, 2, 29, 22) }],
+        ['back', 'America/New_York', '2026-10-25T01:30', '2026-10-26T00:00', { from: Date.UTC(2026, 9, 24, 23, 30), to: Date.UTC(2026, 9, 25, 23) }],
+    ]) {
+        it(`requests the period in Geneva time on the day the clocks go ${direction}, with a browser in ${zone}`, async () => {
+            await page.emulateTimezone(zone);
+            try {
+                await preparePresentation(from, to);
+                const request = await startGeneration();
+                expect(JSON.parse(await request.fetchPostData())).to.include(expected);
+                await request.respond({ status: 503, contentType: 'application/json', body: JSON.stringify({ errors: [] }) });
+                await page.waitForSelector(`${GENERATE_BUTTON}:enabled`);
+            } finally {
+                await page.emulateTimezone('America/New_York');
+            }
+        });
+    }
+
+    it('discards a finished presentation when another period is chosen', async () => {
+        await preparePresentation();
+        const request = await startGeneration();
+        await request.respond({
+            status: 200,
+            contentType: 'application/pdf',
+            headers: { 'Content-Disposition': `attachment; filename="${FILENAME}"` },
+            body: PDF,
+        });
+        await page.waitForSelector(DOWNLOAD_LINK);
+
+        const popoverSelector = await getPopoverSelector(await page.$(PERIOD_TRIGGER));
+        const fromInput = `${popoverSelector} input[type="datetime-local"]`;
+        await pressElement(page, PERIOD_TRIGGER);
+        await page.waitForSelector(fromInput, { visible: true });
+        await page.$eval(fromInput, (input) => {
+            input.value = '2026-11-17T00:00';
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        await page.waitForSelector(DOWNLOAD_LINK, { hidden: true });
+        await pressElement(page, PERIOD_TRIGGER);
+        await page.waitForSelector(`${GENERATE_BUTTON}:enabled`);
+    });
+
+    it('discards the reason generation failed when another template is chosen', async () => {
+        await preparePresentation();
+        const request = await startGeneration();
+        await request.respond({
+            status: 503,
+            contentType: 'application/json',
+            body: JSON.stringify({ errors: [{ status: 503, title: 'Generation busy', detail: 'Try again shortly.' }] }),
+        });
+        await page.waitForSelector('#presentation-generation-error');
+
+        await page.select('#presentation-template', '2');
+        await page.waitForSelector('#presentation-generation-error', { hidden: true });
     });
 };
