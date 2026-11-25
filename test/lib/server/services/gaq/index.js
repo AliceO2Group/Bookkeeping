@@ -11,8 +11,13 @@
  * or submit itself to any jurisdiction.
  */
 
+const { resetDatabaseContent } = require('../../../../utilities/resetDatabaseContent.js');
 const GaqDetectorServiceSuite = require('./GaqDetectorService.test.js');
+const GaqDetectorsQueriesSuite = require('./gaqDetectorsQueries.test.js');
 
 module.exports = () => {
+    after(resetDatabaseContent);
+
     describe('GaqDetectorService', GaqDetectorServiceSuite);
+    describe('GAQ detectors small functions', GaqDetectorsQueriesSuite);
 };

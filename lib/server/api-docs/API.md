@@ -491,3 +491,60 @@ Responses:
 ```bash
 curl -g "$BOOKKEEPING_URL/api/lhcPeriodsStatistics/1?token=$TOKEN"
 ```
+
+## GAQ detectors
+
+Detectors whose QC flags contribute to the global aggregated quality (GAQ) of a run in a data pass.
+
+### `GET /gaqDetectors` - List the detectors contributing to the GAQ of a run in a data pass
+
+Operation id: `listGaqDetectors`
+
+Returns the detectors whose QC flags contribute to the global aggregated quality (GAQ) of a run in a data pass, sorted by name. Not paginated.
+The list is empty when no detector is set for this run and data pass, **or when the run or the data pass does not exist** (never `404`).
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `dataPassId` | query | integer | yes | Data pass identifier. |
+| `runNumber` | query | integer | yes | Run number. |
+
+Responses:
+
+- `200`: The detectors.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/gaqDetectors?dataPassId=3&runNumber=56&token=$TOKEN"
+```
+
+### `POST /gaqDetectors` - Set the detectors contributing to the GAQ of runs in a data pass (not for LLM use)
+
+Operation id: `setGaqDetectors`
+
+Requires the role `admin` or `gaq`. For each given run, replaces the detectors contributing to the GAQ in the data pass by the given ones.
+Every run must be linked to the data pass and have every given detector.
+
+**Not meant for LLM or MCP tool use** (`x-llm-exclude`).
+
+**Required role:** `admin`, `gaq`
+
+Request body (JSON):
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `dataPassId` | integer | yes |  |
+| `runNumbers` | array | yes | Run numbers of the runs to update, without duplicates. |
+| `detectorIds` | array | yes | Ids of the detectors contributing to the GAQ, without duplicates. |
+
+Responses:
+
+- `201`: The created associations between runs and detectors, one per run and detector.
+- `400`: The request failed validation (see the validation errors format), **or** a run is not linked to the data pass, a detector does not exist or a run does not have a given detector. In these last cases the error has `title: Service unavailable` and the reason in `detail`.
+- `403`: The token lacks the role required by this operation.
+- `404`: The data pass does not exist.
+
+```bash
+curl -g -X POST "$BOOKKEEPING_URL/api/gaqDetectors?token=$TOKEN" \
+  -H 'content-type: application/json' \
+  -d '{"dataPassId":3,"runNumbers":[49,56],"detectorIds":[4,7]}'
+```

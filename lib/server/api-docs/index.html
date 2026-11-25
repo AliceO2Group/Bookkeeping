@@ -896,6 +896,96 @@ parameters are rejected.</p>
 <pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/lhcPeriodsStatistics/1?token=$TOKEN&quot;
 </code></pre>
 </details>
+<h2>GAQ detectors</h2>
+<p>Detectors whose QC flags contribute to the global aggregated quality (GAQ) of a run in a data pass.</p>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/gaqDetectors</code> - List the detectors contributing to the GAQ of a run in a data pass</h3></summary>
+
+<p>Operation id: <code>listGaqDetectors</code></p>
+<p>Returns the detectors whose QC flags contribute to the global aggregated quality (GAQ) of a run in a data pass, sorted by name. Not paginated.
+The list is empty when no detector is set for this run and data pass, <strong>or when the run or the data pass does not exist</strong> (never <code>404</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>dataPassId</code></td>
+<td>query</td>
+<td>integer</td>
+<td>yes</td>
+<td>Data pass identifier.</td>
+</tr>
+<tr>
+<td><code>runNumber</code></td>
+<td>query</td>
+<td>integer</td>
+<td>yes</td>
+<td>Run number.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The detectors.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/gaqDetectors?dataPassId=3&amp;runNumber=56&amp;token=$TOKEN&quot;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method post">POST</span> <code>/gaqDetectors</code> - Set the detectors contributing to the GAQ of runs in a data pass <span class="no-llm" title="Changes data: not meant for LLM or MCP tool use (x-llm-exclude)">not for LLM use</span></h3></summary>
+
+<p>Operation id: <code>setGaqDetectors</code></p>
+<p>Requires the role <code>admin</code> or <code>gaq</code>. For each given run, replaces the detectors contributing to the GAQ in the data pass by the given ones.
+Every run must be linked to the data pass and have every given detector.</p>
+<p><strong>Not meant for LLM or MCP tool use</strong> (<code>x-llm-exclude</code>).</p>
+<p><strong>Required role:</strong> <code>admin</code>, <code>gaq</code></p>
+<p>Request body (JSON):</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>dataPassId</code></td>
+<td>integer</td>
+<td>yes</td>
+<td></td>
+</tr>
+<tr>
+<td><code>runNumbers</code></td>
+<td>array</td>
+<td>yes</td>
+<td>Run numbers of the runs to update, without duplicates.</td>
+</tr>
+<tr>
+<td><code>detectorIds</code></td>
+<td>array</td>
+<td>yes</td>
+<td>Ids of the detectors contributing to the GAQ, without duplicates.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>201</code>: The created associations between runs and detectors, one per run and detector.</li>
+<li><code>400</code>: The request failed validation (see the validation errors format), <strong>or</strong> a run is not linked to the data pass, a detector does not exist or a run does not have a given detector. In these last cases the error has <code>title: Service unavailable</code> and the reason in <code>detail</code>.</li>
+<li><code>403</code>: The token lacks the role required by this operation.</li>
+<li><code>404</code>: The data pass does not exist.</li>
+</ul>
+<pre><code class="language-bash">curl -g -X POST &quot;$BOOKKEEPING_URL/api/gaqDetectors?token=$TOKEN&quot; \
+  -H &#39;content-type: application/json&#39; \
+  -d &#39;{&quot;dataPassId&quot;:3,&quot;runNumbers&quot;:[49,56],&quot;detectorIds&quot;:[4,7]}&#39;
+</code></pre>
+</details>
 
 </main>
 <footer>Generated from openapi.yaml by <code>npm run docs:api</code> · ALICE Bookkeeping · internal use only</footer>

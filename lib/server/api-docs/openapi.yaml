@@ -53,6 +53,8 @@ tags:
     description: Monte Carlo simulation productions.
   - name: LHC periods statistics
     description: LHC periods with statistics on their physics runs.
+  - name: GAQ detectors
+    description: Detectors whose QC flags contribute to the global aggregated quality (GAQ) of a run in a data pass.
 
 paths:
   /tags:
@@ -606,6 +608,84 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/ErrorResponse' }
 
+  /gaqDetectors:
+    get:
+      tags: [GAQ detectors]
+      operationId: listGaqDetectors
+      summary: List the detectors contributing to the GAQ of a run in a data pass
+      description: |
+        Returns the detectors whose QC flags contribute to the global aggregated quality (GAQ) of a run in a data pass, sorted by name. Not paginated.
+        The list is empty when no detector is set for this run and data pass, **or when the run or the data pass does not exist** (never `404`).
+      parameters:
+        - name: dataPassId
+          in: query
+          required: true
+          description: Data pass identifier.
+          schema: { type: integer, minimum: 1, examples: [3] }
+        - name: runNumber
+          in: query
+          required: true
+          description: Run number.
+          schema: { type: integer, minimum: 1, examples: [56] }
+      responses:
+        '200':
+          description: The detectors.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DetectorListResponse' }
+              example:
+                data:
+                  - { id: 7, name: FT0, type: PHYSICAL }
+                  - { id: 4, name: ITS, type: PHYSICAL }
+        '400': { $ref: '#/components/responses/ValidationError' }
+    post:
+      tags: [GAQ detectors]
+      operationId: setGaqDetectors
+      x-llm-exclude: true
+      x-required-roles: [admin, gaq]
+      summary: Set the detectors contributing to the GAQ of runs in a data pass
+      description: |
+        Requires the role `admin` or `gaq`. For each given run, replaces the detectors contributing to the GAQ in the data pass by the given ones.
+        Every run must be linked to the data pass and have every given detector.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SetGaqDetectors' }
+            example:
+              dataPassId: 3
+              runNumbers: [49, 56]
+              detectorIds: [4, 7]
+      responses:
+        '201':
+          description: The created associations between runs and detectors, one per run and detector.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GaqDetectorEntriesResponse' }
+              example:
+                data:
+                  - { dataPassId: 3, runNumber: 49, detectorId: 4 }
+                  - { dataPassId: 3, runNumber: 49, detectorId: 7 }
+        '400':
+          description: |
+            The request failed validation (see the validation errors format), **or** a run is not linked to the data pass, a detector does not exist or
+            a run does not have a given detector. In these last cases the error has `title: Service unavailable` and the reason in `detail`.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+              example:
+                errors:
+                  - { status: 400, title: Service unavailable, detail: 'No association between data pass with id 3 and following runs: 1' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404':
+          description: The data pass does not exist.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+              example:
+                errors:
+                  - { status: 404, title: Not found, detail: Data pass with this id (99999) could not be found }
+
 components:
   securitySchemes:
     jwtQuery:
@@ -936,3 +1016,32 @@ components:
           type: array
           items: { $ref: '#/components/schemas/LhcPeriodStatistics' }
         meta: { $ref: '#/components/schemas/PageMeta' }
+    SetGaqDetectors:
+      type: object
+      required: [dataPassId, runNumbers, detectorIds]
+      properties:
+        dataPassId: { type: integer, minimum: 1 }
+        runNumbers:
+          type: array
+          description: Run numbers of the runs to update, without duplicates.
+          uniqueItems: true
+          items: { type: integer, minimum: 1 }
+        detectorIds:
+          type: array
+          description: Ids of the detectors contributing to the GAQ, without duplicates.
+          uniqueItems: true
+          items: { type: integer, minimum: 1 }
+    GaqDetectorEntry:
+      type: object
+      required: [dataPassId, runNumber, detectorId]
+      properties:
+        dataPassId: { type: integer }
+        runNumber: { type: integer }
+        detectorId: { type: integer }
+    GaqDetectorEntriesResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/GaqDetectorEntry' }
