@@ -30,7 +30,7 @@ const ShiftSuite = require('./shift/index.js');
 const StatisticsSuite = require('./statistics/index.js');
 const StatusSuite = require('./status/index.js');
 const TagSuite = require('./tag/index.js');
-const TemplateSuite = require('./template/index.js');
+const PresentationTemplateSuite = require('./presentationTemplate/index.js');
 const LhcPeriodSuite = require('./lhcPeriod');
 const DataPassesSuite = require('./dataPasses/index.js');
 const UserSuite = require('./user/index.js');
@@ -62,7 +62,7 @@ module.exports = () => {
     describe('Statistics', StatisticsSuite);
     describe('Status', StatusSuite);
     describe('Tag', TagSuite);
-    describe('Template', TemplateSuite);
+    describe('PresentationTemplate', PresentationTemplateSuite);
     describe('LhcPeriod', LhcPeriodSuite);
     describe('User', UserSuite);
     describe('DataPasses', DataPassesSuite);

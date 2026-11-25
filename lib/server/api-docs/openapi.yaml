@@ -51,7 +51,7 @@ tags:
     description: Data used to fill end-of-shift reports.
   - name: Simulation passes
     description: Monte Carlo simulation productions.
-  - name: Templates
+  - name: Presentation templates
     description: Presentation templates, each an ordered list of content modules, read by the ALICE Insights generation service.
 
   - name: Presentations
@@ -527,20 +527,20 @@ paths:
                 errors:
                   - { status: 404, title: Not found, detail: Simulation pass with this id (99999) could not be found }
 
-  /templates:
+  /presentationTemplates:
     get:
-      tags: [Templates]
-      operationId: listTemplates
+      tags: [Presentation templates]
+      operationId: listPresentationTemplates
       summary: List presentation templates
       description: |
-        Returns the presentation templates ordered by title, without their modules. Not paginated: there are few templates. Pagination parameters
+        Returns the presentation templates ordered by title, without their modules. Not paginated: there are few presentation templates. Pagination parameters
         are rejected.
       responses:
         '200':
-          description: The templates.
+          description: The presentation templates.
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/TemplateListResponse' }
+              schema: { $ref: '#/components/schemas/PresentationTemplateListResponse' }
               example:
                 data:
                   - id: 2
@@ -549,23 +549,23 @@ paths:
                     description: A short summary of the LHC fills of the period and how efficiently their stable beams were used.
         '400': { $ref: '#/components/responses/ValidationError' }
 
-  /templates/{templateId}:
+  /presentationTemplates/{presentationTemplateId}:
     get:
-      tags: [Templates]
-      operationId: getTemplate
+      tags: [Presentation templates]
+      operationId: getPresentationTemplate
       summary: Get a presentation template by id, with its modules
       parameters:
-        - name: templateId
+        - name: presentationTemplateId
           in: path
           required: true
-          description: Template identifier.
+          description: Presentation template identifier.
           schema: { type: integer, minimum: 1 }
       responses:
         '200':
-          description: The template, with its modules in presentation order.
+          description: The presentation template, with its modules in presentation order.
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/TemplateResponse' }
+              schema: { $ref: '#/components/schemas/PresentationTemplateResponse' }
               example:
                 data:
                   id: 2
@@ -573,18 +573,18 @@ paths:
                   title: LHC Fill Summary
                   description: A short summary of the LHC fills of the period and how efficiently their stable beams were used.
                   modules:
-                    - { position: 0, type: title-slide, title: LHC Fill Summary, options: {} }
-                    - { position: 1, type: fill-calendar, title: Fills and runs, options: { run_definitions: [PHYSICS] } }
-                    - { position: 2, type: fill-efficiency, title: Fill efficiencies, options: { run_definitions: [PHYSICS] } }
+                    - { position: 0, type: title-slide, title: LHC Fill Summary }
+                    - { position: 1, type: fill-calendar, title: Fills and runs }
+                    - { position: 2, type: fill-efficiency, title: Fill efficiencies }
         '400': { $ref: '#/components/responses/ValidationError' }
         '404':
-          description: No template has this id.
+          description: No presentation template has this id.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ErrorResponse' }
               example:
                 errors:
-                  - { status: 404, title: Not found, detail: Template with this id (999999) could not be found }
+                  - { status: 404, title: Not found, detail: Presentation template with this id (999999) could not be found }
 
   /presentations:
     post:
@@ -604,7 +604,7 @@ paths:
               additionalProperties: false
               required: [templateId, from, to]
               properties:
-                templateId: { type: integer, minimum: 1, description: The ID returned by GET /templates. }
+                templateId: { type: integer, minimum: 1, description: The ID returned by GET /presentationTemplates. }
                 from: { type: integer, minimum: 0, description: Inclusive start in Unix milliseconds. }
                 to: { type: integer, minimum: 0, description: Exclusive end in Unix milliseconds. Must be greater than from. }
             example: { templateId: 1, from: 1794783600000, to: 1795388400000 }
@@ -925,35 +925,34 @@ components:
           type: array
           items: { $ref: '#/components/schemas/SimulationPass' }
         meta: { $ref: '#/components/schemas/PageMeta' }
-    TemplateModule:
+    PresentationTemplateModule:
       type: object
-      required: [position, type, title, options]
+      required: [position, type, title]
       properties:
         position: { type: integer, description: 'Position of the module in the presentation, starting at 0.' }
         type: { type: string, description: 'Type of the module, as known by the generation service, e.g. `fill-efficiency`.' }
         title: { type: string, nullable: true, description: Title of the module's slides. }
-        options: { type: object, additionalProperties: true, description: Settings of the module. }
-    Template:
+    PresentationTemplate:
       type: object
       required: [id, name, title, description]
       properties:
         id: { type: integer }
-        name: { type: string, description: 'Unique name of the template, e.g. `run-manager-weekly-report`.' }
+        name: { type: string, description: 'Unique name of the presentation template, e.g. `run-manager-weekly-report`.' }
         title: { type: string, description: Title of the presentations made with the template. }
         description: { type: string, nullable: true }
         modules:
           type: array
-          description: Modules in presentation order. Only returned when getting a single template.
-          items: { $ref: '#/components/schemas/TemplateModule' }
-    TemplateResponse:
+          description: Modules in presentation order. Only returned when getting a single presentation template.
+          items: { $ref: '#/components/schemas/PresentationTemplateModule' }
+    PresentationTemplateResponse:
       type: object
       required: [data]
       properties:
-        data: { $ref: '#/components/schemas/Template' }
-    TemplateListResponse:
+        data: { $ref: '#/components/schemas/PresentationTemplate' }
+    PresentationTemplateListResponse:
       type: object
       required: [data]
       properties:
         data:
           type: array
-          items: { $ref: '#/components/schemas/Template' }
+          items: { $ref: '#/components/schemas/PresentationTemplate' }

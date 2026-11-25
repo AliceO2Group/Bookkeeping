@@ -437,42 +437,42 @@ Responses:
 curl -g "$BOOKKEEPING_URL/api/simulationPasses/1?token=$TOKEN"
 ```
 
-## Templates
+## Presentation templates
 
 Presentation templates, each an ordered list of content modules, read by the ALICE Insights generation service.
 
-### `GET /templates` - List presentation templates
+### `GET /presentationTemplates` - List presentation templates
 
-Operation id: `listTemplates`
+Operation id: `listPresentationTemplates`
 
-Returns the presentation templates ordered by title, without their modules. Not paginated: there are few templates. Pagination parameters
+Returns the presentation templates ordered by title, without their modules. Not paginated: there are few presentation templates. Pagination parameters
 are rejected.
 
 Responses:
 
-- `200`: The templates.
+- `200`: The presentation templates.
 - `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
 
 ```bash
-curl -g "$BOOKKEEPING_URL/api/templates?token=$TOKEN"
+curl -g "$BOOKKEEPING_URL/api/presentationTemplates?token=$TOKEN"
 ```
 
-### `GET /templates/{templateId}` - Get a presentation template by id, with its modules
+### `GET /presentationTemplates/{presentationTemplateId}` - Get a presentation template by id, with its modules
 
-Operation id: `getTemplate`
+Operation id: `getPresentationTemplate`
 
 | Parameter | In | Type | Required | Notes |
 | --- | --- | --- | --- | --- |
-| `templateId` | path | integer | yes | Template identifier. |
+| `presentationTemplateId` | path | integer | yes | Presentation template identifier. |
 
 Responses:
 
-- `200`: The template, with its modules in presentation order.
+- `200`: The presentation template, with its modules in presentation order.
 - `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
-- `404`: No template has this id.
+- `404`: No presentation template has this id.
 
 ```bash
-curl -g "$BOOKKEEPING_URL/api/templates/1?token=$TOKEN"
+curl -g "$BOOKKEEPING_URL/api/presentationTemplates/1?token=$TOKEN"
 ```
 
 ## Presentations
@@ -490,7 +490,7 @@ Request body (JSON):
 
 | Field | Type | Required | Notes |
 | --- | --- | --- | --- |
-| `templateId` | integer | yes | The ID returned by GET /templates. |
+| `templateId` | integer | yes | The ID returned by GET /presentationTemplates. |
 | `from` | integer | yes | Inclusive start in Unix milliseconds. |
 | `to` | integer | yes | Exclusive end in Unix milliseconds. Must be greater than from. |
 

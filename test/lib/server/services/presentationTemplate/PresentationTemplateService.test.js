@@ -11,28 +11,28 @@
  * or submit itself to any jurisdiction.
  */
 
-const { templateService } = require('../../../../../lib/server/services/template/TemplateService.js');
+const { presentationTemplateService } = require('../../../../../lib/server/services/presentationTemplate/PresentationTemplateService.js');
 const { NotFoundError } = require('../../../../../lib/server/errors/NotFoundError.js');
 const { expect } = require('chai');
 
 module.exports = () => {
-    it('should successfully return all the templates sorted by title, without their modules', async () => {
-        const templates = await templateService.getAll();
+    it('should successfully return all the presentation templates sorted by title, without their modules', async () => {
+        const templates = await presentationTemplateService.getAll();
 
         expect(templates.map(({ title }) => title)).to.eql(['LHC Fill Summary', 'Run Manager Weekly Report']);
         templates.forEach((template) => expect(template).to.not.have.property('modules'));
     });
 
-    it('should successfully return a template by id with its modules in presentation order', async () => {
-        const template = await templateService.getOneOrFail(2);
+    it('should successfully return a presentation template by id with its modules in presentation order', async () => {
+        const template = await presentationTemplateService.getOneOrFail(2);
 
         expect(template.name).to.equal('lhc-fill-summary');
         expect(template.modules.map(({ type }) => type)).to.eql(['title-slide', 'fill-calendar', 'fill-efficiency']);
     });
 
-    it('should fail with a not found error when the template does not exist', async () => {
-        const error = await templateService.getOneOrFail(999999).catch((error) => error);
+    it('should fail with a not found error when the presentation template does not exist', async () => {
+        const error = await presentationTemplateService.getOneOrFail(999999).catch((error) => error);
         expect(error).to.be.instanceOf(NotFoundError);
-        expect(error.message).to.equal('Template with this id (999999) could not be found');
+        expect(error.message).to.equal('Presentation template with this id (999999) could not be found');
     });
 };

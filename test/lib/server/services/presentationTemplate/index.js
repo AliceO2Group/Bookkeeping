@@ -11,16 +11,8 @@
  * or submit itself to any jurisdiction.
  */
 
-const Joi = require('joi');
+const PresentationTemplateServiceTest = require('./PresentationTemplateService.test.js');
 
-const QueryDto = Joi.object({
-    token: Joi.string(),
-});
-
-const GetAllTemplatesDto = Joi.object({
-    body: Joi.object({}),
-    params: Joi.object({}),
-    query: QueryDto,
-});
-
-module.exports = GetAllTemplatesDto;
+module.exports = () => {
+    describe('PresentationTemplateService', PresentationTemplateServiceTest);
+};

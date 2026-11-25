@@ -19,9 +19,9 @@ const { resetDatabaseContent } = require('../utilities/resetDatabaseContent.js')
 module.exports = () => {
     before(resetDatabaseContent);
 
-    describe('GET /api/templates', () => {
-        it('should return all the templates sorted by title, without their modules', async () => {
-            const response = await request(server).get('/api/templates');
+    describe('GET /api/presentationTemplates', () => {
+        it('should return all the presentation templates sorted by title, without their modules', async () => {
+            const response = await request(server).get('/api/presentationTemplates');
             expect(response.status).to.equal(200);
 
             const { data: templates, meta } = response.body;
@@ -31,14 +31,14 @@ module.exports = () => {
         });
 
         it('should return 400 if a pagination parameter is given', async () => {
-            const response = await request(server).get('/api/templates?page[limit]=1');
+            const response = await request(server).get('/api/presentationTemplates?page[limit]=1');
             expect(response.status).to.equal(400);
         });
     });
 
-    describe('GET /api/templates/:templateId', () => {
-        it('should return the template with its modules in presentation order', async () => {
-            const response = await request(server).get('/api/templates/1');
+    describe('GET /api/presentationTemplates/:presentationTemplateId', () => {
+        it('should return the presentation template with its modules in presentation order', async () => {
+            const response = await request(server).get('/api/presentationTemplates/1');
             expect(response.status).to.equal(200);
 
             const { data: template } = response.body;
@@ -51,24 +51,24 @@ module.exports = () => {
                 [3, 'running-time'],
                 [4, 'eor-reasons'],
             ]);
-            expect(template.modules[1].options).to.eql({ run_definitions: ['PHYSICS'] });
+            template.modules.forEach((module) => expect(Object.keys(module)).to.have.members(['position', 'type', 'title']));
         });
 
-        it('should return 404 if the template does not exist', async () => {
-            const response = await request(server).get('/api/templates/999999');
+        it('should return 404 if the presentation template does not exist', async () => {
+            const response = await request(server).get('/api/presentationTemplates/999999');
             expect(response.status).to.equal(404);
             expect(response.body.errors).to.eql([
-                { status: 404, title: 'Not found', detail: 'Template with this id (999999) could not be found' },
+                { status: 404, title: 'Not found', detail: 'Presentation template with this id (999999) could not be found' },
             ]);
         });
 
-        it('should return 400 if the template id is not positive', async () => {
-            const response = await request(server).get('/api/templates/-1');
+        it('should return 400 if the presentation template id is not positive', async () => {
+            const response = await request(server).get('/api/presentationTemplates/-1');
             expect(response.status).to.equal(400);
 
             const { errors } = response.body;
-            const idError = errors.find((error) => error.source.pointer === '/data/attributes/params/templateId');
-            expect(idError.detail).to.equal('"params.templateId" must be a positive number');
+            const idError = errors.find((error) => error.source.pointer === '/data/attributes/params/presentationTemplateId');
+            expect(idError.detail).to.equal('"params.presentationTemplateId" must be a positive number');
         });
     });
 };
