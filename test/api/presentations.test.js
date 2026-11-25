@@ -26,6 +26,11 @@ const PRESENTATION = {
     to: Date.UTC(2026, 10, 23),
 };
 const PDF_BYTES = Buffer.from('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n%%EOF\n', 'latin1');
+const GENERATION_FAILED = {
+    status: 502,
+    title: 'Generation failed',
+    detail: 'The generation service could not return a PDF. Try again later.',
+};
 
 module.exports = () => {
     let token;
@@ -123,27 +128,42 @@ module.exports = () => {
         generationResponse = {
             status: 503,
             headers: { 'Content-Type': 'application/json', 'Retry-After': '10' },
-            body: JSON.stringify({ detail: 'Another presentation is being made.' }),
+            body: JSON.stringify({ detail: 'A presentation is being made. Try again when it is done.' }),
         };
         const response = await generate(PRESENTATION);
         expect(response.status).to.equal(503);
         expect(response.headers['retry-after']).to.equal('10');
-        expect(response.body.errors[0]).to.include({ status: 503 });
-        expect(response.body.errors[0].detail).to.be.a('string').and.not.to.be.empty;
+        expect(response.body.errors).to.eql([
+            { status: 503, title: 'Generation busy', detail: 'A presentation is being made. Try again when it is done.' },
+        ]);
     });
 
-    it('reports a rejected template without passing through upstream internals', async () => {
-        generationResponse = {
-            status: 422,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ detail: 'Internal generator error details' }),
-        };
-        const response = await generate({ ...PRESENTATION, templateId: 999999 });
-        expect(response.status).to.equal(422);
-        expect(response.body.errors[0]).to.include({ status: 422 });
-        expect(response.body.errors[0].detail).to.be.a('string').and.not.to.be.empty;
-        expect(response.text).not.to.include('Internal generator error details');
-    });
+    for (const [status, title, detail] of [
+        [401, 'Session expired', 'Bookkeeping rejected your user token. Sign in to Bookkeeping again.'],
+        [422, 'Invalid presentation', 'The template has no modules.'],
+        [502, 'Data unavailable', 'Bookkeeping could not provide the data for this presentation.'],
+    ]) {
+        it(`passes on the sentence with which the generator explains a ${status}`, async () => {
+            generationResponse = { status, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ detail }) };
+            const response = await generate(PRESENTATION);
+            expect(response.status).to.equal(status);
+            expect(response.body.errors).to.eql([{ status, title, detail }]);
+        });
+    }
+
+    for (const [answer, body] of [
+        ['without a sentence', JSON.stringify({ errors: ['Not a sentence of the generator'] })],
+        ['that is not JSON', 'Not a sentence of the generator'],
+    ]) {
+        it(`explains an error in its own words for an answer ${answer}`, async () => {
+            generationResponse = { status: 422, headers: { 'Content-Type': 'application/json' }, body };
+            const response = await generate(PRESENTATION);
+            expect(response.status).to.equal(422);
+            expect(response.body.errors).to.eql([
+                { status: 422, title: 'Invalid presentation', detail: 'Check the selected template and period and try again.' },
+            ]);
+        });
+    }
 
     it('reports a non-PDF response as a generation service failure', async () => {
         generationResponse = {
@@ -154,5 +174,28 @@ module.exports = () => {
         const response = await generate(PRESENTATION);
         expect(response.status).to.equal(502);
         expect(response.headers['content-disposition']).to.be.undefined;
+    });
+
+    it('reports a PDF response that holds no PDF as a generation service failure', async () => {
+        generationResponse = {
+            status: 200,
+            headers: { 'Content-Type': 'application/pdf' },
+            body: '<html>Not a PDF</html>',
+        };
+        const response = await generate(PRESENTATION);
+        expect(response.status).to.equal(502);
+        expect(response.headers['content-disposition']).to.be.undefined;
+        expect(response.body.errors).to.eql([GENERATION_FAILED]);
+    });
+
+    it('reports an answer with a status the generator does not use as a generation service failure', async () => {
+        generationResponse = {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ detail: 'Internal Server Error' }),
+        };
+        const response = await generate(PRESENTATION);
+        expect(response.status).to.equal(502);
+        expect(response.body.errors).to.eql([GENERATION_FAILED]);
     });
 };

@@ -619,7 +619,7 @@ paths:
               schema: { type: string, format: binary }
         '400': { $ref: '#/components/responses/ValidationError' }
         '401': { description: A valid Bookkeeping user session is required. }
-        '422': { description: ALICE Insights rejected the template or period. }
+        '422': { description: 'ALICE Insights rejected the template or period. The detail of this and every other error of ALICE Insights is the sentence with which it explains why.' }
         '502': { description: The generation service could not return a PDF. }
         '503':
           description: Generation is unavailable or busy. A busy response can include Retry-After in seconds.

@@ -499,7 +499,7 @@ Responses:
 - `200`: PDF attachment. The Content-Disposition header contains the filename.
 - `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
 - `401`: A valid Bookkeeping user session is required.
-- `422`: ALICE Insights rejected the template or period.
+- `422`: ALICE Insights rejected the template or period. The detail of this and every other error of ALICE Insights is the sentence with which it explains why.
 - `502`: The generation service could not return a PDF.
 - `503`: Generation is unavailable or busy. A busy response can include Retry-After in seconds.
 - `504`: The generation service took too long to return a PDF.

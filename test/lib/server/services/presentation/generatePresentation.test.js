@@ -53,4 +53,16 @@ module.exports = () => {
             detail: 'The generation service took too long to finish. Try again later.',
         });
     });
+
+    it('reports when the generator cannot be reached', async () => {
+        ServicesConfig.aliceInsights.url = 'http://127.0.0.1';
+        fetchStub.rejects(new TypeError('fetch failed', { cause: { code: 'ECONNREFUSED' } }));
+
+        const result = await generatePresentation(SELECTION, 'John Doe', 'test-token');
+        expect(result).to.deep.equal({
+            status: 502,
+            title: 'Generation failed',
+            detail: 'The generation service could not return a PDF. Try again later.',
+        });
+    });
 };

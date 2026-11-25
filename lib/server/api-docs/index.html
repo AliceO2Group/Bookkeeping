@@ -848,7 +848,7 @@ their token to ALICE Insights. The reporting period includes its start and exclu
 <li><code>200</code>: PDF attachment. The Content-Disposition header contains the filename.</li>
 <li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
 <li><code>401</code>: A valid Bookkeeping user session is required.</li>
-<li><code>422</code>: ALICE Insights rejected the template or period.</li>
+<li><code>422</code>: ALICE Insights rejected the template or period. The detail of this and every other error of ALICE Insights is the sentence with which it explains why.</li>
 <li><code>502</code>: The generation service could not return a PDF.</li>
 <li><code>503</code>: Generation is unavailable or busy. A busy response can include Retry-After in seconds.</li>
 <li><code>504</code>: The generation service took too long to return a PDF.</li>
