@@ -97,6 +97,13 @@ module.exports = () => {
         await page.waitForSelector(`${GENERATE_BUTTON}:disabled`);
     });
 
+    it('explains which fills and runs a presentation covers', async () => {
+        await goToPage(page, 'presentations');
+        const explanation = await page.$eval('#presentations-explanation', ({ innerText }) => innerText);
+        expect(explanation).to.include('every LHC fill with stable beams in the period');
+        expect(explanation).to.include('with all its PHYSICS runs');
+    });
+
     it('keeps the create button fully visible with the Presentations tab on a laptop', async () => {
         await goToPage(page, 'presentations');
         await page.waitForSelector('#presentations.selected');
