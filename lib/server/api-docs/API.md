@@ -10,7 +10,7 @@ Every request carries a JWT in the `token` **query parameter** (e.g. `GET /api/t
 The token's `access` claim lists the user's roles; operations marked with a role below return `403` otherwise.
 
 ## Response envelope
-Successful responses are `{ "data": ... }`, with `meta.page` added on paginated endpoints.
+Successful JSON responses are `{ "data": ... }`, with `meta.page` added on paginated endpoints. The generation endpoint returns a PDF attachment.
 Failed responses are `{ "errors": [ { status, title, detail?, source? } ] }`.
 Note that request-validation failures are sent with **HTTP 400** while each error's `status` field says `"422"`.
 
@@ -435,4 +435,86 @@ Responses:
 
 ```bash
 curl -g "$BOOKKEEPING_URL/api/simulationPasses/1?token=$TOKEN"
+```
+
+## Presentation templates
+
+Presentation templates, each an ordered list of content modules, read by the ALICE Insights generation service.
+
+### `GET /presentationTemplates` - List presentation templates
+
+Operation id: `listPresentationTemplates`
+
+Returns the presentation templates ordered by title, without their modules. Not paginated: there are few presentation templates. Pagination parameters
+are rejected.
+
+Responses:
+
+- `200`: The presentation templates.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/presentationTemplates?token=$TOKEN"
+```
+
+### `GET /presentationTemplates/{presentationTemplateId}` - Get a presentation template by id, with its modules
+
+Operation id: `getPresentationTemplate`
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `presentationTemplateId` | path | integer | yes | Presentation template identifier. |
+
+Responses:
+
+- `200`: The presentation template, with its modules in presentation order.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: No presentation template has this id.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/presentationTemplates/1?token=$TOKEN"
+```
+
+## Presentations
+
+On-demand PDF generation for signed-in Bookkeeping users.
+
+### `POST /presentations` - Generate a presentation PDF
+
+Operation id: `generatePresentation`
+
+Generates a PDF from a template and reporting period. Bookkeeping uses the authenticated user's name as the author and forwards
+their token to ALICE Insights. The reporting period includes its start and excludes its end.
+
+Request body (JSON):
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `templateId` | integer | yes | The ID returned by GET /presentationTemplates. |
+| `from` | integer | yes | Inclusive start in Unix milliseconds. |
+| `to` | integer | yes | Exclusive end in Unix milliseconds. Must be greater than from. |
+
+Responses:
+
+- `200`: PDF attachment. The Content-Disposition header contains the filename.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `401`: A valid Bookkeeping user session is required.
+- `422`: ALICE Insights rejected the template or period. The detail of this and every other error of ALICE Insights is the sentence with which it explains why.
+- `502`: The generation service could not return a PDF.
+- `503`: Generation is unavailable or busy. A busy response can include Retry-After in seconds.
+- `504`: The generation service took too long to return a PDF.
+
+**PowerShell 7+**
+
+```powershell
+Invoke-WebRequest -Uri "$env:BOOKKEEPING_URL/api/presentations?token=$env:TOKEN" -Method POST -ContentType 'application/json' -Body '{"templateId":1,"from":1794783600000,"to":1795388400000}' -OutFile presentation.pdf
+```
+
+**Linux/Bash**
+
+```bash
+curl -g --fail -X POST "$BOOKKEEPING_URL/api/presentations?token=$TOKEN" \
+  -H 'content-type: application/json' \
+  -d '{"templateId":1,"from":1794783600000,"to":1795388400000}' \
+  --output presentation.pdf
 ```

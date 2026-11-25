@@ -156,18 +156,39 @@ const examplesOf = (method, route, operation, parameters) => {
         .filter(({ in: location, name, required }) => location === 'query' && (required || name === 'page[limit]'));
     const query = queryParameters.map((parameter) => `${parameter.name}=${encodeURIComponent(sampleValue(parameter))}`);
     // $BOOKKEEPING_URL and $TOKEN are meant to be expanded by the shell, anything coming from the spec is not
-    const address = `${shellDoubleQuoteEscape(`/api${url}?${[...query, 'token='].join('&')}`)}$TOKEN`;
+    const requestPath = `/api${url}?${[...query, 'token='].join('&')}`;
+    const address = `${shellDoubleQuoteEscape(requestPath)}$TOKEN`;
     const body = operation.requestBody?.content?.['application/json']?.example;
+    const downloadsPdf = Boolean(operation.responses['200']?.content?.['application/pdf']);
 
     const curlLines = [
-        `curl -g${method === 'get' ? '' : ` -X ${method.toUpperCase()}`} "$BOOKKEEPING_URL${address}"`,
+        `curl -g${downloadsPdf ? ' --fail' : ''}${method === 'get' ? '' : ` -X ${method.toUpperCase()}`} "$BOOKKEEPING_URL${address}"`,
         ...body === undefined ? [] : ['  -H \'content-type: application/json\'', `  -d ${shellSingleQuote(JSON.stringify(body))}`],
+        ...downloadsPdf ? ['  --output presentation.pdf'] : [],
     ];
 
-    return [
+    const bashExample = [
         '```bash',
         curlLines.join(' \\\n'),
         '```',
+    ].join('\n');
+    if (!downloadsPdf) {
+        return bashExample;
+    }
+
+    const psAddress = requestPath.replace(/["$`]/g, '`$&');
+    const psBody = body === undefined ? '' : ` -ContentType 'application/json' -Body '${JSON.stringify(body).replaceAll("'", "''")}'`;
+    const psCommand = `Invoke-WebRequest -Uri "$env:BOOKKEEPING_URL${psAddress}$env:TOKEN" -Method ${method.toUpperCase()}${psBody}`;
+    return [
+        '**PowerShell 7+**',
+        '',
+        '```powershell',
+        `${psCommand} -OutFile presentation.pdf`,
+        '```',
+        '',
+        '**Linux/Bash**',
+        '',
+        bashExample,
     ].join('\n');
 };
 
