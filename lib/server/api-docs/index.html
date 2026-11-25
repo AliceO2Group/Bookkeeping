@@ -986,6 +986,105 @@ Every run must be linked to the data pass and have every given detector.</p>
   -d &#39;{&quot;dataPassId&quot;:3,&quot;runNumbers&quot;:[49,56],&quot;detectorIds&quot;:[4,7]}&#39;
 </code></pre>
 </details>
+<h2>End of shift reports</h2>
+<p>End-of-shift (EoS) reports written by the shifters.</p>
+<details>
+<summary><h3><span class="method post">POST</span> <code>/eos-report</code> - Create the end-of-shift report of the calling user <span class="no-llm" title="Changes data: not meant for LLM or MCP tool use (x-llm-exclude)">not for LLM use</span></h3></summary>
+
+<p>Operation id: <code>createEosReport</code></p>
+<p>Creates the end-of-shift (EoS) report of the <strong>pending shift</strong> of the calling user (see <code>GET /shift-data</code>) as a log entry. The start of the shift is
+deduced from the current time and must <strong>not</strong> be given in the body.</p>
+<p>The text of the report is generated from the body and from the data of the shift (issues, environments, runs...), the log is linked to the runs and to
+the environments of the shift and is tagged with the tags of the shift type that exist.</p>
+<p><strong>Not meant for LLM or MCP tool use</strong> (<code>x-llm-exclude</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>reportType</code></td>
+<td>query</td>
+<td>string</td>
+<td>yes</td>
+<td>Kind of shift the report is about.</td>
+</tr>
+</tbody></table>
+<p>Request body (JSON):</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>shifterName</code></td>
+<td>string</td>
+<td>no</td>
+<td>Name of the shifter.</td>
+</tr>
+<tr>
+<td><code>traineeName</code></td>
+<td>string</td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td><code>lhcTransitions</code></td>
+<td>string</td>
+<td>no</td>
+<td>Transitions of the LHC machine during the shift.</td>
+</tr>
+<tr>
+<td><code>shiftFlow</code></td>
+<td>string</td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td><code>infoForNextShifter</code></td>
+<td>string</td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td><code>infoForRmRc</code></td>
+<td>string</td>
+<td>no</td>
+<td>Information for the run coordinator and the resource manager.</td>
+</tr>
+<tr>
+<td><code>runs</code></td>
+<td>array</td>
+<td>no</td>
+<td>Accepted but not used.</td>
+</tr>
+<tr>
+<td><code>typeSpecific</code></td>
+<td>object | null</td>
+<td>yes</td>
+<td>Depends on <code>reportType</code>, and must be given (<code>null</code> for <code>SLIMOS</code>): - <code>ECS</code>: <code>{ environmentComments, runComments }</code>, objects mapping an environment id or a run number to a comment - <code>QC/PDP</code>: <code>{ runComments }</code> - <code>SL</code>: <code>{ magnets }</code> - <code>DCS</code>: <code>{ alerts }</code></td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>201</code>: The log entry created for the report.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: The calling user is not known to Bookkeeping.</li>
+</ul>
+<pre><code class="language-bash">curl -g -X POST &quot;$BOOKKEEPING_URL/api/eos-report?reportType=ECS&amp;token=$TOKEN&quot; \
+  -H &#39;content-type: application/json&#39; \
+  -d &#39;{&quot;shifterName&quot;:&quot;John Doe&quot;,&quot;shiftFlow&quot;:&quot;The shift flow&quot;,&quot;infoForNextShifter&quot;:&quot;Info for the next shifter&quot;,&quot;typeSpecific&quot;:{&quot;environmentComments&quot;:{&quot;ENV1&quot;:&quot;A comment about the environment&quot;},&quot;runComments&quot;:{&quot;200&quot;:&quot;A comment about the run&quot;}}}&#39;
+</code></pre>
+</details>
 
 </main>
 <footer>Generated from openapi.yaml by <code>npm run docs:api</code> · ALICE Bookkeeping · internal use only</footer>

@@ -55,6 +55,8 @@ tags:
     description: LHC periods with statistics on their physics runs.
   - name: GAQ detectors
     description: Detectors whose QC flags contribute to the global aggregated quality (GAQ) of a run in a data pass.
+  - name: End of shift reports
+    description: End-of-shift (EoS) reports written by the shifters.
 
 paths:
   /tags:
@@ -686,6 +688,54 @@ paths:
                 errors:
                   - { status: 404, title: Not found, detail: Data pass with this id (99999) could not be found }
 
+  /eos-report:
+    post:
+      tags: [End of shift reports]
+      operationId: createEosReport
+      x-llm-exclude: true
+      summary: Create the end-of-shift report of the calling user
+      description: |
+        Creates the end-of-shift (EoS) report of the **pending shift** of the calling user (see `GET /shift-data`) as a log entry. The start of the shift is
+        deduced from the current time and must **not** be given in the body.
+
+        The text of the report is generated from the body and from the data of the shift (issues, environments, runs...), the log is linked to the runs and to
+        the environments of the shift and is tagged with the tags of the shift type that exist.
+      parameters:
+        - name: reportType
+          in: query
+          required: true
+          description: Kind of shift the report is about.
+          schema: { type: string, enum: [ECS, QC/PDP, SLIMOS, SL, DCS], examples: [ECS] }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateEosReport' }
+            example:
+              shifterName: John Doe
+              shiftFlow: The shift flow
+              infoForNextShifter: Info for the next shifter
+              typeSpecific:
+                environmentComments: { ENV1: A comment about the environment }
+                runComments: { '200': A comment about the run }
+      responses:
+        '201':
+          description: The log entry created for the report.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EosReportResponse' }
+              example:
+                data: { id: 120, title: End of shift report - ECS - 17/03/2023 Morning }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404':
+          description: The calling user is not known to Bookkeeping.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+              example:
+                errors:
+                  - { status: 404, title: Not found, detail: User with this external id (1) could not be found }
+
 components:
   securitySchemes:
     jwtQuery:
@@ -1045,3 +1095,60 @@ components:
         data:
           type: array
           items: { $ref: '#/components/schemas/GaqDetectorEntry' }
+    CreateEosReport:
+      type: object
+      required: [typeSpecific]
+      properties:
+        shifterName: { type: string, description: Name of the shifter. }
+        traineeName: { type: string }
+        lhcTransitions: { type: string, description: Transitions of the LHC machine during the shift. }
+        shiftFlow: { type: string }
+        infoForNextShifter: { type: string }
+        infoForRmRc: { type: string, description: Information for the run coordinator and the resource manager. }
+        runs:
+          type: array
+          description: Accepted but not used.
+          items: { type: object, additionalProperties: true }
+        typeSpecific:
+          type: [object, 'null']
+          description: |
+            Depends on `reportType`, and must be given (`null` for `SLIMOS`):
+            - `ECS`: `{ environmentComments, runComments }`, objects mapping an environment id or a run number to a comment
+            - `QC/PDP`: `{ runComments }`
+            - `SL`: `{ magnets }`
+            - `DCS`: `{ alerts }`
+          properties:
+            environmentComments: { type: object, additionalProperties: { type: string }, description: ECS only. Comment by environment id. }
+            runComments: { type: object, additionalProperties: { type: string }, description: ECS and QC/PDP only. Comment by run number. }
+            magnets:
+              type: object
+              description: SL only. Configuration of the magnets at the start and at the end of the shift, and in between.
+              properties:
+                start: { $ref: '#/components/schemas/MagnetsConfiguration' }
+                intermediates:
+                  type: array
+                  items:
+                    type: object
+                    required: [timestamp]
+                    properties:
+                      timestamp: { type: string, format: date-time }
+                      magnetsConfiguration: { $ref: '#/components/schemas/MagnetsConfiguration' }
+                end: { $ref: '#/components/schemas/MagnetsConfiguration' }
+            alerts: { type: string, description: DCS only. The DCS alerts. }
+    MagnetsConfiguration:
+      type: object
+      properties:
+        solenoid: { type: string, examples: [30kA +452mT] }
+        dipole: { type: string, examples: [6kA +681mT] }
+    EosReportResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          description: The log entry created for the report (see the Logs resource, not yet documented).
+          required: [id]
+          properties:
+            id: { type: integer }
+            title: { type: string, description: 'Title of the report, e.g. `End of shift report - ECS - 17/03/2023 Morning`.' }
+          additionalProperties: true

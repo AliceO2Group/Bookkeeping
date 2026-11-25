@@ -548,3 +548,48 @@ curl -g -X POST "$BOOKKEEPING_URL/api/gaqDetectors?token=$TOKEN" \
   -H 'content-type: application/json' \
   -d '{"dataPassId":3,"runNumbers":[49,56],"detectorIds":[4,7]}'
 ```
+
+## End of shift reports
+
+End-of-shift (EoS) reports written by the shifters.
+
+### `POST /eos-report` - Create the end-of-shift report of the calling user (not for LLM use)
+
+Operation id: `createEosReport`
+
+Creates the end-of-shift (EoS) report of the **pending shift** of the calling user (see `GET /shift-data`) as a log entry. The start of the shift is
+deduced from the current time and must **not** be given in the body.
+
+The text of the report is generated from the body and from the data of the shift (issues, environments, runs...), the log is linked to the runs and to
+the environments of the shift and is tagged with the tags of the shift type that exist.
+
+**Not meant for LLM or MCP tool use** (`x-llm-exclude`).
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `reportType` | query | string | yes | Kind of shift the report is about. |
+
+Request body (JSON):
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `shifterName` | string | no | Name of the shifter. |
+| `traineeName` | string | no |  |
+| `lhcTransitions` | string | no | Transitions of the LHC machine during the shift. |
+| `shiftFlow` | string | no |  |
+| `infoForNextShifter` | string | no |  |
+| `infoForRmRc` | string | no | Information for the run coordinator and the resource manager. |
+| `runs` | array | no | Accepted but not used. |
+| `typeSpecific` | object \| null | yes | Depends on `reportType`, and must be given (`null` for `SLIMOS`): - `ECS`: `{ environmentComments, runComments }`, objects mapping an environment id or a run number to a comment - `QC/PDP`: `{ runComments }` - `SL`: `{ magnets }` - `DCS`: `{ alerts }`  |
+
+Responses:
+
+- `201`: The log entry created for the report.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: The calling user is not known to Bookkeeping.
+
+```bash
+curl -g -X POST "$BOOKKEEPING_URL/api/eos-report?reportType=ECS&token=$TOKEN" \
+  -H 'content-type: application/json' \
+  -d '{"shifterName":"John Doe","shiftFlow":"The shift flow","infoForNextShifter":"Info for the next shifter","typeSpecific":{"environmentComments":{"ENV1":"A comment about the environment"},"runComments":{"200":"A comment about the run"}}}'
+```
