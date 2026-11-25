@@ -1085,6 +1085,81 @@ the environments of the shift and is tagged with the tags of the shift type that
   -d &#39;{&quot;shifterName&quot;:&quot;John Doe&quot;,&quot;shiftFlow&quot;:&quot;The shift flow&quot;,&quot;infoForNextShifter&quot;:&quot;Info for the next shifter&quot;,&quot;typeSpecific&quot;:{&quot;environmentComments&quot;:{&quot;ENV1&quot;:&quot;A comment about the environment&quot;},&quot;runComments&quot;:{&quot;200&quot;:&quot;A comment about the run&quot;}}}&#39;
 </code></pre>
 </details>
+<h2>Attachments</h2>
+<p>Files attached to log entries.</p>
+<details>
+<summary><h3><span class="method post">POST</span> <code>/attachments</code> - Upload a file as an attachment <span class="no-llm" title="Changes data: not meant for LLM or MCP tool use (x-llm-exclude)">not for LLM use</span></h3></summary>
+
+<p>Operation id: <code>createAttachment</code></p>
+<p>Uploads <strong>one</strong> file (multipart request) and stores it as an attachment, linked to a log if <code>log</code> is given.</p>
+<p>The files of a request are all written on the server, but only the first one is stored as an attachment. A request without any file is rejected with a <code>400</code>.
+Logs and their attachments are usually created together with <code>POST /logs</code>.</p>
+<p><strong>Not meant for LLM or MCP tool use</strong> (<code>x-llm-exclude</code>).</p>
+<p>Request body (multipart/form-data):</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>log</code></td>
+<td>integer</td>
+<td>no</td>
+<td>Identifier of the log to attach the file to.</td>
+</tr>
+<tr>
+<td><code>attachments</code></td>
+<td>string (binary)</td>
+<td>yes</td>
+<td>The file to upload.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>201</code>: The stored attachment.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+</ul>
+<pre><code class="language-bash">curl -g -X POST &quot;$BOOKKEEPING_URL/api/attachments?token=$TOKEN&quot; \
+  -F &#39;log=1&#39; \
+  -F &#39;attachments=@/path/to/file.png&#39;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/attachments/{attachmentId}</code> - Download the file of an attachment</h3></summary>
+
+<p>Operation id: <code>getAttachmentFile</code></p>
+<p>Returns the content of the file, with the type of the file as <code>Content-Type</code>. Use <code>curl -OJ</code> to save it with the name given by the server.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>attachmentId</code></td>
+<td>path</td>
+<td>integer</td>
+<td>yes</td>
+<td>Attachment identifier.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The file.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: No attachment has this id.</li>
+</ul>
+<pre><code class="language-bash">curl -g -OJ &quot;$BOOKKEEPING_URL/api/attachments/1?token=$TOKEN&quot;
+</code></pre>
+</details>
 
 </main>
 <footer>Generated from openapi.yaml by <code>npm run docs:api</code> · ALICE Bookkeeping · internal use only</footer>
