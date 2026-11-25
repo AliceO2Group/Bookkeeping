@@ -759,6 +759,143 @@ with AND.</p>
 <pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/simulationPasses/1?token=$TOKEN&quot;
 </code></pre>
 </details>
+<h2>LHC periods statistics</h2>
+<p>LHC periods with statistics on their physics runs.</p>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/lhcPeriodsStatistics</code> - List LHC periods with their statistics</h3></summary>
+
+<p>Operation id: <code>listLhcPeriodsStatistics</code></p>
+<p>Returns a page of LHC periods with statistics computed on their <strong>physics runs</strong>: number of runs, average center-of-mass energy, distinct
+energies, PDP beam types and number of data and simulation passes. Default order is by id, descending.</p>
+<p>List filters are repeated query parameters: <code>filter[ids][]=1&amp;filter[ids][]=2</code>. A single value without <code>[]</code> is rejected. Unknown query
+parameters are rejected.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>filter[ids][]</code></td>
+<td>query</td>
+<td>integer</td>
+<td>no</td>
+<td>Keep the LHC periods with one of these ids. Repeat the parameter for several values.</td>
+</tr>
+<tr>
+<td><code>filter[names][]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Keep the LHC periods with one of these exact names. Repeat the parameter for several values.</td>
+</tr>
+<tr>
+<td><code>filter[years][]</code></td>
+<td>query</td>
+<td>integer</td>
+<td>no</td>
+<td>Keep the LHC periods of these years. The year is read from the period name (<code>LHC23f</code> is 2023). Repeat the parameter for several values.</td>
+</tr>
+<tr>
+<td><code>filter[pdpBeamTypes][]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Keep the LHC periods having runs of one of these PDP beam types. Repeat the parameter for several values.</td>
+</tr>
+<tr>
+<td><code>sort[id]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Sort by id (the default is <code>desc</code>).</td>
+</tr>
+<tr>
+<td><code>sort[name]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Sort by name.</td>
+</tr>
+<tr>
+<td><code>sort[avgCenterOfMassEnergy]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Sort by average center-of-mass energy.</td>
+</tr>
+<tr>
+<td><code>sort[year]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Sort by year.</td>
+</tr>
+<tr>
+<td><code>sort[pdpBeamTypes]</code></td>
+<td>query</td>
+<td>string</td>
+<td>no</td>
+<td>Sort by PDP beam types.</td>
+</tr>
+<tr>
+<td><code>page[limit]</code></td>
+<td>query</td>
+<td>integer</td>
+<td>no</td>
+<td>Maximum number of items to return. LLMs and agents must use 100 or less.</td>
+</tr>
+<tr>
+<td><code>page[offset]</code></td>
+<td>query</td>
+<td>integer</td>
+<td>no</td>
+<td>Number of items to skip.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: A page of LHC periods with statistics.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/lhcPeriodsStatistics?page[limit]=100&amp;token=$TOKEN&quot;
+</code></pre>
+</details>
+<details>
+<summary><h3><span class="method get">GET</span> <code>/lhcPeriodsStatistics/{lhcPeriodId}</code> - Get the statistics of an LHC period</h3></summary>
+
+<p>Operation id: <code>getLhcPeriodStatistics</code></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>lhcPeriodId</code></td>
+<td>path</td>
+<td>integer</td>
+<td>yes</td>
+<td>LHC period identifier.</td>
+</tr>
+</tbody></table>
+<p>Responses:</p>
+<ul>
+<li><code>200</code>: The LHC period with its statistics.</li>
+<li><code>400</code>: The request failed validation. HTTP status is 400 although each error&#39;s <code>status</code> field is <code>&quot;422&quot;</code>. <code>source.pointer</code> has the form <code>/data/attributes/&lt;query|params|body&gt;/&lt;field&gt;</code>.</li>
+<li><code>404</code>: No LHC period has this id.</li>
+</ul>
+<pre><code class="language-bash">curl -g &quot;$BOOKKEEPING_URL/api/lhcPeriodsStatistics/1?token=$TOKEN&quot;
+</code></pre>
+</details>
 
 </main>
 <footer>Generated from openapi.yaml by <code>npm run docs:api</code> · ALICE Bookkeeping · internal use only</footer>

@@ -436,3 +436,58 @@ Responses:
 ```bash
 curl -g "$BOOKKEEPING_URL/api/simulationPasses/1?token=$TOKEN"
 ```
+
+## LHC periods statistics
+
+LHC periods with statistics on their physics runs.
+
+### `GET /lhcPeriodsStatistics` - List LHC periods with their statistics
+
+Operation id: `listLhcPeriodsStatistics`
+
+Returns a page of LHC periods with statistics computed on their **physics runs**: number of runs, average center-of-mass energy, distinct
+energies, PDP beam types and number of data and simulation passes. Default order is by id, descending.
+
+List filters are repeated query parameters: `filter[ids][]=1&filter[ids][]=2`. A single value without `[]` is rejected. Unknown query
+parameters are rejected.
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `filter[ids][]` | query | integer | no | Keep the LHC periods with one of these ids. Repeat the parameter for several values. |
+| `filter[names][]` | query | string | no | Keep the LHC periods with one of these exact names. Repeat the parameter for several values. |
+| `filter[years][]` | query | integer | no | Keep the LHC periods of these years. The year is read from the period name (`LHC23f` is 2023). Repeat the parameter for several values. |
+| `filter[pdpBeamTypes][]` | query | string | no | Keep the LHC periods having runs of one of these PDP beam types. Repeat the parameter for several values. |
+| `sort[id]` | query | string | no | Sort by id (the default is `desc`). |
+| `sort[name]` | query | string | no | Sort by name. |
+| `sort[avgCenterOfMassEnergy]` | query | string | no | Sort by average center-of-mass energy. |
+| `sort[year]` | query | string | no | Sort by year. |
+| `sort[pdpBeamTypes]` | query | string | no | Sort by PDP beam types. |
+| `page[limit]` | query | integer | no | Maximum number of items to return. LLMs and agents must use 100 or less. |
+| `page[offset]` | query | integer | no | Number of items to skip. |
+
+Responses:
+
+- `200`: A page of LHC periods with statistics.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/lhcPeriodsStatistics?page[limit]=100&token=$TOKEN"
+```
+
+### `GET /lhcPeriodsStatistics/{lhcPeriodId}` - Get the statistics of an LHC period
+
+Operation id: `getLhcPeriodStatistics`
+
+| Parameter | In | Type | Required | Notes |
+| --- | --- | --- | --- | --- |
+| `lhcPeriodId` | path | integer | yes | LHC period identifier. |
+
+Responses:
+
+- `200`: The LHC period with its statistics.
+- `400`: The request failed validation. HTTP status is 400 although each error's `status` field is `"422"`. `source.pointer` has the form `/data/attributes/<query|params|body>/<field>`.
+- `404`: No LHC period has this id.
+
+```bash
+curl -g "$BOOKKEEPING_URL/api/lhcPeriodsStatistics/1?token=$TOKEN"
+```
