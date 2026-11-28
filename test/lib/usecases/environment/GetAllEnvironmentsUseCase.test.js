@@ -261,4 +261,85 @@ module.exports = () => {
         expect(new Set(allIds).size).to.be.equal(totalMatchingFilter);
         expect(allIds).to.have.members(['SomeId', 'newId', 'CmCvjNbg', 'EIDO13i3D', '8E4aZTjY', 'Dxi029djX']);
     });
+
+    it('should successfully filter to multiple environments on raw configuration', async () => {
+        getAllEnvsDto.query = { filter: { rawConfiguration: { key: 'hosts', value: 'fake-flp' } } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(2);
+        expect(environments.map(({ id }) => id)).to.have.members(['TDI59So3d', 'CmCvjNbg']);
+    });
+
+    it('should successfully filter to a single environment on raw configuration', async () => {
+        getAllEnvsDto.query = { filter: { rawConfiguration: { key: 'hosts', value: 'fake-flp3' } } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(1);
+        expect(environments.map(({ id }) => id)).to.have.members(['TDI59So3d']);
+    });
+
+    it('should successfully return empty environment array if filter does not match on raw configuration', async () => {
+        getAllEnvsDto.query = { filter: { rawConfiguration: { key: 'nonExistingKey', value: 'nonExistingValue' } } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(0);
+    });
+
+    it('should filter raw configuration value containing plain brackets and quotes', async () => {
+        getAllEnvsDto.query = { filter: { rawConfiguration: { key: 'hosts', value: '["fake-flp3"]' } } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(1);
+        expect(environments[0].id).to.equal('TDI59So3d');
+    });
+
+    it('should not treat LIKE wildcards in the raw configuration value as wildcards', async () => {
+        getAllEnvsDto.query = { filter: { rawConfiguration: { key: 'hosts', value: 'fake_flp3' } } };
+        const { environments: underscoreMatches } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(underscoreMatches.length).to.be.equal(0);
+
+        getAllEnvsDto.query = { filter: { rawConfiguration: { key: 'hosts', value: '%' } } };
+        const { environments: percentMatches } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(percentMatches.length).to.be.equal(0);
+    });
+
+    it('should treat the raw configuration key literally and not as a JSON path expression', async () => {
+        getAllEnvsDto.query = { filter: { rawConfiguration: { key: '*' } } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(environments.length).to.be.equal(0);
+    });
+
+    it('should filter raw configuration value with plain value containing array brackets', async () => {
+        getAllEnvsDto.query = { filter: { rawConfiguration: { key: 'hosts', value: '["fake-flp1", "fake-flp2"]' } } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(environments).to.be.an('array');
+        expect(environments.length).to.be.equal(1);
+        expect(environments[0].id).to.equal('CmCvjNbg');
+    });
+
+    it('should search a value without key anywhere in the raw configuration', async () => {
+        getAllEnvsDto.query = { filter: { rawConfiguration: { value: 'fake-flp3' } } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(environments.map(({ id }) => id)).to.have.members(['TDI59So3d']);
+    });
+
+    it('should search a value without key in its JSON-escaped form, as values are stored', async () => {
+        // Stored as "hosts":"[\"fake-flp1\", \"fake-flp2\"]"
+        getAllEnvsDto.query = { filter: { rawConfiguration: { value: '["fake-flp1", "fake-flp2"]' } } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(environments.map(({ id }) => id)).to.have.members(['CmCvjNbg']);
+    });
+
+    it('should search a value without key as given, including keys and JSON syntax', async () => {
+        // Stored as {"ccdb_enabled":true,"dcs_enabled":false}
+        getAllEnvsDto.query = { filter: { rawConfiguration: { value: '"ccdb_enabled":true' } } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(environments.map(({ id }) => id)).to.have.members(['Dxi029djX']);
+    });
+
+    it('should not treat LIKE wildcards as wildcards when searching a value without key', async () => {
+        getAllEnvsDto.query = { filter: { rawConfiguration: { value: 'fake_flp' } } };
+        const { environments } = await new GetAllEnvironmentsUseCase().execute(getAllEnvsDto);
+        expect(environments.length).to.be.equal(0);
+    });
 };
